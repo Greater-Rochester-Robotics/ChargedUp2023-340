@@ -14,10 +14,10 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.drive.util.DriveAdjustModuleZeroPoint;
-import frc.robot.commands.drive.util.DriveAllModulesPositionOnly;
-import frc.robot.commands.drive.util.DriveOneModule;
-import frc.robot.commands.drive.util.DriveResetAllModulePositionsToZero;
+// import frc.robot.commands.drive.util.DriveAdjustModuleZeroPoint;
+// import frc.robot.commands.drive.util.DriveAllModulesPositionOnly;
+// import frc.robot.commands.drive.util.DriveOneModule;
+// import frc.robot.commands.drive.util.DriveResetAllModulePositionsToZero;
 import frc.robot.subsystems.SwerveDrive;
 
 public class RobotContainer {
@@ -86,14 +86,14 @@ public class RobotContainer {
     configureBindings();
 
     //add some commands to dashboard for testing/configuring
-    SmartDashboard.putData(new DriveResetAllModulePositionsToZero());//For setup of swerve
-    SmartDashboard.putData(new DriveAdjustModuleZeroPoint());//For setup of swerve
-    SmartDashboard.putData("Drive Module 0", new DriveOneModule(0));//For setup of swerve
-    SmartDashboard.putData("Drive Module 1", new DriveOneModule(1));//For setup of swerve
-    SmartDashboard.putData("Drive Module 2", new DriveOneModule(2));//For setup of swerve
-    SmartDashboard.putData("Drive Module 3", new DriveOneModule(3));//For setup of swerve
-    SmartDashboard.putData(new DriveAllModulesPositionOnly());
-    SmartDashboard.putData(new DriveStopAllModules());//For setup of swerve
+    // SmartDashboard.putData(new DriveResetAllModulePositionsToZero());//For setup of swerve
+    // SmartDashboard.putData(new DriveAdjustModuleZeroPoint());//For setup of swerve
+    // SmartDashboard.putData("Drive Module 0", new DriveOneModule(0));//For setup of swerve
+    // SmartDashboard.putData("Drive Module 1", new DriveOneModule(1));//For setup of swerve
+    // SmartDashboard.putData("Drive Module 2", new DriveOneModule(2));//For setup of swerve
+    // SmartDashboard.putData("Drive Module 3", new DriveOneModule(3));//For setup of swerve
+    // SmartDashboard.putData(new DriveAllModulesPositionOnly());
+    // SmartDashboard.putData(new DriveStopAllModules());//For setup of swerve
   }
 
   private void configureBindings() {}
