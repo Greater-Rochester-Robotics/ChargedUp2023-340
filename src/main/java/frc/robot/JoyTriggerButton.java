@@ -9,6 +9,7 @@ package frc.robot;
 
 import java.util.function.BooleanSupplier;
 
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -21,25 +22,16 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * {@code axis >= triggerPercent}
  */
 public class JoyTriggerButton extends Trigger {
-	private XboxController stick;
-	private double percent;
-	private int axis;
+	// private XboxController stick;
+	// private double percent;
+	// private int axis;
 
-	public JoyTriggerButton(XboxController joystick, double triggerPercent, int axis) {
-		//super(() -> {stick.getRawAxis(axis) >= percent});
-		super (
-
-			new BooleanSupplier() {
-				@Override
-				public boolean getAsBoolean() {
-					// TODO Auto-generated method stub
-					return  stick.getRawAxis(axis) >= percent;
-				}
-			}
-		);
-		stick = joystick;
-		percent = triggerPercent;
-		this.axis = axis;
+	public JoyTriggerButton(GenericHID joystick, double triggerPercent, int axis) {
+		super(()-> {(triggerPercent < joystick::getRawAxis(axis));});
+		
+		// stick = joystick;
+		// percent = triggerPercent;
+		// this.axis = axis;
 		
 	}
 
@@ -50,7 +42,7 @@ public class JoyTriggerButton extends Trigger {
 	/**
 	 * @return {@code true} if axis >= givenPercent 
 	 */
-	public boolean get() {
-		return stick.getRawAxis(axis) >= percent;
-	}
+	// public boolean get() {
+	// 	return stick.getRawAxis(axis) >= percent;
+	// }
 }
