@@ -22,7 +22,7 @@ import frc.robot.subsystems.SwerveDrive;
 
 public class RobotContainer {
   // The robot's gamepads are defined here...
-  
+  //TODO:Add the autoChooser aka SendableChooser
   static final XboxController driver = new XboxController(0);
   static final XboxController coDriver = new XboxController(1);
 
@@ -72,11 +72,13 @@ public class RobotContainer {
 
   //The robot's subsystems are instantiated here
   public static SwerveDrive swerveDrive;
+  //TODO:add Arm and Claw and Compressor subsystems
 
   public RobotContainer() {
     //create(construct) subsystems
     
     swerveDrive = new SwerveDrive();
+    //TODO:add Arm and Claw and Compressor subsystem
     // swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced());
 
     //Add all autos to the auto selector

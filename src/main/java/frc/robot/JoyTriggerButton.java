@@ -17,8 +17,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 
 /**
- * Converts a trigger, locked to a joystick,
- * into a true/false button as if by
+ * Converts a joystick trigger, which is a joystick 
+ * axis value between 0.0 and 1.0 into a Trigger 
+ * object, which can be used to bind a boolean state 
+ * to a command.
  * {@code axis >= triggerPercent}
  */
 public class JoyTriggerButton extends Trigger {
@@ -27,7 +29,7 @@ public class JoyTriggerButton extends Trigger {
 	// private int axis;
 
 	public JoyTriggerButton(GenericHID joystick, double triggerPercent, int axis) {
-		super(()-> {(triggerPercent < joystick::getRawAxis(axis));});
+		super(()-> (triggerPercent < joystick.getRawAxis(axis)));
 		
 		// stick = joystick;
 		// percent = triggerPercent;

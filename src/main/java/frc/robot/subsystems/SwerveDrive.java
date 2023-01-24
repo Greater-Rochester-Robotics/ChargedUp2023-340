@@ -11,7 +11,7 @@ public class SwerveDrive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator;
   /** Creates a new SwerveDrive. */
   public SwerveDrive() {
-    poseEstimator = new SwerveDrivePoseEstimator(null, null, null, null, null, null)
+    poseEstimator = new SwerveDrivePoseEstimator(null, null, null, null, null, null);
   }
 
   @Override
