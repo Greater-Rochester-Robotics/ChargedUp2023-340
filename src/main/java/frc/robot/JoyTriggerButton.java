@@ -24,27 +24,16 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * {@code axis >= triggerPercent}
  */
 public class JoyTriggerButton extends Trigger {
-	// private XboxController stick;
-	// private double percent;
-	// private int axis;
+
 
 	public JoyTriggerButton(GenericHID joystick, double triggerPercent, int axis) {
 		super(()-> (triggerPercent < joystick.getRawAxis(axis)));
-		
-		// stick = joystick;
-		// percent = triggerPercent;
-		// this.axis = axis;
-		
+				
 	}
 
 	public JoyTriggerButton(XboxController joystick, double triggerPercent, Axis axis) {
 		this(joystick, triggerPercent, axis.value);
 	}
 
-	/**
-	 * @return {@code true} if axis >= givenPercent 
-	 */
-	// public boolean get() {
-	// 	return stick.getRawAxis(axis) >= percent;
-	// }
+
 }
