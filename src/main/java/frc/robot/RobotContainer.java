@@ -80,15 +80,15 @@ public class RobotContainer {
   public static SwerveDrive swerveDrive;
   public static Claw claw;
   public static Compressor compressor;
-  //TODO:add Arm and Claw and Compressor subsystems
-
+  //TODO:add Arm
+  
   public RobotContainer() {
     //create(construct) subsystems
     
     swerveDrive = new SwerveDrive();
     claw = new Claw();
     compressor = new Compressor();
-    //TODO:add Arm and Claw and Compressor subsystem
+    //TODO:add Arm
     // swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced());
 
     //Add all autos to the auto selector
