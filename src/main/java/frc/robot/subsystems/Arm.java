@@ -25,7 +25,7 @@ import frc.robot.Constants;
 public class Arm extends SubsystemBase {
   private CANSparkMax shoulderRight;
   private CANSparkMax shoulderLeft;
-  private CANSparkMax elbowMotor;
+  private CANSparkMax elbowMotor;//TODO: add a secondary elbow motor then set as a follower(maybe rename to include leader)
   private AbsoluteEncoder absoluteEncoderRight;
   private AbsoluteEncoder absoluteEncoderLeft;
   private AbsoluteEncoder absoluteEncoderElbow;
@@ -39,6 +39,7 @@ public class Arm extends SubsystemBase {
 
   /** Creates a new Arm. */
   public Arm() {
+    //TODO:for all NEO's use enableVoltageCompensation
     //right shoulder
     shoulderRight = new CANSparkMax(Constants.SHOULDER_MOTOR_RIGHT, MotorType.kBrushless);
     absoluteEncoderRight = shoulderRight.getAbsoluteEncoder(Type.kDutyCycle);
@@ -120,15 +121,28 @@ public class Arm extends SubsystemBase {
     //TODO: write a check to make sure the two shoulders are the same
   }
 
+  // -------------------------- Shoulder Motors Methods
+
+  /**
+   * Stop both the shoulder motors
+   */
   public void stopShoulder(){
     shoulderRight.set(0);
     shoulderLeft.set(0);
   }
 
+  /**
+   * drive only the left shoulder motor via duty cycle
+   * @param leftDutyCycle a value between -1.0 and 1.0, 0.0 is stopped
+   */
   public void setLeftDutyCycle(Double leftDutyCycle){
     shoulderLeft.set(leftDutyCycle);
   }
 
+  /**
+   * drive only the rgith shoulder motor via duty cycle
+   * @param rightDutyCycle a value between -1.0 and 1.0, 0.0 is stopped
+   */
   public void setRightDutyCycle(Double rightDutyCycle){
     shoulderLeft.set(rightDutyCycle);
   }
@@ -136,34 +150,46 @@ public class Arm extends SubsystemBase {
   public void setRightShoulderMotor(double output){
     shoulderRight.getPIDController().setReference(output, CANSparkMax.ControlType.kPosition);
   }
-  //TODO: add a single PID set call
+  //TODO: add a single PID set call for both, not independent methods
   public void setLeftShoulderMotor(double output){
     shoulderLeft.getPIDController().setReference(output, CANSparkMax.ControlType.kPosition);
   }
 
-  //TODO:remember to disable and reenable brake 
+  // -------------------------- Elbow Methods
 
+  //TODO: write getElbowPosition, pull value from the absolute encoder
+
+  /**
+   * Stops the elbow and reengages the brake
+   */
   public void stopElbow(){
     elbowMotor.set(0);
+    //TODO:remember to disable and reenable brake 
   } 
 
   public void setElbowDutyCycle(Double elbowDutyCycle){
     elbowMotor.set(elbowDutyCycle);
+    //TODO:remember to disable and reenable brake 
   }
 
   public void setElbowPosition(Double position){
     elbowController.setReference(position, ControlType.kPosition);
+    //TODO:remember to disable and reenable brake 
   }
   
+  // -------------------------- Wrist Methods
+
+  /**
+   * extends the wrist pneumatic piston
+   */
   public void extendWrist(){
     wrist.set(Value.kForward);
   }
 
+  /**
+   * retracts the wrist pneumatic piston
+   */
   public void retractWrist(){
     wrist.set(Value.kReverse);
-  }
-
-  public void turnWristOff(){
-    wrist.set(Value.kOff);
   }
 }

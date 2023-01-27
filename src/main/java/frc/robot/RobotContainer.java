@@ -9,15 +9,15 @@ import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Compressor;
-import frc.robot.subsystems.Compressor;
-import frc.robot.subsystems.Compressor;
+import frc.robot.subsystems.SwerveDrive;
+
 // import frc.robot.commands.drive.util.DriveAdjustModuleZeroPoint;
 // import frc.robot.commands.drive.util.DriveAllModulesPositionOnly;
 // import frc.robot.commands.drive.util.DriveOneModule;
@@ -84,7 +84,6 @@ public class RobotContainer {
   
   public RobotContainer() {
     //create(construct) subsystems
-    
     swerveDrive = new SwerveDrive();
     claw = new Claw();
     compressor = new Compressor();
@@ -108,7 +107,13 @@ public class RobotContainer {
     // SmartDashboard.putData(new DriveStopAllModules());//For setup of swerve
   }
 
-  private void configureBindings() {}
+  /**
+   * Use this method to define your trigger->command mappings.
+   */
+  private void configureBindings() {
+    /* ==================== DRIVER BUTTONS ==================== */
+    /* =================== CODRIVER BUTTONS =================== */
+  }
 
   /**
    * Define all autonomous modes here to have them 
@@ -125,7 +130,12 @@ public class RobotContainer {
     SmartDashboard.putData(RobotContainer.autoChooser);
   }
 
-public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
-}
+  /**
+   * retrieve the autonomous mode selected on the 
+   * ShuffleDashboard/SmartDashboard
+   * @return Autonomous Command
+   */
+  public Command getAutonomousCommand() {
+      return autoChooser.getSelected();
+  }
 }
