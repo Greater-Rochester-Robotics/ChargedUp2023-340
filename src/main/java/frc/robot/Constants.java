@@ -96,6 +96,9 @@ public final class Constants {
     public static final double SHOUDLER_D = 0.0;
     public static final double SHOUDLER_F = 0.0;
     
+     /* Compressor Pressure Constants */
+     public static final double MIN_PRESSURE = 100.0;
+     public static final double MAX_PRESSURE = 120.0;//TODO: change this on between comp bot and prac , 100 for prac, 120 for comp
     /* IDENTIFICATION NUMBERS FOR DEVICES */
 
     /* CTRE motor and sensors */
