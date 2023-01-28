@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Compressor;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelights;
 import frc.robot.subsystems.SwerveDrive;
 
@@ -82,6 +83,7 @@ public class RobotContainer {
   public static Compressor compressor;
   public static Arm arm;
   public static Limelights limelights;
+  public static Intake intake;
   
   public RobotContainer() {
     //create(construct) subsystems
@@ -90,6 +92,7 @@ public class RobotContainer {
     compressor = new Compressor();
     arm = new Arm();
     limelights = new Limelights();
+    intake = new Intake();
     // swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced());
 
     //Add all autos to the auto selector
