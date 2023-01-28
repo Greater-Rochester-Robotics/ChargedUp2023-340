@@ -54,10 +54,10 @@ public class Arm extends SubsystemBase {
 
     shoulderRight.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
     
-    shoulderRight.getPIDController().setP(Constants.SHOUDLER_P);  
-    shoulderRight.getPIDController().setI(Constants.SHOUDLER_I);
-    shoulderRight.getPIDController().setD(Constants.SHOUDLER_D);
-    shoulderRight.getPIDController().setFF(Constants.SHOUDLER_F);
+    shoulderRight.getPIDController().setP(Constants.SHOULDER_P);  
+    shoulderRight.getPIDController().setI(Constants.SHOULDER_I);
+    shoulderRight.getPIDController().setD(Constants.SHOULDER_D);
+    shoulderRight.getPIDController().setFF(Constants.SHOULDER_F);
 
     shoulderRight.setIdleMode(IdleMode.kBrake);
 
@@ -80,10 +80,10 @@ public class Arm extends SubsystemBase {
 
     shoulderLeft.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
  
-    shoulderLeft.getPIDController().setP(Constants.SHOUDLER_P);
-    shoulderLeft.getPIDController().setI(Constants.SHOUDLER_I);
-    shoulderLeft.getPIDController().setD(Constants.SHOUDLER_D);
-    shoulderLeft.getPIDController().setFF(Constants.SHOUDLER_F);
+    shoulderLeft.getPIDController().setP(Constants.SHOULDER_P);
+    shoulderLeft.getPIDController().setI(Constants.SHOULDER_I);
+    shoulderLeft.getPIDController().setD(Constants.SHOULDER_D);
+    shoulderLeft.getPIDController().setFF(Constants.SHOULDER_F);
 
     shoulderLeft.setIdleMode(IdleMode.kBrake);
 
@@ -106,10 +106,10 @@ public class Arm extends SubsystemBase {
 
     elbowMotorLeader.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
  
-    elbowMotorLeader.getPIDController().setP(Constants.SHOUDLER_P);
-    elbowMotorLeader.getPIDController().setI(Constants.SHOUDLER_I);
-    elbowMotorLeader.getPIDController().setD(Constants.SHOUDLER_D);
-    elbowMotorLeader.getPIDController().setFF(Constants.SHOUDLER_F);
+    elbowMotorLeader.getPIDController().setP(Constants.SHOULDER_P);
+    elbowMotorLeader.getPIDController().setI(Constants.SHOULDER_I);
+    elbowMotorLeader.getPIDController().setD(Constants.SHOULDER_D);
+    elbowMotorLeader.getPIDController().setFF(Constants.SHOULDER_F);
 
     elbowMotorLeader.setIdleMode(IdleMode.kBrake);
 

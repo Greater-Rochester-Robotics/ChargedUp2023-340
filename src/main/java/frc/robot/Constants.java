@@ -92,10 +92,16 @@ public final class Constants {
     public static final Translation2d FIELD_CENTER = new Translation2d();
 
     /* Arm PID Constants */
-    public static final double SHOUDLER_P = 0.0;
-    public static final double SHOUDLER_I = 0.0;
-    public static final double SHOUDLER_D = 0.0;
-    public static final double SHOUDLER_F = 0.0;
+    public static final double SHOULDER_P = 0.0;
+    public static final double SHOULDER_I = 0.0;
+    public static final double SHOULDER_D = 0.0;
+    public static final double SHOULDER_F = 0.0;
+
+     /* Record Player PID Constants */
+     public static final double RECORD_PLAYER_P = 0.0;
+     public static final double RECORD_PLAYER_I = 0.0;
+     public static final double RECORD_PLAYER_D = 0.0;
+     public static final double RECORD_PLAYER_F = 0.0;
     
       /* Compressor Pressure Constants */
       public static final double MIN_PRESSURE = 100.0;
@@ -126,6 +132,9 @@ public final class Constants {
     public static final int SHOULDER_MOTOR_RIGHT = 21;
     public static final int ELBOW_MOTOR_LEADER = 22;
     public static final int ELBOW_MOTOR_FOLLOWER = 23;
+
+    public static final int RECORD_PLAYER_MOTOR = 24;
+
 
     /*Solenoids*/
     public static final int WRIST_SOLENOID = 30;
