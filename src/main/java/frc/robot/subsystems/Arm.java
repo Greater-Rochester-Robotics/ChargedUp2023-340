@@ -103,11 +103,11 @@ public class Arm extends SubsystemBase {
     elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
     elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);  
     elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
-
+    //TODO: add a secondary elbow motor set to follower, don't need PID, absEnc calls, as it follows primary 
     elbowMotor.set(0);
 
     wrist = new DoubleSolenoid(Constants.WRIST_MOTOR, PneumaticsModuleType.REVPH, 0, 0);
-    wristBrakeSolenoid = new Solenoid(Constants.WRIST_MOTOR, PneumaticsModuleType.REVPH, 0);
+    wristBrakeSolenoid = new Solenoid(Constants.WRIST_MOTOR, PneumaticsModuleType.REVPH, 0);//TODO:this is the  brake to the elbow, should be named such
 
     //burning flash for all NEOs
     shoulderRight.burnFlash();
@@ -121,6 +121,9 @@ public class Arm extends SubsystemBase {
     //TODO: write a check to make sure the two shoulders are the same
   }
 
+  // -------------------------- Kinematics Methods
+  //TODO: write kinematics here,  need a public position commmand
+  
   // -------------------------- Shoulder Motors Methods
 
   /**
