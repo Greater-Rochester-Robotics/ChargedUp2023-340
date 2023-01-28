@@ -122,7 +122,8 @@ public final class Constants {
     /* Rev Robotics SparkMAXs */
     public static final int SHOULDER_MOTOR_LEFT = 20;
     public static final int SHOULDER_MOTOR_RIGHT = 21;
-    public static final int WRIST_MOTOR = 22;
+    public static final int ELBOW_MOTOR_LEADER = 22;
+    public static final int ELBOW_MOTOR_FOLLOWER = 23;
 
 
 }

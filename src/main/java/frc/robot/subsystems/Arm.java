@@ -25,11 +25,11 @@ import frc.robot.Constants;
 public class Arm extends SubsystemBase {
   private CANSparkMax shoulderRight;
   private CANSparkMax shoulderLeft;
-  private CANSparkMax elbowMotor;//TODO: add a secondary elbow motor then set as a follower(maybe rename to include leader)
+  private CANSparkMax elbowMotorLeader;//TODO: add a secondary elbow motor then set as a follower(maybe rename to include leader)
+  private CANSparkMax elbowMotorFollower;
   private AbsoluteEncoder absoluteEncoderRight;
   private AbsoluteEncoder absoluteEncoderLeft;
   private AbsoluteEncoder absoluteEncoderElbow;
-  private AbsoluteEncoder absoluteEncoderWrist;
   private SparkMaxPIDController shoulderRightController;
   private SparkMaxPIDController shoulderLeftController;
   private SparkMaxPIDController elbowController;
@@ -84,35 +84,45 @@ public class Arm extends SubsystemBase {
 
 
     //elbow
-    elbowMotor = new CANSparkMax(Constants.WRIST_MOTOR, MotorType.kBrushless);
-    absoluteEncoderElbow = elbowMotor.getAbsoluteEncoder(Type.kDutyCycle);
+    elbowMotorLeader = new CANSparkMax(Constants.ELBOW_MOTOR_LEADER, MotorType.kBrushless);
+    elbowMotorFollower = new CANSparkMax(Constants.ELBOW_MOTOR_FOLLOWER, MotorType.kBrushless);
+    absoluteEncoderElbow = elbowMotorLeader.getAbsoluteEncoder(Type.kDutyCycle);
 
     elbowController.setFeedbackDevice(absoluteEncoderElbow);
  
-    elbowMotor.getPIDController().setP(Constants.SHOUDLER_P);
-    elbowMotor.getPIDController().setI(Constants.SHOUDLER_I);
-    elbowMotor.getPIDController().setD(Constants.SHOUDLER_D);
-    elbowMotor.getPIDController().setFF(Constants.SHOUDLER_F);
+    elbowMotorLeader.getPIDController().setP(Constants.SHOUDLER_P);
+    elbowMotorLeader.getPIDController().setI(Constants.SHOUDLER_I);
+    elbowMotorLeader.getPIDController().setD(Constants.SHOUDLER_D);
+    elbowMotorLeader.getPIDController().setFF(Constants.SHOUDLER_F);
 
-    elbowMotor.setIdleMode(IdleMode.kBrake);
+    elbowMotorLeader.setIdleMode(IdleMode.kBrake);
 
-    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
-    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
-    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 2000);
-    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
-    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);  
-    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
-    //TODO: add a secondary elbow motor set to follower, don't need PID, absEnc calls, as it follows primary 
-    elbowMotor.set(0);
+    elbowMotorLeader.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
+    elbowMotorLeader.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
+    elbowMotorLeader.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
+    elbowMotorLeader.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 2000);
+    elbowMotorLeader.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
+    elbowMotorLeader.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);  
+    elbowMotorLeader.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
+    //TODO: add a secondary elbow motor set to follower, don't need PID, absEnc calls, as it follows primary
+    elbowMotorFollower.setIdleMode(IdleMode.kBrake);
+    elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
+    elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
+    elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
+    elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 2000);
+    elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
+    elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);  
+    elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
+    elbowMotorFollower.follow(elbowMotorLeader);
+    elbowMotorLeader.set(0);
 
-    wrist = new DoubleSolenoid(Constants.WRIST_MOTOR, PneumaticsModuleType.REVPH, 0, 0);
-    wristBrakeSolenoid = new Solenoid(Constants.WRIST_MOTOR, PneumaticsModuleType.REVPH, 0);//TODO:this is the  brake to the elbow, should be named such
+    wrist = new DoubleSolenoid(Constants.ELBOW_MOTOR_LEADER, PneumaticsModuleType.REVPH, 0, 0);
+    wristBrakeSolenoid = new Solenoid(Constants.ELBOW_MOTOR_LEADER, PneumaticsModuleType.REVPH, 0);//TODO:this is the  brake to the elbow, should be named such
 
     //burning flash for all NEOs
     shoulderRight.burnFlash();
     shoulderLeft.burnFlash();
-    elbowMotor.burnFlash();
+    elbowMotorLeader.burnFlash();
   }
 
   @Override
@@ -161,17 +171,18 @@ public class Arm extends SubsystemBase {
   // -------------------------- Elbow Methods
 
   //TODO: write getElbowPosition, pull value from the absolute encoder
+  
 
   /**
    * Stops the elbow and reengages the brake
    */
   public void stopElbow(){
-    elbowMotor.set(0);
+    elbowMotorLeader.set(0);
     //TODO:remember to disable and reenable brake 
   } 
 
   public void setElbowDutyCycle(Double elbowDutyCycle){
-    elbowMotor.set(elbowDutyCycle);
+    elbowMotorLeader.set(elbowDutyCycle);
     //TODO:remember to disable and reenable brake 
   }
 

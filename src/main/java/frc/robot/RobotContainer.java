@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Compressor;
 import frc.robot.subsystems.SwerveDrive;
@@ -22,7 +22,6 @@ import frc.robot.subsystems.SwerveDrive;
 // import frc.robot.commands.drive.util.DriveAllModulesPositionOnly;
 // import frc.robot.commands.drive.util.DriveOneModule;
 // import frc.robot.commands.drive.util.DriveResetAllModulePositionsToZero;
-import frc.robot.subsystems.SwerveDrive;
 
 public class RobotContainer {
   // The robot's gamepads are defined here...
@@ -80,14 +79,14 @@ public class RobotContainer {
   public static SwerveDrive swerveDrive;
   public static Claw claw;
   public static Compressor compressor;
-  //TODO:add Arm
+  public static Arm arm;
   
   public RobotContainer() {
     //create(construct) subsystems
     swerveDrive = new SwerveDrive();
     claw = new Claw();
     compressor = new Compressor();
-    //TODO:add Arm
+    arm = new Arm();
     // swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced());
 
     //Add all autos to the auto selector
