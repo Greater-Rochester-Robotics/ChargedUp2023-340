@@ -47,6 +47,7 @@ public final class Constants {
 
     /* Swerve Module Rotation constants */
     public static final double RAD_TO_ENC_CONV_FACTOR = 14.13675; // 10.1859; // the radian to enc factor
+    public static final double ABS_ENC_TO_RAD_CONV_FACTOR = 2*Math.PI;
     public static final double SWERVE_ROT_P_VALUE = 0.1;//.1;
     public static final double SWERVE_ROT_I_VALUE = 0.0;
     public static final double SWERVE_ROT_D_VALUE = 0.05; 

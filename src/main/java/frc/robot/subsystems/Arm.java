@@ -34,7 +34,13 @@ public class Arm extends SubsystemBase {
   private SparkMaxPIDController shoulderLeftController;
   private SparkMaxPIDController elbowController;
   private DoubleSolenoid wrist;
-  private Solenoid wristBrakeSolenoid;
+  private Solenoid brakeSolenoid;
+
+  private double rightPos;
+  private double leftPos;
+  private double shoulderGoalPos;
+
+  private boolean shoulderPIDEnable;
   
 
   /** Creates a new Arm. */
@@ -43,8 +49,11 @@ public class Arm extends SubsystemBase {
     //right shoulder
     shoulderRight = new CANSparkMax(Constants.SHOULDER_MOTOR_RIGHT, MotorType.kBrushless);
     absoluteEncoderRight = shoulderRight.getAbsoluteEncoder(Type.kDutyCycle);
+    absoluteEncoderRight.setPositionConversionFactor(Constants.ABS_ENC_TO_RAD_CONV_FACTOR);
 
     shoulderRightController.setFeedbackDevice(absoluteEncoderRight);
+
+    shoulderRight.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
     
     shoulderRight.getPIDController().setP(Constants.SHOUDLER_P);  
     shoulderRight.getPIDController().setI(Constants.SHOUDLER_I);
@@ -61,11 +70,16 @@ public class Arm extends SubsystemBase {
     shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
     shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
 
+
+
     //left shoulder
     shoulderLeft = new CANSparkMax(Constants.SHOULDER_MOTOR_LEFT, MotorType.kBrushless);
     absoluteEncoderLeft = shoulderLeft.getAbsoluteEncoder(Type.kDutyCycle);
+    absoluteEncoderLeft.setPositionConversionFactor(Constants.ABS_ENC_TO_RAD_CONV_FACTOR);
 
     shoulderLeftController.setFeedbackDevice(absoluteEncoderLeft);
+
+    shoulderLeft.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
  
     shoulderLeft.getPIDController().setP(Constants.SHOUDLER_P);
     shoulderLeft.getPIDController().setI(Constants.SHOUDLER_I);
@@ -87,8 +101,11 @@ public class Arm extends SubsystemBase {
     elbowMotorLeader = new CANSparkMax(Constants.ELBOW_MOTOR_LEADER, MotorType.kBrushless);
     elbowMotorFollower = new CANSparkMax(Constants.ELBOW_MOTOR_FOLLOWER, MotorType.kBrushless);
     absoluteEncoderElbow = elbowMotorLeader.getAbsoluteEncoder(Type.kDutyCycle);
+    absoluteEncoderElbow.setPositionConversionFactor(Constants.ABS_ENC_TO_RAD_CONV_FACTOR);
 
     elbowController.setFeedbackDevice(absoluteEncoderElbow);
+
+    elbowMotorLeader.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
  
     elbowMotorLeader.getPIDController().setP(Constants.SHOUDLER_P);
     elbowMotorLeader.getPIDController().setI(Constants.SHOUDLER_I);
@@ -114,21 +131,54 @@ public class Arm extends SubsystemBase {
     elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);  
     elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
     elbowMotorFollower.follow(elbowMotorLeader);
+
+    elbowMotorFollower.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
+
     elbowMotorLeader.set(0);
 
     wrist = new DoubleSolenoid(Constants.ELBOW_MOTOR_LEADER, PneumaticsModuleType.REVPH, 0, 0);
-    wristBrakeSolenoid = new Solenoid(Constants.ELBOW_MOTOR_LEADER, PneumaticsModuleType.REVPH, 0);//TODO:this is the  brake to the elbow, should be named such
+    brakeSolenoid = new Solenoid(Constants.ELBOW_MOTOR_LEADER, PneumaticsModuleType.REVPH, 0);//TODO:this is the  brake to the elbow, should be named such
 
     //burning flash for all NEOs
     shoulderRight.burnFlash();
     shoulderLeft.burnFlash();
     elbowMotorLeader.burnFlash();
+    elbowMotorFollower.burnFlash();
+
+    //setting goal to current pos for startup
+    shoulderGoalPos = absoluteEncoderRight.getPosition();
+
+    //PID is off on startup
+    shoulderPIDEnable = false;
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    //TODO: write a check to make sure the two shoulders are the same
+    rightPos = absoluteEncoderRight.getPosition();
+    leftPos = absoluteEncoderLeft.getPosition();
+
+    //Checks to see if both shoulders are at the same position,
+    //stops one closer to goal position
+    if(shoulderPIDEnable){
+      if(rightPos - leftPos < -0.19625 || rightPos - leftPos > 0.19625){
+        double rightDiff = shoulderGoalPos - rightPos;
+        double leftDiff = shoulderGoalPos - leftPos;
+
+        if(Math.abs(rightDiff) > Math.abs(leftDiff)){
+          shoulderLeft.set(0.0);
+          shoulderRight.getPIDController().setReference(shoulderGoalPos, ControlType.kPosition);
+        }
+        else{
+          shoulderRight.set(0.0);
+          shoulderLeft.getPIDController().setReference(shoulderGoalPos, ControlType.kPosition);
+        }
+      }
+      else{
+        shoulderRight.getPIDController().setReference(shoulderGoalPos, ControlType.kPosition);
+        shoulderLeft.getPIDController().setReference(shoulderGoalPos, ControlType.kPosition);
+      }
+    }
   }
 
   // -------------------------- Kinematics Methods
@@ -142,35 +192,41 @@ public class Arm extends SubsystemBase {
   public void stopShoulder(){
     shoulderRight.set(0);
     shoulderLeft.set(0);
+    shoulderPIDEnable = false;
   }
 
   /**
    * drive only the left shoulder motor via duty cycle
+   * FOR TESTING PURPOSES ONLY
    * @param leftDutyCycle a value between -1.0 and 1.0, 0.0 is stopped
    */
   public void setLeftDutyCycle(Double leftDutyCycle){
     shoulderLeft.set(leftDutyCycle);
+    shoulderPIDEnable = false;
   }
 
   /**
-   * drive only the rgith shoulder motor via duty cycle
+   * drive only the right shoulder motor via duty cycle
+   * FOR TESTING ONLY
    * @param rightDutyCycle a value between -1.0 and 1.0, 0.0 is stopped
    */
   public void setRightDutyCycle(Double rightDutyCycle){
     shoulderLeft.set(rightDutyCycle);
+    shoulderPIDEnable = false;
   }
 
-  public void setRightShoulderMotor(double output){
+  public void setBothShoulderMotor(double output){
     shoulderRight.getPIDController().setReference(output, CANSparkMax.ControlType.kPosition);
-  }
-  //TODO: add a single PID set call for both, not independent methods
-  public void setLeftShoulderMotor(double output){
     shoulderLeft.getPIDController().setReference(output, CANSparkMax.ControlType.kPosition);
+    shoulderGoalPos = output;
+    shoulderPIDEnable = true;
   }
 
   // -------------------------- Elbow Methods
 
-  //TODO: write getElbowPosition, pull value from the absolute encoder
+  public double getElbowPosition(){
+    return absoluteEncoderElbow.getPosition();
+  }
   
 
   /**
@@ -178,17 +234,17 @@ public class Arm extends SubsystemBase {
    */
   public void stopElbow(){
     elbowMotorLeader.set(0);
-    //TODO:remember to disable and reenable brake 
+    brakeSolenoid.set(true);
   } 
 
   public void setElbowDutyCycle(Double elbowDutyCycle){
     elbowMotorLeader.set(elbowDutyCycle);
-    //TODO:remember to disable and reenable brake 
+    brakeSolenoid.set(false);
   }
 
   public void setElbowPosition(Double position){
     elbowController.setReference(position, ControlType.kPosition);
-    //TODO:remember to disable and reenable brake 
+    brakeSolenoid.set(false);
   }
   
   // -------------------------- Wrist Methods
