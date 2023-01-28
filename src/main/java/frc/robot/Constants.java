@@ -96,9 +96,10 @@ public final class Constants {
     public static final double SHOUDLER_D = 0.0;
     public static final double SHOUDLER_F = 0.0;
     
-     /* Compressor Pressure Constants */
-     public static final double MIN_PRESSURE = 100.0;
-     public static final double MAX_PRESSURE = 120.0;//TODO: change this on between comp bot and prac , 100 for prac, 120 for comp
+      /* Compressor Pressure Constants */
+      public static final double MIN_PRESSURE = 100.0;
+      public static final double MAX_PRESSURE = 120.0;//TODO: change this on between comp bot and prac , 100 for prac, 120 for comp
+      
     /* IDENTIFICATION NUMBERS FOR DEVICES */
 
     /* CTRE motor and sensors */
@@ -114,7 +115,7 @@ public final class Constants {
     public static final int REAR_RIGHT_MOVE_MOTOR = 9;//drive module 2
     public static final int REAR_RIGHT_ROTATE_MOTOR = 10;//drive module 2
     public static final int REAR_RIGHT_ROTATE_SENSOR = 11;//drive module 2
-    
+     
     public static final int FRONT_RIGHT_MOVE_MOTOR = 12;//drive module 3
     public static final int FRONT_RIGHT_ROTATE_MOTOR = 13;//drive module 3
     public static final int FRONT_RIGHT_ROTATE_SENSOR = 14;//drive module 3
@@ -125,5 +126,7 @@ public final class Constants {
     public static final int ELBOW_MOTOR_LEADER = 22;
     public static final int ELBOW_MOTOR_FOLLOWER = 23;
 
+    /*Solenoids*/
+    public static final int WRIST_SOLENOID = 30;
 
 }
