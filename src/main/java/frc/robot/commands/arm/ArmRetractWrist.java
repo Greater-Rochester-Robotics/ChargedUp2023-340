@@ -13,11 +13,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
-//InstantCommand that extends the wrist
-public class ArmExtendWrist extends InstantCommand {
-  private DoubleSolenoid  wrist;
-
-  public ArmExtendWrist() {
+//InstantCommand that retracts the wrist
+public class ArmRetractWrist extends InstantCommand {
+  private DoubleSolenoid wrist;
+  public ArmRetractWrist() {
     // Use addRequirements() here to declare subsystem dependencies.
     wrist = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 0);
   }
@@ -25,6 +24,6 @@ public class ArmExtendWrist extends InstantCommand {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    wrist.set(Value.kForward);
+    wrist.set(Value.kReverse);
   }
 }

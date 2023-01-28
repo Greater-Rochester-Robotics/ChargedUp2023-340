@@ -25,7 +25,7 @@ import frc.robot.Constants;
 public class Arm extends SubsystemBase {
   private CANSparkMax shoulderRight;
   private CANSparkMax shoulderLeft;
-  private CANSparkMax elbowMotorLeader;//TODO: add a secondary elbow motor then set as a follower(maybe rename to include leader)
+  private CANSparkMax elbowMotorLeader;
   private CANSparkMax elbowMotorFollower;
   private AbsoluteEncoder absoluteEncoderRight;
   private AbsoluteEncoder absoluteEncoderLeft;
@@ -45,7 +45,6 @@ public class Arm extends SubsystemBase {
 
   /** Creates a new Arm. */
   public Arm() {
-    //TODO:for all NEO's use enableVoltageCompensation
     //right shoulder
     shoulderRight = new CANSparkMax(Constants.SHOULDER_MOTOR_RIGHT, MotorType.kBrushless);
     absoluteEncoderRight = shoulderRight.getAbsoluteEncoder(Type.kDutyCycle);
@@ -121,7 +120,7 @@ public class Arm extends SubsystemBase {
     elbowMotorLeader.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
     elbowMotorLeader.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);  
     elbowMotorLeader.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
-    //TODO: add a secondary elbow motor set to follower, don't need PID, absEnc calls, as it follows primary
+
     elbowMotorFollower.setIdleMode(IdleMode.kBrake);
     elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
     elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
@@ -137,7 +136,7 @@ public class Arm extends SubsystemBase {
     elbowMotorLeader.set(0);
 
     wrist = new DoubleSolenoid(Constants.ELBOW_MOTOR_LEADER, PneumaticsModuleType.REVPH, 0, 0);
-    brakeSolenoid = new Solenoid(Constants.ELBOW_MOTOR_LEADER, PneumaticsModuleType.REVPH, 0);//TODO:this is the  brake to the elbow, should be named such
+    brakeSolenoid = new Solenoid(Constants.ELBOW_MOTOR_LEADER, PneumaticsModuleType.REVPH, 0);
 
     //burning flash for all NEOs
     shoulderRight.burnFlash();
