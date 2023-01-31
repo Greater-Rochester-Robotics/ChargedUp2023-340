@@ -83,7 +83,8 @@ public class RobotContainer {
   public static Compressor compressor;
   public static Arm arm;
   public static Limelights limelights;
-  public static Intake intake;
+  public static Intake intake1;
+  public static Intake intake2;
   
   public RobotContainer() {
     //create(construct) subsystems
@@ -92,7 +93,8 @@ public class RobotContainer {
     compressor = new Compressor();
     arm = new Arm();
     limelights = new Limelights();
-    intake = new Intake();
+    intake1 = new Intake(Constants.INTAKE_1_MOTOR, Constants.INTAKE_1_SOLENOID);
+    intake2 = new Intake(Constants.INTAKE_2_MOTOR, Constants.INTAKE_2_SOLENOID);
     // swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced());
 
     //Add all autos to the auto selector

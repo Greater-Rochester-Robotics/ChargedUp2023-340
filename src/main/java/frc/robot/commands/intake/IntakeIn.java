@@ -5,14 +5,15 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
+import frc.robot.subsystems.Intake;
 
 public class IntakeIn extends CommandBase {
+  Intake intake;
   /** Creates a new IntakeIn. */
-  public IntakeIn() {
+  public IntakeIn(Intake intake) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.intake);
-
+    addRequirements(intake);
+    this.intake = intake;
   }
 
   // Called when the command is initially scheduled.
@@ -23,7 +24,7 @@ public class IntakeIn extends CommandBase {
   @Override
   public void execute() {
 
-    RobotContainer.intake.intakeIn();
+    intake.intakeIn();
 
   }
 

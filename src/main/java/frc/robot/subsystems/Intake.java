@@ -4,11 +4,45 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
+
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
+  private CANSparkMax motor;
+  private DoubleSolenoid solenoid;
+  private final double MOTOR_SPEED = 0.5; //TODO: What should this be?
+
   /** Creates a new Intake. */
-  public Intake() {}
+  public Intake(int motorId, int solenoidId) {
+    motor = new CANSparkMax(motorId, MotorType.kBrushless);
+    motor.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
+    
+    motor.getPIDController().setP(Constants.SHOULDER_P);  
+    motor.getPIDController().setI(Constants.SHOULDER_I);
+    motor.getPIDController().setD(Constants.SHOULDER_D);
+    motor.getPIDController().setFF(Constants.SHOULDER_F);
+
+    motor.setIdleMode(IdleMode.kBrake);
+
+    //TODO: Make sure these are correct
+    motor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
+    motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
+    motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
+    motor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 2000);
+    motor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
+    motor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
+    motor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
+
+    solenoid = new DoubleSolenoid(solenoidId, PneumaticsModuleType.REVPH, 0, 0);
+  }
 
   @Override
   public void periodic() {
@@ -16,23 +50,23 @@ public class Intake extends SubsystemBase {
   }
 
   public void intakeIn() {
-
+    solenoid.set(Value.kReverse);
   }
 
   public void intakeOut() {
-
+    solenoid.set(Value.kForward);
   }
 
   public void motorIn() {
-
+    motor.set(-MOTOR_SPEED);
   }
 
   public void motorOut() {
-
+    motor.set(MOTOR_SPEED);
   }
 
   public void motorStop() {
-    
+    motor.set(0.0);
   }
 
 }

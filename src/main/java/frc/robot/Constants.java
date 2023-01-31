@@ -135,8 +135,13 @@ public final class Constants {
 
     public static final int RECORD_PLAYER_MOTOR = 24;
 
+    public static final int INTAKE_1_MOTOR = 25;
+    public static final int INTAKE_2_MOTOR = 26;
 
     /*Solenoids*/
     public static final int WRIST_SOLENOID = 30;
+
+    public static final int INTAKE_1_SOLENOID = 31;
+    public static final int INTAKE_2_SOLENOID = 32;
 
 }
