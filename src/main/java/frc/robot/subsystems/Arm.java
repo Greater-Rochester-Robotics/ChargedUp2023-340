@@ -15,6 +15,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -39,6 +41,7 @@ public class Arm extends SubsystemBase {
   private double rightPos;
   private double leftPos;
   private double shoulderGoalPos;
+  private double forarmLength = Constants.ARM_LENGTH_2;
 
   private boolean shoulderPIDEnable;
   
@@ -182,8 +185,66 @@ public class Arm extends SubsystemBase {
 
   // -------------------------- Kinematics Methods
   //TODO: write kinematics here,  need a public position commmand
+
+  public Pose2d getArmPose(){
+    double elbowPos = getElbowPosition();
+    double shoulderPos = getShoulderPositon();
+
+
+    //calculates the position of the end of the arm
+    double x = Constants.ARM_LENGTH_1 * Math.sin(shoulderPos) + forarmLength * Math.sin(shoulderPos - elbowPos);
+    double y = Constants.ARM_LENGTH_1 * Math.cos(shoulderPos) - forarmLength * Math.cos(shoulderPos - elbowPos) + Constants.ROBOT_BASE_HEIGHT;
+
+    return new Pose2d(x,y, new Rotation2d());
+  }
+
+  public double distanceToRobot(double x, double y){
+
+    //finds the nearest point on the robots base to calculate a distance too.
+    double nearX = x;
+    double nearY = y;
+
+    //Puts x within the robots frame perimiter.
+    if(nearX < Constants.REMAINING_SPACE) nearX = Constants.REMAINING_SPACE;
+    else if(nearX > Constants.ROBOT_LENGTH - Constants.REMAINING_SPACE);
+
+    if(nearX > Constants.REMAINING_SPACE && nearX < Constants.ROBOT_LENGTH - Constants.REMAINING_SPACE) {
+      //acounts for indent
+      double distance = Math.sqrt(Math.pow(nearX,2) + Math.pow(nearX-Constants.INDENT_HEIGHT,2));
+
+      if(distance > Constants.INDENT_RADIUS && nearY < Constants.ROBOT_BASE_HEIGHT) return 0.0;
+
+      double pushedX = nearX / distance;
+      double pushedY = nearY / distance;
+
+      if(pushedX < Constants.REMAINING_SPACE || pushedX > Constants.ROBOT_LENGTH - Constants.REMAINING_SPACE){
+        nearX = nearX < 0? Constants.REMAINING_SPACE : Constants.ROBOT_LENGTH - Constants.REMAINING_SPACE;
+        nearY = Constants.ROBOT_BASE_HEIGHT;
+      }else{
+        nearX = pushedX;
+        nearY = pushedY;
+      }
+
+    } else {
+      nearY = Constants.REMAINING_SPACE;
+    }
+
+    //takes the smaller distance of the distance to the nearest point on the robot, and the heighest the arm is allowed to go.
+    double nearDist = Math.min(
+      Math.sqrt(Math.pow(nearX-x,2) + Math.pow(nearY-y,2)),
+      Constants.MAX_HEIGHT
+     );
+
+    return(nearDist);
+  }
+
+
   
   // -------------------------- Shoulder Motors Methods
+
+  public double getShoulderPositon(){
+    return (absoluteEncoderRight.getPosition() + absoluteEncoderLeft.getPosition()) / 2;
+  }
 
   /**
    * Stop both the shoulder motors
@@ -253,6 +314,7 @@ public class Arm extends SubsystemBase {
    */
   public void extendWrist(){
     wrist.set(Value.kForward);
+    forarmLength = Constants.ARM_LENGTH_2 + Constants.WRIST_EXTENTION_LENGTH;
   }
 
   /**
@@ -260,5 +322,6 @@ public class Arm extends SubsystemBase {
    */
   public void retractWrist(){
     wrist.set(Value.kReverse);
+    forarmLength = Constants.ARM_LENGTH_2;
   }
 }

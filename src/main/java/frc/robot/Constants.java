@@ -22,6 +22,24 @@ public final class Constants {
     public static final double TWO_PI = 2*Math.PI;
     public static final Rotation2d ROTATE_BY_PI = Rotation2d.fromDegrees(180);//I only make this once
 
+    /*Robot dementions */
+    //TODO: set ALL of the robots dementions none are acurate
+    public static final double ROBOT_WIDTH = 30.0;
+    public static final double ROBOT_LENGTH = 30.0;
+    public static final double ROBOT_BASE_HEIGHT = 5;
+
+    /*arm dementions */
+    public static final double ARM_LENGTH_1 = 10;
+    public static final double ARM_LENGTH_2 = 10;
+    public static final double WRIST_EXTENTION_LENGTH = 1;
+    public static final double MAX_HEIGHT = 50;
+
+    /*indent dementions */
+    //the indent height value is how far of the ground the indent will be. The indent is a circle. (Ask Caleb for explenation)
+    public static final double INDENT_HEIGHT = 20;
+    public static final double INDENT_RADIUS = 19;
+    public static final double REMAINING_SPACE = ROBOT_LENGTH/2 - Math.sqrt(Math.pow(INDENT_RADIUS,2) - Math.pow(INDENT_HEIGHT - ROBOT_BASE_HEIGHT,2));
+
     /* Swerve Module Positions */
     public static final Translation2d FRONT_LEFT_POSITION = new Translation2d(.3016,.3016);//These are in meters
     public static final Translation2d REAR_LEFT_POSITION = new Translation2d(-.3016,.3016);
