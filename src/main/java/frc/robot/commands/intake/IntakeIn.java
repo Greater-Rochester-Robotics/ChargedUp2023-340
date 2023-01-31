@@ -14,7 +14,6 @@ public class IntakeIn extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(intake);
     this.intake = intake;
-
   }
 
   // Called when the command is initially scheduled.

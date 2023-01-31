@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Target extends SubsystemBase {
@@ -129,7 +130,12 @@ public class Target extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Target Grid", grid);
+    SmartDashboard.putNumber("Target Column", col);
+    SmartDashboard.putNumber("Target Row", row);
+    SmartDashboard.putNumber("Target X", getTargetPosition().getX());
+    SmartDashboard.putNumber("Target Y", getTargetPosition().getY());
+    SmartDashboard.putNumber("Target Height", getTargetPosition().getHeight());
   }
 
   public int[] getTarget() {
@@ -193,6 +199,18 @@ public class Target extends SubsystemBase {
     public GoalLocation(Pose2d position, double height) {
       this.position = position;
       this.height = height;
+    }
+
+    public double getX() {
+      return position.getX();
+    }
+
+    public double getY() {
+      return position.getY();
+    }
+    
+    public double getHeight() {
+      return height;
     }
   }
 }
