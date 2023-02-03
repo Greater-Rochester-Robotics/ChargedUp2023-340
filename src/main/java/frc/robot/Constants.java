@@ -28,11 +28,6 @@ public final class Constants {
     public static final double ROBOT_LENGTH = 30.0;
     public static final double ROBOT_BASE_HEIGHT = 5;
 
-    /*arm dementions */
-    public static final double ARM_LENGTH_1 = 10;
-    public static final double ARM_LENGTH_2 = 10;
-    public static final double WRIST_EXTENTION_LENGTH = 1;
-    public static final double MAX_HEIGHT = 50;
 
     /*indent dementions */
     //the indent height value is how far of the ground the indent will be. The indent is a circle. (Ask Caleb for explenation)
@@ -108,22 +103,36 @@ public final class Constants {
     public static final double DRIVER_SPEED_SCALE_ROTATIONAL = .75;
     /* Aiming Values*/
     public static final Translation2d FIELD_CENTER = new Translation2d();
+    
+    public class ArmConstants{
+      /* Arm PID Constants */
+      public static final double SHOULDER_P = 0.0;
+      public static final double SHOULDER_I = 0.0;
+      public static final double SHOULDER_D = 0.0;
+      public static final double SHOULDER_F = 0.0;
 
-    /* Arm PID Constants */
-    public static final double SHOULDER_P = 0.0;
-    public static final double SHOULDER_I = 0.0;
-    public static final double SHOULDER_D = 0.0;
-    public static final double SHOULDER_F = 0.0;
+      public static final double ELBOW_P = 0.0;
+      public static final double ELBOW_I = 0.0;
+      public static final double ELBOW_D = 0.0;
+      public static final double ELBOW_F = 0.0;
 
-     /* Record Player PID Constants */
+
+      /*arm dementions */
+      public static final double ARM_LENGTH_1 = 10;
+      public static final double ARM_LENGTH_2 = 10;
+      public static final double WRIST_EXTENTION_LENGTH = 1;
+      public static final double MAX_HEIGHT = 50;
+    }
+     
+    /* Record Player PID Constants */
      public static final double RECORD_PLAYER_P = 0.0;
      public static final double RECORD_PLAYER_I = 0.0;
      public static final double RECORD_PLAYER_D = 0.0;
      public static final double RECORD_PLAYER_F = 0.0;
     
-      /* Compressor Pressure Constants */
-      public static final double MIN_PRESSURE = 100.0;
-      public static final double MAX_PRESSURE = 120.0;//TODO: change this on between comp bot and prac , 100 for prac, 120 for comp
+    /* Compressor Pressure Constants */
+    public static final double MIN_PRESSURE = 100.0;
+    public static final double MAX_PRESSURE = 120.0;//TODO: change this on between comp bot and prac , 100 for prac, 120 for comp
       
     /* IDENTIFICATION NUMBERS FOR DEVICES */
 
@@ -153,13 +162,15 @@ public final class Constants {
 
     public static final int RECORD_PLAYER_MOTOR = 24;
 
-    public static final int INTAKE_1_MOTOR = 25;
-    public static final int INTAKE_2_MOTOR = 26;
+    public static final int INTAKE_FRONT_MOTOR = 25;
+    public static final int INTAKE_BACK_MOTOR = 26;
 
     /*Solenoids*/
     public static final int WRIST_SOLENOID = 30;
 
-    public static final int INTAKE_1_SOLENOID = 31;
-    public static final int INTAKE_2_SOLENOID = 32;
+    public static final int INTAKE_FRONT_SOLENOID_OUT = 31;
+    public static final int INTAKE_FRONT_SOLENOID_IN = 32;
+    public static final int INTAKE_BACK_SOLENOID_OUT = 33;
+    public static final int INTAKE_BACK_SOLENOID_IN = 34;
 
 }

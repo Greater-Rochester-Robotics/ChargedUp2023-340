@@ -21,14 +21,9 @@ public class Intake extends SubsystemBase {
   private final double MOTOR_SPEED = 0.5; //TODO: What should this be?
 
   /** Creates a new Intake. */
-  public Intake(int motorId, int solenoidId) {
+  public Intake(int motorId, int solenoidOutId, int solenoidInId) {
     motor = new CANSparkMax(motorId, MotorType.kBrushless);
     motor.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
-    
-    motor.getPIDController().setP(Constants.SHOULDER_P);  
-    motor.getPIDController().setI(Constants.SHOULDER_I);
-    motor.getPIDController().setD(Constants.SHOULDER_D);
-    motor.getPIDController().setFF(Constants.SHOULDER_F);
 
     motor.setIdleMode(IdleMode.kBrake);
 
@@ -41,7 +36,7 @@ public class Intake extends SubsystemBase {
     motor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
     motor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
 
-    solenoid = new DoubleSolenoid(solenoidId, PneumaticsModuleType.REVPH, 0, 0);
+    solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, solenoidOutId, solenoidInId);
   }
 
   @Override

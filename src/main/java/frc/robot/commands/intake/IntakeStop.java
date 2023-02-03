@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intake;
 
 public class IntakeStop extends CommandBase {
-  Intake intake;
+  final Intake intake;
 
   /** Creates a new IntakeStop. */
   public IntakeStop(Intake intake) {

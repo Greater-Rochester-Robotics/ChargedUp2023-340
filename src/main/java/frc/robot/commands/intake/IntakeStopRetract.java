@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intake;
 
 public class IntakeStopRetract extends CommandBase {
-  Intake intake;
+  final Intake intake;
   /** Creates a new IntakeStopRetract. */
   public IntakeStopRetract(Intake intake) {
     // Use addRequirements() here to declare subsystem dependencies.

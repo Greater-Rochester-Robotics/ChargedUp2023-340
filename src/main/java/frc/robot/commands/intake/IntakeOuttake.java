@@ -10,7 +10,7 @@ import frc.robot.subsystems.Intake;
 
 //TODO: keep changing intake code
 public class IntakeOuttake extends CommandBase {
-  Intake intake;
+  final Intake intake;
 
   /** Creates a new IntakeOuttake. */
   public IntakeOuttake(Intake intake) {

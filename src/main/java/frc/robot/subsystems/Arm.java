@@ -22,7 +22,9 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.Constants;
+import frc.robot.Constants.ArmConstants;
 
 public class Arm extends SubsystemBase {
   private CANSparkMax shoulderRight;
@@ -41,7 +43,7 @@ public class Arm extends SubsystemBase {
   private double rightPos;
   private double leftPos;
   private double shoulderGoalPos;
-  private double forarmLength = Constants.ARM_LENGTH_2;
+  private double forarmLength = ArmConstants.ARM_LENGTH_2;
 
   private boolean shoulderPIDEnable;
   
@@ -57,10 +59,10 @@ public class Arm extends SubsystemBase {
 
     shoulderRight.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
     
-    shoulderRight.getPIDController().setP(Constants.SHOULDER_P);  
-    shoulderRight.getPIDController().setI(Constants.SHOULDER_I);
-    shoulderRight.getPIDController().setD(Constants.SHOULDER_D);
-    shoulderRight.getPIDController().setFF(Constants.SHOULDER_F);
+    shoulderRight.getPIDController().setP(ArmConstants.SHOULDER_P);  
+    shoulderRight.getPIDController().setI(ArmConstants.SHOULDER_I);
+    shoulderRight.getPIDController().setD(ArmConstants.SHOULDER_D);
+    shoulderRight.getPIDController().setFF(ArmConstants.SHOULDER_F);
 
     shoulderRight.setIdleMode(IdleMode.kBrake);
 
@@ -83,10 +85,10 @@ public class Arm extends SubsystemBase {
 
     shoulderLeft.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
  
-    shoulderLeft.getPIDController().setP(Constants.SHOULDER_P);
-    shoulderLeft.getPIDController().setI(Constants.SHOULDER_I);
-    shoulderLeft.getPIDController().setD(Constants.SHOULDER_D);
-    shoulderLeft.getPIDController().setFF(Constants.SHOULDER_F);
+    shoulderLeft.getPIDController().setP(ArmConstants.SHOULDER_P);
+    shoulderLeft.getPIDController().setI(ArmConstants.SHOULDER_I);
+    shoulderLeft.getPIDController().setD(ArmConstants.SHOULDER_D);
+    shoulderLeft.getPIDController().setFF(ArmConstants.SHOULDER_F);
 
     shoulderLeft.setIdleMode(IdleMode.kBrake);
 
@@ -109,10 +111,10 @@ public class Arm extends SubsystemBase {
 
     elbowMotorLeader.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
  
-    elbowMotorLeader.getPIDController().setP(Constants.SHOULDER_P);
-    elbowMotorLeader.getPIDController().setI(Constants.SHOULDER_I);
-    elbowMotorLeader.getPIDController().setD(Constants.SHOULDER_D);
-    elbowMotorLeader.getPIDController().setFF(Constants.SHOULDER_F);
+    elbowMotorLeader.getPIDController().setP(ArmConstants.ELBOW_P);
+    elbowMotorLeader.getPIDController().setI(ArmConstants.ELBOW_I);
+    elbowMotorLeader.getPIDController().setD(ArmConstants.ELBOW_D);
+    elbowMotorLeader.getPIDController().setFF(ArmConstants.ELBOW_F);
 
     elbowMotorLeader.setIdleMode(IdleMode.kBrake);
 
@@ -192,8 +194,8 @@ public class Arm extends SubsystemBase {
 
 
     //calculates the position of the end of the arm
-    double x = Constants.ARM_LENGTH_1 * Math.sin(shoulderPos) + forarmLength * Math.sin(shoulderPos - elbowPos);
-    double y = Constants.ARM_LENGTH_1 * Math.cos(shoulderPos) - forarmLength * Math.cos(shoulderPos - elbowPos) + Constants.ROBOT_BASE_HEIGHT;
+    double x = ArmConstants.ARM_LENGTH_1 * Math.sin(shoulderPos) + forarmLength * Math.sin(shoulderPos - elbowPos);
+    double y = ArmConstants.ARM_LENGTH_1 * Math.cos(shoulderPos) - forarmLength * Math.cos(shoulderPos - elbowPos) + Constants.ROBOT_BASE_HEIGHT;
 
     return new Pose2d(x,y, new Rotation2d());
   }
@@ -232,7 +234,7 @@ public class Arm extends SubsystemBase {
     //takes the smaller distance of the distance to the nearest point on the robot, and the heighest the arm is allowed to go.
     double nearDist = Math.min(
       Math.sqrt(Math.pow(nearX-x,2) + Math.pow(nearY-y,2)),
-      Constants.MAX_HEIGHT
+      ArmConstants.MAX_HEIGHT
      );
 
     return(nearDist);
@@ -314,7 +316,7 @@ public class Arm extends SubsystemBase {
    */
   public void extendWrist(){
     wrist.set(Value.kForward);
-    forarmLength = Constants.ARM_LENGTH_2 + Constants.WRIST_EXTENTION_LENGTH;
+    forarmLength = ArmConstants.ARM_LENGTH_2 + ArmConstants.WRIST_EXTENTION_LENGTH;
   }
 
   /**
@@ -322,6 +324,6 @@ public class Arm extends SubsystemBase {
    */
   public void retractWrist(){
     wrist.set(Value.kReverse);
-    forarmLength = Constants.ARM_LENGTH_2;
+    forarmLength = ArmConstants.ARM_LENGTH_2;
   }
 }
