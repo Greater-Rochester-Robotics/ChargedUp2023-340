@@ -46,6 +46,8 @@ public class Arm extends SubsystemBase {
   private double forarmLength = ArmConstants.ARM_LENGTH_2;
 
   private boolean shoulderPIDEnable;
+
+  private double wayPoints[];
   
 
   /** Creates a new Arm. */
@@ -192,7 +194,6 @@ public class Arm extends SubsystemBase {
     double elbowPos = getElbowPosition();
     double shoulderPos = getShoulderPositon();
 
-
     //calculates the position of the end of the arm
     double x = ArmConstants.ARM_LENGTH_1 * Math.sin(shoulderPos) + forarmLength * Math.sin(shoulderPos - elbowPos);
     double y = ArmConstants.ARM_LENGTH_1 * Math.cos(shoulderPos) - forarmLength * Math.cos(shoulderPos - elbowPos) + Constants.ROBOT_BASE_HEIGHT;
@@ -238,6 +239,11 @@ public class Arm extends SubsystemBase {
      );
 
     return(nearDist);
+  }
+
+  public void setToWayPoint(){
+    
+
   }
 
 

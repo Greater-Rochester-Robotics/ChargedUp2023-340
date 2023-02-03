@@ -165,7 +165,7 @@ public final class Constants {
     public static final int INTAKE_FRONT_MOTOR = 25;
     public static final int INTAKE_BACK_MOTOR = 26;
 
-    /*Solenoids*/
+    /* Solenoids */
     public static final int WRIST_SOLENOID = 30;
 
     public static final int INTAKE_FRONT_SOLENOID_OUT = 31;
