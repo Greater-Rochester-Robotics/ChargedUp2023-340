@@ -43,9 +43,12 @@ public class Arm extends SubsystemBase {
   private double rightPos;
   private double leftPos;
   private double shoulderGoalPos;
-  private double forarmLength = ArmConstants.ARM_LENGTH_2;
+  private double forearmLength = ArmConstants.ELBOW_TO_WRIST_DISTANCE;
 
   private boolean shoulderPIDEnable;
+
+  private double shoulderAngle;
+  private double elbowAngle;
 
   private double wayPoints[];
   
@@ -156,6 +159,8 @@ public class Arm extends SubsystemBase {
 
     //PID is off on startup
     shoulderPIDEnable = false;
+
+    //wayPoints array
   }
 
   @Override
@@ -191,15 +196,13 @@ public class Arm extends SubsystemBase {
   //TODO: write kinematics here,  need a public position commmand
 
   public Pose2d getArmPose(){
-    double elbowPos = getElbowPosition();
-    double shoulderPos = getShoulderPositon();
+    boolean getWrist = wrist.get() == Value.kForward;
+    ArmPosition armPos = new ArmPosition(getShoulderPositon(), getElbowPosition(), getWrist);
 
-    //calculates the position of the end of the arm
-    double x = ArmConstants.ARM_LENGTH_1 * Math.sin(shoulderPos) + forarmLength * Math.sin(shoulderPos - elbowPos);
-    double y = ArmConstants.ARM_LENGTH_1 * Math.cos(shoulderPos) - forarmLength * Math.cos(shoulderPos - elbowPos) + Constants.ROBOT_BASE_HEIGHT;
-
-    return new Pose2d(x,y, new Rotation2d());
+    return armPos.getEndPosition();
   }
+
+
 
   public double distanceToRobot(double x, double y){
 
@@ -241,10 +244,6 @@ public class Arm extends SubsystemBase {
     return(nearDist);
   }
 
-  public void setToWayPoint(){
-    
-
-  }
 
 
   
@@ -322,7 +321,7 @@ public class Arm extends SubsystemBase {
    */
   public void extendWrist(){
     wrist.set(Value.kForward);
-    forarmLength = ArmConstants.ARM_LENGTH_2 + ArmConstants.WRIST_EXTENTION_LENGTH;
+    forearmLength = ArmConstants.ELBOW_TO_WRIST_DISTANCE + ArmConstants.WRIST_EXTENTION_LENGTH;
   }
 
   /**
@@ -330,6 +329,55 @@ public class Arm extends SubsystemBase {
    */
   public void retractWrist(){
     wrist.set(Value.kReverse);
-    forarmLength = ArmConstants.ARM_LENGTH_2;
+    forearmLength = ArmConstants.ELBOW_TO_WRIST_DISTANCE;
+  }
+}
+
+class ArmPosition{
+  // use Rotation2ds instead of double angles?
+  // find where angles are measured from (relative to the ground or relative to something else?)
+  double shoulderAngle;
+  double elbowAngle;
+  boolean wristExtended;
+
+  ArmPosition(double shoulderAngle, double elbowAngle, boolean wristExtended){
+    this.shoulderAngle = shoulderAngle;
+    this.elbowAngle = elbowAngle;
+    this.wristExtended = wristExtended;
+  }
+
+  public Pose2d getShoulderPosition(){
+    return new Pose2d(0, Constants.ROBOT_BASE_HEIGHT, new Rotation2d());
+  }
+
+  public Pose2d getElbowPosition(){
+    double x = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.sin(shoulderAngle);
+    double y = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.cos(shoulderAngle);
+
+    return new Pose2d(x, y, new Rotation2d());
+  }
+
+  public Pose2d getWristPosition(){
+    double x = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.sin(shoulderAngle) + ArmConstants.ELBOW_TO_WRIST_DISTANCE * Math.sin(shoulderAngle - elbowAngle);
+    double y = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.cos(shoulderAngle) - ArmConstants.ELBOW_TO_WRIST_DISTANCE * Math.cos(shoulderAngle - elbowAngle)
+     + Constants.ROBOT_BASE_HEIGHT;
+
+    return new Pose2d(x, y, new Rotation2d());
+  }
+
+  public Pose2d getEndPosition(){
+    Pose2d wristPosition = getWristPosition();
+    
+    if(!wristExtended){
+      return wristPosition;
+    }
+    else{
+      double x = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.sin(shoulderAngle) + ArmConstants.ELBOW_TO_WRIST_DISTANCE * Math.sin(shoulderAngle - elbowAngle)
+       +  Math.sin(elbowAngle);
+      double y = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.cos(shoulderAngle) - ArmConstants.ELBOW_TO_WRIST_DISTANCE * Math.cos(shoulderAngle - elbowAngle)
+       + Constants.ROBOT_BASE_HEIGHT + ArmConstants.WRIST_EXTENTION_LENGTH * Math.cos(elbowAngle);
+
+      return new Pose2d(x, y, new Rotation2d());
+    }
   }
 }

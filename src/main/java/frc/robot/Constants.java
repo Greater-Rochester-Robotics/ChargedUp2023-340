@@ -117,9 +117,9 @@ public final class Constants {
       public static final double ELBOW_F = 0.0;
 
 
-      /*arm dementions */
-      public static final double ARM_LENGTH_1 = 10;
-      public static final double ARM_LENGTH_2 = 10;
+      /*arm dimensions */
+      public static final double SHOULDER_TO_ELBOW_DISTANCE = 10;
+      public static final double ELBOW_TO_WRIST_DISTANCE = 10;
       public static final double WRIST_EXTENTION_LENGTH = 1;
       public static final double MAX_HEIGHT = 50;
     }
@@ -162,8 +162,8 @@ public final class Constants {
 
     public static final int RECORD_PLAYER_MOTOR = 24;
 
-    public static final int INTAKE_FRONT_MOTOR = 25;
-    public static final int INTAKE_BACK_MOTOR = 26;
+    public static final int INTAKE_MOTOR_1 = 25;
+    public static final int INTAKE_MOTOR_2 = 26;
 
     /* Solenoids */
     public static final int WRIST_SOLENOID = 30;
