@@ -4,11 +4,18 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 //TODO: write this once we know claw
 public class Claw extends SubsystemBase {
+
+  TalonSRX clawMotor;
   /** Creates a new Claw. */
-  public Claw() {}
+  public Claw() {
+    clawMotor = new TalonSRX(Constants.CLAW_MOTOR);
+  }
 
   @Override
   public void periodic() {

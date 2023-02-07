@@ -149,7 +149,7 @@ public final class Constants {
     public static final int REAR_RIGHT_MOVE_MOTOR = 9;//drive module 2
     public static final int REAR_RIGHT_ROTATE_MOTOR = 10;//drive module 2
     public static final int REAR_RIGHT_ROTATE_SENSOR = 11;//drive module 2
-     
+    
     public static final int FRONT_RIGHT_MOVE_MOTOR = 12;//drive module 3
     public static final int FRONT_RIGHT_ROTATE_MOTOR = 13;//drive module 3
     public static final int FRONT_RIGHT_ROTATE_SENSOR = 14;//drive module 3
@@ -172,5 +172,8 @@ public final class Constants {
     public static final int INTAKE_FRONT_SOLENOID_IN = 32;
     public static final int INTAKE_BACK_SOLENOID_OUT = 33;
     public static final int INTAKE_BACK_SOLENOID_IN = 34;
+
+    /* Claw */
+    public static final int CLAW_MOTOR = 40;
 
 }
