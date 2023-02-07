@@ -4,70 +4,99 @@
 
 package frc.robot.subsystems;
 
+import org.opencv.core.Mat;
+
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.CvSource;
+import edu.wpi.first.cscore.MjpegServer;
+import edu.wpi.first.cscore.VideoSource;
+import edu.wpi.first.cscore.VideoMode.PixelFormat;
+import edu.wpi.first.cscore.raw.RawSource;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Target extends SubsystemBase {
   int grid;
-  int col;
+  int col=2;
   int row;
   GoalLocation[][][] blueLocations;
   GoalLocation[][][] redLocations;
+  ShuffleboardTab tab;
 
   /** Creates a new Target. */
   public Target() {
+    // MjpegServer serverStream = new MjpegServer("Anything", 1181);
+    // RawSource source = new RawSource("Source", PixelFormat.kRGB565, 10, 10, 1);
+    // CvSource source2 = new CvSource("Source2", PixelFormat.kRGB565, 10, 10, 1);
+    // Mat mat = ;
+    // source2.putFrame();
+    // serverStream.setSource(source);
+    tab = Shuffleboard.getTab("Tab Title");
+    for(int i = 0; i < 3; i++) {
+      for(int j = 0; j < 3; j++) {
+        for(int k = 0; k < 3; k++) {
+          int ii = i;
+          int jj = j;
+          int kk = k;
+          tab.addBoolean("Boolean" + (i*j*k), () -> this.isTarget(ii, jj, kk)).withPosition(j * 3 + k, i);
+        }
+      }
+    }
+
     blueLocations = new GoalLocation[][][] {
       {
         {
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0), 
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0),
           new GoalLocation(new Pose2d(), 0.0)
         },
         {
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0), 
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0),
           new GoalLocation(new Pose2d(), 0.0)
-        }, 
+        },
         {
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0)
-        }
-      }, 
-      {
-        {
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0)
-        }, 
-        {
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0)
-        }, 
-        {
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0), 
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0),
           new GoalLocation(new Pose2d(), 0.0)
         }
-      }, 
+      },
       {
         {
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0), 
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0),
           new GoalLocation(new Pose2d(), 0.0)
-        }, 
+        },
         {
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0), 
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0),
           new GoalLocation(new Pose2d(), 0.0)
-        }, 
+        },
         {
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0), 
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0)
+        }
+      },
+      {
+        {
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0)
+        },
+        {
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0)
+        },
+        {
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0),
           new GoalLocation(new Pose2d(), 0.0)
         }
       }
@@ -76,52 +105,52 @@ public class Target extends SubsystemBase {
     redLocations = new GoalLocation[][][] {
       {
         {
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0), 
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0),
           new GoalLocation(new Pose2d(), 0.0)
         },
         {
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0), 
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0),
           new GoalLocation(new Pose2d(), 0.0)
-        }, 
+        },
         {
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0)
-        }
-      }, 
-      {
-        {
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0)
-        }, 
-        {
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0)
-        }, 
-        {
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0), 
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0),
           new GoalLocation(new Pose2d(), 0.0)
         }
-      }, 
+      },
       {
         {
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0), 
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0),
           new GoalLocation(new Pose2d(), 0.0)
-        }, 
+        },
         {
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0), 
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0),
           new GoalLocation(new Pose2d(), 0.0)
-        }, 
+        },
         {
-          new GoalLocation(new Pose2d(), 0.0), 
-          new GoalLocation(new Pose2d(), 0.0), 
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0)
+        }
+      },
+      {
+        {
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0)
+        },
+        {
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0)
+        },
+        {
+          new GoalLocation(new Pose2d(), 0.0),
+          new GoalLocation(new Pose2d(), 0.0),
           new GoalLocation(new Pose2d(), 0.0)
         }
       }
@@ -140,6 +169,10 @@ public class Target extends SubsystemBase {
 
   public int[] getTarget() {
     return new int[]{grid, col, row};
+  }
+
+  public boolean isTarget(int grid, int col, int row){
+    return (grid == this.grid) && (col == this.col) && (row == this.row);
   }
 
   public void setTarget(int grid, int col, int row) {
@@ -208,7 +241,7 @@ public class Target extends SubsystemBase {
     public double getY() {
       return position.getY();
     }
-    
+
     public double getHeight() {
       return height;
     }

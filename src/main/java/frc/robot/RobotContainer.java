@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -19,6 +21,7 @@ import frc.robot.subsystems.Compressor;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelights;
 import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.Target;
 
 // import frc.robot.commands.drive.util.DriveAdjustModuleZeroPoint;
 // import frc.robot.commands.drive.util.DriveAllModulesPositionOnly;
@@ -84,6 +87,7 @@ public class RobotContainer {
   public static Arm arm;
   public static Limelights limelights;
   public static Intake intake;
+  public static Target target;
 
   public RobotContainer() {
     //create(construct) subsystems
@@ -110,6 +114,10 @@ public class RobotContainer {
     // SmartDashboard.putData("Drive Module 3", new DriveOneModule(3));//For setup of swerve
     // SmartDashboard.putData(new DriveAllModulesPositionOnly());
     // SmartDashboard.putData(new DriveStopAllModules());//For setup of swerve
+
+    NetworkTableInstance instance = NetworkTableInstance.getDefault();
+    NetworkTable table = instance.getTable("drive/navx/yaw");
+    table.putValue(null, )
   }
 
   /**
