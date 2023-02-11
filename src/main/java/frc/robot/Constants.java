@@ -177,6 +177,9 @@ public final class Constants {
 
     public static final int WRIST_SOLENOID_OUT = 5;
     public static final int WRIST_SOLENOID_IN = 6;
- 
 
+    /* Target Heights */
+    public static final double HIGH_POLE = 5.0;
+    public static final double MED_POLE = 3.883;
+    public static final double LOW_POLE = 3.324;
 }

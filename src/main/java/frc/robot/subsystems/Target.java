@@ -13,19 +13,20 @@ import edu.wpi.first.cscore.VideoSource;
 import edu.wpi.first.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.cscore.raw.RawSource;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Target extends SubsystemBase {
   int grid;
   int col=2;
   int row;
-  GoalLocation[][][] blueLocations;
-  GoalLocation[][][] redLocations;
+  public GoalLocation[][][] goalLocations;
   ShuffleboardTab tab;
 
   /** Creates a new Target. */
@@ -36,122 +37,68 @@ public class Target extends SubsystemBase {
     // Mat mat = ;
     // source2.putFrame();
     // serverStream.setSource(source);
-    tab = Shuffleboard.getTab("Tab Title");
-    for(int i = 0; i < 3; i++) {
-      for(int j = 0; j < 3; j++) {
-        for(int k = 0; k < 3; k++) {
-          int ii = i;
-          int jj = j;
-          int kk = k;
-          tab.addBoolean("Boolean" + (i*j*k), () -> this.isTarget(ii, jj, kk)).withPosition(j * 3 + k, i);
-        }
-      }
-    }
+    // tab = Shuffleboard.getTab("Tab Title");
+    // for(int i = 0; i < 3; i++) {
+    //   for(int j = 0; j < 3; j++) {
+    //     for(int k = 0; k < 3; k++) {
+    //       int ii = i;
+    //       int jj = j;
+    //       int kk = k;
+    //       tab.addBoolean("Boolean" + (i*j*k), () -> this.isTarget(ii, jj, kk)).withPosition(j * 3 + k, i);
+    //     }
+    //   }
+    // }
 
-    blueLocations = new GoalLocation[][][] {
+    goalLocations = new GoalLocation[][][] {
       {
         {
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0)
+          new GoalLocation(new Translation2d(), Constants.HIGH_POLE),
+          new GoalLocation(new Translation2d(), Constants.MED_POLE),
+          new GoalLocation(new Translation2d(), Constants.LOW_POLE)
         },
         {
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0)
+          new GoalLocation(new Translation2d(), Constants.HIGH_POLE),
+          new GoalLocation(new Translation2d(), Constants.MED_POLE),
+          new GoalLocation(new Translation2d(), Constants.LOW_POLE)
         },
         {
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0)
+          new GoalLocation(new Translation2d(), Constants.HIGH_POLE),
+          new GoalLocation(new Translation2d(), Constants.MED_POLE),
+          new GoalLocation(new Translation2d(), Constants.LOW_POLE)       
+         }
+      },
+      {
+        {
+          new GoalLocation(new Translation2d(), Constants.HIGH_POLE),
+          new GoalLocation(new Translation2d(), Constants.MED_POLE),
+          new GoalLocation(new Translation2d(), Constants.LOW_POLE)        
+        },
+        {
+          new GoalLocation(new Translation2d(), Constants.HIGH_POLE),
+          new GoalLocation(new Translation2d(), Constants.MED_POLE),
+          new GoalLocation(new Translation2d(), Constants.LOW_POLE)       
+        },
+        {
+          new GoalLocation(new Translation2d(), Constants.HIGH_POLE),
+          new GoalLocation(new Translation2d(), Constants.MED_POLE),
+          new GoalLocation(new Translation2d(), Constants.LOW_POLE)        
         }
       },
       {
         {
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0)
+          new GoalLocation(new Translation2d(), Constants.HIGH_POLE),
+          new GoalLocation(new Translation2d(), Constants.MED_POLE),
+          new GoalLocation(new Translation2d(), Constants.LOW_POLE)        
         },
         {
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0)
+          new GoalLocation(new Translation2d(), Constants.HIGH_POLE),
+          new GoalLocation(new Translation2d(), Constants.MED_POLE),
+          new GoalLocation(new Translation2d(), Constants.LOW_POLE)        
         },
         {
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0)
-        }
-      },
-      {
-        {
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0)
-        },
-        {
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0)
-        },
-        {
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0)
-        }
-      }
-    };
-
-    redLocations = new GoalLocation[][][] {
-      {
-        {
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0)
-        },
-        {
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0)
-        },
-        {
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0)
-        }
-      },
-      {
-        {
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0)
-        },
-        {
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0)
-        },
-        {
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0)
-        }
-      },
-      {
-        {
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0)
-        },
-        {
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0)
-        },
-        {
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0),
-          new GoalLocation(new Pose2d(), 0.0)
+          new GoalLocation(new Translation2d(), Constants.HIGH_POLE),
+          new GoalLocation(new Translation2d(), Constants.MED_POLE),
+          new GoalLocation(new Translation2d(), Constants.LOW_POLE)        
         }
       }
     };
@@ -167,6 +114,7 @@ public class Target extends SubsystemBase {
     SmartDashboard.putNumber("Target Height", getTargetPosition().getHeight());
   }
 
+  // helper function that returns an array for a certain GoalPosition
   public int[] getTarget() {
     return new int[]{grid, col, row};
   }
@@ -183,9 +131,9 @@ public class Target extends SubsystemBase {
 
   public GoalLocation getTargetPosition() {
     if(DriverStation.getAlliance() == Alliance.Blue) {
-      return blueLocations[grid][col][row];
+      return goalLocations[grid][col][row];
     } else {
-      return redLocations[grid][col][row];
+      return goalLocations[grid][col][row];
     }
   }
 
@@ -226,10 +174,10 @@ public class Target extends SubsystemBase {
   }
 
   public class GoalLocation {
-    private Pose2d position;
+    private Translation2d position;
     private double height;
 
-    public GoalLocation(Pose2d position, double height) {
+    public GoalLocation(Translation2d position, double height) {
       this.position = position;
       this.height = height;
     }

@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.GregorianCalendar;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.XboxController;
@@ -22,6 +24,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelights;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.Target;
+import frc.robot.subsystems.Target.GoalLocation;
 
 // import frc.robot.commands.drive.util.DriveAdjustModuleZeroPoint;
 // import frc.robot.commands.drive.util.DriveAllModulesPositionOnly;
@@ -91,13 +94,14 @@ public class RobotContainer {
 
   public RobotContainer() {
     //create(construct) subsystems
-    swerveDrive = new SwerveDrive();
-    claw = new Claw();
-    compressor = new Compressor();
-    arm = new Arm();
-    limelights = new Limelights();
-    intake = new Intake(Constants.INTAKE_MOTOR_1, Constants.INTAKE_MOTOR_2, Constants.INTAKE_SOLENOID_OUT, Constants.INTAKE_SOLENOID_IN);
+    //swerveDrive = new SwerveDrive();
+    //claw = new Claw();
+    //compressor = new Compressor();
+    //arm = new Arm();
+    //limelights = new Limelights();
+    //intake = new Intake(Constants.INTAKE_MOTOR_1, Constants.INTAKE_MOTOR_2, Constants.INTAKE_SOLENOID_OUT, Constants.INTAKE_SOLENOID_IN);
     // swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced());
+    target = new Target();
 
     //Add all autos to the auto selector
     configureAutoModes();
@@ -115,6 +119,16 @@ public class RobotContainer {
     // SmartDashboard.putData(new DriveAllModulesPositionOnly());
     // SmartDashboard.putData(new DriveStopAllModules());//For setup of swerve
 
+    //Goal Positions
+    for(int i = 1; i < target.goalLocations.length; i++){
+      for(int j = 1; j < target.goalLocations[i].length; j++){
+        for( int k = 1; k < target.goalLocations[i][j].length; k++){
+          SmartDashboard.putNumber("G"+i+"C"+j+"R"+k+"X", target.goalLocations[i][j][k].getX());
+          SmartDashboard.putNumber("G"+i+"C"+j+"R"+k+"Y", target.goalLocations[i][j][k].getY());
+          SmartDashboard.putNumber("G"+i+"C"+j+"R"+k+"H", target.goalLocations[i][j][k].getHeight());
+        }
+      }
+    }
     NetworkTableInstance instance = NetworkTableInstance.getDefault();
     NetworkTable table = instance.getTable("drive/navx/yaw");
     //table.putValue(null, ) //TODO: fix this
