@@ -96,7 +96,7 @@ public class RobotContainer {
     compressor = new Compressor();
     arm = new Arm();
     limelights = new Limelights();
-    intake = new Intake(Constants.INTAKE_MOTOR_1, Constants.INTAKE_MOTOR_2, Constants.INTAKE_FRONT_SOLENOID_OUT, Constants.INTAKE_FRONT_SOLENOID_IN);
+    intake = new Intake(Constants.INTAKE_MOTOR_1, Constants.INTAKE_MOTOR_2, Constants.INTAKE_SOLENOID_OUT, Constants.INTAKE_SOLENOID_IN);
     // swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced());
 
     //Add all autos to the auto selector
@@ -117,7 +117,7 @@ public class RobotContainer {
 
     NetworkTableInstance instance = NetworkTableInstance.getDefault();
     NetworkTable table = instance.getTable("drive/navx/yaw");
-    table.putValue(null, )
+    //table.putValue(null, ) //TODO: fix this
   }
 
   /**

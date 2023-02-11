@@ -136,8 +136,8 @@ public final class Constants {
       
     /* IDENTIFICATION NUMBERS FOR DEVICES */
 
-    /* CTRE motor and sensors */
 
+    /* Rev Robotics SparkMAXs */
     public static final int FRONT_LEFT_MOVE_MOTOR = 3;//drive module 0
     public static final int FRONT_LEFT_ROTATE_MOTOR = 4;//drive module 0
     public static final int FRONT_LEFT_ROTATE_SENSOR = 5;//drive module 0
@@ -154,7 +154,6 @@ public final class Constants {
     public static final int FRONT_RIGHT_ROTATE_MOTOR = 13;//drive module 3
     public static final int FRONT_RIGHT_ROTATE_SENSOR = 14;//drive module 3
 
-    /* Rev Robotics SparkMAXs */
     public static final int SHOULDER_MOTOR_LEFT = 20;
     public static final int SHOULDER_MOTOR_RIGHT = 21;
     public static final int ELBOW_MOTOR_LEADER = 22;
@@ -162,18 +161,22 @@ public final class Constants {
 
     public static final int RECORD_PLAYER_MOTOR = 24;
 
+    /* CTRE motor and sensors */
     public static final int INTAKE_MOTOR_1 = 25;
     public static final int INTAKE_MOTOR_2 = 26;
-
+    public static final int CLAW_MOTOR = 27;
+   
     /* Solenoids */
-    public static final int WRIST_SOLENOID = 30;
+    public static final int ELBOW_BRAKE = 0;
 
-    public static final int INTAKE_FRONT_SOLENOID_OUT = 31;
-    public static final int INTAKE_FRONT_SOLENOID_IN = 32;
-    public static final int INTAKE_BACK_SOLENOID_OUT = 33;
-    public static final int INTAKE_BACK_SOLENOID_IN = 34;
+    public static final int CLAW_SOLENOID_OUT = 1;
+    public static final int CLAW_SOLENOID_IN = 2;
 
-    /* Claw */
-    public static final int CLAW_MOTOR = 40;
+    public static final int INTAKE_SOLENOID_OUT = 3;
+    public static final int INTAKE_SOLENOID_IN = 4;
+
+    public static final int WRIST_SOLENOID_OUT = 5;
+    public static final int WRIST_SOLENOID_IN = 6;
+ 
 
 }

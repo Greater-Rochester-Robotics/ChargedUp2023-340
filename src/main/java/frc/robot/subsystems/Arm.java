@@ -30,7 +30,6 @@ public class Arm extends SubsystemBase {
   private CANSparkMax shoulderRight;
   private CANSparkMax shoulderLeft;
   private CANSparkMax elbowMotorLeader;
-  private CANSparkMax elbowMotorFollower;
   private AbsoluteEncoder absoluteEncoderRight;
   private AbsoluteEncoder absoluteEncoderLeft;
   private AbsoluteEncoder absoluteEncoderElbow;
@@ -38,7 +37,7 @@ public class Arm extends SubsystemBase {
   private SparkMaxPIDController shoulderLeftController;
   private SparkMaxPIDController elbowController;
   private DoubleSolenoid wrist;
-  private Solenoid brakeSolenoid;
+  private Solenoid elbowBrake;
 
   private double rightPos;
   private double leftPos;
@@ -108,7 +107,6 @@ public class Arm extends SubsystemBase {
 
     //elbow
     elbowMotorLeader = new CANSparkMax(Constants.ELBOW_MOTOR_LEADER, MotorType.kBrushless);
-    elbowMotorFollower = new CANSparkMax(Constants.ELBOW_MOTOR_FOLLOWER, MotorType.kBrushless);
     absoluteEncoderElbow = elbowMotorLeader.getAbsoluteEncoder(Type.kDutyCycle);
     absoluteEncoderElbow.setPositionConversionFactor(Constants.ABS_ENC_TO_RAD_CONV_FACTOR);
 
@@ -131,28 +129,15 @@ public class Arm extends SubsystemBase {
     elbowMotorLeader.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);  
     elbowMotorLeader.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
 
-    elbowMotorFollower.setIdleMode(IdleMode.kBrake);
-    elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
-    elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-    elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
-    elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 2000);
-    elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
-    elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);  
-    elbowMotorFollower.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
-    elbowMotorFollower.follow(elbowMotorLeader);
-
-    elbowMotorFollower.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
-
     elbowMotorLeader.set(0);
 
-    wrist = new DoubleSolenoid(Constants.ELBOW_MOTOR_LEADER, PneumaticsModuleType.REVPH, 0, 0);
-    brakeSolenoid = new Solenoid(Constants.ELBOW_MOTOR_LEADER, PneumaticsModuleType.REVPH, 0);
+    wrist = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.WRIST_SOLENOID_OUT, Constants.WRIST_SOLENOID_IN);
+    elbowBrake = new Solenoid(PneumaticsModuleType.REVPH, Constants.ELBOW_BRAKE);
 
     //burning flash for all NEOs
     shoulderRight.burnFlash();
     shoulderLeft.burnFlash();
     elbowMotorLeader.burnFlash();
-    elbowMotorFollower.burnFlash();
 
     //setting goal to current pos for startup
     shoulderGoalPos = absoluteEncoderRight.getPosition();
@@ -301,17 +286,17 @@ public class Arm extends SubsystemBase {
    */
   public void stopElbow(){
     elbowMotorLeader.set(0);
-    brakeSolenoid.set(true);
+    elbowBrake.set(true);
   } 
 
   public void setElbowDutyCycle(Double elbowDutyCycle){
     elbowMotorLeader.set(elbowDutyCycle);
-    brakeSolenoid.set(false);
+    elbowBrake.set(false);
   }
 
   public void setElbowPosition(Double position){
     elbowController.setReference(position, ControlType.kPosition);
-    brakeSolenoid.set(false);
+    elbowBrake.set(false);
   }
   
   // -------------------------- Wrist Methods
