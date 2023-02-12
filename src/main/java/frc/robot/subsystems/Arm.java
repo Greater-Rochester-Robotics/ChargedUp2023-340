@@ -6,6 +6,11 @@ package frc.robot.subsystems;
 
 import javax.print.attribute.standard.SheetCollate;
 
+import org.opencv.features2d.AffineFeature;
+
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
@@ -179,6 +184,30 @@ public class Arm extends SubsystemBase {
 
   // -------------------------- Kinematics Methods
   //TODO: write kinematics here,  need a public position commmand
+
+  //TODO: next steps
+  /*
+  1. Figure out how to invert the transforms so it takes an x and y and gives you the angle
+  2. Use actual robot dementions
+  3. the matrix could give multiple outputs, so pick the right one
+  4. replace existing caculations with the affine transforms
+  5. make an interpolation function between two arm positions
+   */
+
+  //TODO: integrate this into kinnomatics
+  //This class is using the AffineTransform to find the end position of the end of the arm
+  public void test(double angle1, double angle2){
+    AffineTransform rotate = new AffineTransform();//Makes a new AffineTransform
+    Point2D source = new Point2D.Double(0,0);//makes the location of the shoulder
+    Point2D destination = new Point2D.Double();//Will be filled with the location of the wrist
+    rotate.rotate(angle1);//Rotates the shoulder
+    rotate.translate(10, 0.0);//Translates by the length of the upper arm
+    rotate.rotate(angle2);//Rotates the elbow
+    rotate.translate(10, 0.0);//Translates by the length of the forearm
+    rotate.transform(source, destination);
+    System.out.println("x: " + destination.getX() + " y: " + destination.getY());
+
+  }
 
   public Pose2d getArmPose(){
     boolean getWrist = wrist.get() == Value.kForward;
@@ -365,4 +394,5 @@ class ArmPosition{
       return new Pose2d(x, y, new Rotation2d());
     }
   }
+
 }
