@@ -5,16 +5,23 @@
 package frc.robot;
 
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTableType;
+import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.TargetMoveSelection;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Compressor;
@@ -22,6 +29,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelights;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.Target;
+import frc.robot.subsystems.Target.GoalLocation;
 
 // import frc.robot.commands.drive.util.DriveAdjustModuleZeroPoint;
 // import frc.robot.commands.drive.util.DriveAllModulesPositionOnly;
@@ -91,13 +99,14 @@ public class RobotContainer {
 
   public RobotContainer() {
     //create(construct) subsystems
-    swerveDrive = new SwerveDrive();
-    claw = new Claw();
-    compressor = new Compressor();
-    arm = new Arm();
-    limelights = new Limelights();
-    intake = new Intake(Constants.INTAKE_MOTOR_1, Constants.INTAKE_MOTOR_2, Constants.INTAKE_SOLENOID_OUT, Constants.INTAKE_SOLENOID_IN);
+    //swerveDrive = new SwerveDrive();
+    //claw = new Claw();
+    //compressor = new Compressor();
+    //arm = new Arm();
+    //limelights = new Limelights();
+    //intake = new Intake(Constants.INTAKE_MOTOR_1, Constants.INTAKE_MOTOR_2, Constants.INTAKE_SOLENOID_OUT, Constants.INTAKE_SOLENOID_IN);
     // swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced());
+    target = new Target();
 
     //Add all autos to the auto selector
     configureAutoModes();
@@ -115,9 +124,20 @@ public class RobotContainer {
     // SmartDashboard.putData(new DriveAllModulesPositionOnly());
     // SmartDashboard.putData(new DriveStopAllModules());//For setup of swerve
 
-    NetworkTableInstance instance = NetworkTableInstance.getDefault();
-    NetworkTable table = instance.getTable("drive/navx/yaw");
-    //table.putValue(null, ) //TODO: fix this
+    //Goal Positions
+    for(int i = 1; i < target.goalLocations.length; i++){
+      for(int j = 1; j < target.goalLocations[i].length; j++){
+        for( int k = 1; k < target.goalLocations[i][j].length; k++){
+          SmartDashboard.putNumber("G"+i+"C"+j+"R"+k+"X", target.goalLocations[i][j][k].getX());
+          SmartDashboard.putNumber("G"+i+"C"+j+"R"+k+"Y", target.goalLocations[i][j][k].getY());
+          SmartDashboard.putNumber("G"+i+"C"+j+"R"+k+"H", target.goalLocations[i][j][k].getHeight());
+        }
+      }
+    }
+    // NetworkTableInstance instance = NetworkTableInstance.getDefault();
+    // NetworkTable table = instance.getTable("drive/navx/yaw");
+    // NetworkTableEntry entry = table.getEntry("entry");
+    // entry.setBoolean(true);
   }
 
   /**
@@ -125,6 +145,12 @@ public class RobotContainer {
    */
   private void configureBindings() {
     /* ==================== DRIVER BUTTONS ==================== */
+    driverDUp.onTrue(new TargetMoveSelection(0));
+    driverDRight.onTrue(new TargetMoveSelection(1));
+    driverDDown.onTrue(new TargetMoveSelection(2));
+    driverDLeft.onTrue(new TargetMoveSelection(3));
+    driverRB.onTrue(new TargetMoveSelection(4));
+    driverLB.onTrue(new TargetMoveSelection(5));
     /* =================== CODRIVER BUTTONS =================== */
   }
 
