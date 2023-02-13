@@ -37,17 +37,17 @@ public class Target extends SubsystemBase {
     // Mat mat = ;
     // source2.putFrame();
     // serverStream.setSource(source);
-    // tab = Shuffleboard.getTab("Tab Title");
-    // for(int i = 0; i < 3; i++) {
-    //   for(int j = 0; j < 3; j++) {
-    //     for(int k = 0; k < 3; k++) {
-    //       int ii = i;
-    //       int jj = j;
-    //       int kk = k;
-    //       tab.addBoolean("Boolean" + (i*j*k), () -> this.isTarget(ii, jj, kk)).withPosition(j * 3 + k, i);
-    //     }
-    //   }
-    // }
+    tab = Shuffleboard.getTab("Tab Title");
+    for(int i = 0; i < 3; i++) {
+      for(int j = 0; j < 3; j++) {
+        for(int k = 0; k < 3; k++) {
+          int ii = i;
+          int jj = j;
+          int kk = k;
+          tab.addBoolean("Boolean G"+ii+"C"+jj+"R"+kk, () -> this.isTarget(ii, jj, kk)).withPosition(i * 3 + j, k);
+        }
+      }
+    }
 
     goalLocations = new GoalLocation[][][] {
       {

@@ -4,19 +4,24 @@
 
 package frc.robot;
 
-import java.util.GregorianCalendar;
-
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTableType;
+import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.TargetMoveSelection;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Compressor;
@@ -128,9 +133,10 @@ public class RobotContainer {
         }
       }
     }
-    NetworkTableInstance instance = NetworkTableInstance.getDefault();
-    NetworkTable table = instance.getTable("drive/navx/yaw");
-    //table.putValue(null, ) //TODO: fix this
+    // NetworkTableInstance instance = NetworkTableInstance.getDefault();
+    // NetworkTable table = instance.getTable("drive/navx/yaw");
+    // NetworkTableEntry entry = table.getEntry("entry");
+    // entry.setBoolean(true);
   }
 
   /**
@@ -138,6 +144,12 @@ public class RobotContainer {
    */
   private void configureBindings() {
     /* ==================== DRIVER BUTTONS ==================== */
+    driverDUp.onTrue(new TargetMoveSelection(0));
+    driverDRight.onTrue(new TargetMoveSelection(1));
+    driverDDown.onTrue(new TargetMoveSelection(2));
+    driverDLeft.onTrue(new TargetMoveSelection(3));
+    driverRB.onTrue(new TargetMoveSelection(4));
+    driverLB.onTrue(new TargetMoveSelection(5));
     /* =================== CODRIVER BUTTONS =================== */
   }
 
