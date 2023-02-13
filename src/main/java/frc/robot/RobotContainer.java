@@ -24,7 +24,6 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelights;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.Target;
-import frc.robot.subsystems.Target.GoalLocation;
 
 // import frc.robot.commands.drive.util.DriveAdjustModuleZeroPoint;
 // import frc.robot.commands.drive.util.DriveAllModulesPositionOnly;
