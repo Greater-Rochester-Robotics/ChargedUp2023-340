@@ -206,6 +206,7 @@ public class Arm extends SubsystemBase {
   //TODO: integrate this into kinnomatics
   //This class is using the AffineTransform to find the end position of the end of the arm
   public Pose2d test(double shoulderAngle, double elbowAngle){
+
     AffineTransform rotate = new AffineTransform();//Makes a new AffineTransform
     Point2D source = new Point2D.Double(0,0);//makes the location of the shoulder
     Point2D destination = new Point2D.Double();//Will be filled with the location of the wrist
@@ -213,13 +214,20 @@ public class Arm extends SubsystemBase {
     rotate.translate(ArmConstants.SHOULDER_TO_ELBOW_DISTANCE, 0.0);//Translates by the length of the upper arm
     rotate.rotate(elbowAngle);//Rotates the elbow
     rotate.translate(ArmConstants.ELBOW_TO_WRIST_DISTANCE, 0.0);//Translates by the length of the forearm
-    rotate.transform(source, destination);
 
     try{
     rotate.invert();
     } catch (java.awt.geom.NoninvertibleTransformException e) {
       //TODO: add proper error handeling
     }
+
+  public void inverseKinnomatics(double x, double y){
+
+
+
+  }
+
+    rotate.transform(source, destination);
      return new Pose2d(destination.getX(), destination.getY(), new Rotation2d());
   }
 
