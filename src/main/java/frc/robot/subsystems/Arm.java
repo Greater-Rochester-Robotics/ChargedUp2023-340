@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
@@ -83,6 +84,8 @@ public class Arm extends SubsystemBase {
     shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
     shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
 
+    setRightShoulderOffset(0.0);
+
 
 
     //left shoulder
@@ -108,6 +111,8 @@ public class Arm extends SubsystemBase {
     shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
     shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);  
     shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
+
+    setLeftShoulderOffset(0.0);
 
 
     //elbow
@@ -135,6 +140,8 @@ public class Arm extends SubsystemBase {
     elbowMotorLeader.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
 
     elbowMotorLeader.set(0);
+
+    setElbowZeroOffset(0.0);
 
     wrist = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.WRIST_SOLENOID_OUT, Constants.WRIST_SOLENOID_IN);
     elbowBrake = new Solenoid(PneumaticsModuleType.REVPH, Constants.ELBOW_BRAKE);
@@ -182,13 +189,15 @@ public class Arm extends SubsystemBase {
     }
   }
 
+  
+
   // -------------------------- Kinematics Methods
   //TODO: write kinematics here,  need a public position commmand
 
   //TODO: next steps
   /*
   1. Figure out how to invert the transforms so it takes an x and y and gives you the angle
-  2. Use actual robot dementions  Done
+  2. Use actual robot dimensions  Done
   3. the matrix could give multiple outputs, so pick the right one
   4. replace existing caculations with the affine transforms
   5. make an interpolation function between two arm positions
@@ -308,6 +317,14 @@ public class Arm extends SubsystemBase {
     shoulderPIDEnable = true;
   }
 
+  public void setRightShoulderOffset(double offset){
+    absoluteEncoderRight.setZeroOffset(offset);
+  }
+
+  public void setLeftShoulderOffset(double offset){
+    absoluteEncoderLeft.setZeroOffset(offset);
+  }
+
   // -------------------------- Elbow Methods
 
   public double getElbowPosition(){
@@ -330,9 +347,18 @@ public class Arm extends SubsystemBase {
 
   public void setElbowPosition(Double position){
     elbowController.setReference(position, ControlType.kPosition);
+    double theta = getElbowPosition() - getShoulderPositon();
+    elbowController.setReference(position, ControlType.kPosition, 0, Constants.KG * Math.sin(theta) * Math.signum(theta));
     elbowBrake.set(false);
   }
+
+  public void setElbowZeroOffset(double offset){
+    absoluteEncoderElbow.setZeroOffset(offset);
+  }
   
+  public double getElbowVoltage(){
+    return elbowMotorLeader.getBusVoltage();
+  }
   // -------------------------- Wrist Methods
 
   /**
