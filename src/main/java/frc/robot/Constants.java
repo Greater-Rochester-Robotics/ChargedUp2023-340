@@ -182,4 +182,8 @@ public final class Constants {
     public static final double HIGH_POLE = 5.0;
     public static final double MED_POLE = 3.883;
     public static final double LOW_POLE = 3.324;
+
+
+    /*  */
+    public static final double KG = 0.0;
 }
