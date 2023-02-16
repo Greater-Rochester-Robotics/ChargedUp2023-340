@@ -211,15 +211,29 @@ public class Arm extends SubsystemBase {
     } catch (java.awt.geom.NoninvertibleTransformException e) {
       //TODO: add proper error handeling
     }
-
-  public void inverseKinnomatics(double x, double y){
-
-
-
+     rotate.transform(source, destination);
+     return new Pose2d(destination.getX(), destination.getY(), new Rotation2d());
   }
 
-    rotate.transform(source, destination);
-     return new Pose2d(destination.getX(), destination.getY(), new Rotation2d());
+  public ArmPosition inverseKinematics(double x, double y){
+    //TODO: refactor these to not have capital letters at the begining
+    double ShoulderToElbow = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE;
+    double ElbowToEnd = ArmConstants.ELBOW_TO_WRIST_DISTANCE;
+    double ShoulderToEnd = Math.sqrt(x*x + y*y); //Gets the distance between the shoulder joint of the arm and the end point
+
+    //Uses the law of cosines to find the angle between the end point and the elbow joint
+    double rawShoulderAngle = Math.acos(
+      (ShoulderToEnd*ShoulderToEnd + ShoulderToElbow*ShoulderToElbow - ElbowToEnd*ElbowToEnd)/
+      2*ShoulderToEnd*ShoulderToElbow);
+    //Uses the law of cosines again to find the raw elbow angle
+    double rawElbowAngle = Math.acos(
+      (ShoulderToElbow*ShoulderToElbow + ElbowToEnd*ElbowToEnd - ShoulderToEnd*ShoulderToEnd)/
+      2*ShoulderToElbow*ElbowToEnd);
+
+    return new ArmPosition(0,0,false);//Placeholder
+
+    //If the arm is extended out the front of the robbot, then the shoulder angle is positive.
+
   }
 
   public Pose2d getArmPose(){
