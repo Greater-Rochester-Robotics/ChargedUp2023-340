@@ -41,14 +41,14 @@ public class Claw extends SubsystemBase {
 
   //TODO: set the motor speeds
   public void intake(){
-    clawMotor.set(TalonSRXControlMode.Velocity, 1);
+    clawMotor.set(TalonSRXControlMode.PercentOutput, 1);
   }
 
   public void outtake(){
-    clawMotor.set(TalonSRXControlMode.Velocity, -1);
+    clawMotor.set(TalonSRXControlMode.PercentOutput,-1);
   }
 
   public void stop(){
-    clawMotor.set(TalonSRXControlMode.Velocity, 0);
+    clawMotor.set(TalonSRXControlMode.PercentOutput, 0);
   }
 }

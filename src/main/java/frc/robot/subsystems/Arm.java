@@ -69,10 +69,10 @@ public class Arm extends SubsystemBase {
 
     shoulderRight.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
     
-    shoulderRight.getPIDController().setP(ArmConstants.SHOULDER_P);  
-    shoulderRight.getPIDController().setI(ArmConstants.SHOULDER_I);
-    shoulderRight.getPIDController().setD(ArmConstants.SHOULDER_D);
-    shoulderRight.getPIDController().setFF(ArmConstants.SHOULDER_F);
+    shoulderRight.getPIDController().setP(ArmConstants.SHOULDER_P_RIGHT);  
+    shoulderRight.getPIDController().setI(ArmConstants.SHOULDER_I_RIGHT);
+    shoulderRight.getPIDController().setD(ArmConstants.SHOULDER_D_RIGHT);
+    shoulderRight.getPIDController().setFF(ArmConstants.SHOULDER_F_RIGHT);
 
     shoulderRight.setIdleMode(IdleMode.kBrake);
 
@@ -97,10 +97,10 @@ public class Arm extends SubsystemBase {
 
     shoulderLeft.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
  
-    shoulderLeft.getPIDController().setP(ArmConstants.SHOULDER_P);
-    shoulderLeft.getPIDController().setI(ArmConstants.SHOULDER_I);
-    shoulderLeft.getPIDController().setD(ArmConstants.SHOULDER_D);
-    shoulderLeft.getPIDController().setFF(ArmConstants.SHOULDER_F);
+    shoulderLeft.getPIDController().setP(ArmConstants.SHOULDER_P_LEFT);
+    shoulderLeft.getPIDController().setI(ArmConstants.SHOULDER_I_LEFT);
+    shoulderLeft.getPIDController().setD(ArmConstants.SHOULDER_D_LEFT);
+    shoulderLeft.getPIDController().setFF(ArmConstants.SHOULDER_F_LEFT);
 
     shoulderLeft.setIdleMode(IdleMode.kBrake);
 
@@ -166,6 +166,12 @@ public class Arm extends SubsystemBase {
     rightPos = absoluteEncoderRight.getPosition();
     leftPos = absoluteEncoderLeft.getPosition();
 
+    SmartDashboard.putNumber("absolute encoder right", rightPos);
+    SmartDashboard.putNumber("Internal encoder right", shoulderRight.getEncoder().getPosition());
+
+    SmartDashboard.putNumber("absolute encoder left", leftPos);
+    SmartDashboard.putNumber("Internal encoder left", shoulderLeft.getEncoder().getPosition());
+
     //Checks to see if both shoulders are at the same position,
     //stops one closer to goal position
     if(shoulderPIDEnable){
@@ -225,21 +231,30 @@ public class Arm extends SubsystemBase {
   }
 
   public ArmPosition inverseKinematics(double x, double y){
-    //TODO: refactor these to not have capital letters at the begining
-    double ShoulderToElbow = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE;
-    double ElbowToEnd = ArmConstants.ELBOW_TO_WRIST_DISTANCE;
-    double ShoulderToEnd = Math.sqrt(x*x + y*y); //Gets the distance between the shoulder joint of the arm and the end point
+    double shoulderToElbow = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE;
+    double elbowToEnd = ArmConstants.ELBOW_TO_WRIST_DISTANCE;
+    double shoulderToEnd = Math.sqrt(x*x + y*y); //Gets the distance between the shoulder joint of the arm and the end point
+    boolean isExtended = false;
+    if(shoulderToEnd > shoulderToElbow + elbowToEnd){
+      elbowToEnd += ArmConstants.WRIST_EXTENTION_LENGTH;
+      isExtended = true;
+    }
 
     //Uses the law of cosines to find the angle between the end point and the elbow joint
     double rawShoulderAngle = Math.acos(
-      (ShoulderToEnd*ShoulderToEnd + ShoulderToElbow*ShoulderToElbow - ElbowToEnd*ElbowToEnd)/
-      2*ShoulderToEnd*ShoulderToElbow);
+      (shoulderToEnd*shoulderToEnd + shoulderToElbow*shoulderToElbow - elbowToEnd*elbowToEnd)/
+      2*shoulderToEnd*shoulderToElbow);
     //Uses the law of cosines again to find the raw elbow angle
     double rawElbowAngle = Math.acos(
-      (ShoulderToElbow*ShoulderToElbow + ElbowToEnd*ElbowToEnd - ShoulderToEnd*ShoulderToEnd)/
-      2*ShoulderToElbow*ElbowToEnd);
+      (shoulderToElbow*shoulderToElbow + elbowToEnd*elbowToEnd - shoulderToEnd*shoulderToEnd)/
+      2*shoulderToElbow*elbowToEnd);
 
-    return new ArmPosition(0,0,false);//Placeholder
+    double XToEndAngle = Math.atan(y/x); //Finds the angle from the x axis (flat) to the end of the arm
+
+    double newShoulderAngle = (Constants.PI_OVER_TWO - rawShoulderAngle - XToEndAngle) * (x > 0? 1 : -1); // gets the Angle from the y axis down to the Elbow
+    double newElbowAngle = rawElbowAngle - (Constants.PI_OVER_TWO - newShoulderAngle) * (x > 0? 1 : -1); // gets the Angle from the y axis up to the end point
+
+    return new ArmPosition(newShoulderAngle, newElbowAngle, isExtended);//Placeholder
 
     //If the arm is extended out the front of the robbot, then the shoulder angle is positive.
 

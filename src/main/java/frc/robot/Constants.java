@@ -106,10 +106,15 @@ public final class Constants {
     
     public class ArmConstants{
       /* Arm PID Constants */
-      public static final double SHOULDER_P = 0.0;
-      public static final double SHOULDER_I = 0.0;
-      public static final double SHOULDER_D = 0.0;
-      public static final double SHOULDER_F = 0.0;
+      public static final double SHOULDER_P_RIGHT = 0.0;
+      public static final double SHOULDER_I_RIGHT = 0.0;
+      public static final double SHOULDER_D_RIGHT = 0.0;
+      public static final double SHOULDER_F_RIGHT = 0.0;
+
+      public static final double SHOULDER_P_LEFT = 0.0;
+      public static final double SHOULDER_I_LEFT = 0.0;
+      public static final double SHOULDER_D_LEFT = 0.0;
+      public static final double SHOULDER_F_LEFT = 0.0;
 
       public static final double ELBOW_P = 0.0;
       public static final double ELBOW_I = 0.0;

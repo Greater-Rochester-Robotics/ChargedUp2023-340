@@ -4,10 +4,8 @@
 
 package frc.robot.commands.arm;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.RobotContainer;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -15,15 +13,14 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 //InstantCommand that retracts the wrist
 public class ArmRetractWrist extends InstantCommand {
-  private DoubleSolenoid wrist;
   public ArmRetractWrist() {
     // Use addRequirements() here to declare subsystem dependencies.
-    wrist = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 0);
+    addRequirements(RobotContainer.arm);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    wrist.set(Value.kReverse);
+    RobotContainer.arm.retractWrist();
   }
 }
