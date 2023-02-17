@@ -4,24 +4,19 @@
 
 package frc.robot;
 
+
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.NetworkTableType;
-import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.TargetMoveSelection;
+import frc.robot.commands.target.TargetMoveSelection;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Compressor;
@@ -29,6 +24,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelights;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.Target;
+import frc.robot.subsystems.Target.GoalLocation;
 
 // import frc.robot.commands.drive.util.DriveAdjustModuleZeroPoint;
 // import frc.robot.commands.drive.util.DriveAllModulesPositionOnly;
@@ -176,4 +172,27 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
       return autoChooser.getSelected();
   }
+
+  /**
+   * A method to return the value of a codriver joystick axis,
+   * which runs from -1.0 to 1.0, with a .1 dead zone(a 0 
+   * value returned if the joystick value is between -.1 and 
+   * .1) 
+   * @param axis
+   * @return
+   */
+  public double getCoDriverAxis(Axis axis) {
+    return (coDriver.getRawAxis(axis.value) < -.1 || coDriver.getRawAxis(axis.value) > .1)
+        ? coDriver.getRawAxis(axis.value)
+        : 0;
+  }
+
+  public double getRightShoulderManual(){
+    return getCoDriverAxis(Axis.kRightY);
+  }
+
+  public double getLeftShoulderManuel(){
+    return getCoDriverAxis(Axis.kLeftY);
+  }
+
 }
