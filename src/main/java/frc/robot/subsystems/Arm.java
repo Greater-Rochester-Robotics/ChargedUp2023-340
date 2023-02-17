@@ -225,19 +225,18 @@ public class Arm extends SubsystemBase {
   }
 
   public ArmPosition inverseKinematics(double x, double y){
-    //TODO: refactor these to not have capital letters at the begining
-    double ShoulderToElbow = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE;
-    double ElbowToEnd = ArmConstants.ELBOW_TO_WRIST_DISTANCE;
-    double ShoulderToEnd = Math.sqrt(x*x + y*y); //Gets the distance between the shoulder joint of the arm and the end point
+    double shoulderToElbow = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE;
+    double elbowToEnd = ArmConstants.ELBOW_TO_WRIST_DISTANCE;
+    double shoulderToEnd = Math.sqrt(x*x + y*y); //Gets the distance between the shoulder joint of the arm and the end point
 
     //Uses the law of cosines to find the angle between the end point and the elbow joint
     double rawShoulderAngle = Math.acos(
-      (ShoulderToEnd*ShoulderToEnd + ShoulderToElbow*ShoulderToElbow - ElbowToEnd*ElbowToEnd)/
-      2*ShoulderToEnd*ShoulderToElbow);
+      (shoulderToEnd*shoulderToEnd + shoulderToElbow*shoulderToElbow - elbowToEnd*elbowToEnd)/
+      2*shoulderToEnd*shoulderToElbow);
     //Uses the law of cosines again to find the raw elbow angle
     double rawElbowAngle = Math.acos(
-      (ShoulderToElbow*ShoulderToElbow + ElbowToEnd*ElbowToEnd - ShoulderToEnd*ShoulderToEnd)/
-      2*ShoulderToElbow*ElbowToEnd);
+      (shoulderToElbow*shoulderToElbow + elbowToEnd*elbowToEnd - shoulderToEnd*shoulderToEnd)/
+      2*shoulderToElbow*elbowToEnd);
 
     return new ArmPosition(0,0,false);//Placeholder
 
