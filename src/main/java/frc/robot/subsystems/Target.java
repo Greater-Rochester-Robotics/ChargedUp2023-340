@@ -4,15 +4,6 @@
 
 package frc.robot.subsystems;
 
-import org.opencv.core.Mat;
-
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.CvSource;
-import edu.wpi.first.cscore.MjpegServer;
-import edu.wpi.first.cscore.VideoSource;
-import edu.wpi.first.cscore.VideoMode.PixelFormat;
-import edu.wpi.first.cscore.raw.RawSource;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;

@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -53,10 +55,16 @@ public class Limelights extends SubsystemBase{
     }
 
     public double[] getPoseFront() {
-        return NetworkTableInstance.getDefault().getTable("limelight-front").getEntry("botpose").getDoubleArray(new double[6]);
+        if(DriverStation.getAlliance() == Alliance.Blue)
+            return NetworkTableInstance.getDefault().getTable("limelight-front").getEntry("botpose_wpiblue").getDoubleArray(new double[7]);
+        else
+            return NetworkTableInstance.getDefault().getTable("limelight-front").getEntry("botpose_wpired").getDoubleArray(new double[7]);
     }
 
     public double[] getPoseBack() {
-        return NetworkTableInstance.getDefault().getTable("limelight-back").getEntry("botpose").getDoubleArray(new double[6]);
+        if(DriverStation.getAlliance() == Alliance.Blue)
+            return NetworkTableInstance.getDefault().getTable("limelight-back").getEntry("botpose_wpiblue").getDoubleArray(new double[7]);
+        else
+            return NetworkTableInstance.getDefault().getTable("limelight-back").getEntry("botpose_wpired").getDoubleArray(new double[7]);
     }
 }
