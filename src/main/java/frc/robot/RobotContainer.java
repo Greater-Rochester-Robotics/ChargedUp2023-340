@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.arm.ArmShoulderManual;
 import frc.robot.commands.target.TargetMoveSelection;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
@@ -91,18 +92,25 @@ public class RobotContainer {
   public static Limelights limelights;
   public static Intake intake;
   public static Target target;
+  
+  // set to true to include all subsystems.
+  public static final boolean COMPILE_ALL_SUBSYSTEMS = false;
 
   public RobotContainer() {
     //create(construct) subsystems
-    //swerveDrive = new SwerveDrive();
-    //claw = new Claw();
-    //compressor = new Compressor();
-    //arm = new Arm();
-    //limelights = new Limelights();
-    intake = new Intake();
-    // swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced());
-    target = new Target();
 
+    // Any subsystems in if behave as if they were commented out. Move out of the if once they are permanently on the robot.
+    if (COMPILE_ALL_SUBSYSTEMS) {
+      swerveDrive = new SwerveDrive();
+      claw = new Claw();
+      compressor = new Compressor();
+      arm = new Arm();
+      intake = new Intake();
+      //swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced());
+    }
+
+    limelights = new Limelights();
+    target = new Target();
     //Add all autos to the auto selector
     configureAutoModes();
 
@@ -146,6 +154,11 @@ public class RobotContainer {
     driverDLeft.onTrue(new TargetMoveSelection(3));
     driverRB.onTrue(new TargetMoveSelection(4));
     driverLB.onTrue(new TargetMoveSelection(5));
+
+    // any commands inside this if behave as if they were commented out.
+    if (COMPILE_ALL_SUBSYSTEMS) {
+      driverA.onTrue(new ArmShoulderManual());
+    }
     /* =================== CODRIVER BUTTONS =================== */
   }
 
