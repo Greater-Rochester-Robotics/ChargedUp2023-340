@@ -23,6 +23,7 @@ import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Compressor;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelights;
+import frc.robot.subsystems.RecordPlayer;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.Target;
 import frc.robot.subsystems.Target.GoalLocation;
@@ -92,12 +93,22 @@ public class RobotContainer {
   public static Limelights limelights;
   public static Intake intake;
   public static Target target;
+  public static RecordPlayer recordPlayer;
   
   // set to true to include all subsystems.
   public static final boolean COMPILE_ALL_SUBSYSTEMS = false;
 
   public RobotContainer() {
     //create(construct) subsystems
+    //swerveDrive = new SwerveDrive();
+    //claw = new Claw();
+    //compressor = new Compressor();
+    //arm = new Arm();
+    //limelights = new Limelights();
+    intake = new Intake();
+    // swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced());
+    target = new Target();
+    recordPlayer = new RecordPlayer();
 
     // Any subsystems in if behave as if they were commented out. Move out of the if once they are permanently on the robot.
     if (COMPILE_ALL_SUBSYSTEMS) {

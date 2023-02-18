@@ -57,4 +57,29 @@ public class RecordPlayer extends SubsystemBase {
     return conePositionSensor.get();
   }
 
+  public void setRotationMotor(double speed) {
+    rotationMotor.set(speed);
+  }
+
+  public void stopRotationMotor() {
+    rotationMotor.set(0);
+  }
+
+  public double getRotationMotorSpeed() {
+    return rotationMotor.getEncoder().getVelocity();
+  }
+
+  public double getConeAngle(){
+    //TODO use the camra
+    double cameraLatency = 0.0;
+    double conePosition = 0.0;
+     
+    return adjustConeAngle(cameraLatency, conePosition);
+  }
+
+  public double adjustConeAngle(double cameraLatency, double conePosition) {
+    double distanceAhead = rotationMotor.getEncoder().getVelocity() * cameraLatency / 60000; // 60,000 is the number of milla seconds in a minute
+    double position = conePosition + distanceAhead;
+    return position % Constants.TWO_PI;
+  }
 }
