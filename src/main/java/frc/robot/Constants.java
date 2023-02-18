@@ -107,6 +107,7 @@ public final class Constants {
     /* Digital Input Channels */
     public static final int CHANNEL_IS_GAME_PIECE = 0;
     public static final int CHANNEL_CONE_POSITION = 1;
+    public static final int CHANNEL_CLAW_INPUT = 2;
     
     public class ArmConstants{
       /* Arm PID Constants */
