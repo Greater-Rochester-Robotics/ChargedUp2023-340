@@ -74,6 +74,8 @@ public final class Constants {
       public static final double RECORD_PLAYER_I = 0.0;
       public static final double RECORD_PLAYER_D = 0.0;
       public static final double RECORD_PLAYER_F = 0.0;
+
+      public static final double recordPlayerConversonFactor = TWO_PI / 25.0;
     }
 
     public class CompressorConstants {

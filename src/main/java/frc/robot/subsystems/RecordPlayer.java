@@ -70,7 +70,7 @@ public class RecordPlayer extends SubsystemBase {
   }
 
   public double getConeAngle(){
-    //TODO use the camra
+    //TODO use the camera
     double cameraLatency = 0.0;
     double conePosition = 0.0;
      
