@@ -6,17 +6,16 @@ package frc.robot.commands.claw;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.RobotContainer;
-//TODO: write this once we know claw
-public class ClawOpen extends InstantCommand {
-  /** Creates a new ClawOpen. */
-  public ClawOpen() {
+
+public class ClawCloseLight extends InstantCommand {
+  /** Creates a new ClawCloseLight. */
+  public ClawCloseLight() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.claw);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RobotContainer.claw.open();
+    RobotContainer.claw.closeLight();
   }
 }
