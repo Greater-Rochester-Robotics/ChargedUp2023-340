@@ -4,31 +4,19 @@
 
 package frc.robot.commands.claw;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.RobotContainer;
 //TODO: write this once we know claw
-public class ClawClose extends CommandBase {
+public class ClawCloseHard extends InstantCommand {
   /** Creates a new ClawClosed. */
-  public ClawClose() {
+  public ClawCloseHard() {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.claw);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {}
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
+  public void initialize() {
+    RobotContainer.claw.closeHard();
   }
 }
