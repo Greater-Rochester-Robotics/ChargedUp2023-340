@@ -103,6 +103,10 @@ public final class Constants {
     public static final double DRIVER_SPEED_SCALE_ROTATIONAL = .75;
     /* Aiming Values*/
     public static final Translation2d FIELD_CENTER = new Translation2d();
+
+    /* Digital Input Channels */
+    public static final int CHANNEL_IS_GAME_PIECE = 0;
+    public static final int CHANNEL_CONE_POSITION = 1;
     
     public class ArmConstants{
       /* Arm PID Constants */
@@ -189,6 +193,8 @@ public final class Constants {
     public static final double LOW_POLE = 3.324;
 
 
-    /*  */
+    /* Kinenatics Constants */
     public static final double KG = 0.0;
+
+
 }

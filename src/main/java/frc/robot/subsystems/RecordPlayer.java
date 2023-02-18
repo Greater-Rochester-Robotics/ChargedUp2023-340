@@ -9,15 +9,22 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class RecordPlayer extends SubsystemBase {
   private CANSparkMax rotationMotor;
+  private DigitalInput isGamePiece;
+  private DigitalInput isConePosition;
 
   /** Creates a new RecordPlayer. */
   public RecordPlayer() {
     rotationMotor = new CANSparkMax(Constants.RECORD_PLAYER_MOTOR, MotorType.kBrushless);
+
+    isGamePiece = new DigitalInput(Constants.CHANNEL_IS_GAME_PIECE);
+    isConePosition = new DigitalInput(Constants.CHANNEL_CONE_POSITION);
+
 
     rotationMotor.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
  
@@ -41,4 +48,13 @@ public class RecordPlayer extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
   }
+
+  public boolean getIsGamePiece(){
+    return isGamePiece.get();
+  }
+
+  public boolean isConePosition(){
+    return isConePosition.get();
+  }
+
 }
