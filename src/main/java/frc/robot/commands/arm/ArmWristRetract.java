@@ -11,11 +11,9 @@ import frc.robot.RobotContainer;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
-//InstantCommand that extends the wrist
-public class ArmExtendWrist extends InstantCommand {
-  
-
-  public ArmExtendWrist() {
+//InstantCommand that retracts the wrist
+public class ArmWristRetract extends InstantCommand {
+  public ArmWristRetract() {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.arm);
   }
@@ -23,6 +21,6 @@ public class ArmExtendWrist extends InstantCommand {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RobotContainer.arm.extendWrist();
+    RobotContainer.arm.retractWrist();
   }
 }

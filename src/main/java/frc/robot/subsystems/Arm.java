@@ -356,6 +356,7 @@ public class Arm extends SubsystemBase {
 
   public void setRightShoulderOffset(double offset){
     absoluteEncoderRight.setZeroOffset(offset);
+    
   }
 
   public void setLeftShoulderOffset(double offset){
@@ -385,7 +386,7 @@ public class Arm extends SubsystemBase {
   public void setElbowPosition(Double position){
     elbowController.setReference(position, ControlType.kPosition);
     double theta = getElbowPosition() - getShoulderPositon();
-    elbowController.setReference(position, ControlType.kPosition, 0, Constants.KG * Math.sin(theta) * Math.signum(theta));
+    elbowController.setReference(position, ControlType.kPosition, 0, ArmConstants.KG * Math.sin(theta) * Math.signum(theta));
     elbowBrake.set(false);
   }
 

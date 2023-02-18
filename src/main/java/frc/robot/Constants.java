@@ -15,6 +15,8 @@ import edu.wpi.first.math.geometry.Translation2d;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  //TODO: put this in the proper constants subclass and fix the id
+    public static final int GAME_PEICE_SENSOR_ID = 0;
 
     /* Factors of PI */
     public static final double PI_OVER_TWO = Math.PI/2;
@@ -127,8 +129,18 @@ public final class Constants {
       public static final double ELBOW_TO_WRIST_DISTANCE = 10;
       public static final double WRIST_EXTENTION_LENGTH = 1;
       public static final double MAX_HEIGHT = 50;
+
+      /*  */
+      public static final double KG = 0.0; 
     }
-     
+    
+    /* Target Heights */
+    public static final double HIGH_POLE = 5.0;
+    public static final double MED_POLE = 3.883;
+    public static final double LOW_POLE = 3.324;
+    
+    
+        
     /* Record Player PID Constants */
      public static final double RECORD_PLAYER_P = 0.0;
      public static final double RECORD_PLAYER_I = 0.0;
@@ -138,7 +150,9 @@ public final class Constants {
     /* Compressor Pressure Constants */
     public static final double MIN_PRESSURE = 100.0;
     public static final double MAX_PRESSURE = 120.0;//TODO: change this on between comp bot and prac , 100 for prac, 120 for comp
-      
+     
+    
+
     /* IDENTIFICATION NUMBERS FOR DEVICES */
 
 
@@ -183,12 +197,5 @@ public final class Constants {
     public static final int WRIST_SOLENOID_OUT = 5;
     public static final int WRIST_SOLENOID_IN = 6;
 
-    /* Target Heights */
-    public static final double HIGH_POLE = 5.0;
-    public static final double MED_POLE = 3.883;
-    public static final double LOW_POLE = 3.324;
 
-
-    /*  */
-    public static final double KG = 0.0;
 }

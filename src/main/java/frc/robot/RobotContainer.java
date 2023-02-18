@@ -99,7 +99,7 @@ public class RobotContainer {
     //compressor = new Compressor();
     //arm = new Arm();
     //limelights = new Limelights();
-    //intake = new Intake(Constants.INTAKE_MOTOR_1, Constants.INTAKE_MOTOR_2, Constants.INTAKE_SOLENOID_OUT, Constants.INTAKE_SOLENOID_IN);
+    intake = new Intake();
     // swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced());
     target = new Target();
 

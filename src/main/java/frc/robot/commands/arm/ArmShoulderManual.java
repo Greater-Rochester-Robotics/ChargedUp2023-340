@@ -8,11 +8,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
-public class ArmManualShoulder extends CommandBase {
+public class ArmShoulderManual extends CommandBase {
   double rightAxis;
   double leftAxis;
   /** Creates a new ArmManualShoulder. */
-  public ArmManualShoulder() {
+  public ArmShoulderManual() {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.arm);
   }
