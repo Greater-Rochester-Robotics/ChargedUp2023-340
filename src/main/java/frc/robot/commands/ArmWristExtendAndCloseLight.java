@@ -23,6 +23,7 @@ public class ArmWristExtendAndCloseLight extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new ArmWristExtend(),
+      // Measure time it takes for the wrist to extend, or use WaitUntilCommand for DigitalInput if wrist uses a sensor?
       new WaitCommand(0.5),
       new ClawIntake(),
       new WaitUntilCommand(RobotContainer.claw::getGamePieceSensor),
