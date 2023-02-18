@@ -270,7 +270,6 @@ public class Arm extends SubsystemBase {
     double nearY = y;
 
     //Puts x within the robots frame perimiter.
-    if(nearX < Constants.REMAINING_SPACE) nearX = Constants.REMAINING_SPACE;
     if(nearX < ArmConstants.REMAINING_SPACE) nearX = ArmConstants.REMAINING_SPACE;
     else if(nearX > Constants.ROBOT_LENGTH - ArmConstants.REMAINING_SPACE);
 
