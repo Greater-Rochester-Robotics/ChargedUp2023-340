@@ -15,15 +15,15 @@ import frc.robot.Constants;
 
 public class RecordPlayer extends SubsystemBase {
   private CANSparkMax rotationMotor;
-  private DigitalInput isGamePiece;
-  private DigitalInput isConePosition;
+  private DigitalInput gamePieceSensor;
+  private DigitalInput conePositionSensor;
 
   /** Creates a new RecordPlayer. */
   public RecordPlayer() {
     rotationMotor = new CANSparkMax(Constants.RECORD_PLAYER_MOTOR, MotorType.kBrushless);
 
-    isGamePiece = new DigitalInput(Constants.CHANNEL_IS_GAME_PIECE);
-    isConePosition = new DigitalInput(Constants.CHANNEL_CONE_POSITION);
+    gamePieceSensor = new DigitalInput(Constants.CHANNEL_IS_GAME_PIECE);
+    conePositionSensor = new DigitalInput(Constants.CHANNEL_CONE_POSITION);
 
 
     rotationMotor.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
@@ -49,12 +49,12 @@ public class RecordPlayer extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public boolean getIsGamePiece(){
-    return isGamePiece.get();
+  public boolean getGamePieceSensor(){
+    return gamePieceSensor.get();
   }
 
-  public boolean isConePosition(){
-    return isConePosition.get();
+  public boolean getConePositionSensor(){
+    return conePositionSensor.get();
   }
 
 }
