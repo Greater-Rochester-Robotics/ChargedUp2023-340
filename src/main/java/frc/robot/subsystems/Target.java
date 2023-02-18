@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.TargetConstants;
 
 public class Target extends SubsystemBase {
   int grid;
@@ -43,53 +44,53 @@ public class Target extends SubsystemBase {
     goalLocations = new GoalLocation[][][] {
       {
         {
-          new GoalLocation(new Translation2d(), Constants.HIGH_POLE),
-          new GoalLocation(new Translation2d(), Constants.MED_POLE),
-          new GoalLocation(new Translation2d(), Constants.LOW_POLE)
+          new GoalLocation(new Translation2d(), TargetConstants.HIGH_POLE),
+          new GoalLocation(new Translation2d(), TargetConstants.MED_POLE),
+          new GoalLocation(new Translation2d(), TargetConstants.LOW_POLE)
         },
         {
-          new GoalLocation(new Translation2d(), Constants.HIGH_POLE),
-          new GoalLocation(new Translation2d(), Constants.MED_POLE),
-          new GoalLocation(new Translation2d(), Constants.LOW_POLE)
+          new GoalLocation(new Translation2d(), TargetConstants.HIGH_POLE),
+          new GoalLocation(new Translation2d(), TargetConstants.MED_POLE),
+          new GoalLocation(new Translation2d(), TargetConstants.LOW_POLE)
         },
         {
-          new GoalLocation(new Translation2d(), Constants.HIGH_POLE),
-          new GoalLocation(new Translation2d(), Constants.MED_POLE),
-          new GoalLocation(new Translation2d(), Constants.LOW_POLE)       
+          new GoalLocation(new Translation2d(), TargetConstants.HIGH_POLE),
+          new GoalLocation(new Translation2d(), TargetConstants.MED_POLE),
+          new GoalLocation(new Translation2d(), TargetConstants.LOW_POLE)       
          }
       },
       {
         {
-          new GoalLocation(new Translation2d(), Constants.HIGH_POLE),
-          new GoalLocation(new Translation2d(), Constants.MED_POLE),
-          new GoalLocation(new Translation2d(), Constants.LOW_POLE)        
+          new GoalLocation(new Translation2d(), TargetConstants.HIGH_POLE),
+          new GoalLocation(new Translation2d(), TargetConstants.MED_POLE),
+          new GoalLocation(new Translation2d(), TargetConstants.LOW_POLE)        
         },
         {
-          new GoalLocation(new Translation2d(), Constants.HIGH_POLE),
-          new GoalLocation(new Translation2d(), Constants.MED_POLE),
-          new GoalLocation(new Translation2d(), Constants.LOW_POLE)       
+          new GoalLocation(new Translation2d(), TargetConstants.HIGH_POLE),
+          new GoalLocation(new Translation2d(), TargetConstants.MED_POLE),
+          new GoalLocation(new Translation2d(), TargetConstants.LOW_POLE)       
         },
         {
-          new GoalLocation(new Translation2d(), Constants.HIGH_POLE),
-          new GoalLocation(new Translation2d(), Constants.MED_POLE),
-          new GoalLocation(new Translation2d(), Constants.LOW_POLE)        
+          new GoalLocation(new Translation2d(), TargetConstants.HIGH_POLE),
+          new GoalLocation(new Translation2d(), TargetConstants.MED_POLE),
+          new GoalLocation(new Translation2d(), TargetConstants.LOW_POLE)        
         }
       },
       {
         {
-          new GoalLocation(new Translation2d(), Constants.HIGH_POLE),
-          new GoalLocation(new Translation2d(), Constants.MED_POLE),
-          new GoalLocation(new Translation2d(), Constants.LOW_POLE)        
+          new GoalLocation(new Translation2d(), TargetConstants.HIGH_POLE),
+          new GoalLocation(new Translation2d(), TargetConstants.MED_POLE),
+          new GoalLocation(new Translation2d(), TargetConstants.LOW_POLE)        
         },
         {
-          new GoalLocation(new Translation2d(), Constants.HIGH_POLE),
-          new GoalLocation(new Translation2d(), Constants.MED_POLE),
-          new GoalLocation(new Translation2d(), Constants.LOW_POLE)        
+          new GoalLocation(new Translation2d(), TargetConstants.HIGH_POLE),
+          new GoalLocation(new Translation2d(), TargetConstants.MED_POLE),
+          new GoalLocation(new Translation2d(), TargetConstants.LOW_POLE)        
         },
         {
-          new GoalLocation(new Translation2d(), Constants.HIGH_POLE),
-          new GoalLocation(new Translation2d(), Constants.MED_POLE),
-          new GoalLocation(new Translation2d(), Constants.LOW_POLE)        
+          new GoalLocation(new Translation2d(), TargetConstants.HIGH_POLE),
+          new GoalLocation(new Translation2d(), TargetConstants.MED_POLE),
+          new GoalLocation(new Translation2d(), TargetConstants.LOW_POLE)        
         }
       }
     };

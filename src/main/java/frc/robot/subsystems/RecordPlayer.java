@@ -28,10 +28,10 @@ public class RecordPlayer extends SubsystemBase {
 
     rotationMotor.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
  
-    rotationMotor.getPIDController().setP(Constants.RECORD_PLAYER_P);
-    rotationMotor.getPIDController().setI(Constants.RECORD_PLAYER_I);
-    rotationMotor.getPIDController().setD(Constants.RECORD_PLAYER_D);
-    rotationMotor.getPIDController().setFF(Constants.RECORD_PLAYER_F);
+    rotationMotor.getPIDController().setP(Constants.RecordPlayerConstants.RECORD_PLAYER_P);
+    rotationMotor.getPIDController().setI(Constants.RecordPlayerConstants.RECORD_PLAYER_I);
+    rotationMotor.getPIDController().setD(Constants.RecordPlayerConstants.RECORD_PLAYER_D);
+    rotationMotor.getPIDController().setFF(Constants.RecordPlayerConstants.RECORD_PLAYER_F);
 
     rotationMotor.setIdleMode(IdleMode.kBrake);
 
