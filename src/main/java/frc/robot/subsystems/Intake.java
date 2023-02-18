@@ -5,12 +5,9 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -20,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
-  private TalonSRX motor1;
+  private TalonSRX clawWheelsMotor1;
   // private CANSparkMax motor2;
   private DigitalInput gamePieceSensor;
   private DoubleSolenoid solenoid;
@@ -30,30 +27,30 @@ public class Intake extends SubsystemBase {
   public Intake() {
     gamePieceSensor = new DigitalInput(Constants.GAME_PEICE_SENSOR_ID);
 
-    motor1 = new TalonSRX(Constants.INTAKE_MOTOR_1);
+    clawWheelsMotor1 = new TalonSRX(Constants.INTAKE_MOTOR_1);
     // motor2 = new CANSparkMax(Constants.INTAKE_MOTOR_2, MotorType.kBrushless);
-    motor1.enableVoltageCompensation(true);
+    clawWheelsMotor1.enableVoltageCompensation(true);
     // motor2.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
 
-    // motor1.setNeutralMode(NeutralMode.);
+    clawWheelsMotor1.setNeutralMode(NeutralMode.Brake);
     // motor2.setIdleMode(IdleMode.kBrake);
 
-    //TODO: Make sure these are correct
-    // motor1.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
-    // motor1.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-    // motor1.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
-    // motor1.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 2000);
-    // motor1.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
-    // motor1.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
-    // motor1.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
+    //TODO: Make sure these are correct !!!!!
+    clawWheelsMotor1.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20);
+    clawWheelsMotor1.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 20);
+    clawWheelsMotor1.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 20);
+    clawWheelsMotor1.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, 2000);
+    clawWheelsMotor1.setStatusFramePeriod(StatusFrameEnhanced.Status_6_Misc, 2000);
+    clawWheelsMotor1.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus, 20);
+    clawWheelsMotor1.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 20);
 
-    // motor2.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
-    // motor2.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-    // motor2.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
-    // motor2.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 2000);
-    // motor2.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
-    // motor2.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
-    // motor2.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
+    // motor2.setStatusFramePeriod(StatusFrameEnhanced.kStatus0, 2000);
+    // motor2.setStatusFramePeriod(StatusFrameEnhanced.kStatus1, 20);
+    // motor2.setStatusFramePeriod(StatusFrameEnhanced.kStatus2, 20);
+    // motor2.setStatusFramePeriod(StatusFrameEnhanced.kStatus3, 2000);
+    // motor2.setStatusFramePeriod(StatusFrameEnhanced.kStatus4, 2000);
+    // motor2.setStatusFramePeriod(StatusFrameEnhanced.kStatus5, 20);
+    // motor2.setStatusFramePeriod(StatusFrameEnhanced.kStatus6, 20);
 
     // gamePieceSensor = new DigitalInput();
 
@@ -74,16 +71,19 @@ public class Intake extends SubsystemBase {
   }
 
   public void motorIn() {
+    clawWheelsMotor1.set(TalonSRXControlMode.PercentOutput, -MOTOR_SPEED);
     // motor1.set(-MOTOR_SPEED);
     // motor2.set(-MOTOR_SPEED);
   }
 
   public void motorOut() {
+    clawWheelsMotor1.set(TalonSRXControlMode.PercentOutput, MOTOR_SPEED);
     // motor1.set(MOTOR_SPEED);
     // motor2.set(MOTOR_SPEED);
   }
 
   public void motorStop() {
+    clawWheelsMotor1.set(TalonSRXControlMode.PercentOutput, 0.0);
     // motor1.set(0.0);
     // motor2.set(0.0);
   }
