@@ -52,18 +52,12 @@ public class Arm extends SubsystemBase {
 
   private boolean shoulderPIDEnable;
 
-  private double shoulderAngle;
-  private double elbowAngle;
-
-  private double wayPoints[];
-  
-
   /** Creates a new Arm. */
   public Arm() {
     //right shoulder
     shoulderRight = new CANSparkMax(Constants.SHOULDER_MOTOR_RIGHT, MotorType.kBrushless);
     absoluteEncoderRight = shoulderRight.getAbsoluteEncoder(Type.kDutyCycle);
-    absoluteEncoderRight.setPositionConversionFactor(Constants.ABS_ENC_TO_RAD_CONV_FACTOR);
+    absoluteEncoderRight.setPositionConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONV_FACTOR);
 
     shoulderRightController.setFeedbackDevice(absoluteEncoderRight);
 
@@ -91,7 +85,7 @@ public class Arm extends SubsystemBase {
     //left shoulder
     shoulderLeft = new CANSparkMax(Constants.SHOULDER_MOTOR_LEFT, MotorType.kBrushless);
     absoluteEncoderLeft = shoulderLeft.getAbsoluteEncoder(Type.kDutyCycle);
-    absoluteEncoderLeft.setPositionConversionFactor(Constants.ABS_ENC_TO_RAD_CONV_FACTOR);
+    absoluteEncoderLeft.setPositionConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONV_FACTOR);
 
     shoulderLeftController.setFeedbackDevice(absoluteEncoderLeft);
 
@@ -118,7 +112,7 @@ public class Arm extends SubsystemBase {
     //elbow
     elbowMotorLeader = new CANSparkMax(Constants.ELBOW_MOTOR_LEADER, MotorType.kBrushless);
     absoluteEncoderElbow = elbowMotorLeader.getAbsoluteEncoder(Type.kDutyCycle);
-    absoluteEncoderElbow.setPositionConversionFactor(Constants.ABS_ENC_TO_RAD_CONV_FACTOR);
+    absoluteEncoderElbow.setPositionConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONV_FACTOR);
 
     elbowController.setFeedbackDevice(absoluteEncoderElbow);
 
@@ -276,20 +270,20 @@ public class Arm extends SubsystemBase {
     double nearY = y;
 
     //Puts x within the robots frame perimiter.
-    if(nearX < Constants.REMAINING_SPACE) nearX = Constants.REMAINING_SPACE;
-    else if(nearX > Constants.ROBOT_LENGTH - Constants.REMAINING_SPACE);
+    if(nearX < ArmConstants.REMAINING_SPACE) nearX = ArmConstants.REMAINING_SPACE;
+    else if(nearX > Constants.ROBOT_LENGTH - ArmConstants.REMAINING_SPACE);
 
-    if(nearX > Constants.REMAINING_SPACE && nearX < Constants.ROBOT_LENGTH - Constants.REMAINING_SPACE) {
+    if(nearX > ArmConstants.REMAINING_SPACE && nearX < Constants.ROBOT_LENGTH - ArmConstants.REMAINING_SPACE) {
       //acounts for indent
-      double distance = Math.sqrt(Math.pow(nearX,2) + Math.pow(nearX-Constants.INDENT_HEIGHT,2));
+      double distance = Math.sqrt(Math.pow(nearX,2) + Math.pow(nearX-ArmConstants.INDENT_HEIGHT,2));
 
-      if(distance > Constants.INDENT_RADIUS && nearY < Constants.ROBOT_BASE_HEIGHT) return 0.0;
+      if(distance > ArmConstants.INDENT_RADIUS && nearY < Constants.ROBOT_BASE_HEIGHT) return 0.0;
 
       double pushedX = nearX / distance;
       double pushedY = nearY / distance;
 
-      if(pushedX < Constants.REMAINING_SPACE || pushedX > Constants.ROBOT_LENGTH - Constants.REMAINING_SPACE){
-        nearX = nearX < 0? Constants.REMAINING_SPACE : Constants.ROBOT_LENGTH - Constants.REMAINING_SPACE;
+      if(pushedX < ArmConstants.REMAINING_SPACE || pushedX > Constants.ROBOT_LENGTH - ArmConstants.REMAINING_SPACE){
+        nearX = nearX < 0? ArmConstants.REMAINING_SPACE : Constants.ROBOT_LENGTH - ArmConstants.REMAINING_SPACE;
         nearY = Constants.ROBOT_BASE_HEIGHT;
       }else{
         nearX = pushedX;
@@ -297,7 +291,7 @@ public class Arm extends SubsystemBase {
       }
 
     } else {
-      nearY = Constants.REMAINING_SPACE;
+      nearY = ArmConstants.REMAINING_SPACE;
     }
 
     //takes the smaller distance of the distance to the nearest point on the robot, and the heighest the arm is allowed to go.
@@ -309,8 +303,15 @@ public class Arm extends SubsystemBase {
     return(nearDist);
   }
 
+  public ArmPosition interpolateArmPosition(ArmPosition firstPosition, ArmPosition secondPosition, double time){
 
+    double shoulderAngle = firstPosition.shoulderAngle * time + secondPosition.shoulderAngle * (1.0 - time);
+    double elbowAngle = firstPosition.elbowAngle * time + secondPosition.elbowAngle * (1.0 - time);
+    boolean wristExtended = time < 0.5? firstPosition.wristExtended : secondPosition.wristExtended;
 
+    return new ArmPosition(shoulderAngle, elbowAngle, wristExtended);
+
+  }
   
   // -------------------------- Shoulder Motors Methods
 

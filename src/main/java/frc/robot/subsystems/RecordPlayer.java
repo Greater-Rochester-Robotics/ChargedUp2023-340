@@ -9,22 +9,29 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class RecordPlayer extends SubsystemBase {
   private CANSparkMax rotationMotor;
+  private DigitalInput gamePieceSensor;
+  private DigitalInput conePositionSensor;
 
   /** Creates a new RecordPlayer. */
   public RecordPlayer() {
     rotationMotor = new CANSparkMax(Constants.RECORD_PLAYER_MOTOR, MotorType.kBrushless);
 
+    gamePieceSensor = new DigitalInput(Constants.CHANNEL_IS_GAME_PIECE);
+    conePositionSensor = new DigitalInput(Constants.CHANNEL_CONE_POSITION);
+
+
     rotationMotor.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
  
-    rotationMotor.getPIDController().setP(Constants.RECORD_PLAYER_P);
-    rotationMotor.getPIDController().setI(Constants.RECORD_PLAYER_I);
-    rotationMotor.getPIDController().setD(Constants.RECORD_PLAYER_D);
-    rotationMotor.getPIDController().setFF(Constants.RECORD_PLAYER_F);
+    rotationMotor.getPIDController().setP(Constants.RecordPlayerConstants.RECORD_PLAYER_P);
+    rotationMotor.getPIDController().setI(Constants.RecordPlayerConstants.RECORD_PLAYER_I);
+    rotationMotor.getPIDController().setD(Constants.RecordPlayerConstants.RECORD_PLAYER_D);
+    rotationMotor.getPIDController().setFF(Constants.RecordPlayerConstants.RECORD_PLAYER_F);
 
     rotationMotor.setIdleMode(IdleMode.kBrake);
 
@@ -41,4 +48,13 @@ public class RecordPlayer extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
   }
+
+  public boolean getGamePieceSensor(){
+    return gamePieceSensor.get();
+  }
+
+  public boolean getConePositionSensor(){
+    return conePositionSensor.get();
+  }
+
 }

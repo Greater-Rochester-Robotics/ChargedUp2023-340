@@ -15,7 +15,7 @@ public class Compressor extends SubsystemBase {
   /** Creates a new Compressor. */
   public Compressor() {
     pneumaticHub = new PneumaticHub();
-    pneumaticHub.enableCompressorAnalog(Constants.MIN_PRESSURE, Constants.MAX_PRESSURE);
+    pneumaticHub.enableCompressorAnalog(Constants.CompressorConstants.MIN_PRESSURE, Constants.CompressorConstants.MAX_PRESSURE);
     count = 0;
   }
 
@@ -43,7 +43,7 @@ public class Compressor extends SubsystemBase {
   
   /** Enables compressor. */
   public void enableCompressor(){
-    pneumaticHub.enableCompressorAnalog(Constants.MIN_PRESSURE, Constants.MAX_PRESSURE);
+    pneumaticHub.enableCompressorAnalog(Constants.CompressorConstants.MIN_PRESSURE, Constants.CompressorConstants.MAX_PRESSURE);
   }
 
   /** Disables compressor. */
