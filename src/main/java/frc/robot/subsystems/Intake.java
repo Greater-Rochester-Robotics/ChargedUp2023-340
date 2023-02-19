@@ -88,4 +88,8 @@ public class Intake extends SubsystemBase {
     // motor2.set(0.0);
   }
 
+  public boolean hasGamePeice(){
+    return gamePieceSensor.get();
+  }
+
 }

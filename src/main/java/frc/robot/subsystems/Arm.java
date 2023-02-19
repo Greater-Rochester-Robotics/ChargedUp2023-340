@@ -10,6 +10,7 @@ import org.opencv.features2d.AffineFeature;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.util.List;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
@@ -49,6 +50,8 @@ public class Arm extends SubsystemBase {
   private double leftPos;
   private double shoulderGoalPos;
   private double forearmLength = ArmConstants.ELBOW_TO_WRIST_DISTANCE;
+  private ArmPosition[] wayPoints;
+  private int middleWayPoint;
 
   private boolean shoulderPIDEnable;
 
@@ -203,25 +206,36 @@ public class Arm extends SubsystemBase {
   5. make an interpolation function between two arm positions
    */
 
-  //TODO: integrate this into kinnomatics
-  //This class is using the AffineTransform to find the end position of the end of the arm
-  public Pose2d test(double shoulderAngle, double elbowAngle){
+  public void DriveToPosition(ArmPosition target){
+    setBothShoulderMotor(target.shoulderAngle);
+    setElbowPosition(target.elbowAngle);
+    shoulderPIDEnable = true;
 
-    AffineTransform rotate = new AffineTransform();//Makes a new AffineTransform
-    Point2D source = new Point2D.Double(0,0);//makes the location of the shoulder
-    Point2D destination = new Point2D.Double();//Will be filled with the location of the wrist
-    rotate.rotate(shoulderAngle);//Rotates the shoulder
-    rotate.translate(ArmConstants.SHOULDER_TO_ELBOW_DISTANCE, 0.0);//Translates by the length of the upper arm
-    rotate.rotate(elbowAngle);//Rotates the elbow
-    rotate.translate(ArmConstants.ELBOW_TO_WRIST_DISTANCE, 0.0);//Translates by the length of the forearm
+  }
 
-    try{
-    rotate.invert();
-    } catch (java.awt.geom.NoninvertibleTransformException e) {
-      //TODO: add proper error handeling
+  public void getTrajectory(ArmPosition startPosition, ArmPosition endPosition){
+    //Should return List<ArmPosition>
+
+    int startArmZone = 0; // startArmZone is the zone the start position of the arm is in. the three options are front, back, and middle (1, -1, 0)
+    if(startPosition.getEndPosition().getX() > 0){
+      startArmZone = 1;
+    }else if(startPosition.getEndPosition().getX() < 0){
+      startArmZone = -1;
     }
-     rotate.transform(source, destination);
-     return new Pose2d(destination.getX(), destination.getY(), new Rotation2d());
+
+    int endArmZone = 0; // endArmZone is the zone the end position of the arm is in. the three options are front, back, and middle (1, -1, 0)
+    if(endPosition.getEndPosition().getX() > 0){
+      endArmZone = 1;
+    }else if(endPosition.getEndPosition().getX() < 0){
+      endArmZone = -1;
+    }
+
+    // List<ArmPosition> trajectory = new List();
+
+    if(startArmZone < endArmZone){
+      // trajectory.add(startPosition);
+    }
+
   }
 
   public ArmPosition inverseKinematics(double x, double y){
