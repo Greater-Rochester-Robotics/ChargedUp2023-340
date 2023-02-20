@@ -10,6 +10,9 @@ import org.opencv.features2d.AffineFeature;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import com.revrobotics.AbsoluteEncoder;
@@ -50,8 +53,9 @@ public class Arm extends SubsystemBase {
   private double leftPos;
   private double shoulderGoalPos;
   private double forearmLength = ArmConstants.ELBOW_TO_WRIST_DISTANCE;
-  private ArmPosition[] wayPoints;
-  private int middleWayPoint;
+  private List<ArmPosition> wayPoints = new ArrayList<ArmPosition>();
+  private int middleWayPoint = 0; // The way point that is the grabing position (where the arm goes to grab a game peice)
+
 
   private boolean shoulderPIDEnable;
 
@@ -213,7 +217,7 @@ public class Arm extends SubsystemBase {
 
   }
 
-  public void getTrajectory(ArmPosition startPosition, ArmPosition endPosition){
+  public List<ArmPosition> getPath(ArmPosition startPosition, ArmPosition endPosition){
     //Should return List<ArmPosition>
 
     int startArmZone = 0; // startArmZone is the zone the start position of the arm is in. the three options are front, back, and middle (1, -1, 0)
@@ -230,11 +234,62 @@ public class Arm extends SubsystemBase {
       endArmZone = -1;
     }
 
-    // List<ArmPosition> trajectory = new List();
+    List<ArmPosition> path = new ArrayList<ArmPosition>(); //makes a new path
 
-    if(startArmZone < endArmZone){
-      // trajectory.add(startPosition);
+    path.add(startPosition); // adds the starting position to the path
+
+    // if the robot arms end is below the bumper it adds a way point to make sure it doesn't hit it
+    if(startPosition.getEndPosition().getY() < Constants.ROBOT_BASE_HEIGHT && startArmZone != 0)
+      path.add(startArmZone == 1? wayPoints.get(wayPoints.size()-1) : wayPoints.get(0));
+
+    /*
+     * These if statements see what positions the start and end points of the arm are in
+     * and returns the way points between them.
+     * 
+     * Note that the first and last indexes of the list are the way points to get over the bumper
+     * The reson that the middle way point is sometime added to so it doesn't include the same way point twice
+     */
+    if(startArmZone == 1){ 
+
+      if(endArmZone == 0){ // The arm starts out the front of the robot and moves to the middle (grabing position)
+        List<ArmPosition> relevantWayPoints = wayPoints.subList(middleWayPoint + 1, wayPoints.size()-1);
+        Collections.reverse(relevantWayPoints);
+        path.addAll(relevantWayPoints);
+      }else if(endArmZone == -1){ //The arm starts out the front of the robot and moves to extend out the back
+        List<ArmPosition> relevantWayPoints = wayPoints.subList(1, wayPoints.size()-1);
+        Collections.reverse(relevantWayPoints);
+        path.addAll(relevantWayPoints);
+      }
+
+    }else if(startArmZone == -1){
+
+      if(endArmZone == 1){ // The arm starts out the back of the robot and moves to extend out the front
+        List<ArmPosition> relevantWayPoints = wayPoints.subList(1, wayPoints.size()-1);
+        path.addAll(relevantWayPoints);
+      }else if(endArmZone == 0){ // the arm starts out the back of the robot and moves to the middle (grabing position)
+        List<ArmPosition> relevantWayPoints = wayPoints.subList(1, middleWayPoint);
+        path.addAll(relevantWayPoints);
+      }
+
+    }else{
+
+      if(endArmZone == 1){ // the arm starts in the middle of the robot and moves to extend out the front
+        List<ArmPosition> relevantWayPoints = wayPoints.subList(middleWayPoint + 1, wayPoints.size()-1);
+        path.addAll(relevantWayPoints);
+      }else if(endArmZone == -1){ // the arm starts in the middle of the robot and moves to extend out the back
+        List<ArmPosition> relevantWayPoints = wayPoints.subList(1, middleWayPoint);
+        Collections.reverse(relevantWayPoints);
+        path.addAll(relevantWayPoints);
+      }
+
     }
+
+        // if the robot arms end is below the bumper it adds a way point to make sure it doesn't hit it
+    if(endPosition.getEndPosition().getY() < Constants.ROBOT_BASE_HEIGHT && endArmZone != 0)
+     path.add(endArmZone == 1? wayPoints.get(wayPoints.size()-1) : wayPoints.get(0));
+    path.add(endPosition);
+
+    return path;
 
   }
 
