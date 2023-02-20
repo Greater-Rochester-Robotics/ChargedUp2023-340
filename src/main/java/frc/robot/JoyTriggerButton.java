@@ -7,8 +7,6 @@
 
 package frc.robot;
 
-import java.util.function.BooleanSupplier;
-
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Axis;
@@ -25,10 +23,14 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class JoyTriggerButton extends Trigger {
 
-
+	/**
+	 * @param joystick the gamepad that the axis is on
+	 * @param triggerPercent the amount the trigger must be pressed
+	 * @param axis the axis on the joystick this reads
+	 */
 	public JoyTriggerButton(GenericHID joystick, double triggerPercent, int axis) {
-		super(()-> (triggerPercent < joystick.getRawAxis(axis)));
-				
+		//pull the joystick axis, and see if larger than triggerPercent
+		super(()-> (triggerPercent < joystick.getRawAxis(axis)));				
 	}
 
 	public JoyTriggerButton(XboxController joystick, double triggerPercent, Axis axis) {
