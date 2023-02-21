@@ -26,6 +26,7 @@ import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -53,11 +54,14 @@ public class Arm extends SubsystemBase {
   private double leftPos;
   private double shoulderGoalPos;
   private double forearmLength = ArmConstants.ELBOW_TO_WRIST_DISTANCE;
+
   private List<ArmPosition> wayPoints = new ArrayList<ArmPosition>();
   private int middleWayPoint = 0; // The way point that is the grabing position (where the arm goes to grab a game peice)
+  private List<ArmPosition> currentTrajectory;
 
 
   private boolean shoulderPIDEnable;
+  private boolean followingTrajectory = false;
 
   /** Creates a new Arm. */
   public Arm() {
@@ -193,6 +197,11 @@ public class Arm extends SubsystemBase {
         shoulderRight.getPIDController().setReference(shoulderGoalPos, ControlType.kPosition);
         shoulderLeft.getPIDController().setReference(shoulderGoalPos, ControlType.kPosition);
       }
+
+      if(followingTrajectory){
+        //
+      }
+
     }
   }
 
@@ -290,6 +299,18 @@ public class Arm extends SubsystemBase {
     path.add(endPosition);
 
     return path;
+
+  }
+
+  public void getTrajectory(ArmPosition startPosition, ArmPosition endPosition){
+
+    List<ArmPosition> path = getPath(startPosition, endPosition);
+
+    for(ArmPosition currentArmPosition : path){
+      
+
+
+    }
 
   }
 
@@ -464,7 +485,7 @@ public class Arm extends SubsystemBase {
     absoluteEncoderElbow.setZeroOffset(offset);
   }
   
-  public double getElbowVoltage(){
+  public double    getElbowVoltage(){
     return elbowMotorLeader.getBusVoltage();
   }
   // -------------------------- Wrist Methods
