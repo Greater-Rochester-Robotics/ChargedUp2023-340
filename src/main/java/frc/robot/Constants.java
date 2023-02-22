@@ -57,6 +57,7 @@ public final class Constants {
       public static final double ELBOW_TO_WRIST_DISTANCE = 10;
       public static final double WRIST_EXTENTION_LENGTH = 1;
       public static final double MAX_HEIGHT = 50;
+      public static final double BACK_OF_ROBOT_TO_SHOULDER_DISTANCE = 30;
       
       /*indent dimensions */
       //the indent height value is how far of the ground the indent will be. The indent is a circle. (Ask Caleb for explenation)
@@ -66,6 +67,17 @@ public final class Constants {
 
       /* */
       public static final double ABS_ENC_TO_RAD_CONV_FACTOR = 2*Math.PI;
+
+      /*Acceletation and max velocities for the arm */
+      public static final double MAX_SHOULDER_VELOCITY = 1;
+      public static final double MAX_ELBOW_VELOCITY = 1;
+      public static final double MAX_SHOULDER_ACCELERATION = 1;
+      public static final double MAX_ELBOW_ACCELERATION = 1;
+      public static final double SHOULDER_ACCELERATION_DISTANCE = 1;
+      public static final double ELBOW_ACCELERATION_DISTANCE = 1;
+      public static final double SHOULDER_ACCELERATION_TIME = MAX_SHOULDER_VELOCITY / MAX_SHOULDER_ACCELERATION;
+      public static final double ELBOW_ACCELERATION_TIME = MAX_ELBOW_VELOCITY / MAX_ELBOW_ACCELERATION;
+
     }
     
     public class RecordPlayerConstants {

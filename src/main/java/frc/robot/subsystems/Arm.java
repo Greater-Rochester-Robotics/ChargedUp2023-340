@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.subsystems.ArmPosition.ArmTrajectory;
 
 public class Arm extends SubsystemBase {
   private CANSparkMax shoulderRight;
@@ -227,90 +228,204 @@ public class Arm extends SubsystemBase {
   }
 
   public List<ArmPosition> getPath(ArmPosition startPosition, ArmPosition endPosition){
-    //Should return List<ArmPosition>
 
-    int startArmZone = 0; // startArmZone is the zone the start position of the arm is in. the three options are front, back, and middle (1, -1, 0)
-    if(startPosition.getEndPosition().getX() > 0){
-      startArmZone = 1;
-    }else if(startPosition.getEndPosition().getX() < 0){
-      startArmZone = -1;
+    int startWayPoint;
+    int endWayPoint;
+
+    double startX = startPosition.getEndPosition().getX();
+    double endX = endPosition.getEndPosition().getX();
+
+    if(startX > Constants.ROBOT_LENGTH - ArmConstants.BACK_OF_ROBOT_TO_SHOULDER_DISTANCE)
+      startWayPoint = wayPoints.size() - 2;
+    else if (startX < ArmConstants.BACK_OF_ROBOT_TO_SHOULDER_DISTANCE)
+      startWayPoint = 1;
+    else{
+      startWayPoint = getNearestWayPoint(startPosition);
     }
 
-    int endArmZone = 0; // endArmZone is the zone the end position of the arm is in. the three options are front, back, and middle (1, -1, 0)
-    if(endPosition.getEndPosition().getX() > 0){
-      endArmZone = 1;
-    }else if(endPosition.getEndPosition().getX() < 0){
-      endArmZone = -1;
+    if(endX > Constants.ROBOT_LENGTH - ArmConstants.BACK_OF_ROBOT_TO_SHOULDER_DISTANCE)
+      endWayPoint = wayPoints.size() - 2;
+    else if (endX < ArmConstants.BACK_OF_ROBOT_TO_SHOULDER_DISTANCE)
+      endWayPoint = 1;
+    else{
+      endWayPoint = getNearestWayPoint(endPosition);
+    }
+    
+    List<ArmPosition> path = new ArrayList<ArmPosition>();
+
+    if(startWayPoint == endWayPoint){
+      path.add(startPosition);
+      path.add(endPosition);
+      return path;
     }
 
-    List<ArmPosition> path = new ArrayList<ArmPosition>(); //makes a new path
+    path.add(startPosition);
+    if(startPosition.getEndPosition().getY() < Constants.ROBOT_BASE_HEIGHT){
 
-    path.add(startPosition); // adds the starting position to the path
+      if(startX > Constants.ROBOT_LENGTH - ArmConstants.BACK_OF_ROBOT_TO_SHOULDER_DISTANCE)
+        path.add(wayPoints.get(wayPoints.size() - 2));
 
-    // if the robot arms end is below the bumper it adds a way point to make sure it doesn't hit it
-    if(startPosition.getEndPosition().getY() < Constants.ROBOT_BASE_HEIGHT && startArmZone != 0)
-      path.add(startArmZone == 1? wayPoints.get(wayPoints.size()-1) : wayPoints.get(0));
+      else if(startX < ArmConstants.BACK_OF_ROBOT_TO_SHOULDER_DISTANCE)
+        path.add(wayPoints.get(1));
 
-    /*
-     * These if statements see what positions the start and end points of the arm are in
-     * and returns the way points between them.
-     * 
-     * Note that the first and last indexes of the list are the way points to get over the bumper
-     * The reson that the middle way point is sometime added to so it doesn't include the same way point twice
-     */
-    if(startArmZone == 1){ 
+    }
 
-      if(endArmZone == 0){ // The arm starts out the front of the robot and moves to the middle (grabing position)
-        List<ArmPosition> relevantWayPoints = wayPoints.subList(middleWayPoint + 1, wayPoints.size()-1);
-        Collections.reverse(relevantWayPoints);
-        path.addAll(relevantWayPoints);
-      }else if(endArmZone == -1){ //The arm starts out the front of the robot and moves to extend out the back
-        List<ArmPosition> relevantWayPoints = wayPoints.subList(1, wayPoints.size()-1);
-        Collections.reverse(relevantWayPoints);
-        path.addAll(relevantWayPoints);
-      }
+    if(startWayPoint > endWayPoint){
 
-    }else if(startArmZone == -1){
-
-      if(endArmZone == 1){ // The arm starts out the back of the robot and moves to extend out the front
-        List<ArmPosition> relevantWayPoints = wayPoints.subList(1, wayPoints.size()-1);
-        path.addAll(relevantWayPoints);
-      }else if(endArmZone == 0){ // the arm starts out the back of the robot and moves to the middle (grabing position)
-        List<ArmPosition> relevantWayPoints = wayPoints.subList(1, middleWayPoint);
-        path.addAll(relevantWayPoints);
-      }
+      List<ArmPosition> relevantWayPoints = wayPoints.subList(endWayPoint, startWayPoint);
+      Collections.reverse(relevantWayPoints);
+      path.addAll(relevantWayPoints);
 
     }else{
 
-      if(endArmZone == 1){ // the arm starts in the middle of the robot and moves to extend out the front
-        List<ArmPosition> relevantWayPoints = wayPoints.subList(middleWayPoint + 1, wayPoints.size()-1);
-        path.addAll(relevantWayPoints);
-      }else if(endArmZone == -1){ // the arm starts in the middle of the robot and moves to extend out the back
-        List<ArmPosition> relevantWayPoints = wayPoints.subList(1, middleWayPoint);
-        Collections.reverse(relevantWayPoints);
-        path.addAll(relevantWayPoints);
-      }
+      List<ArmPosition> relevantWayPoints = wayPoints.subList(startWayPoint, endWayPoint);
+      path.addAll(relevantWayPoints);
 
     }
 
-        // if the robot arms end is below the bumper it adds a way point to make sure it doesn't hit it
-    if(endPosition.getEndPosition().getY() < Constants.ROBOT_BASE_HEIGHT && endArmZone != 0)
-     path.add(endArmZone == 1? wayPoints.get(wayPoints.size()-1) : wayPoints.get(0));
+    if(endPosition.getEndPosition().getY() < Constants.ROBOT_BASE_HEIGHT){
+
+      if(endX > Constants.ROBOT_LENGTH - ArmConstants.BACK_OF_ROBOT_TO_SHOULDER_DISTANCE)
+        path.add(wayPoints.get(wayPoints.size() - 2));
+
+      else if(endX < ArmConstants.BACK_OF_ROBOT_TO_SHOULDER_DISTANCE)
+        path.add(wayPoints.get(1));
+
+    }
     path.add(endPosition);
 
     return path;
 
   }
 
-  public void getTrajectory(ArmPosition startPosition, ArmPosition endPosition){
+  private int getNearestWayPoint(ArmPosition input){
+    double currentShoulderDist;
+    double nearShoulder = 10000; // sets the nearest shoulder position to a large number
+    int nearestWayPoint = 0;
+      for(int I = 0; I < wayPoints.size(); I++){ // iterates over the way points array
+        currentShoulderDist = Math.abs(input.shoulderAngle - wayPoints.get(I).shoulderAngle); // gets the distance between shoulder angles (does not use absolute value)
+        // checks if the current shoulder distance is less than the current near shoulder position
+        if(currentShoulderDist < nearShoulder){
+          nearestWayPoint = I;
+        }
+      }
+      return nearestWayPoint;
+  }
+
+  // public List<ArmPosition> getPath(ArmPosition startPosition, ArmPosition endPosition){
+  //   //Should return List<ArmPosition>
+
+  //   int startArmZone = 0; // startArmZone is the zone the start position of the arm is in. the three options are front, back, and middle (1, -1, 0)
+  //   if(startPosition.getEndPosition().getX() > 0){
+  //     startArmZone = 1;
+  //   }else if(startPosition.getEndPosition().getX() < 0){
+  //     startArmZone = -1;
+  //   }
+
+  //   int endArmZone = 0; // endArmZone is the zone the end position of the arm is in. the three options are front, back, and middle (1, -1, 0)
+  //   if(endPosition.getEndPosition().getX() > 0){
+  //     endArmZone = 1;
+  //   }else if(endPosition.getEndPosition().getX() < 0){
+  //     endArmZone = -1;
+  //   }
+
+  //   List<ArmPosition> path = new ArrayList<ArmPosition>(); //makes a new path
+
+  //   path.add(startPosition); // adds the starting position to the path
+
+  //   // if the robot arms end is below the bumper it adds a way point to make sure it doesn't hit it
+  //   if(startPosition.getEndPosition().getY() < Constants.ROBOT_BASE_HEIGHT && startArmZone != 0)
+  //     path.add(startArmZone == 1? wayPoints.get(wayPoints.size()-1) : wayPoints.get(0));
+
+  //   /*
+  //    * These if statements see what positions the start and end points of the arm are in
+  //    * and returns the way points between them.
+  //    * 
+  //    * Note that the first and last indexes of the list are the way points to get over the bumper
+  //    * The reson that the middle way point is sometime added to so it doesn't include the same way point twice
+  //    */
+  //   if(startArmZone == 1){ 
+
+  //     if(endArmZone == 0){ // The arm starts out the front of the robot and moves to the middle (grabing position)
+  //       List<ArmPosition> relevantWayPoints = wayPoints.subList(middleWayPoint + 1, wayPoints.size()-1);
+  //       Collections.reverse(relevantWayPoints);
+  //       path.addAll(relevantWayPoints);
+  //     }else if(endArmZone == -1){ //The arm starts out the front of the robot and moves to extend out the back
+  //       List<ArmPosition> relevantWayPoints = wayPoints.subList(1, wayPoints.size()-1);
+  //       Collections.reverse(relevantWayPoints);
+  //       path.addAll(relevantWayPoints);
+  //     }
+
+  //   }else if(startArmZone == -1){
+
+  //     if(endArmZone == 1){ // The arm starts out the back of the robot and moves to extend out the front
+  //       List<ArmPosition> relevantWayPoints = wayPoints.subList(1, wayPoints.size()-1);
+  //       path.addAll(relevantWayPoints);
+  //     }else if(endArmZone == 0){ // the arm starts out the back of the robot and moves to the middle (grabing position)
+  //       List<ArmPosition> relevantWayPoints = wayPoints.subList(1, middleWayPoint);
+  //       path.addAll(relevantWayPoints);
+  //     }
+
+  //   }else{
+
+  //     if(endArmZone == 1){ // the arm starts in the middle of the robot and moves to extend out the front
+  //       List<ArmPosition> relevantWayPoints = wayPoints.subList(middleWayPoint + 1, wayPoints.size()-1);
+  //       path.addAll(relevantWayPoints);
+  //     }else ife(endArmZone == -1){ // the arm starts in the middle of the robot and moves to extend out the back
+  //       List<ArmPosition> relevantWayPoints = wayPoints.subList(1, middleWayPoint);
+  //       Collections.reverse(relevantWayPoints);
+  //       path.addAll(relevantWayPoints);
+  //     }
+
+  //   }
+
+  //       // if the robot arms end is below the bumper it adds a way point to make sure it doesn't hit it
+  //   if(endPosition.getEndPosition().getY() < Constants.ROBOT_BASE_HEIGHT && endArmZone != 0)
+  //    path.add(endArmZone == 1? wayPoints.get(wayPoints.size()-1) : wayPoints.get(0));
+  //   path.add(endPosition);
+
+  //   return path;
+
+  // }
+
+  public List<ArmTrajectory> getTrajectory(ArmPosition startPosition, ArmPosition endPosition){
 
     List<ArmPosition> path = getPath(startPosition, endPosition);
+    List<ArmTrajectory> trajectory = new ArrayList<ArmTrajectory>();
 
-    for(ArmPosition currentArmPosition : path){
+    double diffrenceInShoulders;
+    double diffrenceInElbows;
+    double shoulderTime;
+    double elbowTime;
+    for(var I = 0; I < path.size() - 1; I++){
+
+      diffrenceInShoulders = Math.abs(path.get(I).shoulderAngle - path.get(I+1).shoulderAngle);
+      // Checks if the difference in shoulders is less than how long it takes it to accelerate
+      if(diffrenceInShoulders < ArmConstants.SHOULDER_ACCELERATION_DISTANCE * 2){
+        //Calculates how long it takes the shoulder to go from it's first position to it's second
+        shoulderTime = diffrenceInShoulders / ArmConstants.SHOULDER_ACCELERATION_DISTANCE * ArmConstants.SHOULDER_ACCELERATION_TIME;
+      }else{
+        //Calculates how long it takes the shoulder to go from it's first position to it's second
+        shoulderTime = ArmConstants.SHOULDER_ACCELERATION_TIME * 2 + 
+        (diffrenceInShoulders - ArmConstants.SHOULDER_ACCELERATION_DISTANCE * 2) * ArmConstants.MAX_SHOULDER_ACCELERATION;
+      }
       
+      diffrenceInElbows = Math.abs(path.get(I).elbowAngle - path.get(I+1).elbowAngle);
+      // Checks if the difference in elbows is less than how long it takes it to accelerate
+      if(diffrenceInElbows < ArmConstants.ELBOW_ACCELERATION_DISTANCE * 2){
+        //Calculates how long it takes the elbow to go from it's first position to it's second
+        elbowTime = diffrenceInElbows / ArmConstants.ELBOW_ACCELERATION_DISTANCE * ArmConstants.ELBOW_ACCELERATION_TIME;
+      }else{
+        //Calculates how long it takes the elbow to go from it's first position to it's second
+        elbowTime = ArmConstants.ELBOW_ACCELERATION_TIME * 2 + 
+        (diffrenceInElbows - ArmConstants.ELBOW_ACCELERATION_DISTANCE * 2) * ArmConstants.MAX_ELBOW_ACCELERATION;
+      }
 
+      trajectory.add(new ArmTrajectory(path.get(I), Math.max(shoulderTime, elbowTime)));
 
     }
+
+    return trajectory;
 
   }
 
@@ -582,6 +697,17 @@ class ArmPosition{
     //
     //  return new Pose2d(x, y, new Rotation2d());
     //}
+  }
+
+  static class ArmTrajectory{
+    ArmPosition armPosition;
+    double time;
+
+    ArmTrajectory(ArmPosition armPosition, double time){
+      this.armPosition = armPosition;
+      this.time = time;
+    }
+
   }
 
 }
