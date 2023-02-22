@@ -26,13 +26,18 @@ public class JoyTriggerButton extends Trigger {
 	/**
 	 * @param joystick the gamepad that the axis is on
 	 * @param triggerPercent the amount the trigger must be pressed
-	 * @param axis the axis on the joystick this reads
+	 * @param axis the axis on the joystick this  button reads
 	 */
 	public JoyTriggerButton(GenericHID joystick, double triggerPercent, int axis) {
 		//pull the joystick axis, and see if larger than triggerPercent
 		super(()-> (triggerPercent < joystick.getRawAxis(axis)));				
 	}
-
+	
+	/**
+	 * @param joystick the xboxcontroller that the axis is on
+	 * @param triggerPercent the amount the trigger must be pressed
+	 * @param axis the axis, in enum form, on the joystick this button reads
+	 */
 	public JoyTriggerButton(XboxController joystick, double triggerPercent, Axis axis) {
 		this(joystick, triggerPercent, axis.value);
 	}

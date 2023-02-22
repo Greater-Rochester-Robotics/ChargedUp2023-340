@@ -5,8 +5,6 @@
 package frc.robot;
 
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -16,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 import frc.robot.commands.arm.ArmShoulderManual;
 import frc.robot.commands.target.TargetMoveSelection;
 import frc.robot.subsystems.Arm;
@@ -35,7 +34,6 @@ import frc.robot.subsystems.Target.GoalLocation;
 
 public class RobotContainer {
   // The robot's gamepads are defined here...
-  //TODO:Add the autoChooser aka SendableChooser
   static final XboxController driver = new XboxController(0);
   static final XboxController coDriver = new XboxController(1);
 

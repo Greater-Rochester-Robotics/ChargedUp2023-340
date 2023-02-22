@@ -10,24 +10,24 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotContainer;
 import frc.robot.commands.arm.ArmWristExtend;
-import frc.robot.commands.claw.ClawCloseHard;
+import frc.robot.commands.claw.ClawClose;
 import frc.robot.commands.claw.ClawIntake;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ArmWristExtendAndCloseHard extends SequentialCommandGroup {
+public class ArmWristExtendAndClose extends SequentialCommandGroup {
   /** Creates a new ArmWristExtendAndCloseHard. */
-  public ArmWristExtendAndCloseHard() {
+  public ArmWristExtendAndClose() {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new ArmWristExtend(),
-      // Measure time it takes for the wrist to extend, or use WaitUntilCommand for DigitalInput if wrist uses a sensor?
+      //TODO: Measure time it takes for the wrist to extend, or use WaitUntilCommand for DigitalInput if wrist uses a sensor?
       new WaitCommand(0.5),
       new ClawIntake(),
       new WaitUntilCommand(RobotContainer.claw::getGamePieceSensor),
-      new ClawCloseHard()
+      new ClawClose()
     );
   }
 }

@@ -16,7 +16,7 @@ import edu.wpi.first.math.geometry.Translation2d;
  */
 public final class Constants {
   //TODO: put this in the proper constants subclass and fix the id
-    public static final int GAME_PEICE_SENSOR_ID = 0;
+  
 
     /* Factors of PI */
     public static final double PI_OVER_TWO = Math.PI/2;
@@ -30,9 +30,6 @@ public final class Constants {
     public static final double ROBOT_LENGTH = 30.0;
     public static final double ROBOT_BASE_HEIGHT = 5;
     public static final double MAXIMUM_VOLTAGE = 12.0;
-
-    /* Aiming Values*/
-    public static final Translation2d FIELD_CENTER = new Translation2d();
     
     public static class ArmConstants{
       /* Arm PID Constants */
@@ -93,7 +90,7 @@ public final class Constants {
     public class CompressorConstants {
       /* Compressor Pressure Constants */
       public static final double MIN_PRESSURE = 100.0;
-      public static final double MAX_PRESSURE = 120.0;//TODO: change this on between comp bot and prac , 100 for prac, 120 for comp
+      public static final double MAX_PRESSURE = 120.0;
     }
 
     public class TargetConstants {
@@ -179,19 +176,15 @@ public final class Constants {
     /* Rev Robotics SparkMAXs */
     public static final int FRONT_LEFT_MOVE_MOTOR = 3;//drive module 0
     public static final int FRONT_LEFT_ROTATE_MOTOR = 4;//drive module 0
-    public static final int FRONT_LEFT_ROTATE_SENSOR = 5;//drive module 0
 
     public static final int REAR_LEFT_MOVE_MOTOR = 6;//drive module 1
     public static final int REAR_LEFT_ROTATE_MOTOR = 7;//drive module 1
-    public static final int REAR_LEFT_ROTATE_SENSOR = 8;//drive module 1
 
     public static final int REAR_RIGHT_MOVE_MOTOR = 9;//drive module 2
     public static final int REAR_RIGHT_ROTATE_MOTOR = 10;//drive module 2
-    public static final int REAR_RIGHT_ROTATE_SENSOR = 11;//drive module 2
     
     public static final int FRONT_RIGHT_MOVE_MOTOR = 12;//drive module 3
     public static final int FRONT_RIGHT_ROTATE_MOTOR = 13;//drive module 3
-    public static final int FRONT_RIGHT_ROTATE_SENSOR = 14;//drive module 3
 
     public static final int SHOULDER_MOTOR_LEFT = 20;
     public static final int SHOULDER_MOTOR_RIGHT = 21;
@@ -201,8 +194,7 @@ public final class Constants {
     public static final int RECORD_PLAYER_MOTOR = 24;
 
     /* CTRE motor and sensors */
-    public static final int INTAKE_MOTOR_1 = 25;
-    public static final int INTAKE_MOTOR_2 = 26;
+    public static final int INTAKE_MOTOR = 25;
     public static final int CLAW_MOTOR = 27;
    
     /* Solenoids */
@@ -220,5 +212,6 @@ public final class Constants {
     /* Digital Input Channels */
     public static final int CHANNEL_IS_GAME_PIECE = 0;
     public static final int CHANNEL_CONE_POSITION = 1;
-    public static final int CHANNEL_CLAW_INPUT = 2;
+    public static final int CLAW_GAMEPIECE_SENSOR = 2;
+    public static final int INTAKE_GAME_PIeCE_SENSOR = 3;
 }
