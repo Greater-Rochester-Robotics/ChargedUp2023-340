@@ -4,38 +4,49 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.ClawConstants;
 
 public class Claw extends SubsystemBase {
-
-  private TalonSRX clawMotor;
-  private Solenoid open;
-  private Solenoid close;
+  private CANSparkMax clawMotor;
+  private DoubleSolenoid openClose;
   private DigitalInput gamePieceSensor;
 
   /** Creates a new Claw. */
   public Claw() {
-    //Constructs the claws motors and solenoids
-    //TODO:switch to a NEO550
-    clawMotor = new TalonSRX(Constants.CLAW_MOTOR);
-    ///TODO:set up NEO550, including a PID for basic position(likely just need P)
-    //TODO:Make sure sparkmax set to brake
-    //TODO:burn that flash
+    //Constructs the claws motors and solenoid
+    clawMotor = new CANSparkMax(Constants.CLAW_MOTOR, MotorType.kBrushless);
+    clawMotor.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
+    
+    clawMotor.getPIDController().setP(ClawConstants.CLAW_P);  
+    clawMotor.getPIDController().setI(ClawConstants.CLAW_I);
+    clawMotor.getPIDController().setD(ClawConstants.CLAW_D);
+    clawMotor.getPIDController().setFF(ClawConstants.CLAW_F);
 
-    //TODO: Switch back to a single object, a double solenoid
-    open = new Solenoid(PneumaticsModuleType.REVPH, Constants.CLAW_SOLENOID_IN);
-    close = new Solenoid(PneumaticsModuleType.REVPH, Constants.CLAW_SOLENOID_OUT);
+    clawMotor.setIdleMode(IdleMode.kBrake);
 
+    clawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
+    clawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
+    clawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
+    clawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 2000);
+    clawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
+    clawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
+    clawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
+
+    clawMotor.burnFlash();
+
+    openClose = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.CLAW_SOLENOID_OUT, Constants.CLAW_SOLENOID_IN); //open is in is reverse, close is out is forward
 
     gamePieceSensor = new DigitalInput(Constants.CLAW_GAMEPIECE_SENSOR);
   }
@@ -45,58 +56,53 @@ public class Claw extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Claw Encoder",getEncoderPosition());
     SmartDashboard.putBoolean("Claw GamePiece", getGamePieceSensor());
-
   }
 
   /**
    * Closes the claw pneumatic
    */
   public void close(){
-    //TODO: Make sure that the close and open functions drive the solenoids the right direction
-    close.set(true);
-    open.set(false);
+    openClose.set(Value.kForward);
   }
 
   /**
    * Opens the claw pneumatic
    */
   public void open(){
-    //TODO: Make sure that the close and open functions drive the solenoids the right direction
-    close.set(false);
-    open.set(true);
+    openClose.set(Value.kReverse);
   }
 
   /**
    * causes the claw motor to intake a cube or cone
    */
-  //TODO: set the motor speeds
   public void intake(){
-    clawMotor.set(TalonSRXControlMode.PercentOutput, 1);//TODO:call this as NEO550 and use a constant from the Claw constants
+    clawMotor.set(ClawConstants.CLAW_MOTOR_INTAKE_SPEED);
   }
 
   /**
    * cause the intake motor to spit out
    */
   public void outtake(){
-    clawMotor.set(TalonSRXControlMode.PercentOutput,-1);//TODO:call this as NEO550 and use a constant from the Claw constants
+    clawMotor.set(ClawConstants.CLAW_MOTOR_OUTTAKE_SPEED);
   }
 
   public void stop(){
-    clawMotor.set(TalonSRXControlMode.PercentOutput, 0.0);//TODO:call this as NEO550
+    clawMotor.set(0.0);
   }
 
   /**
-   * @return current value of intake encoder
+   * @return current value of intake encoder in native units
    */
-  public double getEncoderPosition(){
-    return 0.0;//TODO: Write me
+  public double getEncoderPosition() {
+    return clawMotor.getEncoder().getPosition();
   }
 
   /**
-   * @param position 
+   * Sets intake to a position
+   * @param position position to set intake to
    */
   public void setIntakePosition(double position){
-    //TODO: Write me
+    clawMotor.getEncoder().setPosition(position);
   }
 
   /**

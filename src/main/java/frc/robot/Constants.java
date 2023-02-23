@@ -167,7 +167,16 @@ public final class Constants {
       public static final double DRIVER_SPEED_SCALE_LINEAR = 0.65 * 0.85;
       public static final double DRIVER_SPEED_SCALE_ROTATIONAL = .75;
     }
-    /*  */
+    
+    
+    public static class ClawConstants {
+      public static final double CLAW_P = 0.0;
+      public static final double CLAW_I = 0.0;
+      public static final double CLAW_D = 0.0;
+      public static final double CLAW_F = 0.0;
+      public static final double CLAW_MOTOR_INTAKE_SPEED = 1.0; //TODO: set this to the right value
+      public static final double CLAW_MOTOR_OUTTAKE_SPEED = -1.0; //TODO: set this to the right value
+    }
     
 
     /* IDENTIFICATION NUMBERS FOR DEVICES */
