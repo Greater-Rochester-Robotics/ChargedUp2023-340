@@ -5,15 +5,13 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Intake;
+import frc.robot.RobotContainer;
 
 public class IntakeExtensionIn extends CommandBase {
-  final Intake intake;
   /** Creates a new IntakeIn. */
-  public IntakeExtensionIn(Intake intake) {
+  public IntakeExtensionIn() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(intake);
-    this.intake = intake;
+    addRequirements(RobotContainer.intake);
   }
 
   // Called when the command is initially scheduled.
@@ -23,9 +21,7 @@ public class IntakeExtensionIn extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    intake.intakeIn();
-
+    RobotContainer.intake.intakeIn();
   }
 
   // Called once the command ends or is interrupted.

@@ -6,7 +6,6 @@ package frc.robot.commands.claw;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.RobotContainer;
-//TODO: write this once we know claw
 public class ClawOpen extends InstantCommand {
   /** Creates a new ClawOpen. */
   public ClawOpen() {

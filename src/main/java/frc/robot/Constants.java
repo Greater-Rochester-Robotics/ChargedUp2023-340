@@ -15,9 +15,6 @@ import edu.wpi.first.math.geometry.Translation2d;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  //TODO: put this in the proper constants subclass and fix the id
-  
-
     /* Factors of PI */
     public static final double PI_OVER_TWO = Math.PI/2;
     public static final double THREE_PI_OVER_TWO = 3*PI_OVER_TWO;
@@ -180,10 +177,6 @@ public final class Constants {
     
 
     /* IDENTIFICATION NUMBERS FOR DEVICES */
-
-    //TODO: put this in the correct place
-    public static final int INTAKE_GAME_PIECE_SENSOR = 0;
-
     /* Rev Robotics SparkMAXs */
     public static final int FRONT_LEFT_MOVE_MOTOR = 3;//drive module 0
     public static final int FRONT_LEFT_ROTATE_MOTOR = 4;//drive module 0
@@ -204,9 +197,11 @@ public final class Constants {
 
     public static final int RECORD_PLAYER_MOTOR = 24;
 
+    public static final int CLAW_MOTOR = 27;
+
     /* CTRE motor and sensors */
     public static final int INTAKE_MOTOR = 25;
-    public static final int CLAW_MOTOR = 27;
+    public static final int INTAKE_GAME_PIECE_SENSOR = 0;
    
     /* Solenoids */
     public static final int ELBOW_BRAKE = 0;
