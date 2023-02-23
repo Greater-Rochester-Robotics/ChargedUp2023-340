@@ -172,6 +172,8 @@ public final class Constants {
 
     /* IDENTIFICATION NUMBERS FOR DEVICES */
 
+    //TODO: put this in the correct place
+    public static final int INTAKE_GAME_PIECE_SENSOR = 0;
 
     /* Rev Robotics SparkMAXs */
     public static final int FRONT_LEFT_MOVE_MOTOR = 3;//drive module 0

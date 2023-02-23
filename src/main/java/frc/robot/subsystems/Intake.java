@@ -40,7 +40,7 @@ public class Intake extends SubsystemBase {
     intakeMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus, 20);
     intakeMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 20);
     
-    gamePieceSensor = new DigitalInput(Constants.INTAKE_GAME_PIeCE_SENSOR);
+    gamePieceSensor = new DigitalInput(Constants.INTAKE_GAME_PIECE_SENSOR);
 
     intakePistons = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.INTAKE_SOLENOID_OUT, Constants.INTAKE_SOLENOID_IN);
   }
