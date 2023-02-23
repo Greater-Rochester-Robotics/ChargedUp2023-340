@@ -36,7 +36,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.subsystems.ArmPosition.ArmTrajectory;
 
 public class Arm extends SubsystemBase {
   private CANSparkMax shoulderRight;
@@ -453,7 +452,7 @@ public class Arm extends SubsystemBase {
     double newShoulderAngle = (Constants.PI_OVER_TWO - rawShoulderAngle - XToEndAngle) * (x > 0? 1 : -1); // gets the Angle from the y axis down to the Elbow
     double newElbowAngle = rawElbowAngle - (Constants.PI_OVER_TWO - newShoulderAngle) * (x > 0? 1 : -1); // gets the Angle from the y axis up to the end point
 
-    return new ArmPosition(newShoulderAngle, newElbowAngle, isExtended);//Placeholder
+    return new ArmPosition(newShoulderAngle, newElbowAngle, isExtended);
 
     //If the arm is extended out the front of the robbot, then the shoulder angle is positive.
 
@@ -518,6 +517,9 @@ public class Arm extends SubsystemBase {
 
   }
   
+  public ArmPosition getArmPosition(){
+    return new ArmPosition(getShoulderPositon(), getElbowPosition(), wrist.get().equals(Value.kForward));
+  }
   // -------------------------- Shoulder Motors Methods
 
   public double getShoulderPositon(){
@@ -620,94 +622,100 @@ public class Arm extends SubsystemBase {
     wrist.set(Value.kReverse);
     forearmLength = ArmConstants.ELBOW_TO_WRIST_DISTANCE;
   }
-}
 
-class ArmPosition{
-  // use Rotation2ds instead of double angles?
-  // find where angles are measured from (relative to the ground or relative to something else?)
-  double shoulderAngle;
-  double elbowAngle;
-  boolean wristExtended;
-
-  ArmPosition(double shoulderAngle, double elbowAngle, boolean wristExtended){
-    this.shoulderAngle = shoulderAngle;
-    this.elbowAngle = elbowAngle;
-    this.wristExtended = wristExtended;
-  }
-
+  public class ArmPosition{
+    // use Rotation2ds instead of double angles?
+    // find where angles are measured from (relative to the ground or relative to something else?)
+    double shoulderAngle;
+    double elbowAngle;
+    boolean wristExtended;
   
-  public Pose2d getShoulderPosition(){
-    return new Pose2d(0, Constants.ROBOT_BASE_HEIGHT, new Rotation2d());
+    ArmPosition(double shoulderAngle, double elbowAngle, boolean wristExtended){
+      this.shoulderAngle = shoulderAngle;
+      this.elbowAngle = elbowAngle;
+      this.wristExtended = wristExtended;
+    }
+  
+    
+    public Pose2d getShoulderPosition(){
+      return new Pose2d(0, Constants.ROBOT_BASE_HEIGHT, new Rotation2d());
+    }
+  
+    public Pose2d getElbowPosition(){
+      //double x = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.sin(shoulderAngle);
+      //double y = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.cos(shoulderAngle);
+      //return new Pose2d(x, y, new Rotation2d());
+      AffineTransform rotate = new AffineTransform();//Makes a new AffineTransform
+      Point2D source = new Point2D.Double(0,0);//makes the location of the shoulder
+      Point2D destination = new Point2D.Double();//Will be filled with the location of the wrist
+      rotate.rotate(shoulderAngle);//Rotates by the shoulder
+      rotate.translate(ArmConstants.SHOULDER_TO_ELBOW_DISTANCE, 0.0);//Translates by the length of the upper arm
+      rotate.transform(source, destination);
+      return new Pose2d(destination.getX(), destination.getY(), new Rotation2d());
+    }
+  
+    public Pose2d getWristPosition(){
+      //double x = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.sin(shoulderAngle) + ArmConstants.ELBOW_TO_WRIST_DISTANCE * Math.sin(shoulderAngle - elbowAngle);
+      //double y = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.cos(shoulderAngle) - ArmConstants.ELBOW_TO_WRIST_DISTANCE * Math.cos(shoulderAngle - elbowAngle)
+       //+ Constants.ROBOT_BASE_HEIGHT;
+       //TODO: check the math
+       AffineTransform rotate = new AffineTransform();//Makes a new AffineTransform
+      Point2D source = new Point2D.Double(0,0);//makes the location of the shoulder
+      Point2D destination = new Point2D.Double();//Will be filled with the location of the wrist
+      rotate.rotate(shoulderAngle);//Rotates the shoulder
+      rotate.translate(ArmConstants.SHOULDER_TO_ELBOW_DISTANCE, 0.0);//Translates by the length of the upper arm
+      rotate.rotate(elbowAngle);//Rotates by the elbow
+      rotate.translate(ArmConstants.ELBOW_TO_WRIST_DISTANCE, 0.0);//Translates by the length of the forearm
+      rotate.transform(source, destination);
+      return new Pose2d(destination.getX(), destination.getY(), new Rotation2d());
+    }
+  
+    public Pose2d getEndPosition(){
+      double forearmLength = ArmConstants.ELBOW_TO_WRIST_DISTANCE; //Gets the forearm distance and acounts for wrist extention
+      if(wristExtended) forearmLength += ArmConstants.WRIST_EXTENTION_LENGTH;
+  
+      AffineTransform rotate = new AffineTransform();//Makes a new AffineTransform
+      Point2D source = new Point2D.Double(0,0);//makes the location of the shoulder
+      Point2D destination = new Point2D.Double();//Will be filled with the location of the wrist
+      rotate.rotate(shoulderAngle);//Rotates the shoulder
+      rotate.translate(ArmConstants.SHOULDER_TO_ELBOW_DISTANCE, 0.0);//Translates by the length of the upper arm
+      rotate.rotate(elbowAngle);//Rotates the elbow
+      rotate.translate(forearmLength, 0.0);//Translates by the length of the forearm
+      rotate.transform(source, destination);
+      return new Pose2d(destination.getX(), destination.getY(), new Rotation2d());
+  
+  
+      //Pose2d wristPosition = getWristPosition();
+      //
+      //if(!wristExtended){
+      //  return wristPosition;
+      //}
+      //else{
+      //  double x = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.sin(shoulderAngle) + ArmConstants.ELBOW_TO_WRIST_DISTANCE * Math.sin(shoulderAngle - elbowAngle)
+      //   +  Math.sin(elbowAngle);
+      //  double y = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.cos(shoulderAngle) - ArmConstants.ELBOW_TO_WRIST_DISTANCE * Math.cos(shoulderAngle - elbowAngle)
+      //   + Constants.ROBOT_BASE_HEIGHT + ArmConstants.WRIST_EXTENTION_LENGTH * Math.cos(elbowAngle);
+      //
+      //  return new Pose2d(x, y, new Rotation2d());
+      //}
+    }
+  
   }
 
-  public Pose2d getElbowPosition(){
-    //double x = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.sin(shoulderAngle);
-    //double y = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.cos(shoulderAngle);
-    //return new Pose2d(x, y, new Rotation2d());
-    AffineTransform rotate = new AffineTransform();//Makes a new AffineTransform
-    Point2D source = new Point2D.Double(0,0);//makes the location of the shoulder
-    Point2D destination = new Point2D.Double();//Will be filled with the location of the wrist
-    rotate.rotate(shoulderAngle);//Rotates by the shoulder
-    rotate.translate(ArmConstants.SHOULDER_TO_ELBOW_DISTANCE, 0.0);//Translates by the length of the upper arm
-    rotate.transform(source, destination);
-    return new Pose2d(destination.getX(), destination.getY(), new Rotation2d());
-  }
-
-  public Pose2d getWristPosition(){
-    //double x = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.sin(shoulderAngle) + ArmConstants.ELBOW_TO_WRIST_DISTANCE * Math.sin(shoulderAngle - elbowAngle);
-    //double y = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.cos(shoulderAngle) - ArmConstants.ELBOW_TO_WRIST_DISTANCE * Math.cos(shoulderAngle - elbowAngle)
-     //+ Constants.ROBOT_BASE_HEIGHT;
-     //TODO: check the math
-     AffineTransform rotate = new AffineTransform();//Makes a new AffineTransform
-    Point2D source = new Point2D.Double(0,0);//makes the location of the shoulder
-    Point2D destination = new Point2D.Double();//Will be filled with the location of the wrist
-    rotate.rotate(shoulderAngle);//Rotates the shoulder
-    rotate.translate(ArmConstants.SHOULDER_TO_ELBOW_DISTANCE, 0.0);//Translates by the length of the upper arm
-    rotate.rotate(elbowAngle);//Rotates by the elbow
-    rotate.translate(ArmConstants.ELBOW_TO_WRIST_DISTANCE, 0.0);//Translates by the length of the forearm
-    rotate.transform(source, destination);
-    return new Pose2d(destination.getX(), destination.getY(), new Rotation2d());
-  }
-
-  public Pose2d getEndPosition(){
-    double forearmLength = ArmConstants.ELBOW_TO_WRIST_DISTANCE; //Gets the forearm distance and acounts for wrist extention
-    if(wristExtended) forearmLength += ArmConstants.WRIST_EXTENTION_LENGTH;
-
-    AffineTransform rotate = new AffineTransform();//Makes a new AffineTransform
-    Point2D source = new Point2D.Double(0,0);//makes the location of the shoulder
-    Point2D destination = new Point2D.Double();//Will be filled with the location of the wrist
-    rotate.rotate(shoulderAngle);//Rotates the shoulder
-    rotate.translate(ArmConstants.SHOULDER_TO_ELBOW_DISTANCE, 0.0);//Translates by the length of the upper arm
-    rotate.rotate(elbowAngle);//Rotates the elbow
-    rotate.translate(forearmLength, 0.0);//Translates by the length of the forearm
-    rotate.transform(source, destination);
-    return new Pose2d(destination.getX(), destination.getY(), new Rotation2d());
-
-
-    //Pose2d wristPosition = getWristPosition();
-    //
-    //if(!wristExtended){
-    //  return wristPosition;
-    //}
-    //else{
-    //  double x = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.sin(shoulderAngle) + ArmConstants.ELBOW_TO_WRIST_DISTANCE * Math.sin(shoulderAngle - elbowAngle)
-    //   +  Math.sin(elbowAngle);
-    //  double y = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.cos(shoulderAngle) - ArmConstants.ELBOW_TO_WRIST_DISTANCE * Math.cos(shoulderAngle - elbowAngle)
-    //   + Constants.ROBOT_BASE_HEIGHT + ArmConstants.WRIST_EXTENTION_LENGTH * Math.cos(elbowAngle);
-    //
-    //  return new Pose2d(x, y, new Rotation2d());
-    //}
-  }
-
-  static class ArmTrajectory{
-    ArmPosition armPosition;
-    double time;
-
+  public class ArmTrajectory{
+    public ArmPosition armPosition;
+    public double time;
+  
     ArmTrajectory(ArmPosition armPosition, double time){
       this.armPosition = armPosition;
       this.time = time;
     }
+  
 
   }
+  
 
 }
+
+  
+
