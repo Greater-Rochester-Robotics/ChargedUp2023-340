@@ -171,6 +171,10 @@ public final class Constants {
       public static final double CLAW_MOTOR_OUTTAKE_SPEED = -1.0; //TODO: set this to the right value
     }
     
+    public static class IntakeConstants {
+      public static final double INTAKE_MOTOR_INTAKE_SPEED = 1.0; //TODO: set this to the right value
+      public static final double INTAKE_MOTOR_OUTTAKE_SPEED = -1.0; //TODO: set this to the right value
+    }
 
     /* IDENTIFICATION NUMBERS FOR DEVICES */
     /* Rev Robotics SparkMAXs */

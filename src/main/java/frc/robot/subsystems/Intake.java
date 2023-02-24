@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+import static frc.robot.Constants.IntakeConstants.*;
+
 public class Intake extends SubsystemBase {
   private TalonSRX intakeMotor;
   // private CANSparkMax motor2;
@@ -27,18 +29,18 @@ public class Intake extends SubsystemBase {
   public Intake() {
 
     intakeMotor = new TalonSRX(Constants.INTAKE_MOTOR);
-    intakeMotor.enableVoltageCompensation(true);//TODO: set the max voltage on this motor
+    intakeMotor.configVoltageCompSaturation(Constants.MAXIMUM_VOLTAGE);
+    intakeMotor.enableVoltageCompensation(true);
     
     intakeMotor.setNeutralMode(NeutralMode.Brake);
 
-    //TODO: we don't need most of these, set to different values close to 255 for uneeded, 255 is max option
     intakeMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20);
-    intakeMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 20);
-    intakeMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 20);
-    intakeMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, 2000);
-    intakeMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_6_Misc, 2000);
-    intakeMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus, 20);
-    intakeMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 20);
+    intakeMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 255);
+    intakeMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 255);
+    intakeMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, 255);
+    intakeMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_6_Misc, 255);
+    intakeMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus, 255);
+    intakeMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 255);
     
     gamePieceSensor = new DigitalInput(Constants.INTAKE_GAME_PIECE_SENSOR);
 
@@ -68,18 +70,14 @@ public class Intake extends SubsystemBase {
    * run the intake motor, to bring a gamepiece into the robot
    */
   public void motorIn() {
-    intakeMotor.set(TalonSRXControlMode.PercentOutput, -MOTOR_SPEED);
-    // motor1.set(-MOTOR_SPEED);
-    // motor2.set(-MOTOR_SPEED);
+    intakeMotor.set(TalonSRXControlMode.PercentOutput, INTAKE_MOTOR_INTAKE_SPEED);
   }
 
   /**
    * runs the intake motor, to push a gamepiece out of the robot
    */
   public void motorOut() {
-    intakeMotor.set(TalonSRXControlMode.PercentOutput, MOTOR_SPEED);
-    // motor1.set(MOTOR_SPEED);
-    // motor2.set(MOTOR_SPEED);
+    intakeMotor.set(TalonSRXControlMode.PercentOutput, INTAKE_MOTOR_OUTTAKE_SPEED);
   }
 
   /**
@@ -87,15 +85,13 @@ public class Intake extends SubsystemBase {
    */
   public void motorStop() {
     intakeMotor.set(TalonSRXControlMode.PercentOutput, 0.0);
-    // motor1.set(0.0);
-    // motor2.set(0.0);
   }
 
   /**
    * a sensor in the intake to determine if there is a gamepiece in the intake.
    * @return boolean
    */
-  public boolean hasGamePeice(){
+  public boolean hasGamePiece(){
     return gamePieceSensor.get();
   }
 
