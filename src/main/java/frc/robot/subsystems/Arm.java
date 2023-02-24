@@ -40,7 +40,7 @@ import frc.robot.Constants.ArmConstants;
 public class Arm extends SubsystemBase {
   private CANSparkMax shoulderRight;
   private CANSparkMax shoulderLeft;
-  private CANSparkMax elbowMotorLeader;
+  private CANSparkMax elbowMotor;
   private AbsoluteEncoder absoluteEncoderRight;
   private AbsoluteEncoder absoluteEncoderLeft;
   private AbsoluteEncoder absoluteEncoderElbow;
@@ -120,33 +120,33 @@ public class Arm extends SubsystemBase {
     shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
 
     //elbow
-    elbowMotorLeader = new CANSparkMax(Constants.ELBOW_MOTOR_LEADER, MotorType.kBrushless);
-    absoluteEncoderElbow = elbowMotorLeader.getAbsoluteEncoder(Type.kDutyCycle);
+    elbowMotor = new CANSparkMax(Constants.ELBOW_MOTOR_LEADER, MotorType.kBrushless);
+    absoluteEncoderElbow = elbowMotor.getAbsoluteEncoder(Type.kDutyCycle);
     absoluteEncoderElbow.setPositionConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONV_FACTOR);
     absoluteEncoderElbow.setInverted(true);
 
     elbowController.setFeedbackDevice(absoluteEncoderElbow);
 
-    elbowMotorLeader.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
+    elbowMotor.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
 
-    elbowMotorLeader.setInverted(false);
+    elbowMotor.setInverted(false);
  
-    elbowMotorLeader.getPIDController().setP(ArmConstants.ELBOW_P);
-    elbowMotorLeader.getPIDController().setI(ArmConstants.ELBOW_I);
-    elbowMotorLeader.getPIDController().setD(ArmConstants.ELBOW_D);
-    elbowMotorLeader.getPIDController().setFF(ArmConstants.ELBOW_F);
+    elbowMotor.getPIDController().setP(ArmConstants.ELBOW_P);
+    elbowMotor.getPIDController().setI(ArmConstants.ELBOW_I);
+    elbowMotor.getPIDController().setD(ArmConstants.ELBOW_D);
+    elbowMotor.getPIDController().setFF(ArmConstants.ELBOW_F);
 
-    elbowMotorLeader.setIdleMode(IdleMode.kBrake);
+    elbowMotor.setIdleMode(IdleMode.kBrake);
 
-    elbowMotorLeader.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
-    elbowMotorLeader.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-    elbowMotorLeader.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
-    elbowMotorLeader.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 2000);
-    elbowMotorLeader.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
-    elbowMotorLeader.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);  
-    elbowMotorLeader.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
+    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
+    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
+    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
+    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 2000);
+    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
+    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);  
+    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
 
-    elbowMotorLeader.set(0);
+    elbowMotor.set(0);
 
     wrist = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.WRIST_SOLENOID_OUT, Constants.WRIST_SOLENOID_IN);
     elbowBrake = new Solenoid(PneumaticsModuleType.REVPH, Constants.ELBOW_BRAKE);
@@ -154,7 +154,7 @@ public class Arm extends SubsystemBase {
     //burning flash for all NEOs
     shoulderRight.burnFlash();
     shoulderLeft.burnFlash();
-    elbowMotorLeader.burnFlash();
+    elbowMotor.burnFlash();
 
     //setting goal to current pos for startup
     shoulderGoalPos = absoluteEncoderRight.getPosition();
@@ -170,12 +170,16 @@ public class Arm extends SubsystemBase {
     // This method will be called once per scheduler run
     rightPos = absoluteEncoderRight.getPosition();
     leftPos = absoluteEncoderLeft.getPosition();
+    double elbowPos = absoluteEncoderElbow.getPosition();
 
-    SmartDashboard.putNumber("absolute encoder right", rightPos);
+    SmartDashboard.putNumber("Absolute encoder right", rightPos);
     SmartDashboard.putNumber("Internal encoder right", shoulderRight.getEncoder().getPosition());
 
-    SmartDashboard.putNumber("absolute encoder left", leftPos);
+    SmartDashboard.putNumber("Absolute encoder left", leftPos);
     SmartDashboard.putNumber("Internal encoder left", shoulderLeft.getEncoder().getPosition());
+
+    SmartDashboard.putNumber("Absolute encoder elbow", elbowPos);
+    SmartDashboard.putNumber("Internal encoder elbow", elbowMotor.getEncoder().getPosition());
 
     //Checks to see if both shoulders are at the same position,
     //stops one closer to goal position
@@ -582,12 +586,12 @@ public class Arm extends SubsystemBase {
    * Stops the elbow and reengages the brake
    */
   public void stopElbow(){
-    elbowMotorLeader.set(0);
+    elbowMotor.set(0);
     elbowBrake.set(true);
   } 
 
   public void setElbowDutyCycle(Double elbowDutyCycle){
-    elbowMotorLeader.set(elbowDutyCycle);
+    elbowMotor.set(elbowDutyCycle);
     elbowBrake.set(false);
   }
 
@@ -603,7 +607,7 @@ public class Arm extends SubsystemBase {
   }
   
   public double getElbowVoltage(){
-    return elbowMotorLeader.getBusVoltage();
+    return elbowMotor.getBusVoltage();
   }
   // -------------------------- Wrist Methods
 
