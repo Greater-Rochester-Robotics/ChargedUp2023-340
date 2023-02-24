@@ -180,6 +180,7 @@ public class Arm extends SubsystemBase {
 
     SmartDashboard.putNumber("Absolute encoder elbow", elbowPos);
     SmartDashboard.putNumber("Internal encoder elbow", elbowMotor.getEncoder().getPosition());
+    SmartDashboard.putNumber("Applied Elbow Output",this.getElbowVoltage());
 
     //Checks to see if both shoulders are at the same position,
     //stops one closer to goal position
@@ -211,7 +212,7 @@ public class Arm extends SubsystemBase {
 
   
 
-  // -------------------------- Kinematics Methods
+  // -------------------------- Kinematics Methods -------------------------- //
   //TODO: write kinematics here,  need a public position commmand
 
   //TODO: next steps
@@ -524,7 +525,7 @@ public class Arm extends SubsystemBase {
   public ArmPosition getArmPosition(){
     return new ArmPosition(getShoulderPositon(), getElbowPosition(), wrist.get().equals(Value.kForward));
   }
-  // -------------------------- Shoulder Motors Methods
+  // -------------------------- Shoulder Motors Methods -------------------------- //
 
   public double getShoulderPositon(){
     return (absoluteEncoderRight.getPosition() + absoluteEncoderLeft.getPosition()) / 2;
@@ -575,8 +576,12 @@ public class Arm extends SubsystemBase {
     absoluteEncoderLeft.setZeroOffset(offset);
   }
 
-  // -------------------------- Elbow Methods
+  // -------------------------- Elbow Motor Methods -------------------------- //
 
+  /**
+   * 
+   * @return
+   */
   public double getElbowPosition(){
     return absoluteEncoderElbow.getPosition() - Math.PI; // Scales positions -pi to pi
   }
@@ -590,11 +595,24 @@ public class Arm extends SubsystemBase {
     elbowBrake.set(true);
   } 
 
+  /**
+   * sets the elbow motor as a percent output speed
+   * also will disengage brake.
+   * used in testing and manual control
+   * @param elbowDutyCycle an output between -1.0 and 1.0, 0 not outputing
+   */
   public void setElbowDutyCycle(Double elbowDutyCycle){
     elbowMotor.set(elbowDutyCycle);
     elbowBrake.set(false);
   }
 
+  /**
+   * a method to set the elbow based on pid position,
+   * this runs an arbitraty output in addition to PID, 
+   * so it should continue to be called in code loop.
+   * 
+   * @param position an angle the arm should go to
+   */
   public void setElbowPosition(Double position){
     elbowController.setReference(position, ControlType.kPosition);
     double theta = getElbowPosition() - getShoulderPositon();
@@ -602,14 +620,21 @@ public class Arm extends SubsystemBase {
     elbowBrake.set(false);
   }
 
+  /**
+   * a method for zeroing the arm so that the downward 
+   * direction of the arm is 0
+   * 
+   * @param offset
+   */
   public void setElbowZeroOffset(double offset){
     absoluteEncoderElbow.setZeroOffset(offset);
   }
   
   public double getElbowVoltage(){
-    return elbowMotor.getBusVoltage();
+    return elbowMotor.getAppliedOutput() *elbowMotor.getBusVoltage();
   }
-  // -------------------------- Wrist Methods
+
+  // -------------------------- Wrist Piston Methods -------------------------- //
 
   /**
    * extends the wrist pneumatic piston
@@ -627,6 +652,7 @@ public class Arm extends SubsystemBase {
     forearmLength = ArmConstants.ELBOW_TO_WRIST_DISTANCE;
   }
 
+  // -------------------------- ArmPosition Sub-Class -------------------------- //
   public class ArmPosition{
     // use Rotation2ds instead of double angles?
     // find where angles are measured from (relative to the ground or relative to something else?)
