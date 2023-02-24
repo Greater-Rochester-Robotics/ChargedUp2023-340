@@ -4,6 +4,10 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -16,35 +20,27 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ClawConstants;
 
 public class Claw extends SubsystemBase {
-  private CANSparkMax clawMotor;
+  private TalonSRX clawMotor;
   private DoubleSolenoid openClose;
   private DigitalInput gamePieceSensor;
 
   /** Creates a new Claw. */
   public Claw() {
     //Constructs the claws motors and solenoid
-    clawMotor = new CANSparkMax(Constants.CLAW_MOTOR, MotorType.kBrushless);
-    clawMotor.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
-    
-    clawMotor.getPIDController().setP(ClawConstants.CLAW_P);  
-    clawMotor.getPIDController().setI(ClawConstants.CLAW_I);
-    clawMotor.getPIDController().setD(ClawConstants.CLAW_D);
-    clawMotor.getPIDController().setFF(ClawConstants.CLAW_F);
+    clawMotor = new TalonSRX(Constants.CLAW_MOTOR);
+    clawMotor.enableVoltageCompensation(true);
 
-    clawMotor.setIdleMode(IdleMode.kBrake);
-
-    clawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
-    clawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-    clawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
-    clawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 2000);
-    clawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
-    clawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
-    clawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
-
-    clawMotor.burnFlash();
+    clawMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20);
+    clawMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 251);
+    clawMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 257);
+    clawMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, 241);
+    clawMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_6_Misc, 237);
+    clawMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus, 221);
+    clawMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 211);
 
     openClose = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.CLAW_SOLENOID_OUT, Constants.CLAW_SOLENOID_IN); //open is in is reverse, close is out is forward
 
@@ -54,7 +50,6 @@ public class Claw extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Claw Encoder",getEncoderPosition());
     SmartDashboard.putBoolean("Claw GamePiece", getGamePieceSensor());
   }
 
@@ -76,34 +71,20 @@ public class Claw extends SubsystemBase {
    * causes the claw motor to intake a cube or cone
    */
   public void intake(){
-    clawMotor.set(ClawConstants.CLAW_MOTOR_INTAKE_SPEED);
+    clawMotor.set(ControlMode.PercentOutput, ClawConstants.CLAW_MOTOR_INTAKE_SPEED);
   }
 
   /**
    * cause the intake motor to spit out
    */
   public void outtake(){
-    clawMotor.set(ClawConstants.CLAW_MOTOR_OUTTAKE_SPEED);
+    clawMotor.set(TalonSRXControlMode.PercentOutput, ClawConstants.CLAW_MOTOR_OUTTAKE_SPEED);
   }
 
   public void stop(){
-    clawMotor.set(0.0);
+    clawMotor.set(TalonSRXControlMode.PercentOutput, 0);
   }
 
-  /**
-   * @return current value of intake encoder in native units
-   */
-  public double getEncoderPosition() {
-    return clawMotor.getEncoder().getPosition();
-  }
-
-  /**
-   * Sets intake to a position
-   * @param position position to set intake to
-   */
-  public void setIntakePosition(double position){
-    clawMotor.getEncoder().setPosition(position);
-  }
 
   /**
    * @return true if game piece detected
