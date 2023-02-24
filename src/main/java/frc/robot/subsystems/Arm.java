@@ -69,10 +69,13 @@ public class Arm extends SubsystemBase {
     shoulderRight = new CANSparkMax(Constants.SHOULDER_MOTOR_RIGHT, MotorType.kBrushless);
     absoluteEncoderRight = shoulderRight.getAbsoluteEncoder(Type.kDutyCycle);
     absoluteEncoderRight.setPositionConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONV_FACTOR);
+    absoluteEncoderLeft.setInverted(false);
 
     shoulderRightController.setFeedbackDevice(absoluteEncoderRight);
 
     shoulderRight.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
+
+    shoulderLeft.setInverted(true);
     
     shoulderRight.getPIDController().setP(ArmConstants.SHOULDER_P_RIGHT);  
     shoulderRight.getPIDController().setI(ArmConstants.SHOULDER_I_RIGHT);
@@ -89,18 +92,17 @@ public class Arm extends SubsystemBase {
     shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
     shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
 
-    setRightShoulderOffset(0.0);
-
-
-
     //left shoulder
     shoulderLeft = new CANSparkMax(Constants.SHOULDER_MOTOR_LEFT, MotorType.kBrushless);
     absoluteEncoderLeft = shoulderLeft.getAbsoluteEncoder(Type.kDutyCycle);
     absoluteEncoderLeft.setPositionConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONV_FACTOR);
+    absoluteEncoderLeft.setInverted(true);
 
     shoulderLeftController.setFeedbackDevice(absoluteEncoderLeft);
 
     shoulderLeft.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
+
+    shoulderLeft.setInverted(true);
  
     shoulderLeft.getPIDController().setP(ArmConstants.SHOULDER_P_LEFT);
     shoulderLeft.getPIDController().setI(ArmConstants.SHOULDER_I_LEFT);
@@ -117,17 +119,17 @@ public class Arm extends SubsystemBase {
     shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);  
     shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
 
-    setLeftShoulderOffset(0.0);
-
-
     //elbow
     elbowMotorLeader = new CANSparkMax(Constants.ELBOW_MOTOR_LEADER, MotorType.kBrushless);
     absoluteEncoderElbow = elbowMotorLeader.getAbsoluteEncoder(Type.kDutyCycle);
     absoluteEncoderElbow.setPositionConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONV_FACTOR);
+    absoluteEncoderElbow.setInverted(true);
 
     elbowController.setFeedbackDevice(absoluteEncoderElbow);
 
     elbowMotorLeader.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
+
+    elbowMotorLeader.setInverted(false);
  
     elbowMotorLeader.getPIDController().setP(ArmConstants.ELBOW_P);
     elbowMotorLeader.getPIDController().setI(ArmConstants.ELBOW_I);
@@ -145,8 +147,6 @@ public class Arm extends SubsystemBase {
     elbowMotorLeader.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
 
     elbowMotorLeader.set(0);
-
-    setElbowZeroOffset(0.0);
 
     wrist = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.WRIST_SOLENOID_OUT, Constants.WRIST_SOLENOID_IN);
     elbowBrake = new Solenoid(PneumaticsModuleType.REVPH, Constants.ELBOW_BRAKE);
@@ -574,7 +574,7 @@ public class Arm extends SubsystemBase {
   // -------------------------- Elbow Methods
 
   public double getElbowPosition(){
-    return absoluteEncoderElbow.getPosition();
+    return absoluteEncoderElbow.getPosition() - Math.PI; // Scales positions -pi to pi
   }
   
 
@@ -602,7 +602,7 @@ public class Arm extends SubsystemBase {
     absoluteEncoderElbow.setZeroOffset(offset);
   }
   
-  public double    getElbowVoltage(){
+  public double getElbowVoltage(){
     return elbowMotorLeader.getBusVoltage();
   }
   // -------------------------- Wrist Methods
