@@ -4,7 +4,8 @@
 
 package frc.robot.commands.arm;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -12,8 +13,8 @@ import frc.robot.RobotContainer;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
 //InstantCommand that extends the wrist
-public class ArmWristExtend extends InstantCommand {
-  //TODO: change this to have a time that it takes to complete.
+public class ArmWristExtend extends CommandBase {
+  Timer timer = new Timer();
 
   public ArmWristExtend() {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -23,6 +24,23 @@ public class ArmWristExtend extends InstantCommand {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    timer.reset();
+    timer.start();
+  }
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
     RobotContainer.arm.extendWrist();
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {}
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return timer.hasElapsed(0);
   }
 }

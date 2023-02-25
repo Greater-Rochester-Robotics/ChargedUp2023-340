@@ -13,14 +13,14 @@ import frc.robot.subsystems.Arm.ArmPosition;
 import frc.robot.subsystems.Arm.ArmTrajectory;
 import edu.wpi.first.wpilibj.Timer;
 
-public class MoveArmToPosition extends CommandBase {
+public class ArmMoveToPosition extends CommandBase {
   ArmPosition goalPosition;
   List<ArmTrajectory> trajectory;
   int currentWayPoint = 0;
   Timer timer = new Timer();
   
   /** Creates a new MoveArmToPosition. */
-  public MoveArmToPosition(double x, double y) {
+  public ArmMoveToPosition(double x, double y) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.arm);
     goalPosition = RobotContainer.arm.inverseKinematics(x, y);

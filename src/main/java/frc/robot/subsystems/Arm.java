@@ -157,7 +157,7 @@ public class Arm extends SubsystemBase {
     elbowMotor.burnFlash();
 
     //setting goal to current pos for startup
-    shoulderGoalPos = absoluteEncoderRight.getPosition();
+    shoulderGoalPos = getShoulderPositon();
 
     //PID is off on startup
     shoulderPIDEnable = false;
@@ -168,9 +168,9 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    rightPos = absoluteEncoderRight.getPosition();
-    leftPos = absoluteEncoderLeft.getPosition();
-    double elbowPos = absoluteEncoderElbow.getPosition();
+    rightPos = getRightShoulderPosition();
+    leftPos = getLeftShoulderPosition();
+    double elbowPos = getElbowPosition();
 
     SmartDashboard.putNumber("Absolute encoder right", rightPos);
     SmartDashboard.putNumber("Internal encoder right", shoulderRight.getEncoder().getPosition());
@@ -191,16 +191,16 @@ public class Arm extends SubsystemBase {
 
         if(Math.abs(rightDiff) > Math.abs(leftDiff)){
           shoulderLeft.set(0.0);
-          shoulderRight.getPIDController().setReference(shoulderGoalPos, ControlType.kPosition);
+          setRightShoulderPosition(shoulderGoalPos);
         }
         else{
           shoulderRight.set(0.0);
-          shoulderLeft.getPIDController().setReference(shoulderGoalPos, ControlType.kPosition);
+          setLeftShoulderPosition(shoulderGoalPos);
         }
       }
       else{
-        shoulderRight.getPIDController().setReference(shoulderGoalPos, ControlType.kPosition);
-        shoulderLeft.getPIDController().setReference(shoulderGoalPos, ControlType.kPosition);
+        setLeftShoulderPosition(shoulderGoalPos);
+        setRightShoulderPosition(shoulderGoalPos);
       }
 
       if(followingTrajectory){
@@ -527,8 +527,16 @@ public class Arm extends SubsystemBase {
   }
   // -------------------------- Shoulder Motors Methods -------------------------- //
 
+  public double getLeftShoulderPosition() {
+    return absoluteEncoderLeft.getPosition() - Math.PI;
+  }
+
+  public double getRightShoulderPosition() {
+    return absoluteEncoderRight.getPosition() - Math.PI;
+  }
+
   public double getShoulderPositon(){
-    return (absoluteEncoderRight.getPosition() + absoluteEncoderLeft.getPosition()) / 2;
+    return (getRightShoulderPosition() + getLeftShoulderPosition()) / 2;
   }
 
   /**
@@ -560,22 +568,45 @@ public class Arm extends SubsystemBase {
     shoulderPIDEnable = false;
   }
 
-  public void setBothShoulderMotor(double output){
-    shoulderRight.getPIDController().setReference(output, CANSparkMax.ControlType.kPosition);
+  private void setLeftShoulderPosition(double output) {
+    output += Math.PI;
     shoulderLeft.getPIDController().setReference(output, CANSparkMax.ControlType.kPosition);
-    shoulderGoalPos = output;
+  }
+
+  private void setRightShoulderPosition(double output) {
+    output += Math.PI;
+    shoulderRight.getPIDController().setReference(output, CANSparkMax.ControlType.kPosition);
+  }
+
+  public void setBothShoulderMotor(double output){
+    setLeftShoulderPosition(output);
+    setRightShoulderPosition(output);
+    shoulderGoalPos = output + Math.PI;
     shoulderPIDEnable = true;
   }
 
   public void setRightShoulderOffset(double offset){
     absoluteEncoderRight.setZeroOffset(offset);
-    
+    shoulderRight.burnFlash();
   }
 
   public void setLeftShoulderOffset(double offset){
     absoluteEncoderLeft.setZeroOffset(offset);
+    shoulderLeft.burnFlash();
   }
 
+  private void zeroLeftShoulder(){
+    setLeftShoulderOffset(absoluteEncoderLeft.getZeroOffset() - absoluteEncoderLeft.getPosition() + Math.PI);
+  }
+
+  private void zeroRightShoulder(){
+    setLeftShoulderOffset(absoluteEncoderRight.getZeroOffset() - absoluteEncoderRight.getPosition() + Math.PI);
+  }
+
+  public void zeroBothShoulder(){
+    zeroLeftShoulder();
+    zeroRightShoulder();
+  }
   // -------------------------- Elbow Motor Methods -------------------------- //
 
   /**
@@ -601,7 +632,7 @@ public class Arm extends SubsystemBase {
    * used in testing and manual control
    * @param elbowDutyCycle an output between -1.0 and 1.0, 0 not outputing
    */
-  public void setElbowDutyCycle(Double elbowDutyCycle){
+  public void setElbowDutyCycle(double elbowDutyCycle){
     elbowMotor.set(elbowDutyCycle);
     elbowBrake.set(false);
   }
@@ -613,8 +644,8 @@ public class Arm extends SubsystemBase {
    * 
    * @param position an angle the arm should go to
    */
-  public void setElbowPosition(Double position){
-    elbowController.setReference(position, ControlType.kPosition);
+  public void setElbowPosition(double position){
+    position += Math.PI;
     double theta = getElbowPosition() - getShoulderPositon();
     elbowController.setReference(position, ControlType.kPosition, 0, ArmConstants.KG * Math.sin(theta) * Math.signum(theta));
     elbowBrake.set(false);
@@ -628,10 +659,15 @@ public class Arm extends SubsystemBase {
    */
   public void setElbowZeroOffset(double offset){
     absoluteEncoderElbow.setZeroOffset(offset);
+    elbowMotor.burnFlash();
+  }
+
+  public void zeroElbow() {
+    setElbowZeroOffset(absoluteEncoderElbow.getZeroOffset() - absoluteEncoderElbow.getPosition() + Math.PI);
   }
   
   public double getElbowVoltage(){
-    return elbowMotor.getAppliedOutput() *elbowMotor.getBusVoltage();
+    return elbowMotor.getAppliedOutput() * elbowMotor.getBusVoltage();
   }
 
   // -------------------------- Wrist Piston Methods -------------------------- //
