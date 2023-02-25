@@ -81,10 +81,19 @@ public class Claw extends SubsystemBase {
     clawMotor.set(TalonSRXControlMode.PercentOutput, ClawConstants.CLAW_MOTOR_OUTTAKE_SPEED);
   }
 
+  /**
+   * Stops claw motor
+   */
   public void stop(){
     clawMotor.set(TalonSRXControlMode.PercentOutput, 0);
   }
 
+  /**
+   * causes the claw motor to intake slowly to hold object
+   */
+  public void hold() {
+    clawMotor.set(ControlMode.PercentOutput, ClawConstants.CLAW_MOTOR_HOLD_SPEED);
+  }
 
   /**
    * @return true if game piece detected

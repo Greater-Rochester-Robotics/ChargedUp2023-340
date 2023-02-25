@@ -213,8 +213,12 @@ public class RobotContainer {
     return getCoDriverAxis(Axis.kRightY);
   }
 
-  public double getLeftShoulderManuel(){
+  public double getLeftShoulderManual(){
     return getCoDriverAxis(Axis.kLeftY);
   }
 
+  //TODO: pull correct axis
+  public double getElbowManual(){
+    return getCoDriverAxis(Axis.kLeftY);
+  }
 }

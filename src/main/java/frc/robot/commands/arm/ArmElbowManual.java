@@ -5,25 +5,32 @@
 package frc.robot.commands.arm;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
 public class ArmElbowManual extends CommandBase {
+  double axis;
   /** Creates a new ArmElbowManual. */
   public ArmElbowManual() {
-    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(RobotContainer.arm);
   }
-  //TODO: drive the elbow using the setElbowDutyCycle
+  
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    axis = Robot.robotContainer.getElbowManual();
+
+    RobotContainer.arm.setElbowDutyCycle(axis);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    //TODO:remember to stop the elbow
+    RobotContainer.arm.stopElbow();
   }
 
   // Returns true when the command should end.

@@ -4,13 +4,10 @@
 
 package frc.robot.commands.recordPlayer;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class RecordPlayerSpinManual extends InstantCommand {
+public class RecordPlayerSpinManual extends CommandBase {
   double speed;
   public RecordPlayerSpinManual(double speed) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -20,8 +17,23 @@ public class RecordPlayerSpinManual extends InstantCommand {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
+  public void initialize() {}
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
     RobotContainer.recordPlayer.setRotationMotor(speed);
   }
-  //TODO: rewrite as a Command, have isFinished be false, have motor stop on end
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+    RobotContainer.recordPlayer.stopRotationMotor();
+  }
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return false;
+  }
 }

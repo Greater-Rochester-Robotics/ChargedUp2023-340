@@ -5,24 +5,30 @@
 package frc.robot.commands.claw;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 
 public class ClawHold extends CommandBase {
   /** Creates a new ClawHold. */
   public ClawHold() {
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(RobotContainer.claw);
   }
-  //TODO:mke a new method in Claw that drives the claw in at a small value, set in execute, on end stop.
+  
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    RobotContainer.claw.hold();
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    RobotContainer.claw.stop();
+  }
 
   // Returns true when the command should end.
   @Override

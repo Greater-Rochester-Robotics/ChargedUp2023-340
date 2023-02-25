@@ -169,6 +169,7 @@ public final class Constants {
     public static class ClawConstants {
       public static final double CLAW_MOTOR_INTAKE_SPEED = 1.0; //TODO: set this to the right value
       public static final double CLAW_MOTOR_OUTTAKE_SPEED = -1.0; //TODO: set this to the right value
+      public static final double CLAW_MOTOR_HOLD_SPEED = 0.5; //TODO: set this to the right value
     }
     
     public static class IntakeConstants {

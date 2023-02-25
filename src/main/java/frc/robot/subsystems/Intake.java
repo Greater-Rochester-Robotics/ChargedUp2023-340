@@ -23,7 +23,6 @@ public class Intake extends SubsystemBase {
   // private CANSparkMax motor2;
   private DigitalInput gamePieceSensor;
   private DoubleSolenoid intakePistons;
-  private final double MOTOR_SPEED = 0.5; //TODO: What should this be?
 
   /** Creates a new Intake. */
   public Intake() {
