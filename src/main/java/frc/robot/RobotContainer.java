@@ -217,7 +217,6 @@ public class RobotContainer {
     return getCoDriverAxis(Axis.kLeftY);
   }
 
-  //TODO: pull correct axis
   public double getElbowManual(){
     return getCoDriverAxis(Axis.kLeftY);
   }
