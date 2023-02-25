@@ -15,8 +15,18 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+import frc.robot.commands.arm.ArmElbowManual;
 import frc.robot.commands.arm.ArmShoulderManual;
+import frc.robot.commands.arm.ArmWristExtend;
+import frc.robot.commands.arm.ArmWristRetract;
+import frc.robot.commands.claw.ClawClose;
+import frc.robot.commands.claw.ClawHold;
+import frc.robot.commands.claw.ClawIntake;
+import frc.robot.commands.claw.ClawOpen;
+import frc.robot.commands.claw.ClawSpit;
+
 import frc.robot.commands.target.TargetMoveSelection;
+
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Compressor;
@@ -88,7 +98,6 @@ public class RobotContainer {
   public static Claw claw;
   public static Compressor compressor;
   public static Arm arm;
-  public static Limelights limelights;
   public static Intake intake;
   public static Target target;
   public static RecordPlayer recordPlayer;
@@ -102,8 +111,8 @@ public class RobotContainer {
     //claw = new Claw();
     //compressor = new Compressor();
     //arm = new Arm();
-    //limelights = new Limelights();
     intake = new Intake();
+    // swerveDrive.setDefaultCommand(new DriveRobotCentric());
     // swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced());
     target = new Target();
     recordPlayer = new RecordPlayer();
@@ -118,7 +127,6 @@ public class RobotContainer {
       //swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced());
     }
 
-    limelights = new Limelights();
     target = new Target();
     //Add all autos to the auto selector
     configureAutoModes();
@@ -135,6 +143,14 @@ public class RobotContainer {
     // SmartDashboard.putData("Drive Module 3", new DriveOneModule(3));//For setup of swerve
     // SmartDashboard.putData(new DriveAllModulesPositionOnly());
     // SmartDashboard.putData(new DriveStopAllModules());//For setup of swerve
+
+    // SmartDashboard.putData(new ArmWristExtend());
+    // SmartDashboard.putData(new ArmWristRetract());
+    // SmartDashboard.putData(new ClawClose());
+    // SmartDashboard.putData(new ClawOpen());
+    // SmartDashboard.putData(new ClawIntake());
+    // SmartDashboard.putData(new ClawHold());
+    // SmartDashboard.putData(new ClawSpit());
 
     //Goal Positions
     for(int i = 1; i < target.goalLocations.length; i++){
@@ -165,10 +181,13 @@ public class RobotContainer {
     driverLB.onTrue(new TargetMoveSelection(5));
 
     // any commands inside this if behave as if they were commented out.
-    if (COMPILE_ALL_SUBSYSTEMS) {
-      driverA.onTrue(new ArmShoulderManual());
-    }
+   
+    
     /* =================== CODRIVER BUTTONS =================== */
+    if (COMPILE_ALL_SUBSYSTEMS) {
+      coDriverLS.whileTrue(new ArmElbowManual());
+      coDriverRS.whileTrue(new ArmShoulderManual());
+    }
   }
 
   /**

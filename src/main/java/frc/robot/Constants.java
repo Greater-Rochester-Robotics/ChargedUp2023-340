@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -46,10 +47,14 @@ public final class Constants {
       public static final double ELBOW_F = 0.0;
       public static final double KG = 0.0; // The force required to counter gravity i.e prevent the arm from dropping
 
+      /* Arm Limits */
+      public static final double MAX_ELBOW_ANGLE = Math.toRadians(125);
+      public static final double MAX_SHOULDER_ANGLE = Math.toRadians(125);
+      
       /*arm dimensions */
-      public static final double SHOULDER_TO_ELBOW_DISTANCE = 10;
+      public static final double SHOULDER_TO_ELBOW_DISTANCE = Units.inchesToMeters(38);
       public static final double ELBOW_TO_WRIST_DISTANCE = 10;
-      public static final double WRIST_EXTENSION_LENGTH = 1;
+      public static final double WRIST_EXTENSION_LENGTH = Units.inchesToMeters(10);
       public static final double MAX_HEIGHT = 50;
       public static final double BACK_OF_ROBOT_TO_SHOULDER_DISTANCE = 30;
       
@@ -169,7 +174,7 @@ public final class Constants {
     public static class ClawConstants {
       public static final double CLAW_MOTOR_INTAKE_SPEED = 1.0; //TODO: set this to the right value
       public static final double CLAW_MOTOR_OUTTAKE_SPEED = -1.0; //TODO: set this to the right value
-      public static final double CLAW_MOTOR_HOLD_SPEED = 0.5; //TODO: set this to the right value
+      public static final double CLAW_MOTOR_HOLD_SPEED = 0.25; //TODO: set this to the right value
     }
     
     public static class IntakeConstants {

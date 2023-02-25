@@ -257,16 +257,24 @@ public class Arm extends SubsystemBase {
   }
 
   private void setLeftShoulderPosition(double output) {
+    if(Math.abs(output) > ArmConstants.MAX_SHOULDER_ANGLE) {
+      System.out.println("LEFT SHOULDER CAN'T BE SET TO ANGLE " + Math.toDegrees(output) + "\u00b0" + ", OUT OF RANGE!");
+      return;
+    }
     output += Math.PI;
     shoulderLeft.getPIDController().setReference(output, CANSparkMax.ControlType.kPosition);
   }
 
   private void setRightShoulderPosition(double output) {
+    if(Math.abs(output) > ArmConstants.MAX_SHOULDER_ANGLE) {
+      System.out.println("RIGHT SHOULDER CAN'T BE SET TO ANGLE " + Math.toDegrees(output) + "\u00b0" + ", OUT OF RANGE!");
+      return;
+    }
     output += Math.PI;
     shoulderRight.getPIDController().setReference(output, CANSparkMax.ControlType.kPosition);
   }
 
-  public void setBothShoulderMotor(double output){
+  public void setBothShoulderMotorPosition(double output){
     setLeftShoulderPosition(output);
     setRightShoulderPosition(output);
     shoulderGoalPos = output + Math.PI;
@@ -332,7 +340,11 @@ public class Arm extends SubsystemBase {
    * 
    * @param position an angle the arm should go to
    */
-  public void setElbowPosition(double position){
+  public void setElbowPosition(double position) {
+    if(Math.abs(position) > ArmConstants.MAX_ELBOW_ANGLE) {
+      System.out.println("ELBOW CAN'T BE SET TO ANGLE " + Math.toDegrees(position) + "\u00b0" + ", OUT OF RANGE!");
+      return;
+    }
     position += Math.PI;
     double theta = getElbowPosition() - getShoulderPositon();
     elbowController.setReference(position, ControlType.kPosition, 0, ArmConstants.KG * Math.sin(theta) * Math.signum(theta));
@@ -489,7 +501,7 @@ public class Arm extends SubsystemBase {
    */
 
    public void DriveToPosition(ArmPosition target){
-    setBothShoulderMotor(target.shoulderAngle);
+    setBothShoulderMotorPosition(target.shoulderAngle);
     setElbowPosition(target.elbowAngle);
     shoulderPIDEnable = true;
 
@@ -665,9 +677,9 @@ public class Arm extends SubsystemBase {
     double diffrenceInElbows;
     double shoulderTime;
     double elbowTime;
-    for(var I = 0; I < path.size() - 1; I++){
+    for(var i = 0; i < path.size() - 1; i++){
 
-      diffrenceInShoulders = Math.abs(path.get(I).shoulderAngle - path.get(I+1).shoulderAngle);
+      diffrenceInShoulders = Math.abs(path.get(i).shoulderAngle - path.get(i+1).shoulderAngle);
       // Checks if the difference in shoulders is less than how long it takes it to accelerate
       if(diffrenceInShoulders < ArmConstants.SHOULDER_ACCELERATION_DISTANCE * 2){
         //Calculates how long it takes the shoulder to go from it's first position to it's second
@@ -678,7 +690,7 @@ public class Arm extends SubsystemBase {
         (diffrenceInShoulders - ArmConstants.SHOULDER_ACCELERATION_DISTANCE * 2) * ArmConstants.MAX_SHOULDER_ACCELERATION;
       }
       
-      diffrenceInElbows = Math.abs(path.get(I).elbowAngle - path.get(I+1).elbowAngle);
+      diffrenceInElbows = Math.abs(path.get(i).elbowAngle - path.get(i+1).elbowAngle);
       // Checks if the difference in elbows is less than how long it takes it to accelerate
       if(diffrenceInElbows < ArmConstants.ELBOW_ACCELERATION_DISTANCE * 2){
         //Calculates how long it takes the elbow to go from it's first position to it's second
@@ -689,7 +701,7 @@ public class Arm extends SubsystemBase {
         (diffrenceInElbows - ArmConstants.ELBOW_ACCELERATION_DISTANCE * 2) * ArmConstants.MAX_ELBOW_ACCELERATION;
       }
 
-      trajectory.add(new ArmTrajectory(path.get(I), Math.max(shoulderTime, elbowTime)));
+      trajectory.add(new ArmTrajectory(path.get(i), Math.max(shoulderTime, elbowTime)));
 
     }
 
@@ -697,10 +709,10 @@ public class Arm extends SubsystemBase {
 
   }
 
-  public ArmPosition inverseKinematics(double x, double y){
+  public ArmPosition inverseKinematics(double x, double z){
     double shoulderToElbow = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE;
     double elbowToEnd = ArmConstants.ELBOW_TO_WRIST_DISTANCE;
-    double shoulderToEnd = Math.sqrt(x*x + y*y); //Gets the distance between the shoulder joint of the arm and the end point
+    double shoulderToEnd = Math.sqrt(x*x + z*z); //Gets the distance between the shoulder joint of the arm and the end point
     boolean isExtended = false;
     if(shoulderToEnd > shoulderToElbow + elbowToEnd){
       elbowToEnd += ArmConstants.WRIST_EXTENSION_LENGTH;
@@ -716,7 +728,7 @@ public class Arm extends SubsystemBase {
       (shoulderToElbow*shoulderToElbow + elbowToEnd*elbowToEnd - shoulderToEnd*shoulderToEnd)/
       2*shoulderToElbow*elbowToEnd);
 
-    double XToEndAngle = Math.atan(y/x); //Finds the angle from the x axis (flat) to the end of the arm
+    double XToEndAngle = Math.atan(z/x); //Finds the angle from the x axis (flat) to the end of the arm
 
     double newShoulderAngle = (Constants.PI_OVER_TWO - rawShoulderAngle - XToEndAngle) * (x > 0? 1 : -1); // gets the Angle from the y axis down to the Elbow
     double newElbowAngle = rawElbowAngle - (Constants.PI_OVER_TWO - newShoulderAngle) * (x > 0? 1 : -1); // gets the Angle from the y axis up to the end point
