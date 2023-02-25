@@ -13,7 +13,7 @@ import frc.robot.RobotContainer;
 
 //InstantCommand that extends the wrist
 public class ArmWristExtend extends InstantCommand {
-  
+  //TODO: change this to have a time that it takes to complete.
 
   public ArmWristExtend() {
     // Use addRequirements() here to declare subsystem dependencies.

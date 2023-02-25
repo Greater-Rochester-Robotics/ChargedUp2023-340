@@ -120,7 +120,7 @@ public class Arm extends SubsystemBase {
     shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
 
     //elbow
-    elbowMotor = new CANSparkMax(Constants.ELBOW_MOTOR_LEADER, MotorType.kBrushless);
+    elbowMotor = new CANSparkMax(Constants.ELBOW_MOTOR, MotorType.kBrushless);
     absoluteEncoderElbow = elbowMotor.getAbsoluteEncoder(Type.kDutyCycle);
     absoluteEncoderElbow.setPositionConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONV_FACTOR);
     absoluteEncoderElbow.setInverted(true);

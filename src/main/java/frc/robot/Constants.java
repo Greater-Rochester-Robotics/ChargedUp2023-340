@@ -179,30 +179,30 @@ public final class Constants {
 
     /* IDENTIFICATION NUMBERS FOR DEVICES */
     /* Rev Robotics SparkMAXs */
-    public static final int FRONT_LEFT_MOVE_MOTOR = 3;//drive module 0
-    public static final int FRONT_LEFT_ROTATE_MOTOR = 4;//drive module 0
+    public static final int FRONT_LEFT_MOVE_MOTOR = 2;//drive module 0
+    public static final int FRONT_LEFT_ROTATE_MOTOR = 3;//drive module 0
 
-    public static final int REAR_LEFT_MOVE_MOTOR = 6;//drive module 1
-    public static final int REAR_LEFT_ROTATE_MOTOR = 7;//drive module 1
+    public static final int REAR_LEFT_MOVE_MOTOR = 4;//drive module 1
+    public static final int REAR_LEFT_ROTATE_MOTOR = 5;//drive module 1
 
-    public static final int REAR_RIGHT_MOVE_MOTOR = 9;//drive module 2
-    public static final int REAR_RIGHT_ROTATE_MOTOR = 10;//drive module 2
+    public static final int REAR_RIGHT_MOVE_MOTOR = 6;//drive module 2
+    public static final int REAR_RIGHT_ROTATE_MOTOR = 7;//drive module 2
     
-    public static final int FRONT_RIGHT_MOVE_MOTOR = 12;//drive module 3
-    public static final int FRONT_RIGHT_ROTATE_MOTOR = 13;//drive module 3
+    public static final int FRONT_RIGHT_MOVE_MOTOR = 8;//drive module 3
+    public static final int FRONT_RIGHT_ROTATE_MOTOR = 9;//drive module 3
 
     public static final int SHOULDER_MOTOR_LEFT = 20;
     public static final int SHOULDER_MOTOR_RIGHT = 21;
-    public static final int ELBOW_MOTOR_LEADER = 22;
-    public static final int ELBOW_MOTOR_FOLLOWER = 23;
+    public static final int ELBOW_MOTOR = 25;
 
-    public static final int RECORD_PLAYER_MOTOR = 24;
+    public static final int RECORD_PLAYER_MOTOR = 34;
 
-    public static final int CLAW_MOTOR = 27;
-
+    
     /* CTRE motor and sensors */
-    public static final int INTAKE_MOTOR = 25;
-    public static final int INTAKE_GAME_PIECE_SENSOR = 0;
+    public static final int CLAW_MOTOR = 40;
+
+    public static final int INTAKE_MOTOR = 50;
+
    
     /* Solenoids */
     public static final int ELBOW_BRAKE = 0;
@@ -217,8 +217,8 @@ public final class Constants {
     public static final int WRIST_SOLENOID_IN = 6;
 
     /* Digital Input Channels */
-    public static final int CHANNEL_IS_GAME_PIECE = 0;
-    public static final int CHANNEL_CONE_POSITION = 1;
+    public static final int RECORD_IS_GAME_PIECE = 0;
+    public static final int RECORD_CONE_POSITION = 1;
     public static final int CLAW_GAMEPIECE_SENSOR = 2;
-    public static final int INTAKE_GAME_PIeCE_SENSOR = 3;
+    public static final int INTAKE_GAME_PIECE_SENSOR = 3;
 }

@@ -22,8 +22,8 @@ public class RecordPlayer extends SubsystemBase {
   public RecordPlayer() {
     rotationMotor = new CANSparkMax(Constants.RECORD_PLAYER_MOTOR, MotorType.kBrushless);
 
-    gamePieceSensor = new DigitalInput(Constants.CHANNEL_IS_GAME_PIECE);
-    conePositionSensor = new DigitalInput(Constants.CHANNEL_CONE_POSITION);
+    gamePieceSensor = new DigitalInput(Constants.RECORD_IS_GAME_PIECE);
+    conePositionSensor = new DigitalInput(Constants.RECORD_CONE_POSITION);
 
 
     rotationMotor.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
