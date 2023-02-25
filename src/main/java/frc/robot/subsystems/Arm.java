@@ -149,6 +149,8 @@ public class Arm extends SubsystemBase {
     elbowMotor.set(0);
 
     wrist = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.WRIST_SOLENOID_OUT, Constants.WRIST_SOLENOID_IN);
+    retractWrist();
+
     elbowBrake = new Solenoid(PneumaticsModuleType.REVPH, Constants.ELBOW_BRAKE);
 
     //burning flash for all NEOs
@@ -211,8 +213,270 @@ public class Arm extends SubsystemBase {
   }
 
   
+  // -------------------------- Shoulder Motors Methods -------------------------- //
 
-  // -------------------------- Kinematics Methods -------------------------- //
+  public double getLeftShoulderPosition() {
+    return absoluteEncoderLeft.getPosition() - Math.PI;
+  }
+
+  public double getRightShoulderPosition() {
+    return absoluteEncoderRight.getPosition() - Math.PI;
+  }
+
+  public double getShoulderPositon(){
+    return (getRightShoulderPosition() + getLeftShoulderPosition()) / 2;
+  }
+
+  /**
+   * Stop both the shoulder motors
+   */
+  public void stopShoulder(){
+    shoulderRight.set(0);
+    shoulderLeft.set(0);
+    shoulderPIDEnable = false;
+  }
+
+  /**
+   * drive only the left shoulder motor via duty cycle
+   * FOR TESTING PURPOSES ONLY
+   * @param leftDutyCycle a value between -1.0 and 1.0, 0.0 is stopped
+   */
+  public void setLeftDutyCycle(Double leftDutyCycle){
+    shoulderLeft.set(leftDutyCycle);
+    shoulderPIDEnable = false;
+  }
+
+  /**
+   * drive only the right shoulder motor via duty cycle
+   * FOR TESTING ONLY
+   * @param rightDutyCycle a value between -1.0 and 1.0, 0.0 is stopped
+   */
+  public void setRightDutyCycle(Double rightDutyCycle){
+    shoulderLeft.set(rightDutyCycle);
+    shoulderPIDEnable = false;
+  }
+
+  private void setLeftShoulderPosition(double output) {
+    output += Math.PI;
+    shoulderLeft.getPIDController().setReference(output, CANSparkMax.ControlType.kPosition);
+  }
+
+  private void setRightShoulderPosition(double output) {
+    output += Math.PI;
+    shoulderRight.getPIDController().setReference(output, CANSparkMax.ControlType.kPosition);
+  }
+
+  public void setBothShoulderMotor(double output){
+    setLeftShoulderPosition(output);
+    setRightShoulderPosition(output);
+    shoulderGoalPos = output + Math.PI;
+    shoulderPIDEnable = true;
+  }
+
+  public void setRightShoulderOffset(double offset){
+    absoluteEncoderRight.setZeroOffset(offset);
+    shoulderRight.burnFlash();
+  }
+
+  public void setLeftShoulderOffset(double offset){
+    absoluteEncoderLeft.setZeroOffset(offset);
+    shoulderLeft.burnFlash();
+  }
+
+  private void zeroLeftShoulder(){
+    setLeftShoulderOffset(absoluteEncoderLeft.getZeroOffset() - absoluteEncoderLeft.getPosition() + Math.PI);
+  }
+
+  private void zeroRightShoulder(){
+    setLeftShoulderOffset(absoluteEncoderRight.getZeroOffset() - absoluteEncoderRight.getPosition() + Math.PI);
+  }
+
+  public void zeroBothShoulder(){
+    zeroLeftShoulder();
+    zeroRightShoulder();
+  }
+  // -------------------------- Elbow Motor Methods -------------------------- //
+
+  /**
+   * 
+   * @return
+   */
+  public double getElbowPosition(){
+    return absoluteEncoderElbow.getPosition() - Math.PI; // Scales positions -pi to pi
+  }
+  
+
+  /**
+   * Stops the elbow and reengages the brake
+   */
+  public void stopElbow(){
+    elbowMotor.set(0);
+    elbowBrake.set(true);
+  } 
+
+  /**
+   * sets the elbow motor as a percent output speed
+   * also will disengage brake.
+   * used in testing and manual control
+   * @param elbowDutyCycle an output between -1.0 and 1.0, 0 not outputing
+   */
+  public void setElbowDutyCycle(double elbowDutyCycle){
+    elbowMotor.set(elbowDutyCycle);
+    elbowBrake.set(false);
+  }
+
+  /**
+   * a method to set the elbow based on pid position,
+   * this runs an arbitraty output in addition to PID, 
+   * so it should continue to be called in code loop.
+   * 
+   * @param position an angle the arm should go to
+   */
+  public void setElbowPosition(double position){
+    position += Math.PI;
+    double theta = getElbowPosition() - getShoulderPositon();
+    elbowController.setReference(position, ControlType.kPosition, 0, ArmConstants.KG * Math.sin(theta) * Math.signum(theta));
+    elbowBrake.set(false);
+  }
+
+  /**
+   * a method for zeroing the arm so that the downward 
+   * direction of the arm is 0
+   * 
+   * @param offset
+   */
+  public void setElbowZeroOffset(double offset){
+    absoluteEncoderElbow.setZeroOffset(offset);
+    elbowMotor.burnFlash();
+  }
+
+  public void zeroElbow() {
+    setElbowZeroOffset(absoluteEncoderElbow.getZeroOffset() - absoluteEncoderElbow.getPosition() + Math.PI);
+  }
+  
+  public double getElbowVoltage(){
+    return elbowMotor.getAppliedOutput() * elbowMotor.getBusVoltage();
+  }
+
+  // -------------------------- Wrist Piston Methods -------------------------- //
+
+  /**
+   * extends the wrist pneumatic piston
+   */
+  public void extendWrist(){
+    wrist.set(Value.kForward);
+    forearmLength = ArmConstants.ELBOW_TO_WRIST_DISTANCE + ArmConstants.WRIST_EXTENSION_LENGTH;
+  }
+
+  /**
+   * retracts the wrist pneumatic piston
+   */
+  public void retractWrist(){
+    wrist.set(Value.kReverse);
+    forearmLength = ArmConstants.ELBOW_TO_WRIST_DISTANCE;
+  }
+
+  public boolean isWristOut(){
+    return wrist.get() == Value.kForward;
+  }
+
+  // -------------------------- ArmPosition Sub-Class -------------------------- //
+  public class ArmPosition{
+    // use Rotation2ds instead of double angles?
+    // find where angles are measured from (relative to the ground or relative to something else?)
+    double shoulderAngle;
+    double elbowAngle;
+    boolean wristExtended;
+  
+    ArmPosition(double shoulderAngle, double elbowAngle, boolean wristExtended){
+      this.shoulderAngle = shoulderAngle;
+      this.elbowAngle = elbowAngle;
+      this.wristExtended = wristExtended;
+    }
+  
+    
+    public double getShoulderPosition(){
+      return shoulderAngle;
+    }
+  
+    public double getElbowPosition(){
+      return elbowAngle;
+    }
+      //double x = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.sin(shoulderAngle);
+      //double y = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.cos(shoulderAngle);
+      //return new Pose2d(x, y, new Rotation2d());
+    //   AffineTransform rotate = new AffineTransform();//Makes a new AffineTransform
+    //   Point2D source = new Point2D.Double(0,0);//makes the location of the shoulder
+    //   Point2D destination = new Point2D.Double();//Will be filled with the location of the wrist
+    //   rotate.rotate(shoulderAngle);//Rotates by the shoulder
+    //   rotate.translate(ArmConstants.SHOULDER_TO_ELBOW_DISTANCE, 0.0);//Translates by the length of the upper arm
+    //   rotate.transform(source, destination);
+    //   return new Pose2d(destination.getX(), destination.getY(), new Rotation2d());
+    // }
+  
+    public boolean isWristOut(){
+      return wristExtended;
+    }
+      //double x = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.sin(shoulderAngle) + ArmConstants.ELBOW_TO_WRIST_DISTANCE * Math.sin(shoulderAngle - elbowAngle);
+      //double y = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.cos(shoulderAngle) - ArmConstants.ELBOW_TO_WRIST_DISTANCE * Math.cos(shoulderAngle - elbowAngle)
+       //+ Constants.ROBOT_BASE_HEIGHT;
+       //TODO: check the math
+    //    AffineTransform rotate = new AffineTransform();//Makes a new AffineTransform
+    //   Point2D source = new Point2D.Double(0,0);//makes the location of the shoulder
+    //   Point2D destination = new Point2D.Double();//Will be filled with the location of the wrist
+    //   rotate.rotate(shoulderAngle);//Rotates the shoulder
+    //   rotate.translate(ArmConstants.SHOULDER_TO_ELBOW_DISTANCE, 0.0);//Translates by the length of the upper arm
+    //   rotate.rotate(elbowAngle);//Rotates by the elbow
+    //   rotate.translate(ArmConstants.ELBOW_TO_WRIST_DISTANCE, 0.0);//Translates by the length of the forearm
+    //   rotate.transform(source, destination);
+    //   return new Pose2d(destination.getX(), destination.getY(), new Rotation2d());
+    // }
+  
+    public Pose2d getEndPosition(){
+      double forearmLength = ArmConstants.ELBOW_TO_WRIST_DISTANCE; //Gets the forearm distance and acounts for wrist extention
+      if(wristExtended) forearmLength += ArmConstants.WRIST_EXTENSION_LENGTH;
+  
+      AffineTransform rotate = new AffineTransform();//Makes a new AffineTransform
+      Point2D source = new Point2D.Double(0,0);//makes the location of the shoulder
+      Point2D destination = new Point2D.Double();//Will be filled with the location of the wrist
+      rotate.rotate(shoulderAngle);//Rotates the shoulder
+      rotate.translate(ArmConstants.SHOULDER_TO_ELBOW_DISTANCE, 0.0);//Translates by the length of the upper arm
+      rotate.rotate(elbowAngle);//Rotates the elbow
+      rotate.translate(forearmLength, 0.0);//Translates by the length of the forearm
+      rotate.transform(source, destination);
+      return new Pose2d(destination.getX(), destination.getY(), new Rotation2d());
+  
+  
+      //Pose2d wristPosition = getWristPosition();
+      //
+      //if(!wristExtended){
+      //  return wristPosition;
+      //}
+      //else{
+      //  double x = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.sin(shoulderAngle) + ArmConstants.ELBOW_TO_WRIST_DISTANCE * Math.sin(shoulderAngle - elbowAngle)
+      //   +  Math.sin(elbowAngle);
+      //  double y = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.cos(shoulderAngle) - ArmConstants.ELBOW_TO_WRIST_DISTANCE * Math.cos(shoulderAngle - elbowAngle)
+      //   + Constants.ROBOT_BASE_HEIGHT + ArmConstants.WRIST_EXTENTION_LENGTH * Math.cos(elbowAngle);
+      //
+      //  return new Pose2d(x, y, new Rotation2d());
+      //}
+    }
+  
+  }
+
+  public class ArmTrajectory{
+    public ArmPosition armPosition;
+    public double time;
+  
+    ArmTrajectory(ArmPosition armPosition, double time){
+      this.armPosition = armPosition;
+      this.time = time;
+    }
+  
+
+  }
+
+   // -------------------------- Kinematics Methods -------------------------- //
   //TODO: write kinematics here,  need a public position commmand
 
   //TODO: next steps
@@ -224,7 +488,7 @@ public class Arm extends SubsystemBase {
   5. make an interpolation function between two arm positions
    */
 
-  public void DriveToPosition(ArmPosition target){
+   public void DriveToPosition(ArmPosition target){
     setBothShoulderMotor(target.shoulderAngle);
     setElbowPosition(target.elbowAngle);
     shoulderPIDEnable = true;
@@ -439,7 +703,7 @@ public class Arm extends SubsystemBase {
     double shoulderToEnd = Math.sqrt(x*x + y*y); //Gets the distance between the shoulder joint of the arm and the end point
     boolean isExtended = false;
     if(shoulderToEnd > shoulderToElbow + elbowToEnd){
-      elbowToEnd += ArmConstants.WRIST_EXTENTION_LENGTH;
+      elbowToEnd += ArmConstants.WRIST_EXTENSION_LENGTH;
       isExtended = true;
     }
 
@@ -464,7 +728,7 @@ public class Arm extends SubsystemBase {
   }
 
   public Pose2d getArmPose(){
-    boolean getWrist = wrist.get() == Value.kForward;
+    boolean getWrist = this.isWristOut();
     ArmPosition armPos = new ArmPosition(getShoulderPositon(), getElbowPosition(), getWrist);
 
     return armPos.getEndPosition();
@@ -525,261 +789,6 @@ public class Arm extends SubsystemBase {
   public ArmPosition getArmPosition(){
     return new ArmPosition(getShoulderPositon(), getElbowPosition(), wrist.get().equals(Value.kForward));
   }
-  // -------------------------- Shoulder Motors Methods -------------------------- //
-
-  public double getLeftShoulderPosition() {
-    return absoluteEncoderLeft.getPosition() - Math.PI;
-  }
-
-  public double getRightShoulderPosition() {
-    return absoluteEncoderRight.getPosition() - Math.PI;
-  }
-
-  public double getShoulderPositon(){
-    return (getRightShoulderPosition() + getLeftShoulderPosition()) / 2;
-  }
-
-  /**
-   * Stop both the shoulder motors
-   */
-  public void stopShoulder(){
-    shoulderRight.set(0);
-    shoulderLeft.set(0);
-    shoulderPIDEnable = false;
-  }
-
-  /**
-   * drive only the left shoulder motor via duty cycle
-   * FOR TESTING PURPOSES ONLY
-   * @param leftDutyCycle a value between -1.0 and 1.0, 0.0 is stopped
-   */
-  public void setLeftDutyCycle(Double leftDutyCycle){
-    shoulderLeft.set(leftDutyCycle);
-    shoulderPIDEnable = false;
-  }
-
-  /**
-   * drive only the right shoulder motor via duty cycle
-   * FOR TESTING ONLY
-   * @param rightDutyCycle a value between -1.0 and 1.0, 0.0 is stopped
-   */
-  public void setRightDutyCycle(Double rightDutyCycle){
-    shoulderLeft.set(rightDutyCycle);
-    shoulderPIDEnable = false;
-  }
-
-  private void setLeftShoulderPosition(double output) {
-    output += Math.PI;
-    shoulderLeft.getPIDController().setReference(output, CANSparkMax.ControlType.kPosition);
-  }
-
-  private void setRightShoulderPosition(double output) {
-    output += Math.PI;
-    shoulderRight.getPIDController().setReference(output, CANSparkMax.ControlType.kPosition);
-  }
-
-  public void setBothShoulderMotor(double output){
-    setLeftShoulderPosition(output);
-    setRightShoulderPosition(output);
-    shoulderGoalPos = output + Math.PI;
-    shoulderPIDEnable = true;
-  }
-
-  public void setRightShoulderOffset(double offset){
-    absoluteEncoderRight.setZeroOffset(offset);
-    shoulderRight.burnFlash();
-  }
-
-  public void setLeftShoulderOffset(double offset){
-    absoluteEncoderLeft.setZeroOffset(offset);
-    shoulderLeft.burnFlash();
-  }
-
-  private void zeroLeftShoulder(){
-    setLeftShoulderOffset(absoluteEncoderLeft.getZeroOffset() - absoluteEncoderLeft.getPosition() + Math.PI);
-  }
-
-  private void zeroRightShoulder(){
-    setLeftShoulderOffset(absoluteEncoderRight.getZeroOffset() - absoluteEncoderRight.getPosition() + Math.PI);
-  }
-
-  public void zeroBothShoulder(){
-    zeroLeftShoulder();
-    zeroRightShoulder();
-  }
-  // -------------------------- Elbow Motor Methods -------------------------- //
-
-  /**
-   * 
-   * @return
-   */
-  public double getElbowPosition(){
-    return absoluteEncoderElbow.getPosition() - Math.PI; // Scales positions -pi to pi
-  }
-  
-
-  /**
-   * Stops the elbow and reengages the brake
-   */
-  public void stopElbow(){
-    elbowMotor.set(0);
-    elbowBrake.set(true);
-  } 
-
-  /**
-   * sets the elbow motor as a percent output speed
-   * also will disengage brake.
-   * used in testing and manual control
-   * @param elbowDutyCycle an output between -1.0 and 1.0, 0 not outputing
-   */
-  public void setElbowDutyCycle(double elbowDutyCycle){
-    elbowMotor.set(elbowDutyCycle);
-    elbowBrake.set(false);
-  }
-
-  /**
-   * a method to set the elbow based on pid position,
-   * this runs an arbitraty output in addition to PID, 
-   * so it should continue to be called in code loop.
-   * 
-   * @param position an angle the arm should go to
-   */
-  public void setElbowPosition(double position){
-    position += Math.PI;
-    double theta = getElbowPosition() - getShoulderPositon();
-    elbowController.setReference(position, ControlType.kPosition, 0, ArmConstants.KG * Math.sin(theta) * Math.signum(theta));
-    elbowBrake.set(false);
-  }
-
-  /**
-   * a method for zeroing the arm so that the downward 
-   * direction of the arm is 0
-   * 
-   * @param offset
-   */
-  public void setElbowZeroOffset(double offset){
-    absoluteEncoderElbow.setZeroOffset(offset);
-    elbowMotor.burnFlash();
-  }
-
-  public void zeroElbow() {
-    setElbowZeroOffset(absoluteEncoderElbow.getZeroOffset() - absoluteEncoderElbow.getPosition() + Math.PI);
-  }
-  
-  public double getElbowVoltage(){
-    return elbowMotor.getAppliedOutput() * elbowMotor.getBusVoltage();
-  }
-
-  // -------------------------- Wrist Piston Methods -------------------------- //
-
-  /**
-   * extends the wrist pneumatic piston
-   */
-  public void extendWrist(){
-    wrist.set(Value.kForward);
-    forearmLength = ArmConstants.ELBOW_TO_WRIST_DISTANCE + ArmConstants.WRIST_EXTENTION_LENGTH;
-  }
-
-  /**
-   * retracts the wrist pneumatic piston
-   */
-  public void retractWrist(){
-    wrist.set(Value.kReverse);
-    forearmLength = ArmConstants.ELBOW_TO_WRIST_DISTANCE;
-  }
-
-  // -------------------------- ArmPosition Sub-Class -------------------------- //
-  public class ArmPosition{
-    // use Rotation2ds instead of double angles?
-    // find where angles are measured from (relative to the ground or relative to something else?)
-    double shoulderAngle;
-    double elbowAngle;
-    boolean wristExtended;
-  
-    ArmPosition(double shoulderAngle, double elbowAngle, boolean wristExtended){
-      this.shoulderAngle = shoulderAngle;
-      this.elbowAngle = elbowAngle;
-      this.wristExtended = wristExtended;
-    }
-  
-    
-    public Pose2d getShoulderPosition(){
-      return new Pose2d(0, Constants.ROBOT_BASE_HEIGHT, new Rotation2d());
-    }
-  
-    public Pose2d getElbowPosition(){
-      //double x = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.sin(shoulderAngle);
-      //double y = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.cos(shoulderAngle);
-      //return new Pose2d(x, y, new Rotation2d());
-      AffineTransform rotate = new AffineTransform();//Makes a new AffineTransform
-      Point2D source = new Point2D.Double(0,0);//makes the location of the shoulder
-      Point2D destination = new Point2D.Double();//Will be filled with the location of the wrist
-      rotate.rotate(shoulderAngle);//Rotates by the shoulder
-      rotate.translate(ArmConstants.SHOULDER_TO_ELBOW_DISTANCE, 0.0);//Translates by the length of the upper arm
-      rotate.transform(source, destination);
-      return new Pose2d(destination.getX(), destination.getY(), new Rotation2d());
-    }
-  
-    public Pose2d getWristPosition(){
-      //double x = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.sin(shoulderAngle) + ArmConstants.ELBOW_TO_WRIST_DISTANCE * Math.sin(shoulderAngle - elbowAngle);
-      //double y = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.cos(shoulderAngle) - ArmConstants.ELBOW_TO_WRIST_DISTANCE * Math.cos(shoulderAngle - elbowAngle)
-       //+ Constants.ROBOT_BASE_HEIGHT;
-       //TODO: check the math
-       AffineTransform rotate = new AffineTransform();//Makes a new AffineTransform
-      Point2D source = new Point2D.Double(0,0);//makes the location of the shoulder
-      Point2D destination = new Point2D.Double();//Will be filled with the location of the wrist
-      rotate.rotate(shoulderAngle);//Rotates the shoulder
-      rotate.translate(ArmConstants.SHOULDER_TO_ELBOW_DISTANCE, 0.0);//Translates by the length of the upper arm
-      rotate.rotate(elbowAngle);//Rotates by the elbow
-      rotate.translate(ArmConstants.ELBOW_TO_WRIST_DISTANCE, 0.0);//Translates by the length of the forearm
-      rotate.transform(source, destination);
-      return new Pose2d(destination.getX(), destination.getY(), new Rotation2d());
-    }
-  
-    public Pose2d getEndPosition(){
-      double forearmLength = ArmConstants.ELBOW_TO_WRIST_DISTANCE; //Gets the forearm distance and acounts for wrist extention
-      if(wristExtended) forearmLength += ArmConstants.WRIST_EXTENTION_LENGTH;
-  
-      AffineTransform rotate = new AffineTransform();//Makes a new AffineTransform
-      Point2D source = new Point2D.Double(0,0);//makes the location of the shoulder
-      Point2D destination = new Point2D.Double();//Will be filled with the location of the wrist
-      rotate.rotate(shoulderAngle);//Rotates the shoulder
-      rotate.translate(ArmConstants.SHOULDER_TO_ELBOW_DISTANCE, 0.0);//Translates by the length of the upper arm
-      rotate.rotate(elbowAngle);//Rotates the elbow
-      rotate.translate(forearmLength, 0.0);//Translates by the length of the forearm
-      rotate.transform(source, destination);
-      return new Pose2d(destination.getX(), destination.getY(), new Rotation2d());
-  
-  
-      //Pose2d wristPosition = getWristPosition();
-      //
-      //if(!wristExtended){
-      //  return wristPosition;
-      //}
-      //else{
-      //  double x = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.sin(shoulderAngle) + ArmConstants.ELBOW_TO_WRIST_DISTANCE * Math.sin(shoulderAngle - elbowAngle)
-      //   +  Math.sin(elbowAngle);
-      //  double y = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE * Math.cos(shoulderAngle) - ArmConstants.ELBOW_TO_WRIST_DISTANCE * Math.cos(shoulderAngle - elbowAngle)
-      //   + Constants.ROBOT_BASE_HEIGHT + ArmConstants.WRIST_EXTENTION_LENGTH * Math.cos(elbowAngle);
-      //
-      //  return new Pose2d(x, y, new Rotation2d());
-      //}
-    }
-  
-  }
-
-  public class ArmTrajectory{
-    public ArmPosition armPosition;
-    public double time;
-  
-    ArmTrajectory(ArmPosition armPosition, double time){
-      this.armPosition = armPosition;
-      this.time = time;
-    }
-  
-
-  }
-  
 
 }
 

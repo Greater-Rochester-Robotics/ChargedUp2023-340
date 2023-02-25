@@ -49,7 +49,7 @@ public final class Constants {
       /*arm dimensions */
       public static final double SHOULDER_TO_ELBOW_DISTANCE = 10;
       public static final double ELBOW_TO_WRIST_DISTANCE = 10;
-      public static final double WRIST_EXTENTION_LENGTH = 1;
+      public static final double WRIST_EXTENSION_LENGTH = 1;
       public static final double MAX_HEIGHT = 50;
       public static final double BACK_OF_ROBOT_TO_SHOULDER_DISTANCE = 30;
       
