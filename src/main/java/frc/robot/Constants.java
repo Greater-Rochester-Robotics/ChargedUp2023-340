@@ -50,10 +50,10 @@ public final class Constants {
       /* Arm Limits */
       public static final double MAX_ELBOW_ANGLE = Math.toRadians(125);
       public static final double MAX_SHOULDER_ANGLE = Math.toRadians(125);
-      
+
       /*arm dimensions */
       public static final double SHOULDER_TO_ELBOW_DISTANCE = Units.inchesToMeters(38);
-      public static final double ELBOW_TO_WRIST_DISTANCE = 10;
+      public static final double ELBOW_TO_CLAW_DISTANCE = 10;
       public static final double WRIST_EXTENSION_LENGTH = Units.inchesToMeters(10);
       public static final double MAX_HEIGHT = 50;
       public static final double BACK_OF_ROBOT_TO_SHOULDER_DISTANCE = 30;
@@ -91,8 +91,9 @@ public final class Constants {
 
     public class CompressorConstants {
       /* Compressor Pressure Constants */
-      public static final double MIN_PRESSURE = 100.0;
-      public static final double MAX_PRESSURE = 120.0;
+      //TODO: change when release valve fixed
+      public static final double MIN_PRESSURE = 80.0;
+      public static final double MAX_PRESSURE = 100.0;
     }
 
     public class TargetConstants {
@@ -172,14 +173,14 @@ public final class Constants {
     
     
     public static class ClawConstants {
-      public static final double CLAW_MOTOR_INTAKE_SPEED = 1.0; //TODO: set this to the right value
-      public static final double CLAW_MOTOR_OUTTAKE_SPEED = -1.0; //TODO: set this to the right value
-      public static final double CLAW_MOTOR_HOLD_SPEED = 0.25; //TODO: set this to the right value
+      public static final double CLAW_MOTOR_INTAKE_SPEED = -0.5; //TODO: set this to the right value
+      public static final double CLAW_MOTOR_OUTTAKE_SPEED = 0.5; //TODO: set this to the right value
+      public static final double CLAW_MOTOR_HOLD_SPEED = -0.1; //TODO: set this to the right value
     }
     
     public static class IntakeConstants {
-      public static final double INTAKE_MOTOR_INTAKE_SPEED = 1.0; //TODO: set this to the right value
-      public static final double INTAKE_MOTOR_OUTTAKE_SPEED = -1.0; //TODO: set this to the right value
+      public static final double INTAKE_MOTOR_INTAKE_SPEED = -0.5; //TODO: set this to the right value
+      public static final double INTAKE_MOTOR_OUTTAKE_SPEED = 0.5; //TODO: set this to the right value
     }
 
     /* IDENTIFICATION NUMBERS FOR DEVICES */
@@ -210,20 +211,20 @@ public final class Constants {
 
    
     /* Solenoids */
-    public static final int ELBOW_BRAKE = 0;
+    public static final int ELBOW_BRAKE = 15;
 
-    public static final int CLAW_SOLENOID_OUT = 1;
-    public static final int CLAW_SOLENOID_IN = 2;
+    public static final int CLAW_SOLENOID_OUT = 13;
+    public static final int CLAW_SOLENOID_IN = 9;
 
-    public static final int INTAKE_SOLENOID_OUT = 3;
-    public static final int INTAKE_SOLENOID_IN = 4;
+    public static final int INTAKE_SOLENOID_OUT = 10;
+    public static final int INTAKE_SOLENOID_IN = 12;
 
-    public static final int WRIST_SOLENOID_OUT = 5;
-    public static final int WRIST_SOLENOID_IN = 6;
+    public static final int WRIST_SOLENOID_OUT = 11;
+    public static final int WRIST_SOLENOID_IN = 14;
 
     /* Digital Input Channels */
-    public static final int RECORD_IS_GAME_PIECE = 0;
+    public static final int INTAKE_GAME_PIECE_SENSOR = 0;
     public static final int RECORD_CONE_POSITION = 1;
-    public static final int CLAW_GAMEPIECE_SENSOR = 2;
-    public static final int INTAKE_GAME_PIECE_SENSOR = 3;
+    public static final int RECORD_IS_GAME_PIECE = 2;
+    public static final int CLAW_GAMEPIECE_SENSOR = 3;
 }

@@ -53,7 +53,7 @@ public class Arm extends SubsystemBase {
   private double rightPos;
   private double leftPos;
   private double shoulderGoalPos;
-  private double forearmLength = ArmConstants.ELBOW_TO_WRIST_DISTANCE;
+  private double forearmLength = ArmConstants.ELBOW_TO_CLAW_DISTANCE;
 
   private List<ArmPosition> wayPoints = new ArrayList<ArmPosition>();
   private int middleWayPoint = 0; // The way point that is the grabing position (where the arm goes to grab a game peice)
@@ -68,15 +68,16 @@ public class Arm extends SubsystemBase {
     //right shoulder
     shoulderRight = new CANSparkMax(Constants.SHOULDER_MOTOR_RIGHT, MotorType.kBrushless);
     absoluteEncoderRight = shoulderRight.getAbsoluteEncoder(Type.kDutyCycle);
+    shoulderRightController = shoulderRight.getPIDController();
     absoluteEncoderRight.setPositionConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONV_FACTOR);
-    absoluteEncoderLeft.setInverted(false);
+    absoluteEncoderRight.setInverted(false);
 
     shoulderRightController.setFeedbackDevice(absoluteEncoderRight);
 
     shoulderRight.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
-
-    shoulderLeft.setInverted(true);
     
+    shoulderRight.setInverted(false);
+
     shoulderRight.getPIDController().setP(ArmConstants.SHOULDER_P_RIGHT);  
     shoulderRight.getPIDController().setI(ArmConstants.SHOULDER_I_RIGHT);
     shoulderRight.getPIDController().setD(ArmConstants.SHOULDER_D_RIGHT);
@@ -85,16 +86,18 @@ public class Arm extends SubsystemBase {
     shoulderRight.setIdleMode(IdleMode.kBrake);
 
     shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
-    shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-    shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
+    shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 10);
+    shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 10);
     shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 2000);
     shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
-    shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
-    shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
+    shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 10);
+    shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
 
     //left shoulder
     shoulderLeft = new CANSparkMax(Constants.SHOULDER_MOTOR_LEFT, MotorType.kBrushless);
     absoluteEncoderLeft = shoulderLeft.getAbsoluteEncoder(Type.kDutyCycle);
+    shoulderLeftController = shoulderLeft.getPIDController();
+
     absoluteEncoderLeft.setPositionConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONV_FACTOR);
     absoluteEncoderLeft.setInverted(true);
 
@@ -102,7 +105,7 @@ public class Arm extends SubsystemBase {
 
     shoulderLeft.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
 
-    shoulderLeft.setInverted(true);
+    shoulderLeft.setInverted(false);
  
     shoulderLeft.getPIDController().setP(ArmConstants.SHOULDER_P_LEFT);
     shoulderLeft.getPIDController().setI(ArmConstants.SHOULDER_I_LEFT);
@@ -112,16 +115,17 @@ public class Arm extends SubsystemBase {
     shoulderLeft.setIdleMode(IdleMode.kBrake);
 
     shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
-    shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-    shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
+    shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 10);
+    shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 10);
     shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 2000);
     shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
-    shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);  
-    shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
+    shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 10);  
+    shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
 
     //elbow
     elbowMotor = new CANSparkMax(Constants.ELBOW_MOTOR, MotorType.kBrushless);
     absoluteEncoderElbow = elbowMotor.getAbsoluteEncoder(Type.kDutyCycle);
+    elbowController = elbowMotor.getPIDController();
     absoluteEncoderElbow.setPositionConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONV_FACTOR);
     absoluteEncoderElbow.setInverted(true);
 
@@ -129,7 +133,7 @@ public class Arm extends SubsystemBase {
 
     elbowMotor.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
 
-    elbowMotor.setInverted(false);
+    elbowMotor.setInverted(true);
  
     elbowMotor.getPIDController().setP(ArmConstants.ELBOW_P);
     elbowMotor.getPIDController().setI(ArmConstants.ELBOW_I);
@@ -139,12 +143,12 @@ public class Arm extends SubsystemBase {
     elbowMotor.setIdleMode(IdleMode.kBrake);
 
     elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
-    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
+    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 10);
+    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 10);
     elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 2000);
     elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
-    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);  
-    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
+    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 10);  
+    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
 
     elbowMotor.set(0);
 
@@ -377,7 +381,7 @@ public class Arm extends SubsystemBase {
    */
   public void extendWrist(){
     wrist.set(Value.kForward);
-    forearmLength = ArmConstants.ELBOW_TO_WRIST_DISTANCE + ArmConstants.WRIST_EXTENSION_LENGTH;
+    forearmLength = ArmConstants.ELBOW_TO_CLAW_DISTANCE + ArmConstants.WRIST_EXTENSION_LENGTH;
   }
 
   /**
@@ -385,7 +389,7 @@ public class Arm extends SubsystemBase {
    */
   public void retractWrist(){
     wrist.set(Value.kReverse);
-    forearmLength = ArmConstants.ELBOW_TO_WRIST_DISTANCE;
+    forearmLength = ArmConstants.ELBOW_TO_CLAW_DISTANCE;
   }
 
   public boolean isWristOut(){
@@ -445,7 +449,7 @@ public class Arm extends SubsystemBase {
     // }
   
     public Pose2d getEndPosition(){
-      double forearmLength = ArmConstants.ELBOW_TO_WRIST_DISTANCE; //Gets the forearm distance and acounts for wrist extention
+      double forearmLength = ArmConstants.ELBOW_TO_CLAW_DISTANCE; //Gets the forearm distance and acounts for wrist extention
       if(wristExtended) forearmLength += ArmConstants.WRIST_EXTENSION_LENGTH;
   
       AffineTransform rotate = new AffineTransform();//Makes a new AffineTransform
@@ -709,9 +713,15 @@ public class Arm extends SubsystemBase {
 
   }
 
+  // public ArmPosition inverseKinematics(double x, double z, boolean isWristOut){
+  //   double elbowToEnd = ArmConstants.ELBOW_TO_CLAW_DISTANCE + (isWristOut?ArmConstants.WRIST_EXTENSION_LENGTH:0.0);
+
+  //   return new ArmPosition(shoulderAngle, elbowAngle, isWristOut);
+  // }
+
   public ArmPosition inverseKinematics(double x, double z){
     double shoulderToElbow = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE;
-    double elbowToEnd = ArmConstants.ELBOW_TO_WRIST_DISTANCE;
+    double elbowToEnd = ArmConstants.ELBOW_TO_CLAW_DISTANCE;
     double shoulderToEnd = Math.sqrt(x*x + z*z); //Gets the distance between the shoulder joint of the arm and the end point
     boolean isExtended = false;
     if(shoulderToEnd > shoulderToElbow + elbowToEnd){

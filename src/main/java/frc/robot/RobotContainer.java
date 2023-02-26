@@ -24,7 +24,11 @@ import frc.robot.commands.claw.ClawHold;
 import frc.robot.commands.claw.ClawIntake;
 import frc.robot.commands.claw.ClawOpen;
 import frc.robot.commands.claw.ClawSpit;
-
+import frc.robot.commands.intake.IntakeExtensionIn;
+import frc.robot.commands.intake.IntakeExtensionOut;
+import frc.robot.commands.intake.IntakeIntake;
+import frc.robot.commands.intake.IntakeOuttake;
+import frc.robot.commands.intake.IntakeStop;
 import frc.robot.commands.target.TargetMoveSelection;
 
 import frc.robot.subsystems.Arm;
@@ -108,26 +112,16 @@ public class RobotContainer {
   public RobotContainer() {
     //create(construct) subsystems
     //swerveDrive = new SwerveDrive();
-    //claw = new Claw();
-    //compressor = new Compressor();
-    //arm = new Arm();
+    claw = new Claw();
+    compressor = new Compressor();
+    // arm = new Arm();
     intake = new Intake();
     // swerveDrive.setDefaultCommand(new DriveRobotCentric());
     // swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced());
-    target = new Target();
+    // target = new Target();
     recordPlayer = new RecordPlayer();
 
-    // Any subsystems in if behave as if they were commented out. Move out of the if once they are permanently on the robot.
-    if (COMPILE_ALL_SUBSYSTEMS) {
-      swerveDrive = new SwerveDrive();
-      claw = new Claw();
-      compressor = new Compressor();
-      arm = new Arm();
-      intake = new Intake();
-      //swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced());
-    }
 
-    target = new Target();
     //Add all autos to the auto selector
     configureAutoModes();
 
@@ -146,22 +140,27 @@ public class RobotContainer {
 
     // SmartDashboard.putData(new ArmWristExtend());
     // SmartDashboard.putData(new ArmWristRetract());
-    // SmartDashboard.putData(new ClawClose());
-    // SmartDashboard.putData(new ClawOpen());
-    // SmartDashboard.putData(new ClawIntake());
-    // SmartDashboard.putData(new ClawHold());
-    // SmartDashboard.putData(new ClawSpit());
+    SmartDashboard.putData(new ClawClose());
+    SmartDashboard.putData(new ClawOpen());
+    SmartDashboard.putData(new ClawIntake());
+    SmartDashboard.putData(new ClawHold());
+    SmartDashboard.putData(new ClawSpit());
+    SmartDashboard.putData(new IntakeExtensionIn());
+    SmartDashboard.putData(new IntakeExtensionOut());
+    SmartDashboard.putData(new IntakeIntake());
+    SmartDashboard.putData(new IntakeOuttake());
+    SmartDashboard.putData(new IntakeStop());
 
     //Goal Positions
-    for(int i = 1; i < target.goalLocations.length; i++){
-      for(int j = 1; j < target.goalLocations[i].length; j++){
-        for( int k = 1; k < target.goalLocations[i][j].length; k++){
-          SmartDashboard.putNumber("G"+i+"C"+j+"R"+k+"X", target.goalLocations[i][j][k].getX());
-          SmartDashboard.putNumber("G"+i+"C"+j+"R"+k+"Y", target.goalLocations[i][j][k].getY());
-          SmartDashboard.putNumber("G"+i+"C"+j+"R"+k+"H", target.goalLocations[i][j][k].getHeight());
-        }
-      }
-    }
+    // for(int i = 1; i < target.goalLocations.length; i++){
+    //   for(int j = 1; j < target.goalLocations[i].length; j++){
+    //     for( int k = 1; k < target.goalLocations[i][j].length; k++){
+    //       SmartDashboard.putNumber("G"+i+"C"+j+"R"+k+"X", target.goalLocations[i][j][k].getX());
+    //       SmartDashboard.putNumber("G"+i+"C"+j+"R"+k+"Y", target.goalLocations[i][j][k].getY());
+    //       SmartDashboard.putNumber("G"+i+"C"+j+"R"+k+"H", target.goalLocations[i][j][k].getHeight());
+    //     }
+    //   }
+    // }
     // NetworkTableInstance instance = NetworkTableInstance.getDefault();
     // NetworkTable table = instance.getTable("drive/navx/yaw");
     // NetworkTableEntry entry = table.getEntry("entry");
@@ -173,20 +172,20 @@ public class RobotContainer {
    */
   private void configureBindings() {
     /* ==================== DRIVER BUTTONS ==================== */
-    driverDUp.onTrue(new TargetMoveSelection(0));
-    driverDRight.onTrue(new TargetMoveSelection(1));
-    driverDDown.onTrue(new TargetMoveSelection(2));
-    driverDLeft.onTrue(new TargetMoveSelection(3));
-    driverRB.onTrue(new TargetMoveSelection(4));
-    driverLB.onTrue(new TargetMoveSelection(5));
+    // driverDUp.onTrue(new TargetMoveSelection(0));
+    // driverDRight.onTrue(new TargetMoveSelection(1));
+    // driverDDown.onTrue(new TargetMoveSelection(2));
+    // driverDLeft.onTrue(new TargetMoveSelection(3));
+    // driverRB.onTrue(new TargetMoveSelection(4));
+    // driverLB.onTrue(new TargetMoveSelection(5));
 
     // any commands inside this if behave as if they were commented out.
    
     
     /* =================== CODRIVER BUTTONS =================== */
     if (COMPILE_ALL_SUBSYSTEMS) {
-      coDriverLS.whileTrue(new ArmElbowManual());
-      coDriverRS.whileTrue(new ArmShoulderManual());
+      // coDriverLS.whileTrue(new ArmElbowManual());
+      // coDriverRS.whileTrue(new ArmShoulderManual());
     }
   }
 
