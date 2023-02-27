@@ -45,7 +45,8 @@ public final class Constants {
       public static final double ELBOW_I = 0.0;
       public static final double ELBOW_D = 0.0;
       public static final double ELBOW_F = 0.0;
-      public static final double KG = 0.0; // The force required to counter gravity i.e prevent the arm from dropping
+      public static final double KG_WRIST_OUT = 0.0; // The force required to counter gravity i.e prevent the arm from dropping
+      public static final double KG_WRIST_IN =0.0;
 
       /* Arm Limits */
       public static final double MAX_ELBOW_ANGLE = Math.toRadians(125);
