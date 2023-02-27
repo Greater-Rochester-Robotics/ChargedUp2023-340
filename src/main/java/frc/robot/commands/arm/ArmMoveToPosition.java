@@ -9,7 +9,7 @@ import java.util.List;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
-import frc.robot.subsystems.Arm.ArmPosition;
+import frc.robot.subsystems.ArmPosition;
 import frc.robot.subsystems.Arm.ArmTrajectory;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -23,7 +23,7 @@ public class ArmMoveToPosition extends CommandBase {
   public ArmMoveToPosition(double x, double y) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.arm);
-    goalPosition = RobotContainer.arm.inverseKinematics(x, y);
+    goalPosition = ArmPosition.inverseKinematics(x, y);
   }
 
   // Called when the command is initially scheduled.
