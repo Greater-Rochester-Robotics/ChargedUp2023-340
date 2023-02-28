@@ -31,18 +31,19 @@ import frc.robot.commands.drive.util.DriveAdjustModulesManually;
 import frc.robot.commands.drive.util.DriveAllModulesPositionOnly;
 import frc.robot.commands.drive.util.DriveOneModule;
 import frc.robot.commands.drive.util.DriveResetAllModulePositionsToZero;
+import frc.robot.commands.drive.util.DriveTuneDriveMotorFeedForward;
 import frc.robot.commands.intake.IntakeExtensionIn;
 import frc.robot.commands.intake.IntakeExtensionOut;
 import frc.robot.commands.intake.IntakeIntake;
 import frc.robot.commands.intake.IntakeOuttake;
 import frc.robot.commands.intake.IntakeStop;
+import frc.robot.commands.recordPlayer.RecordPlayerSpinManual;
 import frc.robot.commands.target.TargetMoveSelection;
 
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Compressor;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Limelights;
 import frc.robot.subsystems.RecordPlayer;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.Target;
@@ -112,20 +113,17 @@ public class RobotContainer {
   public static Intake intake;
   public static Target target;
   public static RecordPlayer recordPlayer;
-  
-  // set to true to include all subsystems.
-  public static final boolean COMPILE_ALL_SUBSYSTEMS = false;
 
   public RobotContainer() {
     //create(construct) subsystems
     swerveDrive = new SwerveDrive();
+    // swerveDrive.setDefaultCommand(new DriveRobotCentric());
+    // swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced());
     claw = new Claw();
     compressor = new Compressor();
     arm = new Arm();
     arm.setDefaultCommand(new ArmElbowManual());
     intake = new Intake();
-    // swerveDrive.setDefaultCommand(new DriveRobotCentric());
-    // swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced());
     // target = new Target();
     recordPlayer = new RecordPlayer();
 
@@ -146,6 +144,11 @@ public class RobotContainer {
     SmartDashboard.putData(new DriveAllModulesPositionOnly());
     SmartDashboard.putData(new DriveStopAllModules());//For setup of swerve
     SmartDashboard.putData("Lock Wheels", new DriveLockWheels());
+    SmartDashboard.putData("FFTune 10per", new DriveTuneDriveMotorFeedForward(.1));
+    SmartDashboard.putData("FFTune 15per", new DriveTuneDriveMotorFeedForward(.15));
+    SmartDashboard.putData("FFTune 20per", new DriveTuneDriveMotorFeedForward(.2));
+    SmartDashboard.putData("FFTune 25per", new DriveTuneDriveMotorFeedForward(.25));
+    SmartDashboard.putData("FFTune 30per", new DriveTuneDriveMotorFeedForward(.30));
 
     SmartDashboard.putData(new ClawClose());
     SmartDashboard.putData(new ClawOpen());
@@ -159,7 +162,7 @@ public class RobotContainer {
     SmartDashboard.putData(new IntakeStop());
     SmartDashboard.putData(new ArmWristExtend());
     SmartDashboard.putData(new ArmWristRetract());
-
+    SmartDashboard.putData(new RecordPlayerSpinManual(-.5));
     //Goal Positions
     // for(int i = 1; i < target.goalLocations.length; i++){
     //   for(int j = 1; j < target.goalLocations[i].length; j++){
@@ -193,10 +196,8 @@ public class RobotContainer {
     
     /* =================== CODRIVER BUTTONS =================== */
     
-    if (COMPILE_ALL_SUBSYSTEMS) {
-      // coDriverLS.whileTrue(new ArmElbowManual());
-      // coDriverRS.whileTrue(new ArmShoulderManual());
-    }
+    // coDriverLS.whileTrue(new ArmElbowManual());
+    // coDriverRS.whileTrue(new ArmShoulderManual());
   }
 
   /**
@@ -322,15 +323,27 @@ public class RobotContainer {
     return this.getDriverAxis(Axis.kRightTrigger) - Robot.robotContainer.getDriverAxis(Axis.kLeftTrigger)*-Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_ROTATIONAL;
   }
 
+  /**
+   * accessor for the right shoulder motor's manual function
+   * @return
+   */
   public double getRightShoulderManual(){
-    return getCoDriverAxis(Axis.kRightY);
+    return getCoDriverAxis(Axis.kRightY)*.25;
   }
 
+  /**
+   * accessor for the left shoulder motor's manual function
+   * @return
+   */
   public double getLeftShoulderManual(){
-    return getCoDriverAxis(Axis.kLeftY);
+    return getCoDriverAxis(Axis.kLeftY)*.25;
   }
 
+  /**
+   * accessor for the elbow motor's manual function
+   * @return
+   */
   public double getElbowManual(){
-    return getCoDriverAxis(Axis.kLeftY) * .5;
+    return getCoDriverAxis(Axis.kLeftY) * .25;
   }
 }

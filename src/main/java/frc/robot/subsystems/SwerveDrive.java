@@ -354,10 +354,24 @@ public class SwerveDrive extends SubsystemBase {
     imu.setGyroAngleY(newCurrentAngle);
   }
 
+  /**
+   * A function that allows the user to set the gyro to a 
+   * specific angle. This will make the current orientation 
+   * of the robot the input value. This must be in degrees 
+   * for gyro.
+   * @param newCurrentAngle value the gyro should now read in degrees.
+   */
   public void setGyroRollAngle(double newCurrentAngle){
     imu.setGyroAngleX(newCurrentAngle);
   }
 
+  /**
+   * A function that allows the user to set the gyro to a 
+   * specific angle. This will make the current orientation 
+   * of the robot the input value. This must be in degrees 
+   * for gyro.
+   * @param newCurrentAngle value the gyro should now read in degrees.
+   */
   public void setGyroYawAngle(double newCurrentAngle){
     imu.setGyroAngleZ(newCurrentAngle);
   }
