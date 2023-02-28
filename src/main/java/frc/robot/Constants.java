@@ -7,6 +7,8 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.subsystems.swervelib.SwervePIDFConfig;
+import frc.robot.subsystems.swervelib.rev.NEOConfig;
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -106,15 +108,13 @@ public final class Constants {
 
     public static class SwerveDriveConstants {
       /* Swerve Module Positions */
-      public static final double positive3016 = .3016;
-      public static final double negative3016 = -.3016;
-      public static final Translation2d FRONT_LEFT_POSITION = new Translation2d(positive3016,positive3016);//These are in meters
-      public static final Translation2d REAR_LEFT_POSITION = new Translation2d(negative3016,positive3016);
-      public static final Translation2d REAR_RIGHT_POSITION = new Translation2d(negative3016,negative3016);
-      public static final Translation2d FRONT_RIGHT_POSITION = new Translation2d(positive3016,negative3016); 
+      public static final Translation2d FRONT_LEFT_POSITION = new Translation2d(.3016,.3016);//These are in meters
+      public static final Translation2d REAR_LEFT_POSITION = new Translation2d(-.3016,.3016);
+      public static final Translation2d REAR_RIGHT_POSITION = new Translation2d(-.3016,-.3016);
+      public static final Translation2d FRONT_RIGHT_POSITION = new Translation2d(.3016,-.3016); 
 
       /* Swerve Module Drive Motor Constants */
-      public static final double DRIVE_ENC_TO_METERS_FACTOR = 0.00002153;//7.13:1//the ratio from mechanical specs
+      public static final double DRIVE_ENC_TO_METERS_FACTOR = 0.319186/7.13;//7.13:1//the ratio from mechanical specs
       public static final double MINIMUM_DRIVE_SPEED = 0.01;// the slowest the wheels can turn, in m/s
       public static final double MINIMUM_DRIVE_DUTY_CYCLE = 0.05;// the slowest the wheels can turn, in duty cycle
       public static final double MOTOR_MAXIMUM_VELOCITY = 4.62;//4.33 5.19
@@ -123,18 +123,24 @@ public final class Constants {
       public static final double MAX_ROBOT_ROT_VELOCITY = 2;
 
       // public static final double MAX_ROBOT_ROT_VELOCITY = MAXIMUM_VELOCITY / DISTANCE_TO_MODULE_0;
+      public static final double MAXIMUM_VOLTAGE = 12.0;
       public static final double SWERVE_DRIVE_P_VALUE = 1000; // 0.035;
       public static final double SWERVE_DRIVE_I_VALUE = 0.0;
       public static final double SWERVE_DRIVE_D_VALUE = 25;
       public static final double SWERVE_DRIVE_FF_VALUE = 1023 / (MOTOR_MAXIMUM_VELOCITY / DRIVE_ENC_TO_METERS_FACTOR);
+      public static final SwervePIDFConfig MOVE_PIDF = new SwervePIDFConfig(SWERVE_DRIVE_P_VALUE, SWERVE_DRIVE_I_VALUE, SWERVE_DRIVE_D_VALUE, SWERVE_DRIVE_FF_VALUE);
+      public static final NEOConfig MOVE_CONFIG = new NEOConfig(MOVE_PIDF, false, false, MAXIMUM_VOLTAGE);
+
 
       /* Swerve Module Rotation constants */
-      public static final double RAD_TO_ENC_CONV_FACTOR = 14.13675; // 10.1859; // the radian to enc factor
-      public static final double SWERVE_ROT_P_VALUE = 0.1;//.1;
+      public static final double ENC_TO_RAD_CONV_FACTOR = TWO_PI / 13.71; // 13.71:1 //TODO: get the right number
+      public static final double SWERVE_ROT_P_VALUE = 0.5;//.1;
       public static final double SWERVE_ROT_I_VALUE = 0.0;
-      public static final double SWERVE_ROT_D_VALUE = 0.05; 
+      public static final double SWERVE_ROT_D_VALUE = 0.1; 
       public static final double SWERVE_ROT_I_ZONE_VALUE = 0;
       public static final double SWERVE_ROT_FF_VALUE = 0.0;
+      public static final SwervePIDFConfig ROTATE_PIDF = new SwervePIDFConfig(SWERVE_ROT_P_VALUE, SWERVE_ROT_I_VALUE, SWERVE_ROT_D_VALUE, SWERVE_ROT_FF_VALUE);
+      public static final NEOConfig ROTATE_CONFIG = new NEOConfig(ROTATE_PIDF, true, false, MAXIMUM_VOLTAGE);
       // public static final double SWERVE_ROT_ARB_FF_VOLTAGE = 0.0;//This is left over from NEO550 consider deleting
       // public static final double SWERVE_ROT_PID_VOLTAGE_MINIMUM = -12.0;//This is left over from NEO550 consider deleting
       // public static final double SWERVE_ROT_PID_VOLTAGE_MAXIMUM = 12.0;//This is left over from NEO550 consider deleting
@@ -148,7 +154,7 @@ public final class Constants {
       public static final double ROBOT_SPIN_P = 1.55;//tuned for drive/climber bot
       public static final double ROBOT_SPIN_I = 0.0;
       public static final double ROBOT_SPIN_D = 0.01;
-    
+  
       public static final double ROBOT_COUNTER_SPIN_P = 1.1;
       public static final double ROBOT_COUNTER_SPIN_I = 0.0;
       public static final double ROBOT_COUNTER_SPIN_D = 0.001;
@@ -170,7 +176,9 @@ public final class Constants {
       /* Driver Scaling Constants */
       public static final double DRIVER_SPEED_SCALE_LINEAR = 0.65 * 0.85;
       public static final double DRIVER_SPEED_SCALE_ROTATIONAL = .75;
-    }
+      /* Aiming Values*/
+      public static final Translation2d FIELD_CENTER = new Translation2d();
+  }
     
     
     public static class ClawConstants {

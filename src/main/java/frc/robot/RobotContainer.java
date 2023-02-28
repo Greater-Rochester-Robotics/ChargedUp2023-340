@@ -6,6 +6,7 @@ package frc.robot;
 
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,6 +25,12 @@ import frc.robot.commands.claw.ClawHold;
 import frc.robot.commands.claw.ClawIntake;
 import frc.robot.commands.claw.ClawOpen;
 import frc.robot.commands.claw.ClawSpit;
+import frc.robot.commands.drive.DriveLockWheels;
+import frc.robot.commands.drive.DriveStopAllModules;
+import frc.robot.commands.drive.util.DriveAdjustModulesManually;
+import frc.robot.commands.drive.util.DriveAllModulesPositionOnly;
+import frc.robot.commands.drive.util.DriveOneModule;
+import frc.robot.commands.drive.util.DriveResetAllModulePositionsToZero;
 import frc.robot.commands.intake.IntakeExtensionIn;
 import frc.robot.commands.intake.IntakeExtensionOut;
 import frc.robot.commands.intake.IntakeIntake;
@@ -111,7 +118,7 @@ public class RobotContainer {
 
   public RobotContainer() {
     //create(construct) subsystems
-    //swerveDrive = new SwerveDrive();
+    swerveDrive = new SwerveDrive();
     claw = new Claw();
     compressor = new Compressor();
     arm = new Arm();
@@ -130,17 +137,16 @@ public class RobotContainer {
     configureBindings();
 
     //add some commands to dashboard for testing/configuring
-    // SmartDashboard.putData(new DriveResetAllModulePositionsToZero());//For setup of swerve
-    // SmartDashboard.putData(new DriveAdjustModuleZeroPoint());//For setup of swerve
-    // SmartDashboard.putData("Drive Module 0", new DriveOneModule(0));//For setup of swerve
-    // SmartDashboard.putData("Drive Module 1", new DriveOneModule(1));//For setup of swerve
-    // SmartDashboard.putData("Drive Module 2", new DriveOneModule(2));//For setup of swerve
-    // SmartDashboard.putData("Drive Module 3", new DriveOneModule(3));//For setup of swerve
-    // SmartDashboard.putData(new DriveAllModulesPositionOnly());
-    // SmartDashboard.putData(new DriveStopAllModules());//For setup of swerve
+    SmartDashboard.putData(new DriveResetAllModulePositionsToZero());//For setup of swerve
+    SmartDashboard.putData(new DriveAdjustModulesManually());//For setup of swerve
+    SmartDashboard.putData("Drive Module 0", new DriveOneModule(0));//For setup of swerve
+    SmartDashboard.putData("Drive Module 1", new DriveOneModule(1));//For setup of swerve
+    SmartDashboard.putData("Drive Module 2", new DriveOneModule(2));//For setup of swerve
+    SmartDashboard.putData("Drive Module 3", new DriveOneModule(3));//For setup of swerve
+    SmartDashboard.putData(new DriveAllModulesPositionOnly());
+    SmartDashboard.putData(new DriveStopAllModules());//For setup of swerve
+    SmartDashboard.putData("Lock Wheels", new DriveLockWheels());
 
-    // SmartDashboard.putData(new ArmWristExtend());
-    // SmartDashboard.putData(new ArmWristRetract());
     SmartDashboard.putData(new ClawClose());
     SmartDashboard.putData(new ClawOpen());
     SmartDashboard.putData(new ClawIntake());
@@ -218,6 +224,50 @@ public class RobotContainer {
   }
 
   /**
+   * A method to return the value of a driver joystick axis,
+   * which runs from -1.0 to 1.0, with a .1 dead zone(a 0 
+   * value returned if the joystick value is between -.1 and 
+   * .1)
+   * @param axis
+   * @return value of the joystick, from -1.0 to 1.0 where 0.0 is centered
+   */
+  public double getDriverAxis(Axis axis) {
+    return (driver.getRawAxis(axis.value) < -.1 || driver.getRawAxis(axis.value) > .1)
+        ? driver.getRawAxis(axis.value)
+        : 0.0;
+  }
+
+  /**
+   * Accessor method to set driver rumble function
+   * 
+   * @param leftRumble
+   * @param rightRumble
+   */
+  public static void setDriverRumble(double leftRumble, double rightRumble) {
+    driver.setRumble(RumbleType.kLeftRumble, leftRumble);
+    driver.setRumble(RumbleType.kRightRumble, rightRumble);
+  }
+
+  /**
+   * Returns the int position of the DPad/POVhat based
+   * on the following table:
+   *    input    |return
+   * not pressed |  -1
+   *     up      |   0
+   *   up right  |  45
+   *    right    |  90
+   *  down right | 135
+   *    down     | 180
+   *  down left  | 225
+   *    left     | 270
+   *   up left   | 315
+   * @return
+   */
+  public int getDriverDPad() {
+    return (driver.getPOV());
+  }
+
+  /**
    * A method to return the value of a codriver joystick axis,
    * which runs from -1.0 to 1.0, with a .1 dead zone(a 0 
    * value returned if the joystick value is between -.1 and 
@@ -229,6 +279,47 @@ public class RobotContainer {
     return (coDriver.getRawAxis(axis.value) < -.1 || coDriver.getRawAxis(axis.value) > .1)
         ? coDriver.getRawAxis(axis.value)
         : 0;
+  }
+
+  /**
+   * Accessor method to set codriver rumble function
+   * 
+   * @param leftRumble
+   * @param rightRumble
+   */
+  public static void setCoDriverRumble(double leftRumble, double rightRumble) {
+    coDriver.setRumble(RumbleType.kLeftRumble, leftRumble);
+    coDriver.setRumble(RumbleType.kRightRumble, rightRumble);
+  }
+
+  /**
+   * accessor to get the true/false of the buttonNum 
+   * on the coDriver control
+   * @param buttonNum
+   * @return the value of the button
+   */
+  public boolean getCoDriverButton(int buttonNum) {
+    return coDriver.getRawButton(buttonNum);
+  }
+
+  public double getRobotForwardFull(boolean isVeloMode) {
+    return this.getDriverAxis(Axis.kLeftY)*-Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_LINEAR * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
+  }
+
+  public double getRobotForwardSlow(boolean isVeloMode) {
+    return this.getDriverAxis(Axis.kRightY)*0.5*-Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_LINEAR * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
+  }
+
+  public double getRobotLateralFull(boolean isVeloMode) {
+    return this.getDriverAxis(Axis.kLeftX)*-Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_LINEAR * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
+  }
+
+  public double getRobotLateralSlow(boolean isVeloMode) {
+    return this.getDriverAxis(Axis.kRightX)*0.5*-Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_LINEAR * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
+  }
+
+  public double getRobotRotation() {
+    return this.getDriverAxis(Axis.kRightTrigger) - Robot.robotContainer.getDriverAxis(Axis.kLeftTrigger)*-Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_ROTATIONAL;
   }
 
   public double getRightShoulderManual(){
