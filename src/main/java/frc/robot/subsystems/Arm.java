@@ -322,7 +322,7 @@ public class Arm extends SubsystemBase {
    */
   public void stopElbow(){
     elbowMotor.set(0);
-    elbowBrake.set(true);
+    elbowBrake.set(false);
   } 
 
   /**
@@ -333,7 +333,7 @@ public class Arm extends SubsystemBase {
    */
   public void setElbowDutyCycle(double elbowDutyCycle){
     elbowMotor.set(elbowDutyCycle);
-    elbowBrake.set(false);
+    elbowBrake.set(true);
   }
 
   /**
@@ -352,7 +352,7 @@ public class Arm extends SubsystemBase {
     double gravCounterConstant = isWristOut()?ArmConstants.KG_WRIST_OUT:ArmConstants.KG_WRIST_IN;
     double theta = getElbowPosition() - getShoulderPositon();
     elbowController.setReference(position, ControlType.kPosition, 0, gravCounterConstant* Math.sin(theta) * Math.signum(theta));
-    elbowBrake.set(false);
+    elbowBrake.set(true);
   }
 
   /**

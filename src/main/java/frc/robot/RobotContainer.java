@@ -115,6 +115,7 @@ public class RobotContainer {
     claw = new Claw();
     compressor = new Compressor();
     arm = new Arm();
+    arm.setDefaultCommand(new ArmElbowManual());
     intake = new Intake();
     // swerveDrive.setDefaultCommand(new DriveRobotCentric());
     // swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced());
@@ -150,6 +151,8 @@ public class RobotContainer {
     SmartDashboard.putData(new IntakeIntake());
     SmartDashboard.putData(new IntakeOuttake());
     SmartDashboard.putData(new IntakeStop());
+    SmartDashboard.putData(new ArmWristExtend());
+    SmartDashboard.putData(new ArmWristRetract());
 
     //Goal Positions
     // for(int i = 1; i < target.goalLocations.length; i++){
@@ -183,6 +186,7 @@ public class RobotContainer {
    
     
     /* =================== CODRIVER BUTTONS =================== */
+    
     if (COMPILE_ALL_SUBSYSTEMS) {
       // coDriverLS.whileTrue(new ArmElbowManual());
       // coDriverRS.whileTrue(new ArmShoulderManual());
@@ -236,6 +240,6 @@ public class RobotContainer {
   }
 
   public double getElbowManual(){
-    return getCoDriverAxis(Axis.kLeftY);
+    return getCoDriverAxis(Axis.kLeftY) * .5;
   }
 }
