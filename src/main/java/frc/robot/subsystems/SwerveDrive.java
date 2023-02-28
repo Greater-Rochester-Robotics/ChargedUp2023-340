@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 import frc.robot.Constants;
+import frc.robot.subsystems.ADIS16470_IMU.IMUAxis;
 import frc.robot.subsystems.swervelib.SwerveModule;
 import frc.robot.subsystems.swervelib.rev.SwerveMoveNEO;
 import frc.robot.subsystems.swervelib.rev.SwerveRotationNEO;
@@ -121,7 +122,7 @@ public class SwerveDrive extends SubsystemBase {
       Constants.SwerveDriveConstants.REAR_RIGHT_POSITION, Constants.SwerveDriveConstants.FRONT_RIGHT_POSITION);
 
     // Constructs IMU object (gyro)
-    imu = new ADIS16470_IMU();
+    imu = new ADIS16470_IMU(IMUAxis.kZ, IMUAxis.kX, IMUAxis.kY);
 
     //construct the odometry class.
     driveOdometry = new SwerveGRROdometry(driveKinematics, getGyroRotation2d(), getSwerveModulePositions());
@@ -354,24 +355,10 @@ public class SwerveDrive extends SubsystemBase {
     imu.setGyroAngleY(newCurrentAngle);
   }
 
-  /**
-   * A function that allows the user to set the gyro to a 
-   * specific angle. This will make the current orientation 
-   * of the robot the input value. This must be in degrees 
-   * for gyro.
-   * @param newCurrentAngle value the gyro should now read in degrees.
-   */
   public void setGyroRollAngle(double newCurrentAngle){
     imu.setGyroAngleX(newCurrentAngle);
   }
 
-  /**
-   * A function that allows the user to set the gyro to a 
-   * specific angle. This will make the current orientation 
-   * of the robot the input value. This must be in degrees 
-   * for gyro.
-   * @param newCurrentAngle value the gyro should now read in degrees.
-   */
   public void setGyroYawAngle(double newCurrentAngle){
     imu.setGyroAngleZ(newCurrentAngle);
   }
@@ -432,7 +419,7 @@ public class SwerveDrive extends SubsystemBase {
    * @return The angle of the robot roll in degrees
    */
   public double getGyroInDegRoll(){
-    return imu.getAngle(ADIS16470_IMU.IMUAxis.kX);
+    return imu.getAngle(IMUAxis.kY);
   }
 
   /**
@@ -442,7 +429,7 @@ public class SwerveDrive extends SubsystemBase {
    * @return The angle of the robot pitch in degrees
    */
   public double getGyroInDegPitch(){
-    return imu.getAngle(ADIS16470_IMU.IMUAxis.kY);
+    return imu.getAngle(IMUAxis.kX);
   }
 
   /**
@@ -452,7 +439,7 @@ public class SwerveDrive extends SubsystemBase {
    * @return The angle of the robot yaw in radians
    */
   public double getGyroInDegYaw(){
-    return imu.getAngle(ADIS16470_IMU.IMUAxis.kZ);    
+    return imu.getAngle(IMUAxis.kZ);    
   }
 
   /**
@@ -461,7 +448,7 @@ public class SwerveDrive extends SubsystemBase {
    * @return degrees per second
    */
    public double getRotationalVelocityRoll(){
-    return imu.getRate(ADIS16470_IMU.IMUAxis.kX);
+    return imu.getRate(IMUAxis.kY);
   }
 
   /**
@@ -470,7 +457,7 @@ public class SwerveDrive extends SubsystemBase {
    * @return degrees per second
    */
   public double getRotationalVelocityPitch(){
-    return imu.getRate(ADIS16470_IMU.IMUAxis.kY);
+    return imu.getRate(IMUAxis.kX);
   }
 
   /**
@@ -479,7 +466,7 @@ public class SwerveDrive extends SubsystemBase {
    * @return degrees per second
    */
   public double getRotationalVelocityYaw(){
-    return imu.getRate(ADIS16470_IMU.IMUAxis.kZ);
+    return imu.getRate(IMUAxis.kZ);
   }
 
   /**
@@ -670,5 +657,3 @@ public class SwerveDrive extends SubsystemBase {
     return pathController.calculate(getCurPose2d(), desiredState);
   }
 }
-
-
