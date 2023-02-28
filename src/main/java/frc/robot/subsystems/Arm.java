@@ -154,6 +154,8 @@ public class Arm extends SubsystemBase {
 
     elbowBrake = new Solenoid(PneumaticsModuleType.REVPH, Constants.ELBOW_BRAKE);
 
+    setElbowZeroOffset(.6779);
+
     //burning flash for all NEOs
     shoulderRight.burnFlash();
     shoulderLeft.burnFlash();
@@ -394,8 +396,18 @@ public class Arm extends SubsystemBase {
     return wrist.get() == Value.kForward;
   }
 
-  // -------------------------- ArmPosition Sub-Class -------------------------- //
+  // -------------------------- ArmPosition Methods -------------------------- //
  
+  public void DriveToPosition(ArmPosition target){
+    setBothShoulderMotorPosition(target.shoulderAngle);
+    setElbowPosition(target.elbowAngle);
+    shoulderPIDEnable = true;
+
+  }
+  
+  public ArmPosition getArmPosition(){
+    return new ArmPosition(getShoulderPositon(), getElbowPosition(), wrist.get().equals(Value.kForward));
+  }
 
   public class ArmTrajectory{
     public ArmPosition armPosition;
@@ -421,16 +433,7 @@ public class Arm extends SubsystemBase {
   5. make an interpolation function between two arm positions
    */
 
-   public void DriveToPosition(ArmPosition target){
-    setBothShoulderMotorPosition(target.shoulderAngle);
-    setElbowPosition(target.elbowAngle);
-    shoulderPIDEnable = true;
 
-  }
-  
-  public ArmPosition getArmPosition(){
-    return new ArmPosition(getShoulderPositon(), getElbowPosition(), wrist.get().equals(Value.kForward));
-  }
 
   public List<ArmPosition> getPath(ArmPosition startPosition, ArmPosition endPosition){
 

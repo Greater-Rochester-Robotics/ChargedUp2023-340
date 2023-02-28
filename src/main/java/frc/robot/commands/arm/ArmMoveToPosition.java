@@ -21,16 +21,20 @@ public class ArmMoveToPosition extends CommandBase {
   
   /** Creates a new MoveArmToPosition. */
   public ArmMoveToPosition(double x, double y) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.arm);
-    goalPosition = ArmPosition.inverseKinematics(x, y);
+    this(ArmPosition.inverseKinematics(x, y));
   }
 
+  public ArmMoveToPosition(ArmPosition goalPosition){
+    this.goalPosition = goalPosition;
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(RobotContainer.arm);
+  }
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     
     trajectory = RobotContainer.arm.getTrajectory(RobotContainer.arm.getArmPosition(), goalPosition);
+    timer.reset();
     timer.start();
 
   }
@@ -39,23 +43,33 @@ public class ArmMoveToPosition extends CommandBase {
   @Override
   public void execute() {
 
-    if(trajectory.get(currentWayPoint).time <= timer.get()){
+    if(trajectory.get(currentWayPoint).time >= timer.get()){
       currentWayPoint++;
-      if(currentWayPoint >= trajectory.size())
+      if(currentWayPoint >= trajectory.size() - 1)
         return;
     }
+    // gets the next arm position
+    ArmPosition nextPosition = ArmPosition.interpolateArmPosition(
+      trajectory.get(currentWayPoint).armPosition, // gets the last way point
+      trajectory.get(currentWayPoint + 1).armPosition, // gets the next way point
+      // gets the percentage of the way between the last way point and the next way point using the timer 
+      (timer.get() - trajectory.get(currentWayPoint).time) / (trajectory.get(currentWayPoint + 1).time - trajectory.get(currentWayPoint).time));
+
     //keep making arm!!!
-    RobotContainer.arm.DriveToPosition(trajectory.get(currentWayPoint).armPosition);
+    RobotContainer.arm.DriveToPosition(nextPosition);
 
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    RobotContainer.arm.stopShoulder();
+    RobotContainer.arm.stopElbow();
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return currentWayPoint >= trajectory.size();
   }
 }

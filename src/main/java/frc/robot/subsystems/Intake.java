@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -49,6 +50,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putBoolean("intake has game peice: ", hasGamePiece());
   }
 
   /**
@@ -91,7 +93,7 @@ public class Intake extends SubsystemBase {
    * @return boolean
    */
   public boolean hasGamePiece(){
-    return gamePieceSensor.get();
+    return !gamePieceSensor.get();
   }
 
 }

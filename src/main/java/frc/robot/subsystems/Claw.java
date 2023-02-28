@@ -36,7 +36,7 @@ public class Claw extends SubsystemBase {
 
     clawMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20);
     clawMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 251);
-    clawMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 257);
+    clawMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 254);
     clawMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, 241);
     clawMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_6_Misc, 237);
     clawMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus, 221);
@@ -99,6 +99,6 @@ public class Claw extends SubsystemBase {
    * @return true if game piece detected
    */
   public boolean getGamePieceSensor(){
-    return gamePieceSensor.get();
+    return !gamePieceSensor.get();
   }
 }
