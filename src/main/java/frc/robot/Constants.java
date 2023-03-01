@@ -33,30 +33,31 @@ public final class Constants {
     
     public static class ArmConstants{
       /* Arm PID Constants */
-      public static final double SHOULDER_P_RIGHT = 0.0;
+      public static final double SHOULDER_P_RIGHT = 2.0;
       public static final double SHOULDER_I_RIGHT = 0.0;
       public static final double SHOULDER_D_RIGHT = 0.0;
       public static final double SHOULDER_F_RIGHT = 0.0;
 
-      public static final double SHOULDER_P_LEFT = 0.0;
+      public static final double SHOULDER_P_LEFT = 2.0;
       public static final double SHOULDER_I_LEFT = 0.0;
       public static final double SHOULDER_D_LEFT = 0.0;
       public static final double SHOULDER_F_LEFT = 0.0;
 
-      public static final double ELBOW_P = 0.0;
+      public static final double ELBOW_P = 0.3;
       public static final double ELBOW_I = 0.0;
       public static final double ELBOW_D = 0.0;
       public static final double ELBOW_F = 0.0;
       public static final double KG_WRIST_OUT = 2.0; // The force required to counter gravity i.e prevent the arm from dropping
-      public static final double KG_WRIST_IN = 0.6;
+      public static final double KG_WRIST_IN = 0.3;
 
       /* Arm Limits */
       public static final double MAX_ELBOW_ANGLE = Math.toRadians(125);
-      public static final double MAX_SHOULDER_ANGLE = Math.toRadians(125);
+      public static final double MAX_SHOULDER_ANGLE = Math.toRadians(15);
+      public static final double MIN_SHOULDER_ANGLE = Math.toRadians(-25);
 
       /*arm dimensions */
       public static final double SHOULDER_TO_ELBOW_DISTANCE = Units.inchesToMeters(38);
-      public static final double ELBOW_TO_CLAW_DISTANCE = 10;
+      public static final double ELBOW_TO_CLAW_DISTANCE = Units.inchesToMeters(29);
       public static final double WRIST_EXTENSION_LENGTH = Units.inchesToMeters(10);
       public static final double MAX_HEIGHT = 50;
       public static final double BACK_OF_ROBOT_TO_SHOULDER_DISTANCE = 30;

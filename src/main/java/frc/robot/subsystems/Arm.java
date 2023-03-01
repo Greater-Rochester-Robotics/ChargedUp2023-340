@@ -90,6 +90,8 @@ public class Arm extends SubsystemBase {
     shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 10);
     shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
 
+    absoluteEncoderRight.setZeroOffset(1.7072);
+
     //left shoulder
     shoulderLeft = new CANSparkMax(Constants.SHOULDER_MOTOR_LEFT, MotorType.kBrushless);
     absoluteEncoderLeft = shoulderLeft.getAbsoluteEncoder(Type.kDutyCycle);
@@ -118,6 +120,8 @@ public class Arm extends SubsystemBase {
     shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
     shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 10);  
     shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
+
+    absoluteEncoderLeft.setZeroOffset(3.3257);
 
     //elbow
     elbowMotor = new CANSparkMax(Constants.ELBOW_MOTOR, MotorType.kBrushless);
@@ -177,10 +181,10 @@ public class Arm extends SubsystemBase {
     leftPos = getLeftShoulderPosition();
     double elbowPos = getElbowPosition();
 
-    SmartDashboard.putNumber("Absolute encoder right", rightPos);
+    SmartDashboard.putNumber("Absolute encoder right", Math.toDegrees(rightPos));
     SmartDashboard.putNumber("Internal encoder right", shoulderRight.getEncoder().getPosition());
 
-    SmartDashboard.putNumber("Absolute encoder left", leftPos);
+    SmartDashboard.putNumber("Absolute encoder left", Math.toDegrees(leftPos));
     SmartDashboard.putNumber("Internal encoder left", shoulderLeft.getEncoder().getPosition());
 
     SmartDashboard.putNumber("Absolute encoder elbow", elbowPos);
@@ -255,32 +259,33 @@ public class Arm extends SubsystemBase {
    * @param rightDutyCycle a value between -1.0 and 1.0, 0.0 is stopped
    */
   public void setRightDutyCycle(Double rightDutyCycle){
-    shoulderLeft.set(rightDutyCycle);
+    shoulderRight.set(rightDutyCycle);
     shoulderPIDEnable = false;
   }
 
-  private void setLeftShoulderPosition(double output) {
-    if(Math.abs(output) > ArmConstants.MAX_SHOULDER_ANGLE) {
-      System.out.println("LEFT SHOULDER CAN'T BE SET TO ANGLE " + Math.toDegrees(output) + "\u00b0" + ", OUT OF RANGE!");
+  private void setLeftShoulderPosition(double shoulderAngle) {
+    if(shoulderAngle > ArmConstants.MAX_SHOULDER_ANGLE || shoulderAngle < ArmConstants.MIN_SHOULDER_ANGLE) {
+      System.out.println("LEFT SHOULDER CAN'T BE SET TO ANGLE " + Math.toDegrees(shoulderAngle) + "\u00b0" + ", OUT OF RANGE!");
       return;
     }
-    output += Math.PI;
-    shoulderLeft.getPIDController().setReference(output, CANSparkMax.ControlType.kPosition);
+    // shoulderAngle += Math.PI;
+    shoulderLeft.getPIDController().setReference(shoulderAngle + Math.PI, CANSparkMax.ControlType.kPosition);
   }
 
-  private void setRightShoulderPosition(double output) {
-    if(Math.abs(output) > ArmConstants.MAX_SHOULDER_ANGLE) {
-      System.out.println("RIGHT SHOULDER CAN'T BE SET TO ANGLE " + Math.toDegrees(output) + "\u00b0" + ", OUT OF RANGE!");
+  private void setRightShoulderPosition(double shoulderAngle) {
+    if(shoulderAngle > ArmConstants.MAX_SHOULDER_ANGLE || shoulderAngle < ArmConstants.MIN_SHOULDER_ANGLE) {
+      System.out.println("RIGHT SHOULDER CAN'T BE SET TO ANGLE " + Math.toDegrees(shoulderAngle) + "\u00b0" + ", OUT OF RANGE!");
       return;
     }
-    output += Math.PI;
-    shoulderRight.getPIDController().setReference(output, CANSparkMax.ControlType.kPosition);
+    // shoulderAngle += Math.PI;
+    shoulderRight.getPIDController().setReference(shoulderAngle + Math.PI, CANSparkMax.ControlType.kPosition);
   }
 
-  public void setBothShoulderMotorPosition(double output){
-    setLeftShoulderPosition(output);
-    setRightShoulderPosition(output);
-    shoulderGoalPos = output + Math.PI;
+  public void setBothShoulderMotorPosition(double shoulderAngle){
+    // System.out.println("RIGHT SHOULDER CAN'T BE SET TO ANGLE " + Math.toDegrees(shoulderAngle) + "\u00b0" + ", OUT OF RANGE!");
+    setLeftShoulderPosition(shoulderAngle);
+    setRightShoulderPosition(shoulderAngle);
+    shoulderGoalPos = shoulderAngle;
     shoulderPIDEnable = true;
   }
 
@@ -351,7 +356,8 @@ public class Arm extends SubsystemBase {
     position += Math.PI;
     double gravCounterConstant = isWristOut()?ArmConstants.KG_WRIST_OUT:ArmConstants.KG_WRIST_IN;
     double theta = getElbowPosition() - getShoulderPositon();
-    elbowController.setReference(position, ControlType.kPosition, 0, gravCounterConstant* Math.sin(theta) * Math.signum(theta));
+    SmartDashboard.putNumber("Theta", theta);
+    elbowController.setReference(position, ControlType.kPosition, 0, gravCounterConstant* Math.sin(theta));
     elbowBrake.set(true);
   }
 

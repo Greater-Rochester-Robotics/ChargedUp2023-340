@@ -17,7 +17,9 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import frc.robot.commands.arm.ArmElbowManual;
+import frc.robot.commands.arm.ArmElbowToPosition;
 import frc.robot.commands.arm.ArmShoulderManual;
+import frc.robot.commands.arm.ArmShoulderToPosition;
 import frc.robot.commands.arm.ArmWristExtend;
 import frc.robot.commands.arm.ArmWristRetract;
 import frc.robot.commands.claw.ClawClose;
@@ -122,7 +124,7 @@ public class RobotContainer {
     claw = new Claw();
     compressor = new Compressor();
     arm = new Arm();
-    arm.setDefaultCommand(new ArmElbowManual());
+    // arm.setDefaultCommand(new ArmElbowManual());
     intake = new Intake();
     // target = new Target();
     recordPlayer = new RecordPlayer();
@@ -162,7 +164,13 @@ public class RobotContainer {
     SmartDashboard.putData(new IntakeStop());
     SmartDashboard.putData(new ArmWristExtend());
     SmartDashboard.putData(new ArmWristRetract());
-    SmartDashboard.putData(new RecordPlayerSpinManual(-.5));
+    SmartDashboard.putData(new RecordPlayerSpinManual(-.2));
+
+    SmartDashboard.putData("Elbow to 0",new ArmElbowToPosition(0));
+    SmartDashboard.putData("Elbow to -70",new ArmElbowToPosition(Math.toRadians(-70)));
+    SmartDashboard.putData("Shoulders to 0", new ArmShoulderToPosition(0));
+    SmartDashboard.putData("Shoulders to 10", new ArmShoulderToPosition(Math.toRadians(10)));
+    SmartDashboard.putData("Shoulders to -20", new ArmShoulderToPosition(Math.toRadians(-20)));
     //Goal Positions
     // for(int i = 1; i < target.goalLocations.length; i++){
     //   for(int j = 1; j < target.goalLocations[i].length; j++){
@@ -195,9 +203,8 @@ public class RobotContainer {
    
     
     /* =================== CODRIVER BUTTONS =================== */
-    
-    // coDriverLS.whileTrue(new ArmElbowManual());
-    // coDriverRS.whileTrue(new ArmShoulderManual());
+    coDriverLB.whileTrue(new ArmElbowManual());
+    coDriverRB.whileTrue(new ArmShoulderManual());
   }
 
   /**
