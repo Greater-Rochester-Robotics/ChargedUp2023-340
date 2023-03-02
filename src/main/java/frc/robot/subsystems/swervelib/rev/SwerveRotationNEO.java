@@ -162,15 +162,16 @@ public class SwerveRotationNEO implements SwerveRotationMotor , SwerveAbsoluteSe
      * position as the current position of the module.
      */
     public void zeroAbsPositionSensor(){
+        System.out.println("ROTATION ABSOLUTE SENSOR ZERO CAN'T BE SET AT THIS TIME");  
         //set current offset as zero
-        absoluteEncoder.setZeroOffset(0.0);
+        // absoluteEncoder.setZeroOffset(0.0);
         //take the current value of the sensor and make it the offset 
-        absOffsetAngle = absoluteEncoder.getPosition();
-        absoluteEncoder.setZeroOffset(absOffsetAngle);
+        // absOffsetAngle = absoluteEncoder.getPosition();
+        // absoluteEncoder.setZeroOffset(absOffsetAngle);
         //burn the flash
-        rotationMotor.burnFlash();
+        // rotationMotor.burnFlash();
         //commit offset value to preferences table
-        Preferences.setDouble("SwerveRotationNeoAbsOffset" + rotationMotor.getDeviceId(), absOffsetAngle);
+        // Preferences.setDouble("SwerveRotationNeoAbsOffset" + rotationMotor.getDeviceId(), absOffsetAngle);
     }
 
     /**

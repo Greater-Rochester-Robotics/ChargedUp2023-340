@@ -300,11 +300,13 @@ public class Arm extends SubsystemBase {
   }
 
   private void zeroLeftShoulder(){
-    setLeftShoulderOffset(absoluteEncoderLeft.getZeroOffset() + absoluteEncoderLeft.getPosition() + Math.PI);
+    System.out.println("LEFT SHOULDER ZERO CAN'T BE SET AT THIS TIME");
+    // setLeftShoulderOffset(absoluteEncoderLeft.getZeroOffset() + absoluteEncoderLeft.getPosition() + Math.PI);
   }
 
   private void zeroRightShoulder(){
-    setLeftShoulderOffset(absoluteEncoderRight.getZeroOffset() + absoluteEncoderRight.getPosition() + Math.PI);
+    System.out.println("RIGHT SHOULDER ZERO CAN'T BE SET AT THIS TIME");
+    // setLeftShoulderOffset(absoluteEncoderRight.getZeroOffset() + absoluteEncoderRight.getPosition() + Math.PI);
   }
 
   public void zeroBothShoulder(){
@@ -373,7 +375,8 @@ public class Arm extends SubsystemBase {
   }
 
   public void zeroElbow() {
-    setElbowZeroOffset(absoluteEncoderElbow.getZeroOffset() + absoluteEncoderElbow.getPosition() + Math.PI);
+    System.out.println("ELBOW ZERO CAN'T BE SET AT THIS TIME");
+    // setElbowZeroOffset(absoluteEncoderElbow.getZeroOffset() + absoluteEncoderElbow.getPosition() + Math.PI);
   }
   
   public double getElbowVoltage(){
@@ -427,7 +430,7 @@ public class Arm extends SubsystemBase {
 
   }
 
-   // -------------------------- Kinematics Methods -------------------------- //
+  // -------------------------- Kinematics Methods -------------------------- //
   //TODO: write kinematics here,  need a public position commmand
 
   //TODO: next steps
