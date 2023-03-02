@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -23,11 +23,13 @@ import frc.robot.commands.arm.ArmShoulderManual;
 import frc.robot.commands.arm.ArmShoulderToPosition;
 import frc.robot.commands.arm.ArmWristExtend;
 import frc.robot.commands.arm.ArmWristRetract;
+
 import frc.robot.commands.claw.ClawClose;
 import frc.robot.commands.claw.ClawHold;
 import frc.robot.commands.claw.ClawIntake;
 import frc.robot.commands.claw.ClawOpen;
 import frc.robot.commands.claw.ClawSpit;
+
 import frc.robot.commands.drive.DriveFieldRelative;
 import frc.robot.commands.drive.DriveFieldRelativeAdvanced;
 import frc.robot.commands.drive.DriveLockWheels;
@@ -40,25 +42,27 @@ import frc.robot.commands.drive.util.DriveResetAllModulePositionsToZero;
 import frc.robot.commands.drive.util.DriveResetGyroToZero;
 import frc.robot.commands.drive.util.DriveTuneDriveMotorFeedForward;
 import frc.robot.commands.drive.util.DriveTurnToAngleInRad;
-import frc.robot.commands.intake.IntakeExtensionIn;
-import frc.robot.commands.intake.IntakeExtensionOut;
-import frc.robot.commands.intake.IntakeIntake;
-import frc.robot.commands.intake.IntakeOuttake;
-import frc.robot.commands.intake.IntakeStop;
-import frc.robot.commands.intake.IntakeStopRetract;
+
+import frc.robot.commands.harvester.HarvesterExtensionIn;
+import frc.robot.commands.harvester.HarvesterExtensionOut;
+import frc.robot.commands.harvester.HarvesterIntake;
+import frc.robot.commands.harvester.HarvesterOuttake;
+import frc.robot.commands.harvester.HarvesterStop;
+import frc.robot.commands.harvester.HarvesterStopRetract;
+
 import frc.robot.commands.recordPlayer.RecordPlayerSpinManual;
+
 import frc.robot.commands.target.TargetMoveSelection;
 
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Compressor;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Harvester;
 import frc.robot.subsystems.RecordPlayer;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.Target;
 import frc.robot.subsystems.Target.GoalLocation;
 
-// import frc.robot.commands.drive.util.DriveAdjustModuleZeroPoint;
 // import frc.robot.commands.drive.util.DriveAllModulesPositionOnly;
 // import frc.robot.commands.drive.util.DriveOneModule;
 // import frc.robot.commands.drive.util.DriveResetAllModulePositionsToZero;
@@ -119,7 +123,7 @@ public class RobotContainer {
   public static Claw claw;
   public static Compressor compressor;
   public static Arm arm;
-  public static Intake intake;
+  public static Harvester harvester;
   public static Target target;
   public static RecordPlayer recordPlayer;
 
@@ -132,7 +136,7 @@ public class RobotContainer {
     compressor = new Compressor();
     arm = new Arm();
     // arm.setDefaultCommand(new ArmElbowManual());
-    intake = new Intake();
+    harvester = new Harvester();
     // target = new Target();
     recordPlayer = new RecordPlayer();
 
@@ -166,11 +170,13 @@ public class RobotContainer {
     SmartDashboard.putData(new ClawIntake());
     SmartDashboard.putData(new ClawHold());
     SmartDashboard.putData(new ClawSpit());
-    SmartDashboard.putData(new IntakeExtensionIn());
-    SmartDashboard.putData(new IntakeExtensionOut());
-    SmartDashboard.putData(new IntakeIntake());
-    SmartDashboard.putData(new IntakeOuttake());
-    SmartDashboard.putData(new IntakeStop());
+
+    SmartDashboard.putData(new HarvesterExtensionIn());
+    SmartDashboard.putData(new HarvesterExtensionOut());
+    SmartDashboard.putData(new HarvesterIntake());
+    SmartDashboard.putData(new HarvesterOuttake());
+    SmartDashboard.putData(new HarvesterStop());
+
     SmartDashboard.putData(new ArmWristExtend());
     SmartDashboard.putData(new ArmWristRetract());
     SmartDashboard.putData(new RecordPlayerSpinManual(-.2));
@@ -201,7 +207,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     /* ==================== DRIVER BUTTONS ==================== */
-    driverA.onTrue(new IntakeIntake()).onFalse(new IntakeStopRetract());
+    driverA.onTrue(new HarvesterIntake()).onFalse(new HarvesterStopRetract());
     driverLB.onTrue(new DriveResetGyroToZero());
     // driverDUp.onTrue(new TargetMoveSelection(0));
     // driverDRight.onTrue(new TargetMoveSelection(1));

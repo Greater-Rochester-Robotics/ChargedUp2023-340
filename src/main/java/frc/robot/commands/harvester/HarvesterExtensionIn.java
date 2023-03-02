@@ -2,28 +2,26 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.intake;
+package frc.robot.commands.harvester;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
-public class IntakeIntake extends CommandBase {
-  /** Creates a new IntakeIntake. */
-  public IntakeIntake() {
+public class HarvesterExtensionIn extends CommandBase {
+  /** Creates a new IntakeIn. */
+  public HarvesterExtensionIn() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.intake);
+    addRequirements(RobotContainer.harvester);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    RobotContainer.intake.intakeOut();
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.intake.motorIn();
+    RobotContainer.harvester.harvesterExtensionIn();
   }
 
   // Called once the command ends or is interrupted.
@@ -33,6 +31,6 @@ public class IntakeIntake extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

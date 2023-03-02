@@ -2,17 +2,17 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.intake;
+package frc.robot.commands.harvester;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-public class IntakeStopRetract extends SequentialCommandGroup {
+public class HarvesterStopRetract extends SequentialCommandGroup {
   /** Creates a new IntakeStopRetract. */
-  public IntakeStopRetract() {
+  public HarvesterStopRetract() {
     // Use addRequirements() here to declare subsystem dependencies.
     addCommands(
-      new IntakeExtensionIn(),
-      new IntakeStop()
+      new HarvesterExtensionIn(),
+      new HarvesterStop()
     );
   }
 

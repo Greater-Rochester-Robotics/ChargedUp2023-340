@@ -310,38 +310,6 @@ public class SwerveDrive extends SubsystemBase {
   }
 
   /**
-   * this is left over 2022 stuff
-   * @return angle in radians (not restricted to PI to -PI)
-   */
-  public double getAngleOfTarget(){
-    //get the current angle    
-    double currentAngle = getGyroInRadRoll();
-
-    //if the pose hasn't been set return current angle.
-    if(!hasPoseBeenSet){
-      return currentAngle;
-    }
-
-    // Calculating current angle between -pi and pi
-    double absoluteCurrentAngle = currentAngle%Constants.TWO_PI;
-    if(absoluteCurrentAngle > Math.PI){
-      absoluteCurrentAngle -= 2*(Math.PI);
-    }
-    else if(absoluteCurrentAngle < -Math.PI){
-      absoluteCurrentAngle += 2 * Math.PI;
-    }
-
-    // Finds where the center of the field is with respect to the robot
-    Translation2d target = driveOdometry.getPoseMeters().getTranslation().minus(Constants.SwerveDriveConstants.FIELD_CENTER);
-    //based on that, find the angle of the above Tanslation2d object
-    double desiredAngle = Math.atan2(target.getY(), target.getX());
-
-    // Calculate the robot's target angle given the continuous angle of the gyroscope
-    return currentAngle - absoluteCurrentAngle + desiredAngle;
-  }
-
-
-  /**
    * A function that allows the user to reset the gyro, this 
    * makes the current orientation of the robot 0 degrees on 
    * the gyro.
