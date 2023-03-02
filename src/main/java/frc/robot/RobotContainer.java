@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -27,18 +28,24 @@ import frc.robot.commands.claw.ClawHold;
 import frc.robot.commands.claw.ClawIntake;
 import frc.robot.commands.claw.ClawOpen;
 import frc.robot.commands.claw.ClawSpit;
+import frc.robot.commands.drive.DriveFieldRelative;
+import frc.robot.commands.drive.DriveFieldRelativeAdvanced;
 import frc.robot.commands.drive.DriveLockWheels;
+import frc.robot.commands.drive.DriveRobotCentric;
 import frc.robot.commands.drive.DriveStopAllModules;
 import frc.robot.commands.drive.util.DriveAdjustModulesManually;
 import frc.robot.commands.drive.util.DriveAllModulesPositionOnly;
 import frc.robot.commands.drive.util.DriveOneModule;
 import frc.robot.commands.drive.util.DriveResetAllModulePositionsToZero;
+import frc.robot.commands.drive.util.DriveResetGyroToZero;
 import frc.robot.commands.drive.util.DriveTuneDriveMotorFeedForward;
+import frc.robot.commands.drive.util.DriveTurnToAngleInRad;
 import frc.robot.commands.intake.IntakeExtensionIn;
 import frc.robot.commands.intake.IntakeExtensionOut;
 import frc.robot.commands.intake.IntakeIntake;
 import frc.robot.commands.intake.IntakeOuttake;
 import frc.robot.commands.intake.IntakeStop;
+import frc.robot.commands.intake.IntakeStopRetract;
 import frc.robot.commands.recordPlayer.RecordPlayerSpinManual;
 import frc.robot.commands.target.TargetMoveSelection;
 
@@ -119,8 +126,8 @@ public class RobotContainer {
   public RobotContainer() {
     //create(construct) subsystems
     swerveDrive = new SwerveDrive();
-    // swerveDrive.setDefaultCommand(new DriveRobotCentric());
-    // swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced());
+    //swerveDrive.setDefaultCommand(new DriveRobotCentric(false));
+    swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced(false));
     claw = new Claw();
     compressor = new Compressor();
     arm = new Arm();
@@ -151,6 +158,8 @@ public class RobotContainer {
     SmartDashboard.putData("FFTune 20per", new DriveTuneDriveMotorFeedForward(.2));
     SmartDashboard.putData("FFTune 25per", new DriveTuneDriveMotorFeedForward(.25));
     SmartDashboard.putData("FFTune 30per", new DriveTuneDriveMotorFeedForward(.30));
+    SmartDashboard.putData(new DriveTurnToAngleInRad(Math.toRadians(90)));
+    SmartDashboard.putData("neg 45 turn",new DriveTurnToAngleInRad(Math.toRadians(-45)));
 
     SmartDashboard.putData(new ClawClose());
     SmartDashboard.putData(new ClawOpen());
@@ -192,6 +201,8 @@ public class RobotContainer {
    */
   private void configureBindings() {
     /* ==================== DRIVER BUTTONS ==================== */
+    driverA.onTrue(new IntakeIntake()).onFalse(new IntakeStopRetract());
+    driverLB.onTrue(new DriveResetGyroToZero());
     // driverDUp.onTrue(new TargetMoveSelection(0));
     // driverDRight.onTrue(new TargetMoveSelection(1));
     // driverDDown.onTrue(new TargetMoveSelection(2));
@@ -203,8 +214,8 @@ public class RobotContainer {
    
     
     /* =================== CODRIVER BUTTONS =================== */
-    coDriverLB.whileTrue(new ArmElbowManual());
-    coDriverRB.whileTrue(new ArmShoulderManual());
+    // coDriverLB.whileTrue(new ArmElbowManual());
+    // coDriverRB.whileTrue(new ArmShoulderManual());
   }
 
   /**
@@ -327,7 +338,7 @@ public class RobotContainer {
   }
 
   public double getRobotRotation() {
-    return this.getDriverAxis(Axis.kRightTrigger) - Robot.robotContainer.getDriverAxis(Axis.kLeftTrigger)*-Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_ROTATIONAL;
+    return (this.getDriverAxis(Axis.kRightTrigger) - Robot.robotContainer.getDriverAxis(Axis.kLeftTrigger))*-Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_ROTATIONAL;
   }
 
   /**

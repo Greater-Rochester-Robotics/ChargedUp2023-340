@@ -51,7 +51,7 @@ public class DriveFieldRelativeAdvanced extends CommandBase {
   public void execute() {
     //pull primary stick values, and put to awaySpeed and lateralSpeed doubles
     double awaySpeed = Robot.robotContainer.getRobotForwardFull(isVeloMode);
-    double lateralSpeed = Robot.robotContainer.getRobotForwardFull(isVeloMode);
+    double lateralSpeed = Robot.robotContainer.getRobotLateralFull(isVeloMode);
     //check if secondary sticks are being used
     if(Math.abs(Robot.robotContainer.getDriverAxis(Axis.kRightY))>.1 ||
       Math.abs(Robot.robotContainer.getDriverAxis(Axis.kRightX))>.1){
@@ -62,9 +62,9 @@ public class DriveFieldRelativeAdvanced extends CommandBase {
     //create rotation speed from gamepad triggers
     double rotSpeed = Robot.robotContainer.getRobotRotation();
 
-    //use DPad to turn to specific angles.
+    // // use DPad to turn to specific angles.
     // if(Robot.robotContainer.getDriverDPad() == 0){
-    //   currentAngle = Math.round(RobotContainer.swerveDrive.getGyroInRad()/Constants.TWO_PI) * Constants.TWO_PI;
+    //   currentAngle = Math.round(RobotContainer.swerveDrive.getGyroInRadYaw()/Constants.TWO_PI) * Constants.TWO_PI;
     // }
     // else if(Robot.robotContainer.getDriverDPad() == 90){
     //   currentAngle = Math.round(RobotContainer.swerveDrive.getGyroInRad()/Constants.TWO_PI) * Constants.TWO_PI - 1.178;

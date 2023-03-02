@@ -65,14 +65,14 @@ public class SwerveMoveNEO implements SwerveMoveMotor{
         }
 
         driveMotor.getEncoder().setPositionConversionFactor(encToMetersConvFactor);
-        driveMotor.getEncoder().setVelocityConversionFactor(encToMetersConvFactor);
+        driveMotor.getEncoder().setVelocityConversionFactor(encToMetersConvFactor/60);
         
         driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 1000);
-        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20); 
-        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 10); 
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 10);
         driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 1000);
         driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
-        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 2000);
         driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 2000);
        
         //if values have changed burn NEO flash

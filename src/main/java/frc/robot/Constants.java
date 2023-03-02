@@ -175,7 +175,7 @@ public final class Constants {
       // public static final double DRIVE_ROTATION_MIN_VELOCITY = 25;
 
       /* Driver Scaling Constants */
-      public static final double DRIVER_SPEED_SCALE_LINEAR = 0.65 * 0.85;
+      public static final double DRIVER_SPEED_SCALE_LINEAR = .75;//0.65 * 0.85;
       public static final double DRIVER_SPEED_SCALE_ROTATIONAL = .75;
       /* Aiming Values*/
       public static final Translation2d FIELD_CENTER = new Translation2d();
@@ -189,7 +189,7 @@ public final class Constants {
     }
     
     public static class IntakeConstants {
-      public static final double INTAKE_MOTOR_INTAKE_SPEED = -0.5; //TODO: set this to the right value
+      public static final double INTAKE_MOTOR_INTAKE_SPEED = -0.9; //TODO: set this to the right value
       public static final double INTAKE_MOTOR_OUTTAKE_SPEED = 0.5; //TODO: set this to the right value
     }
 

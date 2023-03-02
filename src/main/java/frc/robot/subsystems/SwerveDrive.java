@@ -148,6 +148,7 @@ public class SwerveDrive extends SubsystemBase {
 
     hasPoseBeenSet = false;
     isOdometry = true;
+    this.setDriveBrake(true);
   }
 
   @Override
@@ -171,6 +172,11 @@ public class SwerveDrive extends SubsystemBase {
     // SmartDashboard.putNumber("Odometry Y", getCurPose2d().getY());
   }
 
+  public void setDriveBrake(boolean isBrake){
+    for(SwerveMoveNEO moveNEO: swerveMoveNEO){
+      moveNEO.setDriveMotorBrake(isBrake);
+    }
+  }
   /**
    * Checks if odometry is being used
    * @return true is odometry is on
@@ -617,7 +623,7 @@ public class SwerveDrive extends SubsystemBase {
    * @return a value to give the rotational input, -1.0 to 1.0
    */
   public double getRobotRotationPIDOut(double target){
-    double currentGyroPos = getGyroInRadRoll();
+    double currentGyroPos = getGyroInRadYaw();
     double output = robotSpinController.calculate(currentGyroPos, target);
     // System.out.println("targetAngle:"+Math.toDegrees(target)+"   angle:"+Math.toDegrees(currentGyroPos)+"atSP:"+robotSpinController.atSetpoint()+"  pid output"+output);
     if(robotSpinController.atSetpoint()){
@@ -637,7 +643,7 @@ public class SwerveDrive extends SubsystemBase {
    * @return a value to give the rotational input, -1.0 to 1.0
    */
   public double getCounterRotationPIDOut(double target){
-    double currentGyroPos = getGyroInRadRoll();
+    double currentGyroPos = getGyroInRadYaw();
     return robotCounterSpinController.calculate(currentGyroPos, target);
   }
 

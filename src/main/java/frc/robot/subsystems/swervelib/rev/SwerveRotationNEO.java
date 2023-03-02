@@ -92,10 +92,10 @@ public class SwerveRotationNEO implements SwerveRotationMotor , SwerveAbsoluteSe
 
         rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
         rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-        rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
+        rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 10);
         rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 2000);
         rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
-        rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
+        rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 10);
         rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
 
         //if values have changed burn NEO flash
