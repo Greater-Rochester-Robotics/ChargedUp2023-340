@@ -11,18 +11,23 @@ import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 import frc.robot.Constants;
 import frc.robot.subsystems.ADIS16470_IMU.IMUAxis;
+import frc.robot.subsystems.LimelightHelpers.LimelightResults;
 import frc.robot.subsystems.swervelib.SwerveModule;
 import frc.robot.subsystems.swervelib.rev.SwerveMoveNEO;
 import frc.robot.subsystems.swervelib.rev.SwerveRotationNEO;
@@ -49,7 +54,9 @@ public class SwerveDrive extends SubsystemBase {
 
   /** Kineatics and Odometry */
   private SwerveDriveKinematics driveKinematics;
-  public SwerveGRROdometry driveOdometry;
+  public SwerveDrivePoseEstimator driveOdometry;
+  private LimelightResults llResultsFront;
+  private LimelightResults llResultsBack;
 
   /** PID Controllers */
   private PIDController robotSpinController;
@@ -126,7 +133,7 @@ public class SwerveDrive extends SubsystemBase {
     imu = new ADIS16470_IMU(IMUAxis.kZ, IMUAxis.kX, IMUAxis.kY);
 
     //construct the odometry class.
-    driveOdometry = new SwerveGRROdometry(driveKinematics, getGyroRotation2d(), getSwerveModulePositions());
+    driveOdometry = new SwerveDrivePoseEstimator(driveKinematics, getGyroRotation2d(), getSwerveModulePositions(), new Pose2d());
 
     //construct the wpilib PIDcontroller for rotation.
 
@@ -166,14 +173,29 @@ public class SwerveDrive extends SubsystemBase {
       SmartDashboard.putNumber("Module relative encoder " + i, swerveModules[i].getRotationMotor().getRelEncCount());
     }
 
-    SmartDashboard.putNumber("Odom X", driveOdometry.getPoseMeters().getX());
-    SmartDashboard.putNumber("Odom Y", driveOdometry.getPoseMeters().getY());
-
     //run odometry update on the odometry object
-    driveOdometry.update(getGyroRotation2d(), getSwerveModulePositions(), getGyroInRadPitch(), getGyroInRadRoll());
+    driveOdometry.update(getGyroRotation2d(), getSwerveModulePositions());//, getGyroInRadPitch(), getGyroInRadRoll());
     // SmartDashboard.putNumber("GyroRate", this.getRotationalVelocity());
-    // SmartDashboard.putNumber("Odometry X", getCurPose2d().getX());
-    // SmartDashboard.putNumber("Odometry Y", getCurPose2d().getY());
+    SmartDashboard.putNumber("Odometry X", getCurPose2d().getX());
+    SmartDashboard.putNumber("Odometry Y", getCurPose2d().getY());
+
+    llResultsFront = LimelightHelpers.getLatestResults("limelight-front");
+    if(llResultsFront.targetingResults.valid && llResultsFront.targetingResults.getBotPose2d().getX() != 0 && llResultsFront.targetingResults.getBotPose2d().getY() != 0) {
+      if(DriverStation.getAlliance().equals(Alliance.Blue)) {
+        driveOdometry.addVisionMeasurement(llResultsFront.targetingResults.getBotPose2d_wpiBlue(), llResultsFront.targetingResults.timestamp_RIOFPGA_capture);
+      } else {
+        driveOdometry.addVisionMeasurement(llResultsFront.targetingResults.getBotPose2d_wpiRed(), llResultsFront.targetingResults.timestamp_RIOFPGA_capture);
+      }
+    }
+
+    llResultsBack = LimelightHelpers.getLatestResults("limelight-back");
+    if(llResultsBack.targetingResults.valid && llResultsBack.targetingResults.getBotPose2d().getX() != 0 && llResultsBack.targetingResults.getBotPose2d().getY() != 0) {
+      if(DriverStation.getAlliance().equals(Alliance.Blue)) {
+        driveOdometry.addVisionMeasurement(llResultsBack.targetingResults.getBotPose2d_wpiBlue(), llResultsBack.targetingResults.timestamp_RIOFPGA_capture);
+      } else {
+        driveOdometry.addVisionMeasurement(llResultsBack.targetingResults.getBotPose2d_wpiRed(), llResultsBack.targetingResults.timestamp_RIOFPGA_capture);
+      }
+    }
   }
 
   public void setDriveBrake(boolean isBrake){
@@ -290,7 +312,7 @@ public class SwerveDrive extends SubsystemBase {
    * @return a Pose2d representing the current position
    */
   public Pose2d getCurPose2d(){
-    return driveOdometry.getPoseMeters();
+    return driveOdometry.getEstimatedPosition();
   }
 
   /**
