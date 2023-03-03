@@ -9,19 +9,17 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotContainer;
 import frc.robot.commands.arm.ArmWristExtend;
 import frc.robot.commands.claw.ClawIntake;
+import frc.robot.commands.claw.ClawOpen;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ArmWristExtendCube extends SequentialCommandGroup {
   /** Creates a new ArmWristExtendCube. */
   public ArmWristExtendCube() {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      // addCommands(new FooCommand(), new BarCommand());
-      new ArmWristExtend(),
+      new ClawOpen(),
       new ClawIntake(),
+      new ArmWristExtend(),
       new WaitUntilCommand(RobotContainer.claw::getGamePieceSensor)
     );
   }

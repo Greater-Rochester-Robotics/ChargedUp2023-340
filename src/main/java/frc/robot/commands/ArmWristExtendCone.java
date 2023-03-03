@@ -12,20 +12,23 @@ import frc.robot.RobotContainer;
 import frc.robot.commands.arm.ArmWristExtend;
 import frc.robot.commands.claw.ClawClose;
 import frc.robot.commands.claw.ClawIntake;
+import frc.robot.commands.claw.ClawOpen;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ArmWristExtendAndClose extends SequentialCommandGroup {
+public class ArmWristExtendCone extends SequentialCommandGroup {
   /** Creates a new ArmWristExtendAndCloseHard. */
-  public ArmWristExtendAndClose() {
+  public ArmWristExtendCone() {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ArmWristExtend(),
+      new ClawOpen(),
       new ClawIntake(),
+      new ArmWristExtend(),
       new WaitUntilCommand(RobotContainer.claw::getGamePieceSensor),
-      new ClawClose()
+      new ClawClose(),
+      new WaitCommand(.5)
     );
   }
 }

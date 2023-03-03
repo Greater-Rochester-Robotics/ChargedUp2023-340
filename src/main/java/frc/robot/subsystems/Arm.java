@@ -410,8 +410,6 @@ public class Arm extends SubsystemBase {
   public void DriveToPosition(ArmPosition target){
     setBothShoulderMotorPosition(target.shoulderAngle);
     setElbowPosition(target.elbowAngle);
-    shoulderPIDEnable = true;
-
   }
   
   public ArmPosition getArmPosition(){
