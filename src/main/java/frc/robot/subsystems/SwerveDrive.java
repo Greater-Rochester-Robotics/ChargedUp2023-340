@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
@@ -164,6 +165,9 @@ public class SwerveDrive extends SubsystemBase {
     for(int i = 0; i < swerveModules.length; i++) {
       SmartDashboard.putNumber("Module relative encoder " + i, swerveModules[i].getRotationMotor().getRelEncCount());
     }
+
+    SmartDashboard.putNumber("Odom X", driveOdometry.getPoseMeters().getX());
+    SmartDashboard.putNumber("Odom Y", driveOdometry.getPoseMeters().getY());
 
     //run odometry update on the odometry object
     driveOdometry.update(getGyroRotation2d(), getSwerveModulePositions(), getGyroInRadPitch(), getGyroInRadRoll());

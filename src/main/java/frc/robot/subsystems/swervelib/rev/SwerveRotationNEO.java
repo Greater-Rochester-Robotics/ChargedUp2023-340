@@ -41,13 +41,13 @@ public class SwerveRotationNEO implements SwerveRotationMotor , SwerveAbsoluteSe
         ENC_TO_RAD_CONV_FACTOR = encToRadConvFactor;
                 
         rotationMotor.getEncoder().setPositionConversionFactor(ENC_TO_RAD_CONV_FACTOR);
-        rotationMotor.getEncoder().setVelocityConversionFactor(ENC_TO_RAD_CONV_FACTOR);
+        rotationMotor.getEncoder().setVelocityConversionFactor(ENC_TO_RAD_CONV_FACTOR/60);
 
 
         ABS_ENC_TO_RAD_CONV_FACTOR = absEncToRadConvFactor; 
 
         absoluteEncoder.setPositionConversionFactor(ABS_ENC_TO_RAD_CONV_FACTOR);
-        absoluteEncoder.setVelocityConversionFactor(ABS_ENC_TO_RAD_CONV_FACTOR);
+        absoluteEncoder.setVelocityConversionFactor(ABS_ENC_TO_RAD_CONV_FACTOR/60);
         
         // absOffsetAngle = Preferences.getDouble("SwerveRotationNeoAbsOffset" + rotationMotor.getDeviceId(), 0.0);
         // absoluteEncoder.setZeroOffset(absOffsetAngle);
@@ -56,39 +56,39 @@ public class SwerveRotationNEO implements SwerveRotationMotor , SwerveAbsoluteSe
         boolean areValuesUpdated = false;
 
         //adjust PIDF if changed
-        if(rotationMotor.getPIDController().getP() != config.pidfConfig.P){
+        // if(rotationMotor.getPIDController().getP() != config.pidfConfig.P){
             rotationMotor.getPIDController().setP(config.pidfConfig.P);
-            areValuesUpdated = true;
-        }
-        if(rotationMotor.getPIDController().getI() != config.pidfConfig.I){
+        //     areValuesUpdated = true;
+        // }
+        // if(rotationMotor.getPIDController().getI() != config.pidfConfig.I){
             rotationMotor.getPIDController().setI(config.pidfConfig.I);
-            areValuesUpdated = true;
-        }
-        if(rotationMotor.getPIDController().getD() != config.pidfConfig.D){
+        //     areValuesUpdated = true;
+        // }
+        // if(rotationMotor.getPIDController().getD() != config.pidfConfig.D){
             rotationMotor.getPIDController().setD(config.pidfConfig.D);
-            areValuesUpdated = true;
-        }
-        if(rotationMotor.getPIDController().getFF() != config.pidfConfig.FF){
+        //     areValuesUpdated = true;
+        // }
+        // if(rotationMotor.getPIDController().getFF() != config.pidfConfig.FF){
             rotationMotor.getPIDController().setFF(config.pidfConfig.FF);
-            areValuesUpdated = true;
-        }
+        //     areValuesUpdated = true;
+        // }
 
         //confirm desired brake mode
-        if((rotationMotor.getIdleMode() == IdleMode.kBrake) != config.isBrakeMode){
+        // if((rotationMotor.getIdleMode() == IdleMode.kBrake) != config.isBrakeMode){
             setRotationMotorBrake(config.isBrakeMode);
-            areValuesUpdated = true;
-        }
+        //     areValuesUpdated = true;
+        // }
         //confirm if motor is inverted
-        if(rotationMotor.getInverted() != config.isInverted){
+        // if(rotationMotor.getInverted() != config.isInverted){
             rotationMotor.setInverted(config.isInverted);// Set motor inverted(set to true)
-            areValuesUpdated = true;
-        }
+        //     areValuesUpdated = true;
+        // }
         //confirm voltage compensation mode voltage
-        if(rotationMotor.getVoltageCompensationNominalVoltage() < config.maxVoltage-.01 
-            || rotationMotor.getVoltageCompensationNominalVoltage() > config.maxVoltage + .01){
+        // if(rotationMotor.getVoltageCompensationNominalVoltage() < config.maxVoltage-.01 
+        //     || rotationMotor.getVoltageCompensationNominalVoltage() > config.maxVoltage + .01){
             rotationMotor.enableVoltageCompensation(config.maxVoltage);
-            areValuesUpdated = true;
-        }
+        //     areValuesUpdated = true;
+        // }
 
         rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
         rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
@@ -99,9 +99,9 @@ public class SwerveRotationNEO implements SwerveRotationMotor , SwerveAbsoluteSe
         rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
 
         //if values have changed burn NEO flash
-        if(areValuesUpdated){
+        // if(areValuesUpdated){
             rotationMotor.burnFlash();
-        }
+        // }
     }
 
     public void setRotationMotorBrake(boolean brakeOn){

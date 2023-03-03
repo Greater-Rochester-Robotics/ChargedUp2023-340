@@ -119,10 +119,10 @@ public final class Constants {
 
       // public static final double MAX_ROBOT_ROT_VELOCITY = MAXIMUM_VELOCITY / DISTANCE_TO_MODULE_0;
       public static final double MAXIMUM_VOLTAGE = 12.0;
-      public static final double SWERVE_DRIVE_P_VALUE = 1000; // 0.035;
+      public static final double SWERVE_DRIVE_P_VALUE = .01; // 0.035;
       public static final double SWERVE_DRIVE_I_VALUE = 0.0;
-      public static final double SWERVE_DRIVE_D_VALUE = 25;
-      public static final double SWERVE_DRIVE_FF_VALUE = 1023 / (MOTOR_MAXIMUM_VELOCITY / DRIVE_ENC_TO_METERS_FACTOR);
+      public static final double SWERVE_DRIVE_D_VALUE = 0.0;
+      public static final double SWERVE_DRIVE_FF_VALUE = .24;
       public static final SwervePIDFConfig MOVE_PIDF = new SwervePIDFConfig(SWERVE_DRIVE_P_VALUE, SWERVE_DRIVE_I_VALUE, SWERVE_DRIVE_D_VALUE, SWERVE_DRIVE_FF_VALUE);
       public static final NEOConfig MOVE_CONFIG = new NEOConfig(MOVE_PIDF, false, false, MAXIMUM_VOLTAGE);
 

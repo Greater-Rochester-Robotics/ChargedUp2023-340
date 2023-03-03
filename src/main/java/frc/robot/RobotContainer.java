@@ -5,6 +5,7 @@
 package frc.robot;
 
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController.Axis;
@@ -12,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -41,6 +43,7 @@ import frc.robot.commands.drive.util.DriveOneModule;
 import frc.robot.commands.drive.util.DriveResetAllModulePositionsToZero;
 import frc.robot.commands.drive.util.DriveResetGyroToZero;
 import frc.robot.commands.drive.util.DriveTuneDriveMotorFeedForward;
+import frc.robot.commands.drive.util.DriveTuneDriveMotorPID;
 import frc.robot.commands.drive.util.DriveTurnToAngleInRad;
 
 import frc.robot.commands.harvester.HarvesterExtensionIn;
@@ -130,8 +133,8 @@ public class RobotContainer {
   public RobotContainer() {
     //create(construct) subsystems
     swerveDrive = new SwerveDrive();
-    //swerveDrive.setDefaultCommand(new DriveRobotCentric(false));
-    swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced(false));
+    swerveDrive.setDefaultCommand(new DriveRobotCentric(true));
+    // swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced(false));
     claw = new Claw();
     compressor = new Compressor();
     arm = new Arm();
@@ -164,6 +167,9 @@ public class RobotContainer {
     SmartDashboard.putData("FFTune 30per", new DriveTuneDriveMotorFeedForward(.30));
     SmartDashboard.putData(new DriveTurnToAngleInRad(Math.toRadians(90)));
     SmartDashboard.putData("neg 45 turn",new DriveTurnToAngleInRad(Math.toRadians(-45)));
+    SmartDashboard.putData("DRIVE_PID_TUNE_1",new DriveTuneDriveMotorPID(1.0));
+    SmartDashboard.putData("DRIVE_PID_TUNE_2",new DriveTuneDriveMotorPID(2.0));
+    SmartDashboard.putData("Reset odometry",new InstantCommand(() -> swerveDrive.setCurPose2d(new Pose2d())));
 
     SmartDashboard.putData(new ClawClose());
     SmartDashboard.putData(new ClawOpen());

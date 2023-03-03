@@ -29,7 +29,6 @@ public class DriveTuneDriveMotorPID extends CommandBase {
   private double[] angle = new double[]{Math.toRadians(135), Math.toRadians(-135), Math.toRadians(-45), Math.toRadians(45)};    
 
   /** Creates a new DriveTuneDriveMotorPIDF. */
-  @Deprecated
   public DriveTuneDriveMotorPID(double speed) {
     this.speed = speed;
     addRequirements(RobotContainer.swerveDrive);

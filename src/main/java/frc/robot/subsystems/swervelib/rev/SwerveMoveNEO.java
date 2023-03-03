@@ -30,39 +30,39 @@ public class SwerveMoveNEO implements SwerveMoveMotor{
 
         
         //adjust PIDF if changed
-        if(driveMotor.getPIDController().getP() != config.pidfConfig.P){
+        // if(driveMotor.getPIDController().getP() != config.pidfConfig.P){
             driveMotor.getPIDController().setP(config.pidfConfig.P);
-            areValuesUpdated = true;
-        }
-        if(driveMotor.getPIDController().getI() != config.pidfConfig.I){
+        //     areValuesUpdated = true;
+        // }
+        // if(driveMotor.getPIDController().getI() != config.pidfConfig.I){
             driveMotor.getPIDController().setI(config.pidfConfig.I);
-            areValuesUpdated = true;
-        }
-        if(driveMotor.getPIDController().getD() != config.pidfConfig.D){
+        //     areValuesUpdated = true;
+        // }
+        // if(driveMotor.getPIDController().getD() != config.pidfConfig.D){
             driveMotor.getPIDController().setD(config.pidfConfig.D);
-            areValuesUpdated = true;
-        }
-        if(driveMotor.getPIDController().getFF() != config.pidfConfig.FF){
+        //     areValuesUpdated = true;
+        // }
+        // if(driveMotor.getPIDController().getFF() != config.pidfConfig.FF){
             driveMotor.getPIDController().setFF(config.pidfConfig.FF);
-            areValuesUpdated = true;
-        }
+        //     areValuesUpdated = true;
+        // }
 
         //confirm desired brake mode
-        if((driveMotor.getIdleMode() == IdleMode.kBrake) != config.isBrakeMode){
+        // if((driveMotor.getIdleMode() == IdleMode.kBrake) != config.isBrakeMode){
             setDriveMotorBrake(config.isBrakeMode);
-            areValuesUpdated = true;
-        }
+        //     areValuesUpdated = true;
+        // }
         //confirm if motor is inverted
-        if(driveMotor.getInverted() != config.isInverted){
+        // if(driveMotor.getInverted() != config.isInverted){
             driveMotor.setInverted(config.isInverted);// Set motor inverted(set to true)
-            areValuesUpdated = true;
-        }
+        //     areValuesUpdated = true;
+        // }
         //confirm voltage compensation mode voltage
-        if(driveMotor.getVoltageCompensationNominalVoltage() < config.maxVoltage-.01 
-            || driveMotor.getVoltageCompensationNominalVoltage() > config.maxVoltage + .01){
+        // if(driveMotor.getVoltageCompensationNominalVoltage() < config.maxVoltage-.01 
+        //     || driveMotor.getVoltageCompensationNominalVoltage() > config.maxVoltage + .01){
             driveMotor.enableVoltageCompensation(config.maxVoltage);
-            areValuesUpdated = true;
-        }
+            // areValuesUpdated = true;
+        // }
 
         driveMotor.getEncoder().setPositionConversionFactor(encToMetersConvFactor);
         driveMotor.getEncoder().setVelocityConversionFactor(encToMetersConvFactor/60);
@@ -76,9 +76,9 @@ public class SwerveMoveNEO implements SwerveMoveMotor{
         driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 2000);
        
         //if values have changed burn NEO flash
-        if(areValuesUpdated){
+        // if(areValuesUpdated){
             driveMotor.burnFlash();
-        }
+        // }
     }
 
 
@@ -87,7 +87,7 @@ public class SwerveMoveNEO implements SwerveMoveMotor{
     }
 
     public void setDriveSpeed(double speed){
-        driveMotor.getPIDController().setReference(speed, CANSparkMax.ControlType.kVelocity);
+        driveMotor.getPIDController().setReference(speed, CANSparkMax.ControlType.kVelocity,0,.2*Math.signum(speed));
     }
 
     public double getDriveDistance(){
