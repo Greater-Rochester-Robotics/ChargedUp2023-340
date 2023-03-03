@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.subsystems.ArmPosition;
 import frc.robot.subsystems.swervelib.SwervePIDFConfig;
 import frc.robot.subsystems.swervelib.rev.NEOConfig;
 /**
@@ -50,8 +51,13 @@ public final class Constants {
       public static final double KG_WRIST_OUT = 2.0; // The force required to counter gravity i.e prevent the arm from dropping
       public static final double KG_WRIST_IN = 0.3;
 
+      /*Scoring constants */
+      public static final ArmPosition BACK_HEIGH_CONE = new ArmPosition(Math.toRadians(-23.57),Math.toRadians(-127.89),true);
+      public static final ArmPosition BACK_MIDDLE_CONE = new ArmPosition(Math.toRadians(2.63),Math.toRadians(-19.53),true);
+      public static final ArmPosition FRONT_MIDDLE_CONE = new ArmPosition(Math.toRadians(11.96),Math.toRadians(109.45),true);
+
       /* Arm Limits */
-      public static final double MAX_ELBOW_ANGLE = Math.toRadians(125);
+      public static final double MAX_ELBOW_ANGLE = Math.toRadians(130);
       public static final double MAX_SHOULDER_ANGLE = Math.toRadians(15);
       public static final double MIN_SHOULDER_ANGLE = Math.toRadians(-25);
 

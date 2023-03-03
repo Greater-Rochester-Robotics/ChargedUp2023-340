@@ -20,7 +20,7 @@ import frc.robot.Constants.ArmConstants;
     double elbowAngle;
     boolean wristExtended;
   
-    ArmPosition(double shoulderAngle, double elbowAngle, boolean wristExtended){
+    public ArmPosition(double shoulderAngle, double elbowAngle, boolean wristExtended){
       this.shoulderAngle = shoulderAngle;
       this.elbowAngle = elbowAngle;
       this.wristExtended = wristExtended;

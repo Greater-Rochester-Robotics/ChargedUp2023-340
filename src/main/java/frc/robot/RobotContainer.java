@@ -226,8 +226,8 @@ public class RobotContainer {
    
     
     /* =================== CODRIVER BUTTONS =================== */
-    // coDriverLB.whileTrue(new ArmElbowManual());
-    // coDriverRB.whileTrue(new ArmShoulderManual());
+    coDriverLB.whileTrue(new ArmElbowManual());
+    coDriverRB.whileTrue(new ArmShoulderManual());
   }
 
   /**
