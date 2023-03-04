@@ -60,16 +60,15 @@ public class DriveFieldRelativeAdvanced extends CommandBase {
       lateralSpeed = Robot.robotContainer.getRobotLateralSlow(isVeloMode);
     }
     //create rotation speed from gamepad triggers
-    double rotSpeed = Robot.robotContainer.getRobotRotation();
+    double rotSpeed = Robot.robotContainer.getRobotRotation(isVeloMode);
 
-    //TODO: Reenable this with correct values
-    // // use DPad to turn to specific angles.
-    // if(Robot.robotContainer.getDriverDPad() == 0){
-    //   currentAngle = Math.round(RobotContainer.swerveDrive.getGyroInRadYaw()/Constants.TWO_PI) * Constants.TWO_PI;
-    // }
-    // else if(Robot.robotContainer.getDriverDPad() == 90){
-    //   currentAngle = Math.round(RobotContainer.swerveDrive.getGyroInRad()/Constants.TWO_PI) * Constants.TWO_PI - 1.178;
-    // }
+    // use DPad to turn to specific angles.
+    if(Robot.robotContainer.getDriverDPad() == 0){
+      currentAngle = Math.round(RobotContainer.swerveDrive.getGyroInRadYaw()/Constants.TWO_PI) * Constants.TWO_PI;
+    }
+    else if(Robot.robotContainer.getDriverDPad() == 180){
+      currentAngle = Math.round(RobotContainer.swerveDrive.getGyroInRadYaw()/Constants.TWO_PI) * Constants.TWO_PI - Math.PI;
+    }
 
     //test if the absolute rotational input is greater than .1
     if (Math.abs(rotSpeed) > .1){
@@ -87,7 +86,7 @@ public class DriveFieldRelativeAdvanced extends CommandBase {
 
     }
     else {
-      if(wasDriverControl && Math.abs(RobotContainer.swerveDrive.getRotationalVelocityPitch()) > 90.0){
+      if(wasDriverControl && Math.abs(RobotContainer.swerveDrive.getRotationalVelocityYaw()) > 90.0){
         RobotContainer.swerveDrive.driveFieldRelative(
           awaySpeed,
           lateralSpeed,
@@ -100,7 +99,7 @@ public class DriveFieldRelativeAdvanced extends CommandBase {
         RobotContainer.swerveDrive.driveFieldRelative(
           awaySpeed,
           lateralSpeed,
-          RobotContainer.swerveDrive.getCounterRotationPIDOut(currentAngle),
+          RobotContainer.swerveDrive.getCounterRotationPIDOut(currentAngle) * (isVeloMode? Constants.SwerveDriveConstants.MAX_ROBOT_ROT_VELOCITY : 1.0),
           isVeloMode
         );
         wasDriverControl = false;

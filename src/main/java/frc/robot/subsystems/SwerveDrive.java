@@ -162,16 +162,12 @@ public class SwerveDrive extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("GyroRoll", this.getGyroInDegRoll());
-    SmartDashboard.putNumber("GyroPitch", this.getGyroInDegPitch());
-    SmartDashboard.putNumber("GyroYaw", this.getGyroInDegYaw());
+    SmartDashboard.putNumber("GyroRoll", Math.round(this.getGyroInDegRoll()));
+    SmartDashboard.putNumber("GyroPitch", Math.round(this.getGyroInDegPitch()));
+    SmartDashboard.putNumber("GyroYaw", Math.round(this.getGyroInDegYaw()));
 
     SmartDashboard.putNumber("GyroRollVel", this.getRotationalVelocityRoll());
     SmartDashboard.putNumber("GyroPitchVel", this.getRotationalVelocityPitch());
-
-    for(int i = 0; i < swerveModules.length; i++) {
-      SmartDashboard.putNumber("Module relative encoder " + i, swerveModules[i].getRotationMotor().getRelEncCount());
-    }
 
     //run odometry update on the odometry object
     driveOdometry.update(getGyroRotation2d(), getSwerveModulePositions());//, getGyroInRadPitch(), getGyroInRadRoll());
@@ -179,23 +175,23 @@ public class SwerveDrive extends SubsystemBase {
     SmartDashboard.putNumber("Odometry X", getCurPose2d().getX());
     SmartDashboard.putNumber("Odometry Y", getCurPose2d().getY());
 
-    llResultsFront = LimelightHelpers.getLatestResults("limelight-front");
-    if(llResultsFront.targetingResults.valid && llResultsFront.targetingResults.getBotPose2d().getX() != 0 && llResultsFront.targetingResults.getBotPose2d().getY() != 0) {
-      if(DriverStation.getAlliance().equals(Alliance.Blue)) {
-        driveOdometry.addVisionMeasurement(llResultsFront.targetingResults.getBotPose2d_wpiBlue(), llResultsFront.targetingResults.timestamp_RIOFPGA_capture);
-      } else {
-        driveOdometry.addVisionMeasurement(llResultsFront.targetingResults.getBotPose2d_wpiRed(), llResultsFront.targetingResults.timestamp_RIOFPGA_capture);
-      }
-    }
+    // llResultsFront = LimelightHelpers.getLatestResults("limelight-front");
+    // if(llResultsFront.targetingResults.valid && llResultsFront.targetingResults.getBotPose2d().getX() != 0 && llResultsFront.targetingResults.getBotPose2d().getY() != 0) {
+    //   if(DriverStation.getAlliance().equals(Alliance.Blue)) {
+    //     driveOdometry.addVisionMeasurement(llResultsFront.targetingResults.getBotPose2d_wpiBlue(), llResultsFront.targetingResults.timestamp_RIOFPGA_capture);
+    //   } else {
+    //     driveOdometry.addVisionMeasurement(llResultsFront.targetingResults.getBotPose2d_wpiRed(), llResultsFront.targetingResults.timestamp_RIOFPGA_capture);
+    //   }
+    // }
 
-    llResultsBack = LimelightHelpers.getLatestResults("limelight-back");
-    if(llResultsBack.targetingResults.valid && llResultsBack.targetingResults.getBotPose2d().getX() != 0 && llResultsBack.targetingResults.getBotPose2d().getY() != 0) {
-      if(DriverStation.getAlliance().equals(Alliance.Blue)) {
-        driveOdometry.addVisionMeasurement(llResultsBack.targetingResults.getBotPose2d_wpiBlue(), llResultsBack.targetingResults.timestamp_RIOFPGA_capture);
-      } else {
-        driveOdometry.addVisionMeasurement(llResultsBack.targetingResults.getBotPose2d_wpiRed(), llResultsBack.targetingResults.timestamp_RIOFPGA_capture);
-      }
-    }
+    // llResultsBack = LimelightHelpers.getLatestResults("limelight-back");
+    // if(llResultsBack.targetingResults.valid && llResultsBack.targetingResults.getBotPose2d().getX() != 0 && llResultsBack.targetingResults.getBotPose2d().getY() != 0) {
+    //   if(DriverStation.getAlliance().equals(Alliance.Blue)) {
+    //     driveOdometry.addVisionMeasurement(llResultsBack.targetingResults.getBotPose2d_wpiBlue(), llResultsBack.targetingResults.timestamp_RIOFPGA_capture);
+    //   } else {
+    //     driveOdometry.addVisionMeasurement(llResultsBack.targetingResults.getBotPose2d_wpiRed(), llResultsBack.targetingResults.timestamp_RIOFPGA_capture);
+    //   }
+    // }
   }
 
   public void setDriveBrake(boolean isBrake){
@@ -223,7 +219,7 @@ public class SwerveDrive extends SubsystemBase {
     //instantiate an array of SwerveModuleStates, set equal to the output of toSwerveModuleStates() 
     SwerveModuleState[] targetStates = driveKinematics.toSwerveModuleStates(chassisSpeeds);
     //use SwerveDriveKinematic.desaturateWheelSpeeds(), max speed is 1 if percentOutput, MaxVelovcity if velocity mode
-    SwerveDriveKinematics.desaturateWheelSpeeds(targetStates, isVeloMode? Constants.SwerveDriveConstants.PATH_MAXIMUM_VELOCITY : 1.0);
+    SwerveDriveKinematics.desaturateWheelSpeeds(targetStates, isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
     
     for (int i = 0; i < targetStates.length; i++) {
       if(!rotationOnlyMode && Math.abs(targetStates[i].speedMetersPerSecond) < (isVeloMode?Constants.SwerveDriveConstants.MINIMUM_DRIVE_SPEED:Constants.SwerveDriveConstants.MINIMUM_DRIVE_DUTY_CYCLE)){

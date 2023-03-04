@@ -53,7 +53,7 @@ public class DriveFieldRelative extends CommandBase {
      awaySpeed = Robot.robotContainer.getRobotForwardSlow(isVeloMode);
      lateralSpeed = Robot.robotContainer.getRobotLateralSlow(isVeloMode);
     }
-    double rotSpeed = Robot.robotContainer.getRobotRotation();
+    double rotSpeed = Robot.robotContainer.getRobotRotation(isVeloMode);
 
     RobotContainer.swerveDrive.driveFieldRelative(
       awaySpeed,

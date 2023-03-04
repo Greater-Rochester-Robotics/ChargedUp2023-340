@@ -120,10 +120,10 @@ public final class Constants {
       public static final double DRIVE_ENC_TO_METERS_FACTOR = 0.319186/7.13;//7.13:1//the ratio from mechanical specs
       public static final double MINIMUM_DRIVE_SPEED = 0.01;// the slowest the wheels can turn, in m/s
       public static final double MINIMUM_DRIVE_DUTY_CYCLE = 0.05;// the slowest the wheels can turn, in duty cycle
-      public static final double MOTOR_MAXIMUM_VELOCITY = 4.62;//4.33 5.19
+      public static final double MOTOR_MAXIMUM_VELOCITY = 4.233672;
       public static final double PATH_MAXIMUM_VELOCITY = 3.5;
       public static final double MAXIMUM_ACCELERATION = 1.25;
-      public static final double MAX_ROBOT_ROT_VELOCITY = 2;
+      public static final double MAX_ROBOT_ROT_VELOCITY = 9.925;//2;
 
       // public static final double MAX_ROBOT_ROT_VELOCITY = MAXIMUM_VELOCITY / DISTANCE_TO_MODULE_0;
       public static final double MAXIMUM_VOLTAGE = 12.0;

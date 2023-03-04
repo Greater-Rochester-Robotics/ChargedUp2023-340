@@ -133,8 +133,8 @@ public class RobotContainer {
   public RobotContainer() {
     //create(construct) subsystems
     swerveDrive = new SwerveDrive();
-    swerveDrive.setDefaultCommand(new DriveRobotCentric(true));
-    // swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced(false));
+    // swerveDrive.setDefaultCommand(new DriveRobotCentric(true));
+    swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced(true));
     claw = new Claw();
     compressor = new Compressor();
     arm = new Arm();
@@ -160,15 +160,7 @@ public class RobotContainer {
     SmartDashboard.putData(new DriveAllModulesPositionOnly());
     SmartDashboard.putData(new DriveStopAllModules());//For setup of swerve
     SmartDashboard.putData("Lock Wheels", new DriveLockWheels());
-    SmartDashboard.putData("FFTune 10per", new DriveTuneDriveMotorFeedForward(.1));
-    SmartDashboard.putData("FFTune 15per", new DriveTuneDriveMotorFeedForward(.15));
-    SmartDashboard.putData("FFTune 20per", new DriveTuneDriveMotorFeedForward(.2));
-    SmartDashboard.putData("FFTune 25per", new DriveTuneDriveMotorFeedForward(.25));
-    SmartDashboard.putData("FFTune 30per", new DriveTuneDriveMotorFeedForward(.30));
     SmartDashboard.putData(new DriveTurnToAngleInRad(Math.toRadians(90)));
-    SmartDashboard.putData("neg 45 turn",new DriveTurnToAngleInRad(Math.toRadians(-45)));
-    SmartDashboard.putData("DRIVE_PID_TUNE_1",new DriveTuneDriveMotorPID(1.0));
-    SmartDashboard.putData("DRIVE_PID_TUNE_2",new DriveTuneDriveMotorPID(2.0));
     SmartDashboard.putData("Reset odometry",new InstantCommand(() -> swerveDrive.setCurPose2d(new Pose2d())));
 
     SmartDashboard.putData(new ClawClose());
@@ -177,14 +169,9 @@ public class RobotContainer {
     SmartDashboard.putData(new ClawHold());
     SmartDashboard.putData(new ClawSpit());
 
-    SmartDashboard.putData(new HarvesterExtensionIn());
-    SmartDashboard.putData(new HarvesterExtensionOut());
-    SmartDashboard.putData(new HarvesterIntake());
-    SmartDashboard.putData(new HarvesterOuttake());
-    SmartDashboard.putData(new HarvesterStop());
-
     SmartDashboard.putData(new ArmWristExtend());
     SmartDashboard.putData(new ArmWristRetract());
+    
     SmartDashboard.putData(new RecordPlayerSpinManual(-.2));
 
     SmartDashboard.putData("Elbow to 0",new ArmElbowToPosition(0));
@@ -349,8 +336,8 @@ public class RobotContainer {
     return this.getDriverAxis(Axis.kRightX)*0.5*-Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_LINEAR * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
   }
 
-  public double getRobotRotation() {
-    return (this.getDriverAxis(Axis.kRightTrigger) - Robot.robotContainer.getDriverAxis(Axis.kLeftTrigger))*-Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_ROTATIONAL;
+  public double getRobotRotation(boolean isVeloMode) {
+    return (this.getDriverAxis(Axis.kRightTrigger) - Robot.robotContainer.getDriverAxis(Axis.kLeftTrigger))*-Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_ROTATIONAL * (isVeloMode? Constants.SwerveDriveConstants.MAX_ROBOT_ROT_VELOCITY : 1.0);
   }
 
   /**
