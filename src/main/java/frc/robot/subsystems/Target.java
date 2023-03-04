@@ -44,53 +44,53 @@ public class Target extends SubsystemBase {
     goalLocations = new GoalLocation[][][] {
       {
         {
-          new GoalLocation(new Translation2d(), TargetConstants.HIGH_POLE),
-          new GoalLocation(new Translation2d(), TargetConstants.MED_POLE),
-          new GoalLocation(new Translation2d(), TargetConstants.LOW_POLE)
+          new GoalLocation(new Translation2d(1.85, .5), TargetConstants.HIGH_POLE),
+          new GoalLocation(new Translation2d(1.85, .5), TargetConstants.MED_POLE),
+          new GoalLocation(new Translation2d(1.85, .5), TargetConstants.LOW_POLE)
         },
         {
-          new GoalLocation(new Translation2d(), TargetConstants.HIGH_POLE),
-          new GoalLocation(new Translation2d(), TargetConstants.MED_POLE),
-          new GoalLocation(new Translation2d(), TargetConstants.LOW_POLE)
+          new GoalLocation(new Translation2d(1.85, 1.07), TargetConstants.HIGH_POLE),
+          new GoalLocation(new Translation2d(1.85, 1.07), TargetConstants.MED_POLE),
+          new GoalLocation(new Translation2d(1.85, 1.07), TargetConstants.LOW_POLE)
         },
         {
-          new GoalLocation(new Translation2d(), TargetConstants.HIGH_POLE),
-          new GoalLocation(new Translation2d(), TargetConstants.MED_POLE),
-          new GoalLocation(new Translation2d(), TargetConstants.LOW_POLE)       
+          new GoalLocation(new Translation2d(1.85, 1.63), TargetConstants.HIGH_POLE),
+          new GoalLocation(new Translation2d(1.85, 1.63), TargetConstants.MED_POLE),
+          new GoalLocation(new Translation2d(1.85, 1.63), TargetConstants.LOW_POLE)       
          }
       },
       {
         {
-          new GoalLocation(new Translation2d(), TargetConstants.HIGH_POLE),
-          new GoalLocation(new Translation2d(), TargetConstants.MED_POLE),
-          new GoalLocation(new Translation2d(), TargetConstants.LOW_POLE)        
+          new GoalLocation(new Translation2d(1.85, 2.16), TargetConstants.HIGH_POLE),
+          new GoalLocation(new Translation2d(1.85, 2.16), TargetConstants.MED_POLE),
+          new GoalLocation(new Translation2d(1.85, 2.16), TargetConstants.LOW_POLE)        
         },
         {
-          new GoalLocation(new Translation2d(), TargetConstants.HIGH_POLE),
-          new GoalLocation(new Translation2d(), TargetConstants.MED_POLE),
-          new GoalLocation(new Translation2d(), TargetConstants.LOW_POLE)       
+          new GoalLocation(new Translation2d(1.85, 2.68), TargetConstants.HIGH_POLE),
+          new GoalLocation(new Translation2d(1.85, 2.68), TargetConstants.MED_POLE),
+          new GoalLocation(new Translation2d(1.85, 2.68), TargetConstants.LOW_POLE)       
         },
         {
-          new GoalLocation(new Translation2d(), TargetConstants.HIGH_POLE),
-          new GoalLocation(new Translation2d(), TargetConstants.MED_POLE),
-          new GoalLocation(new Translation2d(), TargetConstants.LOW_POLE)        
+          new GoalLocation(new Translation2d(1.85, 3.28), TargetConstants.HIGH_POLE),
+          new GoalLocation(new Translation2d(1.85, 3.28), TargetConstants.MED_POLE),
+          new GoalLocation(new Translation2d(1.85, 3.28), TargetConstants.LOW_POLE)        
         }
       },
       {
         {
-          new GoalLocation(new Translation2d(), TargetConstants.HIGH_POLE),
-          new GoalLocation(new Translation2d(), TargetConstants.MED_POLE),
-          new GoalLocation(new Translation2d(), TargetConstants.LOW_POLE)        
+          new GoalLocation(new Translation2d(1.85, 3.88), TargetConstants.HIGH_POLE),
+          new GoalLocation(new Translation2d(1.85, 3.88), TargetConstants.MED_POLE),
+          new GoalLocation(new Translation2d(1.85, 3.88), TargetConstants.LOW_POLE)        
         },
         {
-          new GoalLocation(new Translation2d(), TargetConstants.HIGH_POLE),
-          new GoalLocation(new Translation2d(), TargetConstants.MED_POLE),
-          new GoalLocation(new Translation2d(), TargetConstants.LOW_POLE)        
+          new GoalLocation(new Translation2d(1.85, 4.39), TargetConstants.HIGH_POLE),
+          new GoalLocation(new Translation2d(1.85, 4.39), TargetConstants.MED_POLE),
+          new GoalLocation(new Translation2d(1.85, 4.39), TargetConstants.LOW_POLE)        
         },
         {
-          new GoalLocation(new Translation2d(), TargetConstants.HIGH_POLE),
-          new GoalLocation(new Translation2d(), TargetConstants.MED_POLE),
-          new GoalLocation(new Translation2d(), TargetConstants.LOW_POLE)        
+          new GoalLocation(new Translation2d(1.85, 4.97), TargetConstants.HIGH_POLE),
+          new GoalLocation(new Translation2d(1.85, 4.97), TargetConstants.MED_POLE),
+          new GoalLocation(new Translation2d(1.85, 4.97), TargetConstants.LOW_POLE)        
         }
       }
     };
