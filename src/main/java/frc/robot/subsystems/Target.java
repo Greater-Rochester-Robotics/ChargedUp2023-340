@@ -5,13 +5,15 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.TargetConstants;
 
 public class Target extends SubsystemBase {
@@ -21,6 +23,8 @@ public class Target extends SubsystemBase {
   public GoalLocation[][][] goalLocations;
   public GoalLocation[][][] redGoalLocations;
   ShuffleboardTab tab;
+  private boolean scoring;
+  // ShuffleboardTab tab;
 
   /** Creates a new Target. */
   public Target() {
@@ -30,17 +34,19 @@ public class Target extends SubsystemBase {
     // Mat mat = ;
     // source2.putFrame();
     // serverStream.setSource(source);
-    tab = Shuffleboard.getTab("Tab Title");
-    for(int i = 0; i < 3; i++) {
-      for(int j = 0; j < 3; j++) {
-        for(int k = 0; k < 3; k++) {
-          int ii = i;
-          int jj = j;
-          int kk = k;
-          tab.addBoolean("Boolean G"+ii+"C"+jj+"R"+kk, () -> this.isTarget(ii, jj, kk)).withPosition(i * 3 + j, k);
-        }
-      }
-    }
+
+    //this works
+    // tab = Shuffleboard.getTab("Tab Title");
+    // for(int i = 0; i < 3; i++) {
+    //   for(int j = 0; j < 3; j++) {
+    //     for(int k = 0; k < 3; k++) {
+    //       int ii = i;
+    //       int jj = j;
+    //       int kk = k;
+    //       tab.addBoolean("Boolean G"+ii+"C"+jj+"R"+kk, () -> this.isTarget(ii, jj, kk)).withPosition(i * 3 + j, k);
+    //     }
+    //   }
+    // }
 
     goalLocations = new GoalLocation[][][] {
       {
@@ -109,6 +115,10 @@ public class Target extends SubsystemBase {
 
   @Override
   public void periodic() {
+    NetworkTableInstance inst = NetworkTableInstance.getDefault();
+    NetworkTable table = inst.getTable("/dashboard/targetting");
+    table.getEntry("selection").setIntegerArray(getTargetLong());
+    table.getEntry("scoring").setBoolean(scoring);
     SmartDashboard.putNumber("Target Grid", grid);
     SmartDashboard.putNumber("Target Column", col);
     SmartDashboard.putNumber("Target Row", row);
@@ -117,6 +127,9 @@ public class Target extends SubsystemBase {
     SmartDashboard.putNumber("Target Height", getTargetPosition().getHeight());
   }
 
+  public long[] getTargetLong() {
+    return new long[]{grid, col, row};
+  }
   // helper function that returns an array for a certain GoalPosition
   public int[] getTarget() {
     return new int[]{grid, col, row};
@@ -174,6 +187,14 @@ public class Target extends SubsystemBase {
   public void previous() {
     grid--;
     if(grid < 0) grid = 2;
+  }
+
+  public void setScoring(boolean scoring) {
+    this.scoring = scoring;
+  }
+
+  public boolean isScoring() {
+    return scoring;
   }
 
   public class GoalLocation {
