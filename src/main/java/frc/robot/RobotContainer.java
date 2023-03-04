@@ -52,7 +52,7 @@ import frc.robot.commands.harvester.HarvesterIntake;
 import frc.robot.commands.harvester.HarvesterOuttake;
 import frc.robot.commands.harvester.HarvesterStop;
 import frc.robot.commands.harvester.HarvesterStopRetract;
-
+import frc.robot.commands.recordPlayer.RecordPlayerDriverControl;
 import frc.robot.commands.recordPlayer.RecordPlayerSpinManual;
 
 import frc.robot.commands.target.TargetMoveSelection;
@@ -142,6 +142,7 @@ public class RobotContainer {
     harvester = new Harvester();
     // target = new Target();
     recordPlayer = new RecordPlayer();
+    recordPlayer.setDefaultCommand(new RecordPlayerDriverControl());
 
 
     //Add all autos to the auto selector
