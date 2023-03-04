@@ -4,17 +4,22 @@
 
 package frc.robot.commands.harvester;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.recordPlayer.RecordPlayerIntake;
 
-public class HarvesterStopRetract extends SequentialCommandGroup {
+public class HarvesterStopRetract extends ParallelRaceGroup {
   /** Creates a new IntakeStopRetract. */
   public HarvesterStopRetract() {
     // Use addRequirements() here to declare subsystem dependencies.
     addCommands(
-      new HarvesterExtensionIn(),
-      new WaitCommand(1),
-      new HarvesterStop()
+      new RecordPlayerIntake(),
+      Commands.sequence(
+        new HarvesterExtensionIn(),
+        new WaitCommand(1),
+        new HarvesterStop()
+      )
     );
   }
 
