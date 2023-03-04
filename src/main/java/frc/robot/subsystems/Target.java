@@ -21,7 +21,7 @@ public class Target extends SubsystemBase {
   int grid;
   int col;
   int row;
-  public GoalLocation[][][] goalLocations;
+  public GoalLocation[][][] blueGoalLocations;
   public GoalLocation[][][] redGoalLocations;
   ShuffleboardTab tab;
   private boolean scoring;
@@ -49,7 +49,7 @@ public class Target extends SubsystemBase {
     //   }
     // }
 
-    goalLocations = new GoalLocation[][][] {
+    blueGoalLocations = new GoalLocation[][][] {
       {
         {
           new GoalLocation(new Translation2d(1.85, .5), TargetConstants.HIGH_POLE),
@@ -106,7 +106,7 @@ public class Target extends SubsystemBase {
     for(int i = 0; i < 3; i++) {
       for(int j = 0; j < 3; j++) {
         for(int k = 0; k < 3; k++) {
-          redGoalLocations[i][j][k] = new GoalLocation(new Translation2d(Constants.TargetConstants.FIELD_WIDTH - goalLocations[i][j][k].getX(),goalLocations[i][j][k].getY()), goalLocations[i][j][k].getHeight());
+          redGoalLocations[i][j][k] = new GoalLocation(new Translation2d(Constants.TargetConstants.FIELD_WIDTH - blueGoalLocations[i][j][k].getX(),blueGoalLocations[i][j][k].getY()), blueGoalLocations[i][j][k].getHeight());
         }
 
       }
@@ -148,7 +148,7 @@ public class Target extends SubsystemBase {
 
   public GoalLocation getTargetPosition() {
     if(DriverStation.getAlliance() == Alliance.Blue) {
-      return goalLocations[grid][col][row];
+      return blueGoalLocations[grid][col][row];
     } else { 
       return redGoalLocations[grid][col][row];
     }
@@ -217,6 +217,10 @@ public class Target extends SubsystemBase {
 
     public double getHeight() {
       return height;
+    }
+
+    public Translation2d getPosition() {
+      return position;
     }
   }
 }
