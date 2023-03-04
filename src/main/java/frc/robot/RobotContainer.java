@@ -6,6 +6,9 @@ package frc.robot;
 
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController.Axis;
@@ -148,7 +151,7 @@ public class RobotContainer {
     arm = new Arm();
     // arm.setDefaultCommand(new ArmElbowManual());
     harvester = new Harvester();
-    // target = new Target();
+    target = new Target();
     recordPlayer = new RecordPlayer();
     recordPlayer.setDefaultCommand(new RecordPlayerDriverControl());
 
@@ -159,7 +162,7 @@ public class RobotContainer {
     // Configure the button bindings
     configureBindings();
 
-    //add some commands to dashboard for testing/configuring
+    //add some commands to dashboard for testing/
     SmartDashboard.putData(new DriveResetAllModulePositionsToZero());//For setup of swerve
     SmartDashboard.putData(new DriveAdjustModulesManually());//For setup of swerve
     SmartDashboard.putData("Drive Module 0", new DriveOneModule(0));//For setup of swerve
@@ -214,15 +217,7 @@ public class RobotContainer {
     driverA.onTrue(new HarvestRecordIntake(true)).onFalse(new HarvesterStopRetract());
     driverB.onTrue(new HarvestRecordIntake(false)).onFalse(new HarvesterStopRetract());
     driverX.whileTrue(new ClawOpenSpit());
-
-
     driverLB.onTrue(new DriveResetGyroToZero());
-    // driverDUp.onTrue(new TargetMoveSelection(0));
-    // driverDRight.onTrue(new TargetMoveSelection(1));
-    // driverDDown.onTrue(new TargetMoveSelection(2));
-    // driverDLeft.onTrue(new TargetMoveSelection(3));
-    // driverRB.onTrue(new TargetMoveSelection(4));
-    // driverLB.onTrue(new TargetMoveSelection(5));
     driverStart.or(driverBack).toggleOnTrue(new DriveRobotCentric(false));
     // any commands inside this if behave as if they were commented out.
    
@@ -230,13 +225,16 @@ public class RobotContainer {
     /* =================== CODRIVER BUTTONS =================== */
     coDriverA.onTrue(new ArmWristExtendCone()).onFalse(new CloseAndRetract());
     coDriverB.onTrue(new ArmWristExtendCube()).onFalse(new StopRetract());
-    coDriverLB.whileTrue(new ArmElbowManual());
-    coDriverRB.whileTrue(new ArmShoulderManual());
+    // coDriverLB.whileTrue(new ArmElbowManual());
+    // coDriverRB.whileTrue(new ArmShoulderManual());
 
-
-    coDriverX.whileTrue(new ArmMoveToPosition(new ArmPosition(5.2, 13, false)));
-
-
+    coDriverDUp.onTrue(new InstantCommand(() -> target.up()));
+    coDriverDRight.onTrue(new InstantCommand(() -> target.right()));
+    coDriverDDown.onTrue(new InstantCommand(() -> target.down()));
+    coDriverDLeft.onTrue(new InstantCommand(() -> target.left()));
+    coDriverRB.onTrue(new InstantCommand(() -> target.next()));
+    coDriverLB.onTrue(new InstantCommand(() -> target.previous()));
+    coDriverY.onTrue(new InstantCommand(() -> target.setScoring(true))).onFalse(new InstantCommand(() -> target.setScoring(false)));
   }
 
   /**

@@ -26,6 +26,7 @@ public class TargetMoveSelection extends InstantCommand {
     else if(i == 2) RobotContainer.target.down();
     else if(i == 3) RobotContainer.target.left();
     else if(i == 4) RobotContainer.target.next();
-    else RobotContainer.target.previous();
+    else if(i == 5) RobotContainer.target.previous();
+    else RobotContainer.target.setScoring(!RobotContainer.target.isScoring());
   }
 }
