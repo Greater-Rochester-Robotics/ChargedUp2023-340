@@ -57,11 +57,14 @@ public final class Constants {
       public static final ArmPosition FRONT_MIDDLE_CONE = new ArmPosition(Math.toRadians(11.96),Math.toRadians(109.45),true);
       public static final ArmPosition BACK_HIGH_CUBE = new ArmPosition(Math.toRadians(-122), Math.toRadians(-24.5), false);
       public static final ArmPosition BACK_MIDDLE_CUBE = new ArmPosition(Math.toRadians(-77.2), Math.toRadians(-5.4), false);
+      public static final ArmPosition REAR_LOWER_SCORE = new ArmPosition(0,0,false);
+      public static final ArmPosition INTERNAL_PICK_UP = new ArmPosition(Math.toRadians(5.2), Math.toRadians(13), false);
+      public static final ArmPosition REAR_PICK_UP = new ArmPosition(0,0,false);
 
       /* Arm Limits */
-      public static final double MAX_ELBOW_ANGLE = Math.toRadians(130);
+      public static final double MAX_ELBOW_ANGLE = Math.toRadians(165);
       public static final double MAX_SHOULDER_ANGLE = Math.toRadians(15);
-      public static final double MIN_SHOULDER_ANGLE = Math.toRadians(-25);
+      public static final double MIN_SHOULDER_ANGLE = Math.toRadians(-33);
 
       /*arm dimensions */
       public static final double SHOULDER_TO_ELBOW_DISTANCE = Units.inchesToMeters(38);

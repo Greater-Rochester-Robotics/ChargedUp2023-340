@@ -8,6 +8,7 @@ import javax.print.attribute.standard.SheetCollate;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -53,7 +54,10 @@ public class Arm extends SubsystemBase {
   private double forearmLength = ArmConstants.ELBOW_TO_CLAW_DISTANCE;
   private int count = 0;
 
-  private List<ArmPosition> wayPoints = new ArrayList<ArmPosition>();
+  private List<ArmPosition> wayPoints = new ArrayList<ArmPosition>(Arrays.asList(
+      new ArmPosition(Math.toRadians(7.2), Math.toRadians(11), false),
+      new ArmPosition(Math.toRadians(5.2), Math.toRadians(13), false),
+      new ArmPosition(Math.toRadians(3.2), Math.toRadians(16), false)));
   private int middleWayPoint = 0; // The way point that is the grabing position (where the arm goes to grab a game peice)
   private List<ArmPosition> currentTrajectory;
 
@@ -63,6 +67,7 @@ public class Arm extends SubsystemBase {
 
   /** Creates a new Arm. */
   public Arm() {
+    System.out.println("way points length: " + wayPoints.size());
     //right shoulder
     shoulderRight = new CANSparkMax(Constants.SHOULDER_MOTOR_RIGHT, MotorType.kBrushless);
     absoluteEncoderRight = shoulderRight.getAbsoluteEncoder(Type.kDutyCycle);
@@ -447,6 +452,7 @@ public class Arm extends SubsystemBase {
 
 
   public List<ArmPosition> getPath(ArmPosition startPosition, ArmPosition endPosition){
+    System.out.println("************In get path");
 
     int startWayPoint;
     int endWayPoint;
@@ -475,6 +481,7 @@ public class Arm extends SubsystemBase {
     if(startWayPoint == endWayPoint){
       path.add(startPosition);
       path.add(endPosition);
+      System.out.println("*************early return");
       return path;
     }
 
@@ -513,6 +520,11 @@ public class Arm extends SubsystemBase {
     }
     path.add(endPosition);
 
+    System.out.println("**********getPath path array length: " + path.size());
+    for(ArmPosition next: path){
+      System.out.println(" " + next.shoulderAngle);
+      System.out.println(next.elbowAngle);
+    }
     return path;
 
   }
@@ -610,15 +622,20 @@ public class Arm extends SubsystemBase {
   public List<ArmTrajectory> getTrajectory(ArmPosition startPosition, ArmPosition endPosition){
 
     List<ArmPosition> path = getPath(startPosition, endPosition);
+    System.out.println("********** after get path is called");
     List<ArmTrajectory> trajectory = new ArrayList<ArmTrajectory>();
 
     double diffrenceInShoulders;
     double diffrenceInElbows;
     double shoulderTime;
     double elbowTime;
-    for(var i = 0; i < path.size() - 1; i++){
 
-      diffrenceInShoulders = Math.abs(path.get(i).shoulderAngle - path.get(i+1).shoulderAngle);
+    //sets the with time of 0
+    trajectory.add(new ArmTrajectory(path.get(0), 0.0));
+
+    for(var i = 1; i < path.size(); i++){
+
+      diffrenceInShoulders = Math.abs(path.get(i-1).shoulderAngle - path.get(i).shoulderAngle);
       // Checks if the difference in shoulders is less than how long it takes it to accelerate
       if(diffrenceInShoulders < ArmConstants.SHOULDER_ACCELERATION_DISTANCE * 2){
         //Calculates how long it takes the shoulder to go from it's first position to it's second
@@ -629,7 +646,7 @@ public class Arm extends SubsystemBase {
         (diffrenceInShoulders - ArmConstants.SHOULDER_ACCELERATION_DISTANCE * 2) * ArmConstants.MAX_SHOULDER_ACCELERATION;
       }
       
-      diffrenceInElbows = Math.abs(path.get(i).elbowAngle - path.get(i+1).elbowAngle);
+      diffrenceInElbows = Math.abs(path.get(i-1).elbowAngle - path.get(i).elbowAngle);
       // Checks if the difference in elbows is less than how long it takes it to accelerate
       if(diffrenceInElbows < ArmConstants.ELBOW_ACCELERATION_DISTANCE * 2){
         //Calculates how long it takes the elbow to go from it's first position to it's second
@@ -639,11 +656,13 @@ public class Arm extends SubsystemBase {
         elbowTime = ArmConstants.ELBOW_ACCELERATION_TIME * 2 + 
         (diffrenceInElbows - ArmConstants.ELBOW_ACCELERATION_DISTANCE * 2) * ArmConstants.MAX_ELBOW_ACCELERATION;
       }
-
+      
       trajectory.add(new ArmTrajectory(path.get(i), Math.max(shoulderTime, elbowTime)));
 
     }
 
+
+    System.out.println("getTrajectory trajectory array length: " + trajectory.size());
     return trajectory;
 
   }
