@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.TargetConstants;
 
 public class Target extends SubsystemBase {
@@ -101,7 +102,7 @@ public class Target extends SubsystemBase {
         }
       }
     };
-    redGoalLocations = new GoalLocations[3][3][3];
+    redGoalLocations = new GoalLocation[3][3][3];
     for(int i = 0; i < 3; i++) {
       for(int j = 0; j < 3; j++) {
         for(int k = 0; k < 3; k++) {
@@ -109,8 +110,8 @@ public class Target extends SubsystemBase {
         }
 
       }
-
     }
+  }
 
 
   @Override
