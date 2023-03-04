@@ -77,6 +77,7 @@
         import { OrbitControls } from 'OrbitControls';
         import { STLLoader } from 'STLLoader'
 
+        let alliance = 2;
         let scoring = null
         let currentFrustumScale = 1000;
         const currentSelection = {
@@ -125,13 +126,14 @@
         const selectionOptionBackgrounds = [];
         for (let i = 0; i < 3; i++) {
             const mesh = new THREE.Mesh(roundedRectangle((i * 2.25) - 3.3125, 0.125, 2.125, 1.75, 0.2), new THREE.MeshBasicMaterial({
-                color: i === 1 ? new THREE.Color(0x000000) : new THREE.Color(0x0000ff),
+                color: i === 1 ? new THREE.Color(0x000000) : allianceColor(),
                 transparent: true,
                 opacity: 0.1,
                 side: THREE.DoubleSide
             }));
-            mesh.position.z = -2
-            scene.add(mesh)
+            mesh.position.z = -2;
+            scene.add(mesh);
+            selectionOptionBackgrounds.push(mesh);
         }
 
         // TODO connection UI
@@ -152,6 +154,11 @@
             } else {
                 console.log(`Robot NetworkTables disconnected`);
             }
+        }, true);
+
+        // Integer enum: 0 = Red, 1 = Blue, 2 = Invalid
+        NetworkTables.addKeyListener(`/dashboard/alliance`, (_, value) => {
+            if (typeof value === `number`) alliance = value;
         }, true);
 
         // Integer tuple: [grid, column, row], out of bounds is safe
@@ -217,6 +224,11 @@
 
                     if (event.key === `z`) {
                         undoScore(currentSelection.x, currentSelection.y);
+                    }
+
+                    if (event.key === `a`) {
+                        alliance++;
+                        if (alliance > 2) alliance = 0;
                     }
                 }
             };
@@ -291,9 +303,15 @@
             requestAnimationFrame(animate);
 
             if (currentFrustumScale !== 4) {
-                currentFrustumScale += (4 - currentFrustumScale) * 0.1;
+                currentFrustumScale += (4 - currentFrustumScale) * 0.15;
                 updateCameraFrustum();
             }
+
+            selectionOptionBackgrounds.forEach((background, i) => {
+                if (i !== 1) {
+                    background.material.color = allianceColor();
+                }
+            })
 
             selectionOptions.forEach((row, y) => {
                 row.forEach((selectionOption, x) => {
@@ -302,13 +320,13 @@
 
                     if (currentSelection.x === x && currentSelection.y === y) {
                         if (scoring) {
-                            rotationDelta = -0.2;
+                            rotationDelta = -0.3;
                             targetScale = 1.6;
 
-                            const alpha = (Math.sin((Date.now() - scoring.since) / 100) + 1) / 2;
+                            const alpha = (Math.sin((Date.now() - scoring.since) / 75) + 1) / 2;
                             selectionOption.material.uniforms.color.value.lerpColors(new THREE.Color(0xffffff), new THREE.Color(x % 3 === 1 ? 0xa718b2 : 0xefdf0d), alpha);
                         } else {
-                            rotationDelta = -0.02;
+                            rotationDelta = -0.04;
                             targetScale = 1.3;
                         }
                     } else {
@@ -318,7 +336,7 @@
                     if (typeof rotationDelta === `number`) selectionOption.rotation.y += rotationDelta;
                     else selectionOption.rotation.y = -Math.PI / 6;
 
-                    const newScale = selectionOption.scale.x + ((targetScale - selectionOption.scale.x) * 0.1)
+                    const newScale = selectionOption.scale.x + ((targetScale - selectionOption.scale.x) * 0.125)
                     selectionOption.scale.set(newScale, newScale, newScale)
                 });
             });
@@ -358,12 +376,18 @@
         }
 
         function finishScoring () {
-            selectionOptions[scoring.y]?.[scoring.x]?.material.uniforms.color.value = new THREE.Color(scoring.x % 3 === 1 ? 0xa718b2 : 0xefdf0d);
+            if (scoring && selectionOptions[scoring.y] && selectionOptions[scoring.y][scoring.x]) selectionOptions[scoring.y][scoring.x].material.uniforms.color.value = new THREE.Color(scoring.x % 3 === 1 ? 0xa718b2 : 0xefdf0d);
             scoring = null;
         }
 
         function undoScore (x, y) {
-            selectionOptions[y]?.[x]?.material.uniforms.color.value = new THREE.Color(0xffffff);
+            if (selectionOptions[y] && selectionOptions[y][x]) selectionOptions[y][x].material.uniforms.color.value = new THREE.Color(0xffffff);
+        }
+
+        function allianceColor () {
+            if (alliance === 0) return new THREE.Color(0xff0000);
+            else if (alliance === 1) return new THREE.Color(0x0000ff);
+            else return new THREE.Color(0x000000);
         }
     </script>
 </body>
