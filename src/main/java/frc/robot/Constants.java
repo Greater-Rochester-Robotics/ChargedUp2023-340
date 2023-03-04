@@ -231,8 +231,8 @@ public final class Constants {
   /* Solenoids */
   public static final int ELBOW_BRAKE = 15;
 
-  public static final int CLAW_SOLENOID_OUT = 13;
-  public static final int CLAW_SOLENOID_IN = 9;
+  public static final int CLAW_SOLENOID_OPEN = 13;
+  public static final int CLAW_SOLENOID_CLOSED = 9;
 
   public static final int HARVESTER_SOLENOID_OUT = 10;
   public static final int HARVESTER_SOLENOID_IN = 12;

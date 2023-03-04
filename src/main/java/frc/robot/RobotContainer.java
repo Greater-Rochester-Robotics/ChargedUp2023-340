@@ -18,7 +18,11 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.ArmWristExtendCone;
+import frc.robot.commands.ArmWristExtendCube;
+import frc.robot.commands.CloseAndRetract;
 import frc.robot.commands.HarvestRecordIntake;
+import frc.robot.commands.StopRetract;
 import frc.robot.commands.arm.ArmElbowManual;
 import frc.robot.commands.arm.ArmElbowToPosition;
 import frc.robot.commands.arm.ArmShoulderManual;
@@ -219,8 +223,11 @@ public class RobotContainer {
    
     
     /* =================== CODRIVER BUTTONS =================== */
+    coDriverA.onTrue(new ArmWristExtendCone()).onFalse(new CloseAndRetract());
+    coDriverB.onTrue(new ArmWristExtendCube()).onFalse(new StopRetract());
     coDriverLB.whileTrue(new ArmElbowManual());
     coDriverRB.whileTrue(new ArmShoulderManual());
+
   }
 
   /**

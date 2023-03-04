@@ -42,7 +42,7 @@ public class Claw extends SubsystemBase {
     clawMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus, 221);
     clawMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 211);
 
-    openClose = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.CLAW_SOLENOID_OUT, Constants.CLAW_SOLENOID_IN); //open is in is reverse, close is out is forward
+    openClose = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.CLAW_SOLENOID_CLOSED, Constants.CLAW_SOLENOID_OPEN); //open is in is reverse, close is out is forward
 
     gamePieceSensor = new DigitalInput(Constants.CLAW_GAMEPIECE_SENSOR);
   }
@@ -65,6 +65,10 @@ public class Claw extends SubsystemBase {
    */
   public void open(){
     openClose.set(Value.kReverse);
+  }
+
+  public boolean isOpen(){
+    return openClose.get() == Value.kReverse;
   }
 
   /**
@@ -101,4 +105,5 @@ public class Claw extends SubsystemBase {
   public boolean getGamePieceSensor(){
     return !gamePieceSensor.get();
   }
+
 }
