@@ -302,13 +302,13 @@
 
                     if (currentSelection.x === x && currentSelection.y === y) {
                         if (scoring) {
-                            rotationDelta = -0.2;
+                            rotationDelta = -0.3;
                             targetScale = 1.6;
 
-                            const alpha = (Math.sin((Date.now() - scoring.since) / 100) + 1) / 2;
+                            const alpha = (Math.sin((Date.now() - scoring.since) / 75) + 1) / 2;
                             selectionOption.material.uniforms.color.value.lerpColors(new THREE.Color(0xffffff), new THREE.Color(x % 3 === 1 ? 0xa718b2 : 0xefdf0d), alpha);
                         } else {
-                            rotationDelta = -0.02;
+                            rotationDelta = -0.03;
                             targetScale = 1.3;
                         }
                     } else {
