@@ -71,7 +71,7 @@
     <!-- Logic -->
     <script type="module">
         const ENABLE_ORBIT_CONTROLS = false;
-        const ENABLE_KEYBOARD_CONTROLS = true;
+        const ENABLE_KEYBOARD_CONTROLS = false;
 
         import * as THREE from 'three';
         import { OrbitControls } from 'OrbitControls';
@@ -164,7 +164,7 @@
         // Integer tuple: [grid, column, row], out of bounds is safe
         NetworkTables.addKeyListener(`/dashboard/targetting/selection`, (_, value) => {
             if (value instanceof Array) {
-                currentSelection.x = value[0] * value[1];
+                currentSelection.x = (value[0] * 3) + value[1];
                 currentSelection.y = value[2];
             }
         }, true);
