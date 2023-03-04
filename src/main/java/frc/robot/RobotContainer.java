@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.ArmWristExtendCone;
 import frc.robot.commands.ArmWristExtendCube;
 import frc.robot.commands.CloseAndRetract;
@@ -25,6 +26,7 @@ import frc.robot.commands.HarvestRecordIntake;
 import frc.robot.commands.StopRetract;
 import frc.robot.commands.arm.ArmElbowManual;
 import frc.robot.commands.arm.ArmElbowToPosition;
+import frc.robot.commands.arm.ArmMoveToPosition;
 import frc.robot.commands.arm.ArmShoulderManual;
 import frc.robot.commands.arm.ArmShoulderToPosition;
 import frc.robot.commands.arm.ArmWristExtend;
@@ -63,6 +65,7 @@ import frc.robot.commands.recordPlayer.RecordPlayerSpinManual;
 import frc.robot.commands.target.TargetMoveSelection;
 
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.ArmPosition;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Compressor;
 import frc.robot.subsystems.Harvester;
@@ -185,6 +188,8 @@ public class RobotContainer {
     SmartDashboard.putData("Shoulders to 0", new ArmShoulderToPosition(0));
     SmartDashboard.putData("Shoulders to 10", new ArmShoulderToPosition(Math.toRadians(10)));
     SmartDashboard.putData("Shoulders to -20", new ArmShoulderToPosition(Math.toRadians(-20)));
+
+    SmartDashboard.putData("Harvester out", new HarvesterExtensionOut());
     //Goal Positions
     // for(int i = 1; i < target.goalLocations.length; i++){
     //   for(int j = 1; j < target.goalLocations[i].length; j++){
@@ -227,6 +232,10 @@ public class RobotContainer {
     coDriverB.onTrue(new ArmWristExtendCube()).onFalse(new StopRetract());
     coDriverLB.whileTrue(new ArmElbowManual());
     coDriverRB.whileTrue(new ArmShoulderManual());
+
+
+    coDriverX.whileTrue(new ArmMoveToPosition(new ArmPosition(5.2, 13, false)));
+
 
   }
 

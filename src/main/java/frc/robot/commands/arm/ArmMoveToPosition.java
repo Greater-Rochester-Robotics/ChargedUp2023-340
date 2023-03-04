@@ -32,7 +32,7 @@ public class ArmMoveToPosition extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    
+    currentWayPoint = 0;
     trajectory = RobotContainer.arm.getTrajectory(RobotContainer.arm.getArmPosition(), goalPosition);
     timer.reset();
     timer.start();
@@ -70,6 +70,6 @@ public class ArmMoveToPosition extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return currentWayPoint >= trajectory.size();
+    return currentWayPoint >= trajectory.size()-1;
   }
 }
