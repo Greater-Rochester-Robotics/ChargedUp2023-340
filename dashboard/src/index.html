@@ -134,19 +134,71 @@
             scene.add(mesh)
         }
 
+        // TODO connection UI
+
+        // pynetworktables2js websocket connection
         NetworkTables.addWsConnectionListener((connected) => {
             if (connected) {
-                // connected
+                console.log(`pynetworktables2js websocket connected`);
+            } else {
+                console.log(`pynetworktables2js websocket disconnected`)
             }
         }, true);
 
+        // Connection from pynetworktables2js to robot via NetworkTables
         NetworkTables.addRobotConnectionListener((connected) => {
             if (connected) {
-                // connected
+                console.log(`Robot NetworkTables connected`);
+            } else {
+                console.log(`Robot NetworkTables disconnected`);
             }
         }, true);
 
-        NetworkTables.addKeyListener(`/dashboard/example`, (_, value) => {}, true);
+        // Integer tuple: [grid, column, row], out of bounds is safe
+        NetworkTables.addKeyListener(`/dashboard/targetting/selection`, (_, value) => {
+            if (value instanceof Array) {
+                currentSelection.x = value[0] * value[1];
+                currentSelection.y = value[2];
+            }
+        }, true);
+
+        // Boolean: true = scoring, false = finished scoring
+        NetworkTables.addKeyListener(`/dashboard/targetting/scoring`, (_, value) => {
+            if (value) startScoring();
+            else finishScoring();
+        }, false);
+
+        // Integer tuple: [grid, column, row], values below 0 cause no change (out of bounds is safe)
+        NetworkTables.addKeyListener(`/dashboard/targetting/undoscore`, (_, value) => {
+            if (value instanceof Array && value.every((v) => v >= 0)) undoScore(value[0] * value[1], value[2]);
+        }, false);
+
+        // TODO implement posing robot model
+        // TODO implement topics in robot code
+
+        // Boolean: harvester solenoid state
+        NetworkTables.addKeyListener(`/dashboard/solenoids/harvester`, (_, value) => {}, true);
+
+        // Boolean: wrist solenoid state
+        NetworkTables.addKeyListener(`/dashboard/solenoids/wrist`, (_, value) => {}, true);
+
+        // Boolean: claw solenoid state
+        NetworkTables.addKeyListener(`/dashboard/solenoids/claw`, (_, value) => {}, true);
+
+        // Integer: harvester motor speed
+        NetworkTables.addKeyListener(`/dashboard/motors/harvester`, (_, value) => {}, true);
+
+        // Integer: record player motor speed
+        NetworkTables.addKeyListener(`/dashboard/motors/recordplayer`, (_, value) => {}, true);
+
+        // Integer: claw motor speed
+        NetworkTables.addKeyListener(`/dashboard/motors/claw`, (_, value) => {}, true);
+
+        // Integer: shoulder encoder readout
+        NetworkTables.addKeyListener(`/dashboard/encoders/shoulder`, (_, value) => {}, true);
+
+        // Integer: elbow encoder readout
+        NetworkTables.addKeyListener(`/dashboard/encoders/elbow`, (_, value) => {}, true);
 
         if (ENABLE_KEYBOARD_CONTROLS) {
             document.onkeydown = (event) => {
@@ -161,6 +213,10 @@
                     if (event.key === `Enter`) {
                         startScoring();
                         setTimeout(() => finishScoring(), 2000);
+                    }
+
+                    if (event.key === `z`) {
+                        undoScore(currentSelection.x, currentSelection.y);
                     }
                 }
             };
@@ -249,7 +305,7 @@
                             rotationDelta = -0.2;
                             targetScale = 1.6;
 
-                            const alpha = (Math.sin((Date.now() - scoring.since) / 104) + 1) / 2;
+                            const alpha = (Math.sin((Date.now() - scoring.since) / 100) + 1) / 2;
                             selectionOption.material.uniforms.color.value.lerpColors(new THREE.Color(0xffffff), new THREE.Color(x % 3 === 1 ? 0xa718b2 : 0xefdf0d), alpha);
                         } else {
                             rotationDelta = -0.02;
@@ -302,8 +358,12 @@
         }
 
         function finishScoring () {
-            selectionOptions[scoring.y][scoring.x].material.uniforms.color.value = new THREE.Color(scoring.x % 3 === 1 ? 0xa718b2 : 0xefdf0d);
-            scoring = null
+            selectionOptions[scoring.y]?.[scoring.x]?.material.uniforms.color.value = new THREE.Color(scoring.x % 3 === 1 ? 0xa718b2 : 0xefdf0d);
+            scoring = null;
+        }
+
+        function undoScore (x, y) {
+            selectionOptions[y]?.[x]?.material.uniforms.color.value = new THREE.Color(0xffffff);
         }
     </script>
 </body>
