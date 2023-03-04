@@ -21,7 +21,7 @@ public class RecordPlayerIntake extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.recordPlayer.setRotationMotor(1);
+    RobotContainer.recordPlayer.setRotationMotor(.2);
   }
 
   // Called once the command ends or is interrupted.
@@ -31,6 +31,6 @@ public class RecordPlayerIntake extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return RobotContainer.recordPlayer.getGamePieceSensor();
+    return false;//RobotContainer.recordPlayer.getGamePieceSensor();
   }
 }

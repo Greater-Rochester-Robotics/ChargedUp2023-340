@@ -51,6 +51,7 @@ public class Arm extends SubsystemBase {
   private double leftPos;
   private double shoulderGoalPos;
   private double forearmLength = ArmConstants.ELBOW_TO_CLAW_DISTANCE;
+  private int count = 0;
 
   private List<ArmPosition> wayPoints = new ArrayList<ArmPosition>();
   private int middleWayPoint = 0; // The way point that is the grabing position (where the arm goes to grab a game peice)
@@ -180,17 +181,20 @@ public class Arm extends SubsystemBase {
     rightPos = getRightShoulderPosition();
     leftPos = getLeftShoulderPosition();
     double elbowPos = getElbowPosition();
+    if (count > 25){
+      count = 0;
+    SmartDashboard.putNumber("Absolute encoder right", Math.round(Math.toDegrees(rightPos) * 10 ) * 0.1);
+    // SmartDashboard.putNumber("Internal encoder right", shoulderRight.getEncoder().getPosition());
+  
 
-    SmartDashboard.putNumber("Absolute encoder right", Math.toDegrees(rightPos));
-    SmartDashboard.putNumber("Internal encoder right", shoulderRight.getEncoder().getPosition());
+    SmartDashboard.putNumber("Absolute encoder left", Math.round(Math.toDegrees(leftPos) * 10 ) * 0.1);
+    // SmartDashboard.putNumber("Internal encoder left", shoulderLeft.getEncoder().getPosition());
 
-    SmartDashboard.putNumber("Absolute encoder left", Math.toDegrees(leftPos));
-    SmartDashboard.putNumber("Internal encoder left", shoulderLeft.getEncoder().getPosition());
-
-    SmartDashboard.putNumber("Absolute encoder elbow", elbowPos);
-    SmartDashboard.putNumber("Internal encoder elbow", elbowMotor.getEncoder().getPosition());
-    SmartDashboard.putNumber("Applied Elbow Output",this.getElbowVoltage());
-
+    SmartDashboard.putNumber("Absolute encoder elbow", Math.round(Math.toDegrees(elbowPos) * 10 ) * 0.1);
+    // SmartDashboard.putNumber("Internal encoder elbow", elbowMotor.getEncoder().getPosition());
+    }
+    count++;
+    
     //Checks to see if both shoulders are at the same position,
     //stops one closer to goal position
     if(shoulderPIDEnable){

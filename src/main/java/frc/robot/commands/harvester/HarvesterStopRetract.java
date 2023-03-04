@@ -5,6 +5,7 @@
 package frc.robot.commands.harvester;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class HarvesterStopRetract extends SequentialCommandGroup {
   /** Creates a new IntakeStopRetract. */
@@ -12,6 +13,7 @@ public class HarvesterStopRetract extends SequentialCommandGroup {
     // Use addRequirements() here to declare subsystem dependencies.
     addCommands(
       new HarvesterExtensionIn(),
+      new WaitCommand(1),
       new HarvesterStop()
     );
   }

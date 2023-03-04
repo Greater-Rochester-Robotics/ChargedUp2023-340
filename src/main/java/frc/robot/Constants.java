@@ -52,9 +52,11 @@ public final class Constants {
       public static final double KG_WRIST_IN = 0.3;
 
       /*Scoring constants */
-      public static final ArmPosition BACK_HEIGH_CONE = new ArmPosition(Math.toRadians(-23.57),Math.toRadians(-127.89),true);
-      public static final ArmPosition BACK_MIDDLE_CONE = new ArmPosition(Math.toRadians(2.63),Math.toRadians(-19.53),true);
+      public static final ArmPosition BACK_HIGH_CONE = new ArmPosition(Math.toRadians(-32.6),Math.toRadians(-159),true);
+      public static final ArmPosition BACK_MIDDLE_CONE = new ArmPosition(Math.toRadians(-16.0),Math.toRadians(-103),false);
       public static final ArmPosition FRONT_MIDDLE_CONE = new ArmPosition(Math.toRadians(11.96),Math.toRadians(109.45),true);
+      public static final ArmPosition BACK_HIGH_CUBE = new ArmPosition(Math.toRadians(-122), Math.toRadians(-24.5), false);
+      public static final ArmPosition BACK_MIDDLE_CUBE = new ArmPosition(Math.toRadians(-77.2), Math.toRadians(-5.4), false);
 
       /* Arm Limits */
       public static final double MAX_ELBOW_ANGLE = Math.toRadians(130);

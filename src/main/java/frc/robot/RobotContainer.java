@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-
+import frc.robot.commands.HarvestRecordIntake;
 import frc.robot.commands.arm.ArmElbowManual;
 import frc.robot.commands.arm.ArmElbowToPosition;
 import frc.robot.commands.arm.ArmShoulderManual;
@@ -213,7 +213,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     /* ==================== DRIVER BUTTONS ==================== */
-    driverA.onTrue(new HarvesterIntake()).onFalse(new HarvesterStopRetract());
+    driverA.onTrue(new HarvestRecordIntake()).onFalse(new HarvesterStopRetract());
     driverLB.onTrue(new DriveResetGyroToZero());
     // driverDUp.onTrue(new TargetMoveSelection(0));
     // driverDRight.onTrue(new TargetMoveSelection(1));
