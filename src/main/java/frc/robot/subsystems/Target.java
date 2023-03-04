@@ -19,6 +19,7 @@ public class Target extends SubsystemBase {
   int col;
   int row;
   public GoalLocation[][][] goalLocations;
+  public GoalLocation[][][] redGoalLocations;
   ShuffleboardTab tab;
 
   /** Creates a new Target. */
@@ -94,7 +95,17 @@ public class Target extends SubsystemBase {
         }
       }
     };
-  }
+    redGoalLocations = new GoalLocations[3][3][3];
+    for(int i = 0; i < 3; i++) {
+      for(int j = 0; j < 3; j++) {
+        for(int k = 0; k < 3; k++) {
+          redGoalLocations[i][j][k] = new GoalLocation(new Translation2d(Constants.TargetConstants.FIELD_WIDTH - goalLocations[i][j][k].getX(),goalLocations[i][j][k].getY()), goalLocations[i][j][k].getHeight());
+        }
+
+      }
+
+    }
+
 
   @Override
   public void periodic() {
@@ -120,12 +131,12 @@ public class Target extends SubsystemBase {
     this.col = col;
     this.row = row;
   }
-  // TODO: why does this else return the same thing
+
   public GoalLocation getTargetPosition() {
     if(DriverStation.getAlliance() == Alliance.Blue) {
       return goalLocations[grid][col][row];
     } else { 
-      return goalLocations[grid][col][row];
+      return redGoalLocations[grid][col][row];
     }
   }
 
