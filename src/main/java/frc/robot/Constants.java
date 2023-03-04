@@ -107,6 +107,7 @@ public final class Constants {
     public static class HarvesterConstants {
       public static final double INTAKE_MOTOR_INTAKE_SPEED = -0.9; //TODO: set this to the right value
       public static final double INTAKE_MOTOR_OUTTAKE_SPEED = 0.5; //TODO: set this to the right value
+      public static final double INTAKE_MOTOR_CUBE_SPEED = 0.4; //TODO: set this to the right value
     }
 
     public static class SwerveDriveConstants {
@@ -190,6 +191,7 @@ public final class Constants {
     public static final double RECORD_PLAYER_F = 0.0;
 
     public static final double recordPlayerConversonFactor = TWO_PI / 25.0;
+    public static final double ROTATE_MOTOR_SPEED = 0.6;
   }
   
   public class TargetConstants {

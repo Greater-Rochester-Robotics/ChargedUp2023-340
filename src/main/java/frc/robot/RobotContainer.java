@@ -30,6 +30,7 @@ import frc.robot.commands.claw.ClawClose;
 import frc.robot.commands.claw.ClawHold;
 import frc.robot.commands.claw.ClawIntake;
 import frc.robot.commands.claw.ClawOpen;
+import frc.robot.commands.claw.ClawOpenSpit;
 import frc.robot.commands.claw.ClawSpit;
 
 import frc.robot.commands.drive.DriveFieldRelative;
@@ -201,7 +202,11 @@ public class RobotContainer {
    */
   private void configureBindings() {
     /* ==================== DRIVER BUTTONS ==================== */
-    driverA.onTrue(new HarvestRecordIntake()).onFalse(new HarvesterStopRetract());
+    driverA.onTrue(new HarvestRecordIntake(true)).onFalse(new HarvesterStopRetract());
+    driverB.onTrue(new HarvestRecordIntake(false)).onFalse(new HarvesterStopRetract());
+    driverX.whileTrue(new ClawOpenSpit());
+
+
     driverLB.onTrue(new DriveResetGyroToZero());
     // driverDUp.onTrue(new TargetMoveSelection(0));
     // driverDRight.onTrue(new TargetMoveSelection(1));
@@ -209,7 +214,7 @@ public class RobotContainer {
     // driverDLeft.onTrue(new TargetMoveSelection(3));
     // driverRB.onTrue(new TargetMoveSelection(4));
     // driverLB.onTrue(new TargetMoveSelection(5));
-
+    driverStart.or(driverBack).toggleOnTrue(new DriveRobotCentric(false));
     // any commands inside this if behave as if they were commented out.
    
     

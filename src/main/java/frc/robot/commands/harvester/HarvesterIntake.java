@@ -8,9 +8,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
 public class HarvesterIntake extends CommandBase {
+  boolean isCone;
   /** Creates a new IntakeIntake. */
   public HarvesterIntake() {
+    this(true);
+  }
+  public HarvesterIntake(boolean isCone) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.isCone = isCone;
     addRequirements(RobotContainer.harvester);
   }
 
@@ -23,7 +28,7 @@ public class HarvesterIntake extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.harvester.motorIn();
+    RobotContainer.harvester.motorIn(isCone);
   }
 
   // Called once the command ends or is interrupted.

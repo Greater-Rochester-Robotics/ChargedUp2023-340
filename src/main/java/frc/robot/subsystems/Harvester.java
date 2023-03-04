@@ -70,8 +70,8 @@ public class Harvester extends SubsystemBase {
   /**
    * run the intake motor, to bring a gamepiece into the robot
    */
-  public void motorIn() {
-    harvesterMotor.set(TalonSRXControlMode.PercentOutput, INTAKE_MOTOR_INTAKE_SPEED);
+  public void motorIn(boolean isCone) {
+    harvesterMotor.set(TalonSRXControlMode.PercentOutput, isCone? INTAKE_MOTOR_INTAKE_SPEED : INTAKE_MOTOR_CUBE_SPEED);
   }
 
   /**

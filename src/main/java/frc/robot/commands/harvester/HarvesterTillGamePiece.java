@@ -22,7 +22,7 @@ public class HarvesterTillGamePiece extends CommandBase {
   @Override
   public void execute() {
 
-    RobotContainer.harvester.motorIn();
+    RobotContainer.harvester.motorIn(false);
 
   }
 

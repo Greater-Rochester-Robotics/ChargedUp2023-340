@@ -5,6 +5,7 @@
 package frc.robot.commands.recordPlayer;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 public class RecordPlayerIntake extends CommandBase {
@@ -21,7 +22,7 @@ public class RecordPlayerIntake extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    RobotContainer.recordPlayer.setRotationMotor(.2);
+    RobotContainer.recordPlayer.setRotationMotor(Constants.RecordPlayerConstants.ROTATE_MOTOR_SPEED);
   }
 
   // Called once the command ends or is interrupted.
