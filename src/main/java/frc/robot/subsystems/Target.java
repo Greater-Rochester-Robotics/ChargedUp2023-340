@@ -16,7 +16,7 @@ import frc.robot.Constants.TargetConstants;
 
 public class Target extends SubsystemBase {
   int grid;
-  int col=2;
+  int col;
   int row;
   public GoalLocation[][][] goalLocations;
   ShuffleboardTab tab;
@@ -120,11 +120,11 @@ public class Target extends SubsystemBase {
     this.col = col;
     this.row = row;
   }
-
+  // TODO: why does this else return the same thing
   public GoalLocation getTargetPosition() {
     if(DriverStation.getAlliance() == Alliance.Blue) {
       return goalLocations[grid][col][row];
-    } else {
+    } else { 
       return goalLocations[grid][col][row];
     }
   }
