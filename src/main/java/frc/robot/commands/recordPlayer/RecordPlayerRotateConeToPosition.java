@@ -25,7 +25,7 @@ public class RecordPlayerRotateConeToPosition extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    conePosition = RobotContainer.recordPlayer.getConeAngle();
+    conePosition = RobotContainer.recordPlayer.getEncoderAngle();
     if(Math.abs(conePosition-targetPositionInRad) > Math.PI)
       RobotContainer.recordPlayer.setRotationMotor(1);
     else

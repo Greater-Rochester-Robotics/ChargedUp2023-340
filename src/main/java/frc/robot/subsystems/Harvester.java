@@ -41,6 +41,8 @@ public class Harvester extends SubsystemBase {
     harvesterMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_6_Misc, 233);
     harvesterMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus, 229);
     harvesterMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 227);
+
+    harvesterMotor.configOpenloopRamp(.25);
     
     gamePieceSensor = new DigitalInput(Constants.HARVESTER_GAME_PIECE_SENSOR);
 

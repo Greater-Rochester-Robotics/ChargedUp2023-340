@@ -34,7 +34,7 @@ import frc.robot.commands.arm.ArmShoulderManual;
 import frc.robot.commands.arm.ArmShoulderToPosition;
 import frc.robot.commands.arm.ArmWristExtend;
 import frc.robot.commands.arm.ArmWristRetract;
-
+import frc.robot.commands.auto.auto1;
 import frc.robot.commands.claw.ClawClose;
 import frc.robot.commands.claw.ClawHold;
 import frc.robot.commands.claw.ClawIntake;
@@ -62,9 +62,10 @@ import frc.robot.commands.harvester.HarvesterIntake;
 import frc.robot.commands.harvester.HarvesterOuttake;
 import frc.robot.commands.harvester.HarvesterStop;
 import frc.robot.commands.harvester.HarvesterStopRetract;
+import frc.robot.commands.recordPlayer.RecordOrientCone;
 import frc.robot.commands.recordPlayer.RecordPlayerDriverControl;
 import frc.robot.commands.recordPlayer.RecordPlayerSpinManual;
-
+import frc.robot.commands.recordPlayer.RecordRotateByAngle;
 import frc.robot.commands.target.TargetMoveSelection;
 
 import frc.robot.subsystems.Arm;
@@ -155,7 +156,6 @@ public class RobotContainer {
     recordPlayer = new RecordPlayer();
     recordPlayer.setDefaultCommand(new RecordPlayerDriverControl());
 
-
     //Add all autos to the auto selector
     configureAutoModes();
 
@@ -186,13 +186,20 @@ public class RobotContainer {
     
     SmartDashboard.putData(new RecordPlayerSpinManual(-.2));
 
-    SmartDashboard.putData("Elbow to 0",new ArmElbowToPosition(0));
-    SmartDashboard.putData("Elbow to -70",new ArmElbowToPosition(Math.toRadians(-70)));
-    SmartDashboard.putData("Shoulders to 0", new ArmShoulderToPosition(0));
-    SmartDashboard.putData("Shoulders to 10", new ArmShoulderToPosition(Math.toRadians(10)));
-    SmartDashboard.putData("Shoulders to -20", new ArmShoulderToPosition(Math.toRadians(-20)));
+    // SmartDashboard.putData("Elbow to 0",new ArmElbowToPosition(0));
+    // SmartDashboard.putData("Elbow to -70",new ArmElbowToPosition(Math.toRadians(-70)));
+    // SmartDashboard.putData("Shoulders to 0", new ArmShoulderToPosition(0));
+    // SmartDashboard.putData("Shoulders to 10", new ArmShoulderToPosition(Math.toRadians(10)));
+    // SmartDashboard.putData("Shoulders to -20", new ArmShoulderToPosition(Math.toRadians(-20)));
 
     SmartDashboard.putData("Harvester out", new HarvesterExtensionOut());
+
+
+    /*autos */
+    SmartDashboard.putData("Test Auto", new auto1());
+  
+
+
     //Goal Positions
     // for(int i = 1; i < target.goalLocations.length; i++){
     //   for(int j = 1; j < target.goalLocations[i].length; j++){
@@ -214,8 +221,8 @@ public class RobotContainer {
    */
   private void configureBindings() {
     /* ==================== DRIVER BUTTONS ==================== */
-    driverA.onTrue(new HarvestRecordIntake(true)).onFalse(new HarvesterStopRetract());
-    driverB.onTrue(new HarvestRecordIntake(false)).onFalse(new HarvesterStopRetract());
+    driverA.onTrue(new HarvestRecordIntake(true)).onFalse(new HarvesterStopRetract(true));
+    driverB.onTrue(new HarvestRecordIntake(false)).onFalse(new HarvesterStopRetract(false));
     driverX.whileTrue(new ClawOpenSpit());
     driverLB.onTrue(new DriveResetGyroToZero());
     driverStart.or(driverBack).toggleOnTrue(new DriveRobotCentric(false));
@@ -227,14 +234,16 @@ public class RobotContainer {
     coDriverB.onTrue(new ArmWristExtendCube()).onFalse(new StopRetract());
     // coDriverLB.whileTrue(new ArmElbowManual());
     // coDriverRB.whileTrue(new ArmShoulderManual());
+    coDriverX.onTrue(new RecordOrientCone());
+    coDriverY.onTrue(new RecordRotateByAngle(0.5));
 
-    coDriverDUp.onTrue(new InstantCommand(() -> target.up()));
-    coDriverDRight.onTrue(new InstantCommand(() -> target.right()));
-    coDriverDDown.onTrue(new InstantCommand(() -> target.down()));
-    coDriverDLeft.onTrue(new InstantCommand(() -> target.left()));
-    coDriverRB.onTrue(new InstantCommand(() -> target.next()));
-    coDriverLB.onTrue(new InstantCommand(() -> target.previous()));
-    coDriverY.onTrue(new InstantCommand(() -> target.setScoring(true))).onFalse(new InstantCommand(() -> target.setScoring(false)));
+    // coDriverDUp.onTrue(new InstantCommand(() -> target.up()));
+    // coDriverDRight.onTrue(new InstantCommand(() -> target.right()));
+    // coDriverDDown.onTrue(new InstantCommand(() -> target.down()));
+    // coDriverDLeft.onTrue(new InstantCommand(() -> target.left()));
+    // coDriverRB.onTrue(new InstantCommand(() -> target.next()));
+    // coDriverLB.onTrue(new InstantCommand(() -> target.previous()));
+    // coDriverY.onTrue(new InstantCommand(() -> target.setScoring(true))).onFalse(new InstantCommand(() -> target.setScoring(false)));
   }
 
   /**

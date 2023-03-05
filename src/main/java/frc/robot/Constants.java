@@ -108,9 +108,9 @@ public final class Constants {
     }
  
     public static class HarvesterConstants {
-      public static final double INTAKE_MOTOR_INTAKE_SPEED = -0.9; //TODO: set this to the right value
+      public static final double INTAKE_MOTOR_INTAKE_SPEED = -0.8; //TODO: set this to the right value
       public static final double INTAKE_MOTOR_OUTTAKE_SPEED = 0.5; //TODO: set this to the right value
-      public static final double INTAKE_MOTOR_CUBE_SPEED = 0.4; //TODO: set this to the right value
+      public static final double INTAKE_MOTOR_CUBE_SPEED = -0.4; //TODO: set this to the right value
     }
 
     public static class SwerveDriveConstants {
@@ -188,13 +188,14 @@ public final class Constants {
   
   public class RecordPlayerConstants {
     /* Record Player PID Constants */
-    public static final double RECORD_PLAYER_P = 0.0;
+    public static final double RECORD_PLAYER_P = 7.50;
     public static final double RECORD_PLAYER_I = 0.0;
     public static final double RECORD_PLAYER_D = 0.0;
     public static final double RECORD_PLAYER_F = 0.0;
 
     public static final double recordPlayerConversonFactor = TWO_PI / 25.0;
     public static final double ROTATE_MOTOR_SPEED = 0.6;
+    // public static final double MAX_PID_SPEED = .;
   }
   
   public class TargetConstants {
@@ -246,7 +247,8 @@ public final class Constants {
 
   /* Digital Input Channels */
   public static final int HARVESTER_GAME_PIECE_SENSOR = 0;
-  public static final int RECORD_CONE_POSITION = 1;
-  public static final int RECORD_IS_GAME_PIECE = 2;
-  public static final int CLAW_GAMEPIECE_SENSOR = 3;
+  public static final int RECORD_CONE_POSITION_0 = 1;
+  public static final int RECORD_CONE_POSITION_1 = 2;
+  public static final int RECORD_IS_GAME_PIECE = 3;
+  public static final int CLAW_GAMEPIECE_SENSOR = 4;
 }
