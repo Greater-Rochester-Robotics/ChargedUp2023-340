@@ -147,7 +147,7 @@ public class RobotContainer {
     //create(construct) subsystems
     swerveDrive = new SwerveDrive();
     // swerveDrive.setDefaultCommand(new DriveRobotCentric(true));
-    // swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced(true));
+    swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced(true));
     claw = new Claw();
     compressor = new Compressor();
     arm = new Arm();
