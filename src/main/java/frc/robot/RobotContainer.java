@@ -32,6 +32,7 @@ import frc.robot.commands.arm.ArmElbowToPosition;
 import frc.robot.commands.arm.ArmMoveToPosition;
 import frc.robot.commands.arm.ArmShoulderManual;
 import frc.robot.commands.arm.ArmShoulderToPosition;
+import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.arm.ArmWristExtend;
 import frc.robot.commands.arm.ArmWristRetract;
 import frc.robot.commands.auto.auto1;
@@ -146,7 +147,7 @@ public class RobotContainer {
     //create(construct) subsystems
     swerveDrive = new SwerveDrive();
     // swerveDrive.setDefaultCommand(new DriveRobotCentric(true));
-    swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced(true));
+    // swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced(true));
     claw = new Claw();
     compressor = new Compressor();
     arm = new Arm();
@@ -186,14 +187,21 @@ public class RobotContainer {
     
     SmartDashboard.putData(new RecordPlayerSpinManual(-.2));
 
-    // SmartDashboard.putData("Elbow to 0",new ArmElbowToPosition(0));
-    // SmartDashboard.putData("Elbow to -70",new ArmElbowToPosition(Math.toRadians(-70)));
-    // SmartDashboard.putData("Shoulders to 0", new ArmShoulderToPosition(0));
-    // SmartDashboard.putData("Shoulders to 10", new ArmShoulderToPosition(Math.toRadians(10)));
-    // SmartDashboard.putData("Shoulders to -20", new ArmShoulderToPosition(Math.toRadians(-20)));
+    SmartDashboard.putData("Elbow to 0",new ArmElbowToPosition(0));
+    SmartDashboard.putData("Elbow to -70",new ArmElbowToPosition(Math.toRadians(-70)));
+    SmartDashboard.putData("Shoulders to 0", new ArmShoulderToPosition(0));
+    SmartDashboard.putData("Shoulders to 10", new ArmShoulderToPosition(Math.toRadians(10)));
+    SmartDashboard.putData("Shoulders to -20", new ArmShoulderToPosition(Math.toRadians(-20)));
 
     SmartDashboard.putData("Harvester out", new HarvesterExtensionOut());
 
+    SmartDashboard.putData("back high cone",new ArmToPosition(ArmConstants.BACK_HIGH_CONE));
+    SmartDashboard.putNumber("high cone shoulderAngle", ArmConstants.BACK_HIGH_CONE.getShoulderPosition());
+    SmartDashboard.putNumber("high cone elbowAngle", ArmConstants.BACK_HIGH_CONE.getElbowPosition());
+    
+    SmartDashboard.putData("Front middle cone",new ArmToPosition(ArmConstants.FRONT_MIDDLE_CONE));
+    SmartDashboard.putData("back lower score", new ArmToPosition(ArmConstants.BACK_LOWER_SCORE));
+    SmartDashboard.putData("internal pick up", new ArmToPosition(ArmConstants.INTERNAL_PICK_UP));
 
     /*autos */
     SmartDashboard.putData("Test Auto", new auto1());
@@ -224,6 +232,7 @@ public class RobotContainer {
     driverA.onTrue(new HarvestRecordIntake(true)).onFalse(new HarvesterStopRetract(true));
     driverB.onTrue(new HarvestRecordIntake(false)).onFalse(new HarvesterStopRetract(false));
     driverX.whileTrue(new ClawOpenSpit());
+    driverY.onTrue(new ArmWristExtend());
     driverLB.onTrue(new DriveResetGyroToZero());
     driverStart.or(driverBack).toggleOnTrue(new DriveRobotCentric(false));
     // any commands inside this if behave as if they were commented out.
@@ -232,15 +241,16 @@ public class RobotContainer {
     /* =================== CODRIVER BUTTONS =================== */
     coDriverA.onTrue(new ArmWristExtendCone()).onFalse(new CloseAndRetract());
     coDriverB.onTrue(new ArmWristExtendCube()).onFalse(new StopRetract());
-    // coDriverLB.whileTrue(new ArmElbowManual());
-    // coDriverRB.whileTrue(new ArmShoulderManual());
-    coDriverX.onTrue(new RecordOrientCone());
-    coDriverY.onTrue(new RecordRotateByAngle(0.5));
+    coDriverX.onTrue(new InstantCommand(()->target.getTargetPosition().getBackArmMoveCommand().schedule()));
+    coDriverY.onTrue(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP));
+    // coDriverBack.onTrue(new RecordRotateByAngle(0.5));
+    coDriverLB.whileTrue(new ArmElbowManual());
+    coDriverRB.whileTrue(new ArmShoulderManual());
 
-    // coDriverDUp.onTrue(new InstantCommand(() -> target.up()));
-    // coDriverDRight.onTrue(new InstantCommand(() -> target.right()));
-    // coDriverDDown.onTrue(new InstantCommand(() -> target.down()));
-    // coDriverDLeft.onTrue(new InstantCommand(() -> target.left()));
+    coDriverDUp.onTrue(new InstantCommand(() -> target.up()){public boolean runsWhenDisabled(){return true;}});
+    coDriverDRight.onTrue(new InstantCommand(() -> target.right()){public boolean runsWhenDisabled(){return true;}});
+    coDriverDDown.onTrue(new InstantCommand(() -> target.down()){public boolean runsWhenDisabled(){return true;}});
+    coDriverDLeft.onTrue(new InstantCommand(() -> target.left()){public boolean runsWhenDisabled(){return true;}});
     // coDriverRB.onTrue(new InstantCommand(() -> target.next()));
     // coDriverLB.onTrue(new InstantCommand(() -> target.previous()));
     // coDriverY.onTrue(new InstantCommand(() -> target.setScoring(true))).onFalse(new InstantCommand(() -> target.setScoring(false)));
@@ -279,7 +289,7 @@ public class RobotContainer {
    * @return value of the joystick, from -1.0 to 1.0 where 0.0 is centered
    */
   public double getDriverAxis(Axis axis) {
-    return (driver.getRawAxis(axis.value) < -.1 || driver.getRawAxis(axis.value) > .1)
+    return (driver.getRawAxis(axis.value) < -.075 || driver.getRawAxis(axis.value) > .075)
         ? driver.getRawAxis(axis.value)
         : 0.0;
   }
@@ -391,5 +401,9 @@ public class RobotContainer {
    */
   public double getElbowManual(){
     return getCoDriverAxis(Axis.kLeftY) * .25;
+  }
+
+  public void notifyDriver(boolean notifyOn){
+    setDriverRumble(0.0,notifyOn?0.6:0.0);
   }
 }

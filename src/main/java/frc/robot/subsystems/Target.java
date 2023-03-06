@@ -13,9 +13,12 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.TargetConstants;
+import frc.robot.commands.arm.ArmToPosition;
 
 public class Target extends SubsystemBase {
   int grid;
@@ -52,53 +55,53 @@ public class Target extends SubsystemBase {
     blueGoalLocations = new GoalLocation[][][] {
       {
         {
-          new GoalLocation(new Translation2d(1.85, .5), TargetConstants.HIGH_POLE),
-          new GoalLocation(new Translation2d(1.85, .5), TargetConstants.MED_POLE),
-          new GoalLocation(new Translation2d(1.85, .5), TargetConstants.LOW_POLE)
+          new GoalLocation(new Translation2d(1.85, .5), ArmConstants.FRONT_HIGH_CONE,ArmConstants.BACK_HIGH_CONE),
+          new GoalLocation(new Translation2d(1.85, .5), ArmConstants.FRONT_MIDDLE_CONE,ArmConstants.BACK_MIDDLE_CONE),
+          new GoalLocation(new Translation2d(1.85, .5), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)
         },
         {
-          new GoalLocation(new Translation2d(1.85, 1.07), TargetConstants.HIGH_POLE),
-          new GoalLocation(new Translation2d(1.85, 1.07), TargetConstants.MED_POLE),
-          new GoalLocation(new Translation2d(1.85, 1.07), TargetConstants.LOW_POLE)
+          new GoalLocation(new Translation2d(1.85, 1.07), ArmConstants.FRONT_HIGH_CUBE,ArmConstants.BACK_HIGH_CUBE),
+          new GoalLocation(new Translation2d(1.85, 1.07), ArmConstants.FRONT_MIDDLE_CUBE,ArmConstants.BACK_MIDDLE_CUBE),
+          new GoalLocation(new Translation2d(1.85, 1.07), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)
         },
         {
-          new GoalLocation(new Translation2d(1.85, 1.63), TargetConstants.HIGH_POLE),
-          new GoalLocation(new Translation2d(1.85, 1.63), TargetConstants.MED_POLE),
-          new GoalLocation(new Translation2d(1.85, 1.63), TargetConstants.LOW_POLE)       
+          new GoalLocation(new Translation2d(1.85, 1.63), ArmConstants.FRONT_HIGH_CONE,ArmConstants.BACK_HIGH_CONE),
+          new GoalLocation(new Translation2d(1.85, 1.63),ArmConstants.FRONT_MIDDLE_CONE,ArmConstants.BACK_MIDDLE_CONE),
+          new GoalLocation(new Translation2d(1.85, 1.63), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)       
          }
       },
       {
         {
-          new GoalLocation(new Translation2d(1.85, 2.16), TargetConstants.HIGH_POLE),
-          new GoalLocation(new Translation2d(1.85, 2.16), TargetConstants.MED_POLE),
-          new GoalLocation(new Translation2d(1.85, 2.16), TargetConstants.LOW_POLE)        
+          new GoalLocation(new Translation2d(1.85, 2.16),ArmConstants.FRONT_HIGH_CONE,ArmConstants.BACK_HIGH_CONE),
+          new GoalLocation(new Translation2d(1.85, 2.16), ArmConstants.FRONT_MIDDLE_CONE,ArmConstants.BACK_MIDDLE_CONE),
+          new GoalLocation(new Translation2d(1.85, 2.16), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)        
         },
         {
-          new GoalLocation(new Translation2d(1.85, 2.68), TargetConstants.HIGH_POLE),
-          new GoalLocation(new Translation2d(1.85, 2.68), TargetConstants.MED_POLE),
-          new GoalLocation(new Translation2d(1.85, 2.68), TargetConstants.LOW_POLE)       
+          new GoalLocation(new Translation2d(1.85, 2.68), ArmConstants.FRONT_HIGH_CUBE,ArmConstants.BACK_HIGH_CUBE),
+          new GoalLocation(new Translation2d(1.85, 2.68), ArmConstants.FRONT_MIDDLE_CUBE,ArmConstants.BACK_MIDDLE_CUBE),
+          new GoalLocation(new Translation2d(1.85, 2.68), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)       
         },
         {
-          new GoalLocation(new Translation2d(1.85, 3.28), TargetConstants.HIGH_POLE),
-          new GoalLocation(new Translation2d(1.85, 3.28), TargetConstants.MED_POLE),
-          new GoalLocation(new Translation2d(1.85, 3.28), TargetConstants.LOW_POLE)        
+          new GoalLocation(new Translation2d(1.85, 3.28), ArmConstants.FRONT_HIGH_CONE,ArmConstants.BACK_HIGH_CONE),
+          new GoalLocation(new Translation2d(1.85, 3.28), ArmConstants.FRONT_MIDDLE_CONE,ArmConstants.BACK_MIDDLE_CONE),
+          new GoalLocation(new Translation2d(1.85, 3.28), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)        
         }
       },
       {
         {
-          new GoalLocation(new Translation2d(1.85, 3.88), TargetConstants.HIGH_POLE),
-          new GoalLocation(new Translation2d(1.85, 3.88), TargetConstants.MED_POLE),
-          new GoalLocation(new Translation2d(1.85, 3.88), TargetConstants.LOW_POLE)        
+          new GoalLocation(new Translation2d(1.85, 3.88), ArmConstants.FRONT_HIGH_CONE,ArmConstants.BACK_HIGH_CONE),
+          new GoalLocation(new Translation2d(1.85, 3.88), ArmConstants.FRONT_MIDDLE_CONE,ArmConstants.BACK_MIDDLE_CONE),
+          new GoalLocation(new Translation2d(1.85, 3.88), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)        
         },
         {
-          new GoalLocation(new Translation2d(1.85, 4.39), TargetConstants.HIGH_POLE),
-          new GoalLocation(new Translation2d(1.85, 4.39), TargetConstants.MED_POLE),
-          new GoalLocation(new Translation2d(1.85, 4.39), TargetConstants.LOW_POLE)        
+          new GoalLocation(new Translation2d(1.85, 4.39), ArmConstants.FRONT_HIGH_CUBE,ArmConstants.BACK_HIGH_CUBE),
+          new GoalLocation(new Translation2d(1.85, 4.39), ArmConstants.FRONT_MIDDLE_CUBE,ArmConstants.BACK_MIDDLE_CUBE),
+          new GoalLocation(new Translation2d(1.85, 4.39), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)        
         },
         {
-          new GoalLocation(new Translation2d(1.85, 4.97), TargetConstants.HIGH_POLE),
-          new GoalLocation(new Translation2d(1.85, 4.97), TargetConstants.MED_POLE),
-          new GoalLocation(new Translation2d(1.85, 4.97), TargetConstants.LOW_POLE)        
+          new GoalLocation(new Translation2d(1.85, 4.97), ArmConstants.FRONT_HIGH_CONE,ArmConstants.BACK_HIGH_CONE),
+          new GoalLocation(new Translation2d(1.85, 4.97), ArmConstants.FRONT_MIDDLE_CONE,ArmConstants.BACK_MIDDLE_CONE),
+          new GoalLocation(new Translation2d(1.85, 4.97), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)        
         }
       }
     };
@@ -106,9 +109,14 @@ public class Target extends SubsystemBase {
     for(int i = 0; i < 3; i++) {
       for(int j = 0; j < 3; j++) {
         for(int k = 0; k < 3; k++) {
-          redGoalLocations[i][j][k] = new GoalLocation(new Translation2d(Constants.TargetConstants.FIELD_WIDTH - blueGoalLocations[i][j][k].getX(),blueGoalLocations[i][j][k].getY()), blueGoalLocations[i][j][k].getHeight());
+          redGoalLocations[i][j][k] = new GoalLocation(
+            new Translation2d(
+            Constants.TargetConstants.FIELD_WIDTH - blueGoalLocations[i][j][k].getX(),
+            blueGoalLocations[i][j][k].getY()), 
+            blueGoalLocations[i][j][k].getFrontArmPos(),
+            blueGoalLocations[i][j][k].getBackArmPos()
+          );
         }
-
       }
     }
   }
@@ -125,7 +133,6 @@ public class Target extends SubsystemBase {
     SmartDashboard.putNumber("Target Row", row);
     SmartDashboard.putNumber("Target X", getTargetPosition().getX());
     SmartDashboard.putNumber("Target Y", getTargetPosition().getY());
-    SmartDashboard.putNumber("Target Height", getTargetPosition().getHeight());
   }
 
   public long[] getTargetLong() {
@@ -200,11 +207,14 @@ public class Target extends SubsystemBase {
 
   public class GoalLocation {
     private Translation2d position;
-    private double height;
+    private ArmPosition armPositionBack;
+    private ArmPosition armPositionFront;
 
-    public GoalLocation(Translation2d position, double height) {
+    public GoalLocation(Translation2d position, ArmPosition frontArmPosition, ArmPosition backArmPosition) {
       this.position = position;
-      this.height = height;
+      this.armPositionFront = frontArmPosition;
+      this.armPositionBack = backArmPosition;
+
     }
 
     public double getX() {
@@ -215,8 +225,20 @@ public class Target extends SubsystemBase {
       return position.getY();
     }
 
-    public double getHeight() {
-      return height;
+    public ArmPosition getFrontArmPos() {
+      return armPositionFront;
+    }
+  
+    public Command getFrontArmMoveCommand(){
+      return new ArmToPosition(this.getFrontArmPos());
+    }
+
+    public ArmPosition getBackArmPos(){
+      return armPositionBack;
+    }
+
+    public Command getBackArmMoveCommand(){
+      return new ArmToPosition(this.getBackArmPos());
     }
 
     public Translation2d getPosition() {

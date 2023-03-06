@@ -15,12 +15,13 @@ import frc.robot.RobotContainer;
  * degrees. This command can be run while the robot is disabled.
  * Must wait 10 seconds for command to run
  */
-public class ArmResetShoulderToZero extends CommandBase {
+public class ArmShoulderResetToZero extends CommandBase {
   Timer timer = new Timer();
   /**
    * Creates a new ArmResetLeftShoulderToZero.
    */
-  public ArmResetShoulderToZero() {
+  @Deprecated
+  public ArmShoulderResetToZero() {
     addRequirements(RobotContainer.arm);
   }
 

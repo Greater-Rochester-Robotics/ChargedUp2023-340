@@ -20,6 +20,7 @@ public class ArmMoveToPosition extends CommandBase {
   Timer timer = new Timer();
   
   /** Creates a new MoveArmToPosition. */
+  @Deprecated
   public ArmMoveToPosition(double x, double y) {
     this(ArmPosition.inverseKinematics(x, y));
   }

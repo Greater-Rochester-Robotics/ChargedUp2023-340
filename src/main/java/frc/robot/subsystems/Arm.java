@@ -96,6 +96,9 @@ public class Arm extends SubsystemBase {
     shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 10);
     shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
 
+    shoulderRight.setClosedLoopRampRate(.25);
+    shoulderRight.getPIDController().setOutputRange(-.15, .15);
+
     absoluteEncoderRight.setZeroOffset(1.7072);
 
     //left shoulder
@@ -127,6 +130,9 @@ public class Arm extends SubsystemBase {
     shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 10);  
     shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
 
+    shoulderLeft.setClosedLoopRampRate(.25);
+    shoulderLeft.getPIDController().setOutputRange(-.15, .15);
+
     absoluteEncoderLeft.setZeroOffset(3.3257);
 
     //elbow
@@ -146,6 +152,7 @@ public class Arm extends SubsystemBase {
     elbowMotor.getPIDController().setI(ArmConstants.ELBOW_I);
     elbowMotor.getPIDController().setD(ArmConstants.ELBOW_D);
     elbowMotor.getPIDController().setFF(ArmConstants.ELBOW_F);
+    elbowMotor.getPIDController().setPositionPIDWrappingEnabled(false);
 
     elbowMotor.setIdleMode(IdleMode.kBrake);
 
@@ -156,6 +163,9 @@ public class Arm extends SubsystemBase {
     elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
     elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 10);  
     elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
+
+    elbowMotor.setClosedLoopRampRate(1);
+    elbowMotor.getPIDController().setOutputRange(-.25, .25);
 
     elbowMotor.set(0);
 
@@ -200,7 +210,13 @@ public class Arm extends SubsystemBase {
     }
     count++;
     
-    //Checks to see if both shoulders are at the same position,
+    ArmPosition armPosition = getArmPosition();
+    SmartDashboard.putNumber("ArmXend", armPosition.getEndX());
+    // SmartDashboard.putBoolean("is in front of harvester", armPosition.isInFrontOfHarvester());
+    // SmartDashboard.putBoolean("is in abehind of harvester", armPosition.isBehindHarvester());
+    // SmartDashboard.putBoolean("compare score", ArmConstants.REAR_LOWER_SCORE.isOppositeSideFromCurrent());
+    // SmartDashboard.putBoolean("compare front",ArmConstants.FRONT_MIDDLE_CONE.isOppositeSideFromCurrent());
+    // //Checks to see if both shoulders are at the same position,
     //stops one closer to goal position
     if(shoulderPIDEnable){
       if(rightPos - leftPos < -0.19625 || rightPos - leftPos > 0.19625){
@@ -417,8 +433,8 @@ public class Arm extends SubsystemBase {
   // -------------------------- ArmPosition Methods -------------------------- //
  
   public void DriveToPosition(ArmPosition target){
-    setBothShoulderMotorPosition(target.shoulderAngle);
-    setElbowPosition(target.elbowAngle);
+    setBothShoulderMotorPosition(target.getShoulderPosition());
+    setElbowPosition(target.getElbowPosition());
   }
   
   public ArmPosition getArmPosition(){

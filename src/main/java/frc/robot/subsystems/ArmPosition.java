@@ -10,10 +10,11 @@ import java.awt.geom.Point2D;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
 
 /** Add your docs here. */
- public class ArmPosition{
+ public class ArmPosition implements ArmPositionSupplier{
     // use Rotation2ds instead of double angles?
     // find where angles are measured from (relative to the ground or relative to something else?)
     double shoulderAngle;
@@ -64,6 +65,10 @@ import frc.robot.Constants.ArmConstants;
     //   return new Pose2d(destination.getX(), destination.getY(), new Rotation2d());
     // }
   
+    public ArmPosition getAsArmPosition(){
+      return this;
+    }
+
     public Pose2d getEndPosition(){
       double forearmLength = ArmConstants.ELBOW_TO_CLAW_DISTANCE; //Gets the forearm distance and acounts for wrist extention
       if(wristExtended) forearmLength += ArmConstants.WRIST_EXTENSION_LENGTH;
@@ -92,6 +97,28 @@ import frc.robot.Constants.ArmConstants;
       //
       //  return new Pose2d(x, y, new Rotation2d());
       //}
+    }
+
+    /**
+     * measured from the shoulder pivot
+     * @return
+     */
+    public double getEndX(){
+      return (ArmConstants.SHOULDER_TO_ELBOW_DISTANCE*Math.sin(shoulderAngle)) 
+        + ((wristExtended?ArmConstants.WRIST_EXTENSION_LENGTH+ArmConstants.ELBOW_TO_CLAW_DISTANCE:ArmConstants.ELBOW_TO_CLAW_DISTANCE) * Math.sin(elbowAngle-shoulderAngle));
+    }
+
+    public boolean isInFrontOfHarvester(){
+      return getEndX() > ArmConstants.ARM_TO_HARVESTER_MAX_DISTANCE;
+    }
+
+    public boolean isBehindHarvester(){
+      return getEndX() < ArmConstants.ARM_TO_HARVESTER_MIN_DISTANCE;
+    }
+
+    public boolean isOppositeSideFromCurrent(){
+      ArmPosition currentPosition = RobotContainer.arm.getArmPosition();
+      return !((this.isBehindHarvester()  &&  currentPosition.isBehindHarvester()) || (this.isInFrontOfHarvester() && currentPosition.isInFrontOfHarvester()));
     }
   
     public static ArmPosition inverseKinematics(double x, double z){

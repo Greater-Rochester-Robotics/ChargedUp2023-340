@@ -12,10 +12,13 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
 import static frc.robot.Constants.HarvesterConstants.*;
 
@@ -24,9 +27,13 @@ public class Harvester extends SubsystemBase {
   // private CANSparkMax motor2;
   private DigitalInput gamePieceSensor;
   private DoubleSolenoid harvesterPistons;
+  private boolean hadGamePeice = false;
+  Timer rumbleTimer;
 
   /** Creates a new Intake. */
   public Harvester() {
+    rumbleTimer = new Timer();
+    rumbleTimer.start();
 
     harvesterMotor = new TalonSRX(Constants.HARVESTER_MOTOR);
     harvesterMotor.configVoltageCompSaturation(Constants.MAXIMUM_VOLTAGE);
@@ -53,6 +60,12 @@ public class Harvester extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putBoolean("intake has game peice: ", hasGamePiece());
+    // if(hadGamePeice && !hasGamePiece())
+    //   rumbleTimer.reset();
+
+    // Robot.robotContainer.notifyDriver(!rumbleTimer.hasElapsed(1)&&isHarvesterOut());
+
+    // hadGamePeice = hasGamePiece();
   }
 
   /**
@@ -69,18 +82,22 @@ public class Harvester extends SubsystemBase {
     harvesterPistons.set(Value.kForward);
   }
 
+  public boolean isHarvesterOut(){
+    return harvesterPistons.get() == Value.kForward;
+  }
+
   /**
    * run the intake motor, to bring a gamepiece into the robot
    */
   public void motorIn(boolean isCone) {
-    harvesterMotor.set(TalonSRXControlMode.PercentOutput, isCone? INTAKE_MOTOR_INTAKE_SPEED : INTAKE_MOTOR_CUBE_SPEED);
+    harvesterMotor.set(TalonSRXControlMode.PercentOutput, isCone? HARVESTER_MOTOR_INTAKE_SPEED : HARVESTER_MOTOR_CUBE_SPEED);
   }
 
   /**
    * runs the intake motor, to push a gamepiece out of the robot
    */
   public void motorOut() {
-    harvesterMotor.set(TalonSRXControlMode.PercentOutput, INTAKE_MOTOR_OUTTAKE_SPEED);
+    harvesterMotor.set(TalonSRXControlMode.PercentOutput, HARVESTER_MOTOR_OUTTAKE_SPEED);
   }
 
   /**
