@@ -19,6 +19,7 @@ public class CloseAndRetract extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
+      new ClawStop(),
       new ClawClose(),
       new WaitCommand(0.5),
       new ArmWristRetract()

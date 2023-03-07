@@ -119,7 +119,7 @@ public final class Constants {
     }
  
     public static class HarvesterConstants {
-      public static final double HARVESTER_MOTOR_INTAKE_SPEED = -0.8; //TODO: set this to the right value
+      public static final double HARVESTER_MOTOR_INTAKE_SPEED = -0.6; //TODO: set this to the right value
       public static final double HARVESTER_MOTOR_OUTTAKE_SPEED = 0.5; //TODO: set this to the right value
       public static final double HARVESTER_MOTOR_CUBE_SPEED = -0.4; //TODO: set this to the right value
     }
@@ -193,7 +193,7 @@ public final class Constants {
 
       /* Driver Scaling Constants */
       public static final double DRIVER_SPEED_SCALE_LINEAR = .75;//0.65 * 0.85;
-      public static final double DRIVER_SPEED_SCALE_ROTATIONAL = .75;
+      public static final double DRIVER_SPEED_SCALE_ROTATIONAL = .95;
 
   }
   

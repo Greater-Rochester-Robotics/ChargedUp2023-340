@@ -151,7 +151,7 @@ public class RobotContainer {
     //create(construct) subsystems
     swerveDrive = new SwerveDrive();
     // swerveDrive.setDefaultCommand(new DriveRobotCentric(true));
-    swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced(true));
+    swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced(false));
     claw = new Claw();
     compressor = new Compressor();
     arm = new Arm();
@@ -242,7 +242,7 @@ public class RobotContainer {
     driverX.whileTrue(new ClawOpenSpit());
     driverY.onTrue(new ArmWristExtend());
     driverDLeft.onTrue(new DriveResetGyroToZero());
-    
+    driverDRight.onTrue(new HarvesterExtensionOut());
     driverStart.or(driverBack).toggleOnTrue(new DriveRobotCentric(false));
     // any commands inside this if behave as if they were commented out.
    
@@ -255,6 +255,7 @@ public class RobotContainer {
     coDriverLB.whileTrue(new ArmElbowManual());
     coDriverRB.whileTrue(new ArmShoulderManual());
     coDriverBack.onTrue(new RecordOrientCone());
+   
     coDriverDUp.onTrue(new InstantCommand(() -> target.up()){public boolean runsWhenDisabled(){return true;}});
     coDriverDRight.onTrue(new InstantCommand(() -> target.right()){public boolean runsWhenDisabled(){return true;}});
     coDriverDDown.onTrue(new InstantCommand(() -> target.down()){public boolean runsWhenDisabled(){return true;}});
