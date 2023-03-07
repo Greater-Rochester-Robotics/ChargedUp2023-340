@@ -10,27 +10,21 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.SwerveDriveConstants;
-import frc.robot.commands.ArmScoreCube;
-import frc.robot.commands.drive.DriveBalanceRobot;
 import frc.robot.commands.drive.auto.DriveFollowTrajectory;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class auto1 extends SequentialCommandGroup {
-  /** Creates a new auto1. */
-  public auto1() {
-    List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("MidAroundOverRamp", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
-
+public class AutoBackOneMeterLeftOneMeter extends SequentialCommandGroup {
+  /** Creates a new AutoBackOneMeterLeftOneMeter. */
+  public AutoBackOneMeterLeftOneMeter() {
+    List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("BackOneMeterLeftOneMeter", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new DriveFollowTrajectory(path.get(0)),
-      new ArmScoreCube(ArmConstants.BACK_MIDDLE_CUBE),
-      new DriveFollowTrajectory(path.get(1)),
-      new DriveBalanceRobot()
+      new DriveFollowTrajectory(path.get(1))
     );
   }
 }

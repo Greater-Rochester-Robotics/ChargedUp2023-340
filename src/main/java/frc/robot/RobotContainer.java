@@ -35,7 +35,11 @@ import frc.robot.commands.arm.ArmShoulderToPosition;
 import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.arm.ArmWristExtend;
 import frc.robot.commands.arm.ArmWristRetract;
-import frc.robot.commands.auto.auto1;
+import frc.robot.commands.auto.AutoBackOneMeter;
+import frc.robot.commands.auto.AutoBackOneMeterLeftOneMeter;
+import frc.robot.commands.auto.AutoBackTwoMeters;
+import frc.robot.commands.auto.AutoDiagonalOneMeter;
+import frc.robot.commands.auto.AutoMidAroundOverRamp;
 import frc.robot.commands.claw.ClawClose;
 import frc.robot.commands.claw.ClawHold;
 import frc.robot.commands.claw.ClawIntake;
@@ -96,14 +100,14 @@ public class RobotContainer {
   static final Trigger driverB = new JoystickButton(driver, 2);
   static final Trigger driverX = new JoystickButton(driver, 3);
   static final Trigger driverY = new JoystickButton(driver, 4);
-  static final Trigger driverLB = new JoystickButton(driver, 5);
+  // static final Trigger driverLB = new JoystickButton(driver, 5);
   static final Trigger driverRB = new JoystickButton(driver, 6);
   static final Trigger driverBack = new JoystickButton(driver, 7);
   static final Trigger driverStart = new JoystickButton(driver, 8);
   static final Trigger driverLS = new JoystickButton(driver, 9);
   static final Trigger driverRS = new JoystickButton(driver, 10);
-  static final Trigger driverDUp = new POVButton(driver, 0);
-  static final Trigger driverDDown = new POVButton(driver, 180);
+  // static final Trigger driverDUp = new POVButton(driver, 0);
+  // static final Trigger driverDDown = new POVButton(driver, 180);
   static final Trigger driverDLeft = new POVButton(driver, 270);
   static final Trigger driverDRight = new POVButton(driver, 90);
   // final Trigger driverLTButton = new JoyTriggerButton(driver, .3, Axis.LEFT_TRIGGER);//This is used in driving, don't enable
@@ -204,7 +208,11 @@ public class RobotContainer {
     SmartDashboard.putData("internal pick up", new ArmToPosition(ArmConstants.INTERNAL_PICK_UP));
 
     /*autos */
-    SmartDashboard.putData("Test Auto", new auto1());
+    SmartDashboard.putData("Test Auto", new AutoMidAroundOverRamp());
+    SmartDashboard.putData("Back 1m", new AutoBackOneMeter());
+    SmartDashboard.putData("Back 2m", new AutoBackTwoMeters());
+    SmartDashboard.putData("Diagonal 1m", new AutoDiagonalOneMeter());
+    SmartDashboard.putData("Back 1m, Left 1m", new AutoBackOneMeterLeftOneMeter());
   
 
 
@@ -233,26 +241,26 @@ public class RobotContainer {
     driverB.onTrue(new HarvestRecordIntake(false)).onFalse(new HarvesterStopRetract(false));
     driverX.whileTrue(new ClawOpenSpit());
     driverY.onTrue(new ArmWristExtend());
-    driverLB.onTrue(new DriveResetGyroToZero());
+    driverDLeft.onTrue(new DriveResetGyroToZero());
+    
     driverStart.or(driverBack).toggleOnTrue(new DriveRobotCentric(false));
     // any commands inside this if behave as if they were commented out.
    
     
     /* =================== CODRIVER BUTTONS =================== */
     coDriverA.onTrue(new ArmWristExtendCone()).onFalse(new CloseAndRetract());
-    coDriverB.onTrue(new ArmWristExtendCube()).onFalse(new StopRetract());
+    coDriverB.onTrue(new ArmWristExtendCube()).onFalse(new ArmWristRetract()).onFalse(new ClawHold());
     coDriverX.onTrue(new InstantCommand(()->target.getTargetPosition().getBackArmMoveCommand().schedule()));
     coDriverY.onTrue(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP));
-    // coDriverBack.onTrue(new RecordRotateByAngle(0.5));
     coDriverLB.whileTrue(new ArmElbowManual());
     coDriverRB.whileTrue(new ArmShoulderManual());
-
+    coDriverBack.onTrue(new RecordOrientCone());
     coDriverDUp.onTrue(new InstantCommand(() -> target.up()){public boolean runsWhenDisabled(){return true;}});
     coDriverDRight.onTrue(new InstantCommand(() -> target.right()){public boolean runsWhenDisabled(){return true;}});
     coDriverDDown.onTrue(new InstantCommand(() -> target.down()){public boolean runsWhenDisabled(){return true;}});
     coDriverDLeft.onTrue(new InstantCommand(() -> target.left()){public boolean runsWhenDisabled(){return true;}});
-    // coDriverRB.onTrue(new InstantCommand(() -> target.next()));
-    // coDriverLB.onTrue(new InstantCommand(() -> target.previous()));
+    // coDriverRB.onTrue(new InstantCommand(() -> target.next()){public boolean runsWhenDisabled(){return true;}});
+    // coDriverLB.onTrue(new InstantCommand(() -> target.previous()){public boolean runsWhenDisabled(){return true;}});
     // coDriverY.onTrue(new InstantCommand(() -> target.setScoring(true))).onFalse(new InstantCommand(() -> target.setScoring(false)));
   }
 
@@ -303,6 +311,16 @@ public class RobotContainer {
   public static void setDriverRumble(double leftRumble, double rightRumble) {
     driver.setRumble(RumbleType.kLeftRumble, leftRumble);
     driver.setRumble(RumbleType.kRightRumble, rightRumble);
+  }
+  
+  /**
+   * accessor to get the true/false of the buttonNum 
+   * on the driver control
+   * @param buttonNum
+   * @return the value of the button
+   */
+  public boolean getDriverButton(int buttonNum) {
+    return driver.getRawButton(buttonNum);
   }
 
   /**
@@ -360,23 +378,29 @@ public class RobotContainer {
   }
 
   public double getRobotForwardFull(boolean isVeloMode) {
-    return this.getDriverAxis(Axis.kLeftY)*-Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_LINEAR * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
+    return this.getDriverAxis(Axis.kLeftY)*-Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_LINEAR 
+      * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
   }
 
   public double getRobotForwardSlow(boolean isVeloMode) {
-    return this.getDriverAxis(Axis.kRightY)*0.5*-Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_LINEAR * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
+    return this.getDriverAxis(Axis.kRightY)*0.5*-Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_LINEAR 
+      * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
   }
 
   public double getRobotLateralFull(boolean isVeloMode) {
-    return this.getDriverAxis(Axis.kLeftX)*-Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_LINEAR * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
+    return this.getDriverAxis(Axis.kLeftX)*-Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_LINEAR 
+      * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
   }
 
   public double getRobotLateralSlow(boolean isVeloMode) {
-    return this.getDriverAxis(Axis.kRightX)*0.5*-Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_LINEAR * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
+    return this.getDriverAxis(Axis.kRightX)*0.5*-Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_LINEAR 
+    * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
   }
 
   public double getRobotRotation(boolean isVeloMode) {
-    return (this.getDriverAxis(Axis.kRightTrigger) - Robot.robotContainer.getDriverAxis(Axis.kLeftTrigger))*-Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_ROTATIONAL * (isVeloMode? Constants.SwerveDriveConstants.MAX_ROBOT_ROT_VELOCITY : 1.0);
+    double value =(this.getDriverAxis(Axis.kRightTrigger) - Robot.robotContainer.getDriverAxis(Axis.kLeftTrigger));
+    return value*value*Math.signum(value) *-1.0
+      * (isVeloMode? Constants.SwerveDriveConstants.MAX_ROBOT_ROT_VELOCITY : Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_ROTATIONAL);
   }
 
   /**

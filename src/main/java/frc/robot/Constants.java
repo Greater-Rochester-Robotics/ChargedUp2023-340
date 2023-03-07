@@ -54,7 +54,7 @@ public final class Constants {
 
       /*Scoring constants */
       public static final ArmPosition BACK_HIGH_CONE = new ArmPosition(Math.toRadians(-32.6),Math.toRadians(-159),true);
-      public static final ArmPosition BACK_MIDDLE_CONE = new ArmPosition(Math.toRadians(-16.0),Math.toRadians(-103),false);
+      public static final ArmPosition BACK_MIDDLE_CONE = new ArmPosition(Math.toRadians(-16.0),Math.toRadians(-125),false);
       public static final ArmPosition BACK_HIGH_CUBE = new ArmPosition( Math.toRadians(-24.5),Math.toRadians(-122), false);
       public static final ArmPosition BACK_MIDDLE_CUBE = new ArmPosition(Math.toRadians(-5.4), Math.toRadians(-77.2), false);
       public static final ArmPosition BACK_LOWER_SCORE = new ArmPosition(Math.toRadians(-22.8), Math.toRadians(-40), false);
@@ -175,7 +175,7 @@ public final class Constants {
   
       public static final double ROBOT_COUNTER_SPIN_P = 1.1;
       public static final double ROBOT_COUNTER_SPIN_I = 0.0;
-      public static final double ROBOT_COUNTER_SPIN_D = 0.001;
+      public static final double ROBOT_COUNTER_SPIN_D = 0.005;
 
       /* We stole 3015's constants for DriveFollowTrajectory */
       public static final double DRIVE_POS_ERROR_CONTROLLER_P = .33; // 10

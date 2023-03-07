@@ -13,6 +13,7 @@ import frc.robot.commands.arm.ArmWristExtend;
 import frc.robot.commands.claw.ClawClose;
 import frc.robot.commands.claw.ClawIntake;
 import frc.robot.commands.claw.ClawOpen;
+import frc.robot.commands.claw.ClawStop;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -24,10 +25,11 @@ public class ArmWristExtendCone extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new ClawOpen(),
-      // new ClawIntake(),
+      new ClawIntake(),
       new ArmWristExtend(),
       new WaitUntilCommand(RobotContainer.claw::getGamePieceSensor),
       new ClawClose(),
+      new ClawStop(),
       new WaitCommand(.5)
     );
   }

@@ -47,11 +47,10 @@ public class DriveFieldRelative extends CommandBase {
     double  awaySpeed = Robot.robotContainer.getRobotForwardFull(isVeloMode);
     double lateralSpeed = Robot.robotContainer.getRobotLateralFull(isVeloMode);
     //check if secondary sticks are being used
-    if(Math.abs(Robot.robotContainer.getDriverAxis(Axis.kRightY))>.1 ||
-     Math.abs(Robot.robotContainer.getDriverAxis(Axis.kRightX))>.1){
-     //if secondary sticks used, replace with secondary sticks witha slow factor
-     awaySpeed = Robot.robotContainer.getRobotForwardSlow(isVeloMode);
-     lateralSpeed = Robot.robotContainer.getRobotLateralSlow(isVeloMode);
+    if(Robot.robotContainer.getDriverButton(5)){
+      //if secondary sticks used, replace with secondary sticks witha slow factor
+      awaySpeed *= 0.5;
+      lateralSpeed *= 0.5;
     }
     double rotSpeed = Robot.robotContainer.getRobotRotation(isVeloMode);
 

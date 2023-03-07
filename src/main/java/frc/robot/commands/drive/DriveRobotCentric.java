@@ -50,11 +50,10 @@ public class DriveRobotCentric extends CommandBase {
     double forwardSpeed = Robot.robotContainer.getRobotForwardFull(isVeloMode);
     double strafeSpeed = Robot.robotContainer.getRobotLateralFull(isVeloMode);
     //check if secondary sticks are being used
-    if(Math.abs(Robot.robotContainer.getDriverAxis(Axis.kRightY))>.1 ||
-      Math.abs(Robot.robotContainer.getDriverAxis(Axis.kRightX))>.1){
+    if(Robot.robotContainer.getDriverButton(5)){
       //if secondary sticks used, replace with secondary sticks witha slow factor
-      forwardSpeed = Robot.robotContainer.getRobotForwardSlow(isVeloMode);
-      strafeSpeed = Robot.robotContainer.getRobotLateralSlow(isVeloMode);
+      forwardSpeed *= 0.5;
+      strafeSpeed *= 0.5;
     }
     //create rotation speed from gamepad triggers
     double rotSpeed = Robot.robotContainer.getRobotRotation(isVeloMode);

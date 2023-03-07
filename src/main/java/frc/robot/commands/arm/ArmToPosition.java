@@ -24,6 +24,7 @@ public class ArmToPosition extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
+      new InstantCommand(() -> RobotContainer.target.setScoring(true)),
       new PrintCommand("Moving To ArmPosition: "+Math.abs(Units.radiansToDegrees(armPosition.getShoulderPosition())) +" "+Math.abs(Units.radiansToDegrees(armPosition.getElbowPosition())) ),
       new ConditionalCommand(
         new ArmWristRetract(), 
@@ -51,6 +52,7 @@ public class ArmToPosition extends SequentialCommandGroup {
       new PrintCommand("Arm has started to move"),
       // new ArmMoveShoulderElbow(armPosition)
       new ArmElbowToPosition(armPosition.getElbowPosition()),
+      armPosition.isWristOut()? new ArmWristExtend() : new InstantCommand(),
       new ArmShoulderToPosition(armPosition.getShoulderPosition())
     );
   }
