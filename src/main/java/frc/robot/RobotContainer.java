@@ -244,7 +244,8 @@ public class RobotContainer {
     driverY.onTrue(new ConditionalCommand(new ArmWristRetract(), new ArmWristExtend(), arm::isWristOut));
     driverDLeft.onTrue(new DriveResetGyroToZero());
     driverDRight.onTrue(new HarvesterExtensionOut());
-    driverStart.or(driverBack).toggleOnTrue(new DriveRobotCentric(false));
+    driverStart.toggleOnTrue(new DriveRobotCentric(false));
+    driverBack.whileTrue(new HarvesterOuttake());
     // any commands inside this if behave as if they were commented out.
    
     

@@ -68,7 +68,7 @@ public class SwerveDrive extends SubsystemBase {
 
   /** Booleans */
   private boolean hasPoseBeenSet = false;
-  private boolean isOdometry = true;
+
 
   /**
    * This enumeration clarifies the numbering of the swerve module for new users.
@@ -153,7 +153,6 @@ public class SwerveDrive extends SubsystemBase {
     this.pathController = new PPHolonomicDriveController(xController, yController, rotationController);
 
     hasPoseBeenSet = false;
-    isOdometry = true;
   }
 
   @Override
@@ -202,13 +201,6 @@ public class SwerveDrive extends SubsystemBase {
     for(SwerveMoveNEO moveNEO: swerveMoveNEO){
       moveNEO.setDriveMotorBrake(isBrake);
     }
-  }
-  /**
-   * Checks if odometry is being used
-   * @return true is odometry is on
-   */
-  public boolean getIsOdometry(){
-    return isOdometry;
   }
 
   /**

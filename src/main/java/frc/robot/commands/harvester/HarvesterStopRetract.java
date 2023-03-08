@@ -24,7 +24,7 @@ public class HarvesterStopRetract extends SequentialCommandGroup {
           new ConditionalCommand(new InstantCommand(),isCone?new HarvesterOuttake():new InstantCommand(),RobotContainer.harvester::hasGamePiece),
           new HarvesterExtensionIn(),
           new ConditionalCommand(new InstantCommand(),isCone?new HarvesterOuttake():new InstantCommand(),RobotContainer.harvester::hasGamePiece),
-          new WaitCommand(1),
+          new WaitCommand(.5),
           new ConditionalCommand(new InstantCommand(),isCone?new HarvesterOuttake():new InstantCommand(),RobotContainer.harvester::hasGamePiece),
           new HarvesterStop()
         )
