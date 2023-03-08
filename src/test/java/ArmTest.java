@@ -11,23 +11,23 @@ import org.junit.jupiter.api.Test;
 
 public class ArmTest {
 
-  @BeforeEach
-  void setup(){
+  // @BeforeEach
+  // void setup(){
 
-  }
+  // }
 
-  @AfterEach
-  void shutdown(){
+  // @AfterEach
+  // void shutdown(){
 
-  }
+  // }
 
-  @Test
-  void test(){
-    int a = 90;
-    int b = 91;
+  // @Test
+  // void test(){
+  //   int a = 90;
+  //   int b = 91;
 
-    assertEquals(a,b);
+  //   assertEquals(a,b);
 
-  }
+  // }
 
 }

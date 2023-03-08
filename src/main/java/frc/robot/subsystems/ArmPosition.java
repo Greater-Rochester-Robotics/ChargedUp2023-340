@@ -14,7 +14,7 @@ import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
 
 /** Add your docs here. */
- public class ArmPosition implements ArmPositionSupplier{
+ public class ArmPosition{
     // use Rotation2ds instead of double angles?
     // find where angles are measured from (relative to the ground or relative to something else?)
     double shoulderAngle;
