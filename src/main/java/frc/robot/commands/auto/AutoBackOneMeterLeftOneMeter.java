@@ -10,8 +10,10 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.commands.drive.auto.DriveFollowTrajectory;
+import frc.robot.commands.drive.util.DriveSetGyro;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -23,8 +25,10 @@ public class AutoBackOneMeterLeftOneMeter extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
+      new DriveSetGyro(180),
+      new WaitCommand(.5),
       new DriveFollowTrajectory(path.get(0)),
-      new DriveFollowTrajectory(path.get(1))
+      new DriveFollowTrajectory(path.get(1), false)
     );
   }
 }

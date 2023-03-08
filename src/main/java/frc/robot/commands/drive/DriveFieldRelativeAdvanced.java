@@ -5,7 +5,6 @@
 package frc.robot.commands.drive;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj.XboxController.Axis;
 
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -31,6 +30,7 @@ public class DriveFieldRelativeAdvanced extends CommandBase {
   private boolean isVeloMode;
   private double currentAngle = 0;
   private boolean wasDriverControl;
+  private int prevDPad;
 
   /** Creates a new DriveFieldCentricAdvanced. */
   public DriveFieldRelativeAdvanced(boolean isVeloMode) {
@@ -62,10 +62,10 @@ public class DriveFieldRelativeAdvanced extends CommandBase {
     double rotSpeed = Robot.robotContainer.getRobotRotation(isVeloMode);
 
     // use DPad to turn to specific angles.
-    if(Robot.robotContainer.getDriverDPad() == 0){
+    if(Robot.robotContainer.getDriverDPad() == 0 && prevDPad != 0) {
       currentAngle = Math.round(RobotContainer.swerveDrive.getGyroInRadYaw()/Constants.TWO_PI) * Constants.TWO_PI;
     }
-    else if(Robot.robotContainer.getDriverDPad() == 180){
+    else if(Robot.robotContainer.getDriverDPad() == 180 && prevDPad != 180) {
       currentAngle = Math.round(RobotContainer.swerveDrive.getGyroInRadYaw()/Constants.TWO_PI) * Constants.TWO_PI - Math.PI;
     }
 
@@ -104,6 +104,7 @@ public class DriveFieldRelativeAdvanced extends CommandBase {
         wasDriverControl = false;
       }
     }
+    prevDPad = Robot.robotContainer.getDriverDPad();
   }
 
   // Called once the command ends or is interrupted.

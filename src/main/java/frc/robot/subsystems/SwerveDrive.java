@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.ADIS16470_IMU.IMUAxis;
-import frc.robot.subsystems.LimelightHelpers.LimelightResults;
+import frc.robot.subsystems.LLHelpers.LLResults;
 import frc.robot.subsystems.swervelib.SwerveModule;
 import frc.robot.subsystems.swervelib.rev.SwerveMoveNEO;
 import frc.robot.subsystems.swervelib.rev.SwerveRotationNEO;
@@ -55,8 +55,8 @@ public class SwerveDrive extends SubsystemBase {
   /** Kineatics and Odometry */
   private SwerveDriveKinematics driveKinematics;
   public SwerveDrivePoseEstimator driveOdometry;
-  private LimelightResults llResultsFront;
-  private LimelightResults llResultsBack;
+  // private LLResults llResultsFront;
+  private LLResults llResultsBack;
 
   /** PID Controllers */
   private PIDController robotSpinController;
@@ -156,7 +156,6 @@ public class SwerveDrive extends SubsystemBase {
 
     hasPoseBeenSet = false;
     isOdometry = true;
-    this.setDriveBrake(true);
   }
 
   @Override
@@ -176,22 +175,29 @@ public class SwerveDrive extends SubsystemBase {
     SmartDashboard.putNumber("Odometry Y", getCurPose2d().getY());
     SmartDashboard.putNumber("Motor encoder", getCurPose2d().getY());
 
-    llResultsFront = LimelightHelpers.getLatestResults("limelight-front");
-    if(llResultsFront.targetingResults.valid && llResultsFront.targetingResults.getBotPose2d().getX() != 0 && llResultsFront.targetingResults.getBotPose2d().getY() != 0) {
-      if(DriverStation.getAlliance().equals(Alliance.Blue)) {
-        driveOdometry.addVisionMeasurement(llResultsFront.targetingResults.getBotPose2d_wpiBlue(), llResultsFront.targetingResults.timestamp_RIOFPGA_capture);
-      } else {
-        driveOdometry.addVisionMeasurement(llResultsFront.targetingResults.getBotPose2d_wpiRed(), llResultsFront.targetingResults.timestamp_RIOFPGA_capture);
-      }
-    }
+    // llResultsFront = LLHelpers.getLatestResults("limelight-front");
+    // if(llResultsFront.targetingResults.valid && llResultsFront.targetingResults.getBotPose2d().getX() != 0 && llResultsFront.targetingResults.getBotPose2d().getY() != 0) {
+    //   if(DriverStation.getAlliance().equals(Alliance.Blue)) {
+    //     driveOdometry.addVisionMeasurement(llResultsFront.targetingResults.getBotPose2d_wpiBlue(), llResultsFront.targetingResults.timestamp_RIOFPGA_capture);
+    //   } else {
+    //     driveOdometry.addVisionMeasurement(llResultsFront.targetingResults.getBotPose2d_wpiRed(), llResultsFront.targetingResults.timestamp_RIOFPGA_capture);
+    //   }
+    // }
 
-    llResultsBack = LimelightHelpers.getLatestResults("limelight-back");
-    if(llResultsBack.targetingResults.valid && llResultsBack.targetingResults.getBotPose2d().getX() != 0 && llResultsBack.targetingResults.getBotPose2d().getY() != 0) {
-      if(DriverStation.getAlliance().equals(Alliance.Blue)) {
-        driveOdometry.addVisionMeasurement(llResultsBack.targetingResults.getBotPose2d_wpiBlue(), llResultsBack.targetingResults.timestamp_RIOFPGA_capture);
-      } else {
-        driveOdometry.addVisionMeasurement(llResultsBack.targetingResults.getBotPose2d_wpiRed(), llResultsBack.targetingResults.timestamp_RIOFPGA_capture);
-      }
+    // llResultsBack = LLHelpers.getLatestResults("limelight-back");
+    // if(llResultsBack.targetingResults.valid && llResultsBack.targetingResults.getBotPose2d().getX() != 0 && llResultsBack.targetingResults.getBotPose2d().getY() != 0) {
+    //   if(DriverStation.getAlliance().equals(Alliance.Blue)) {
+    //     driveOdometry.addVisionMeasurement(llResultsBack.targetingResults.getBotPose2d_wpiBlue(), llResultsBack.targetingResults.timestamp_RIOFPGA_capture);
+    //     hasPoseBeenSet = true;
+    //   } else {
+    //     driveOdometry.addVisionMeasurement(llResultsBack.targetingResults.getBotPose2d_wpiRed(), llResultsBack.targetingResults.timestamp_RIOFPGA_capture);
+    //     hasPoseBeenSet = true;
+    //   }
+    // }
+
+    //TODO: Put correct angles
+    if(Math.abs(getGyroInDegPitch()) > 45 || Math.abs(getGyroInDegRoll()) > 45) {
+      hasPoseBeenSet = false;
     }
   }
 

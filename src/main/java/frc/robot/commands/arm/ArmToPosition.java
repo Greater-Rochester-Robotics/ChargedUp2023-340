@@ -5,12 +5,14 @@
 package frc.robot.commands.arm;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.ArmPosition;
 import frc.robot.subsystems.ArmPositionSupplier;
 
@@ -40,19 +42,33 @@ public class ArmToPosition extends SequentialCommandGroup {
             new ArmElbowToPosition(Units.degreesToRadians(55))
           ),
           Commands.sequence(
-            new PrintCommand("it in front of harvester"),
+            new PrintCommand("is in front of harvester"),
             new ArmShoulderToPosition(Units.degreesToRadians(-13)),
             new ArmElbowToPosition(Units.degreesToRadians(10))
           ),
           RobotContainer.arm.getArmPosition()::isBehindHarvester
         ),
-        new InstantCommand(),
+        new InstantCommand(), 
         armPosition::isOppositeSideFromCurrent
       ),
       new PrintCommand("Arm has started to move"),
-      // new ArmMoveShoulderElbow(armPosition)
+      new ConditionalCommand(
+        new ArmShoulderToPosition(Math.toRadians(5)),
+        new InstantCommand(), 
+
+        () -> (RobotContainer.arm.getArmPosition().getEndX() <= Units.inchesToMeters(-10.5))
+      ),
       new ArmElbowToPosition(armPosition.getElbowPosition()),
-      armPosition.isWristOut()? new ArmWristExtend() : new InstantCommand(),
+      armPosition.isWristOut()? 
+        Commands.sequence(
+          new ArmWristExtend().withTimeout(0),
+          new ConditionalCommand(
+            new ArmShoulderToPosition(armPosition.getShoulderPosition() + Units.degreesToRadians(5)),
+            new ArmShoulderToPosition(armPosition.getShoulderPosition() - Units.degreesToRadians(5)),
+            RobotContainer.arm.getArmPosition()::isBehindHarvester
+          ).withTimeout(ArmConstants.WRIST_EXTENSION_DELAY)
+        ): 
+        new InstantCommand(),
       new ArmShoulderToPosition(armPosition.getShoulderPosition())
     );
   }

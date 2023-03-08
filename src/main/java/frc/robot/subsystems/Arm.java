@@ -97,7 +97,7 @@ public class Arm extends SubsystemBase {
     shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
 
     shoulderRight.setClosedLoopRampRate(.25);
-    shoulderRight.getPIDController().setOutputRange(-.15, .15);
+    shoulderRight.getPIDController().setOutputRange(-ArmConstants.MAX_SHOULDER_PID_OUT, ArmConstants.MAX_SHOULDER_PID_OUT);
 
     absoluteEncoderRight.setZeroOffset(1.7072);
 
@@ -131,7 +131,7 @@ public class Arm extends SubsystemBase {
     shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
 
     shoulderLeft.setClosedLoopRampRate(.25);
-    shoulderLeft.getPIDController().setOutputRange(-.15, .15);
+    shoulderLeft.getPIDController().setOutputRange(-ArmConstants.MAX_SHOULDER_PID_OUT, ArmConstants.MAX_SHOULDER_PID_OUT);
 
     absoluteEncoderLeft.setZeroOffset(3.3257);
 
@@ -165,7 +165,7 @@ public class Arm extends SubsystemBase {
     elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
 
     elbowMotor.setClosedLoopRampRate(1);
-    elbowMotor.getPIDController().setOutputRange(-.25, .25);
+    elbowMotor.getPIDController().setOutputRange(-ArmConstants.MAX_ELBOW_PID_OUT, ArmConstants.MAX_ELBOW_PID_OUT);
 
     elbowMotor.set(0);
 
@@ -182,7 +182,7 @@ public class Arm extends SubsystemBase {
     elbowMotor.burnFlash();
 
     //setting goal to current pos for startup
-    shoulderGoalPos = getShoulderPositon();
+    shoulderGoalPos = getShoulderPosition();
 
     //PID is off on startup
     shoulderPIDEnable = false;
@@ -255,7 +255,7 @@ public class Arm extends SubsystemBase {
     return absoluteEncoderRight.getPosition() - Math.PI;
   }
 
-  public double getShoulderPositon(){
+  public double getShoulderPosition(){
     return (getRightShoulderPosition() + getLeftShoulderPosition()) / 2;
   }
 
@@ -382,7 +382,7 @@ public class Arm extends SubsystemBase {
     }
     position += Math.PI;
     double gravCounterConstant = isWristOut()?ArmConstants.KG_WRIST_OUT:ArmConstants.KG_WRIST_IN;
-    double theta = getElbowPosition() - getShoulderPositon();
+    double theta = getElbowPosition() - getShoulderPosition();
     SmartDashboard.putNumber("Theta", theta);
     elbowController.setReference(position, ControlType.kPosition, 0, gravCounterConstant* Math.sin(theta));
     elbowBrake.set(true);
@@ -438,7 +438,7 @@ public class Arm extends SubsystemBase {
   }
   
   public ArmPosition getArmPosition(){
-    return new ArmPosition(getShoulderPositon(), getElbowPosition(), wrist.get().equals(Value.kForward));
+    return new ArmPosition(getShoulderPosition(), getElbowPosition(), wrist.get().equals(Value.kForward));
   }
 
   public class ArmTrajectory{
@@ -693,7 +693,7 @@ public class Arm extends SubsystemBase {
 
   public Pose2d getArmPose(){
     boolean getWrist = this.isWristOut();
-    ArmPosition armPos = new ArmPosition(getShoulderPositon(), getElbowPosition(), getWrist);
+    ArmPosition armPos = new ArmPosition(getShoulderPosition(), getElbowPosition(), getWrist);
 
     return armPos.getEndPosition();
   }

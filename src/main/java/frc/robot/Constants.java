@@ -44,6 +44,7 @@ public final class Constants {
       public static final double SHOULDER_I_LEFT = 0.0;
       public static final double SHOULDER_D_LEFT = 0.0;
       public static final double SHOULDER_F_LEFT = 0.0;
+      public static final double MAX_SHOULDER_PID_OUT = .15;
 
       public static final double ELBOW_P = 1.0;
       public static final double ELBOW_I = 0.0;
@@ -51,9 +52,10 @@ public final class Constants {
       public static final double ELBOW_F = 0.0;
       public static final double KG_WRIST_OUT = 0.30; // The force required to counter gravity i.e prevent the arm from dropping
       public static final double KG_WRIST_IN = 0.3;
+      public static final double MAX_ELBOW_PID_OUT = .35;
 
       /*Scoring constants */
-      public static final ArmPosition BACK_HIGH_CONE = new ArmPosition(Math.toRadians(-32.6),Math.toRadians(-159),true);
+      public static final ArmPosition BACK_HIGH_CONE = new ArmPosition(Math.toRadians(-32.6),Math.toRadians(-165),true);
       public static final ArmPosition BACK_MIDDLE_CONE = new ArmPosition(Math.toRadians(-16.0),Math.toRadians(-125),false);
       public static final ArmPosition BACK_HIGH_CUBE = new ArmPosition( Math.toRadians(-24.5),Math.toRadians(-122), false);
       public static final ArmPosition BACK_MIDDLE_CUBE = new ArmPosition(Math.toRadians(-5.4), Math.toRadians(-77.2), false);
@@ -93,6 +95,9 @@ public final class Constants {
       /* */
       public static final double ABS_ENC_TO_RAD_CONV_FACTOR = 2*Math.PI;
 
+      /* Wrist Timeout points */
+      public static final double WRIST_EXTENSION_DELAY = .4;
+
       /*Acceletation and max velocities for the arm */
       public static final double MAX_SHOULDER_VELOCITY = 1;
       public static final double MAX_ELBOW_VELOCITY = 1;
@@ -106,9 +111,9 @@ public final class Constants {
     }
     
     public static class ClawConstants {
-      public static final double CLAW_MOTOR_INTAKE_SPEED = 0.5; //TODO: set this to the right value
-      public static final double CLAW_MOTOR_OUTTAKE_SPEED = -0.5; //TODO: set this to the right value
-      public static final double CLAW_MOTOR_HOLD_SPEED = 0.1; //TODO: set this to the right value
+      public static final double CLAW_MOTOR_INTAKE_SPEED = 0.9; //TODO: set this to the right value
+      public static final double CLAW_MOTOR_OUTTAKE_SPEED = -0.9; //TODO: set this to the right value
+      public static final double CLAW_MOTOR_HOLD_SPEED = 0.3; //TODO: set this to the right value
     }
 
     public class CompressorConstants {
@@ -132,8 +137,8 @@ public final class Constants {
       public static final Translation2d FRONT_RIGHT_POSITION = new Translation2d(.3016,-.3016); 
 
       /* Swerve Module Drive Motor Constants */
-      public static final double DRIVE_ENC_TO_METERS_FACTOR = 0.319186/7.13;//7.13:1//the ratio from mechanical specs
-      public static final double MINIMUM_DRIVE_SPEED = 0.01;// the slowest the wheels can turn, in m/s
+      public static final double DRIVE_ENC_TO_METERS_FACTOR = Units.inchesToMeters(4.0)*Math.PI/6.54;//7.13;//0.319186/7.13:1//the ratio from mechanical specs
+      public static final double MINIMUM_DRIVE_SPEED = 0.2;// the slowest the wheels can turn, in m/s
       public static final double MINIMUM_DRIVE_DUTY_CYCLE = 0.05;// the slowest the wheels can turn, in duty cycle
       public static final double MOTOR_MAXIMUM_VELOCITY = 4.233672;
       public static final double PATH_MAXIMUM_VELOCITY = 3.5;
@@ -147,7 +152,7 @@ public final class Constants {
       public static final double SWERVE_DRIVE_D_VALUE = 0.0;
       public static final double SWERVE_DRIVE_FF_VALUE = .24;
       public static final SwervePIDFConfig MOVE_PIDF = new SwervePIDFConfig(SWERVE_DRIVE_P_VALUE, SWERVE_DRIVE_I_VALUE, SWERVE_DRIVE_D_VALUE, SWERVE_DRIVE_FF_VALUE);
-      public static final NEOConfig MOVE_CONFIG = new NEOConfig(MOVE_PIDF, false, false, MAXIMUM_VOLTAGE);
+      public static final NEOConfig MOVE_CONFIG = new NEOConfig(MOVE_PIDF, false, true, MAXIMUM_VOLTAGE);
 
 
       /* Swerve Module Rotation constants */
@@ -177,7 +182,7 @@ public final class Constants {
       public static final double ROBOT_COUNTER_SPIN_I = 0.0;
       public static final double ROBOT_COUNTER_SPIN_D = 0.005;
 
-      /* We stole 3015's constants for DriveFollowTrajectory */
+      /* constants for DriveFollowTrajectory */
       public static final double DRIVE_POS_ERROR_CONTROLLER_P = .33; // 10
       public static final double DRIVE_POS_ERROR_CONTROLLER_I = 0.001;
       public static final double DRIVE_POS_ERROR_CONTROLLER_D = 0.0;//0.05;
@@ -193,8 +198,7 @@ public final class Constants {
 
       /* Driver Scaling Constants */
       public static final double DRIVER_SPEED_SCALE_LINEAR = .75;//0.65 * 0.85;
-      public static final double DRIVER_SPEED_SCALE_ROTATIONAL = .95;
-
+      public static final double DRIVER_SPEED_SCALE_ROTATIONAL = 1.2;
   }
   
   public class RecordPlayerConstants {
@@ -204,7 +208,7 @@ public final class Constants {
     public static final double RECORD_PLAYER_D = 0.0;
     public static final double RECORD_PLAYER_F = 0.0;
 
-    public static final double recordPlayerConversonFactor = TWO_PI / 25.0;
+    public static final double RECORD_PLAYER_CONVERSION_FACTOR = TWO_PI / 25.0;
     public static final double ROTATE_MOTOR_SPEED = 0.6;
     // public static final double MAX_PID_SPEED = .;
   }
@@ -242,7 +246,6 @@ public final class Constants {
   public static final int CLAW_MOTOR = 40;
 
   public static final int HARVESTER_MOTOR = 50;
-
   
   /* Solenoids */
   public static final int ELBOW_BRAKE = 15;

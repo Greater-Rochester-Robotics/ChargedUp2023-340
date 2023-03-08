@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -131,10 +132,10 @@ public class RobotContainer {
   static final Trigger coDriverDDown = new POVButton(coDriver, 180);
   static final Trigger coDriverDLeft = new POVButton(coDriver, 270);
   static final Trigger coDriverDRight = new POVButton(coDriver, 90);
-  static final Trigger coDriverLTButton70 = new JoyTriggerButton(coDriver, .7, Axis.kLeftTrigger);
-  static final Trigger coDriverRTButton70 = new JoyTriggerButton(coDriver, .7, Axis.kRightTrigger);
-  static final Trigger coDriverLTButton25 = new JoyTriggerButton(coDriver, .25, Axis.kLeftTrigger);
-  static final Trigger coDriverRTButton25 = new JoyTriggerButton(coDriver, .25, Axis.kRightTrigger);
+  // static final Trigger coDriverLTButton70 = new JoyTriggerButton(coDriver, .7, Axis.kLeftTrigger);
+  // static final Trigger coDriverRTButton70 = new JoyTriggerButton(coDriver, .7, Axis.kRightTrigger);
+  static final Trigger coDriverLTButton20 = new JoyTriggerButton(coDriver, .2, Axis.kLeftTrigger);
+  static final Trigger coDriverRTButton20 = new JoyTriggerButton(coDriver, .2, Axis.kRightTrigger);
 
   public static SendableChooser<Command> autoChooser = new SendableChooser<Command>();
   
@@ -178,7 +179,7 @@ public class RobotContainer {
     SmartDashboard.putData(new DriveStopAllModules());//For setup of swerve
     SmartDashboard.putData("Lock Wheels", new DriveLockWheels());
     SmartDashboard.putData(new DriveTurnToAngleInRad(Math.toRadians(90)));
-    SmartDashboard.putData("Reset odometry",new InstantCommand(() -> swerveDrive.setCurPose2d(new Pose2d())));
+    SmartDashboard.putData("Reset odometry",new InstantCommand(() -> swerveDrive.setCurPose2d(new Pose2d())){public boolean runsWhenDisabled(){return true;}});
 
     SmartDashboard.putData(new ClawClose());
     SmartDashboard.putData(new ClawOpen());
@@ -240,7 +241,7 @@ public class RobotContainer {
     driverA.onTrue(new HarvestRecordIntake(true)).onFalse(new HarvesterStopRetract(true));
     driverB.onTrue(new HarvestRecordIntake(false)).onFalse(new HarvesterStopRetract(false));
     driverX.whileTrue(new ClawOpenSpit());
-    driverY.onTrue(new ArmWristExtend());
+    driverY.onTrue(new ConditionalCommand(new ArmWristRetract(), new ArmWristExtend(), arm::isWristOut));
     driverDLeft.onTrue(new DriveResetGyroToZero());
     driverDRight.onTrue(new HarvesterExtensionOut());
     driverStart.or(driverBack).toggleOnTrue(new DriveRobotCentric(false));
@@ -262,7 +263,8 @@ public class RobotContainer {
     coDriverDLeft.onTrue(new InstantCommand(() -> target.left()){public boolean runsWhenDisabled(){return true;}});
     // coDriverRB.onTrue(new InstantCommand(() -> target.next()){public boolean runsWhenDisabled(){return true;}});
     // coDriverLB.onTrue(new InstantCommand(() -> target.previous()){public boolean runsWhenDisabled(){return true;}});
-    // coDriverY.onTrue(new InstantCommand(() -> target.setScoring(true))).onFalse(new InstantCommand(() -> target.setScoring(false)));
+
+    coDriverLTButton20.or(coDriverRTButton20).onTrue(new RecordPlayerDriverControl());
   }
 
   /**
@@ -271,12 +273,12 @@ public class RobotContainer {
    * They will appear in the order entered
    */
   private void configureAutoModes() {
-    
     autoChooser.setDefaultOption("Wait 1 sec(do nothing)", new WaitCommand(1));
-   
-    // autoChooser.addOption("5 ball", new AutoRightFiveBall());
-
-
+    // autoChooser.addOption("Test Auto", new AutoMidAroundOverRamp());
+    // autoChooser.addOption("Back 1m", new AutoBackOneMeter());
+    // autoChooser.addOption("Back 2m", new AutoBackTwoMeters());
+    // autoChooser.addOption("Diagonal 1m", new AutoDiagonalOneMeter());
+    // autoChooser.addOption("Back 1m, Left 1m", new AutoBackOneMeterLeftOneMeter());
     SmartDashboard.putData(RobotContainer.autoChooser);
   }
 

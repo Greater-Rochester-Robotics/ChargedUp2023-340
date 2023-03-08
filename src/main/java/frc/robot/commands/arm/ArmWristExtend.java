@@ -7,6 +7,7 @@ package frc.robot.commands.arm;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.ArmConstants;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -41,6 +42,6 @@ public class ArmWristExtend extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return timer.hasElapsed(.4);
+    return timer.hasElapsed(ArmConstants.WRIST_EXTENSION_DELAY);
   }
 }

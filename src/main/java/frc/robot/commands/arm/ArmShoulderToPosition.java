@@ -37,6 +37,6 @@ public class ArmShoulderToPosition extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(RobotContainer.arm.getShoulderPositon()-position) < targetTolerance;
+    return Math.abs(RobotContainer.arm.getShoulderPosition()-position) < targetTolerance;
   }
 }

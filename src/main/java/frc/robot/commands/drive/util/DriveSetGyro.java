@@ -13,16 +13,16 @@ public class DriveSetGyro extends InstantCommand {
   private double angle;
   IMUAxis axis;
 
-  public DriveSetGyro(double angle) {
-    this(angle,IMUAxis.kYaw);
-  }
-
   /**
    * Set the gyro's current angle to the input 
    * param. CCW is positive.
    * 
    * @param angle an angle in DEGREES!!!
    */
+  public DriveSetGyro(double angle) {
+    this(angle,IMUAxis.kYaw);
+  }
+
   public DriveSetGyro(double angle, IMUAxis axis) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.swerveDrive);
