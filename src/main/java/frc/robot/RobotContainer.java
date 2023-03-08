@@ -27,7 +27,7 @@ import frc.robot.commands.ArmWristExtendCone;
 import frc.robot.commands.ArmWristExtendCube;
 import frc.robot.commands.CloseAndRetract;
 import frc.robot.commands.HarvestRecordIntake;
-import frc.robot.commands.StopRetract;
+import frc.robot.commands.ArmClawStopRetract;
 import frc.robot.commands.arm.ArmElbowManual;
 import frc.robot.commands.arm.ArmElbowToPosition;
 import frc.robot.commands.arm.ArmMoveToPosition;
@@ -246,7 +246,6 @@ public class RobotContainer {
     driverDRight.onTrue(new HarvesterExtensionOut());
     driverStart.toggleOnTrue(new DriveRobotCentric(false));
     driverBack.whileTrue(new HarvesterOuttake());
-    // any commands inside this if behave as if they were commented out.
    
     
     /* =================== CODRIVER BUTTONS =================== */

@@ -8,12 +8,9 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.arm.ArmWristRetract;
 import frc.robot.commands.claw.ClawStop;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class StopRetract extends SequentialCommandGroup {
+public class ArmClawStopRetract extends SequentialCommandGroup {
   /** Creates a new StopRetract. */
-  public StopRetract() {
+  public ArmClawStopRetract() {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(

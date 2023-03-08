@@ -55,7 +55,7 @@ public final class Constants {
       public static final double MAX_ELBOW_PID_OUT = .35;
 
       /*Scoring constants */
-      public static final ArmPosition BACK_HIGH_CONE = new ArmPosition(Math.toRadians(-32.6),Math.toRadians(-165),true);
+      public static final ArmPosition BACK_HIGH_CONE = new ArmPosition(Math.toRadians(-32.6),Math.toRadians(-159),true);
       public static final ArmPosition BACK_MIDDLE_CONE = new ArmPosition(Math.toRadians(-16.0),Math.toRadians(-125),false);
       public static final ArmPosition BACK_HIGH_CUBE = new ArmPosition( Math.toRadians(-24.5),Math.toRadians(-122), false);
       public static final ArmPosition BACK_MIDDLE_CUBE = new ArmPosition(Math.toRadians(-5.4), Math.toRadians(-77.2), false);

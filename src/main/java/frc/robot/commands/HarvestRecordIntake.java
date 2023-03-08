@@ -4,23 +4,27 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import frc.robot.RobotContainer;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.harvester.HarvesterExtensionOut;
 import frc.robot.commands.harvester.HarvesterIntake;
 import frc.robot.commands.recordPlayer.RecordPlayerIntake;
-import frc.robot.subsystems.Harvester;
+
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class HarvestRecordIntake extends ParallelCommandGroup {
+public class HarvestRecordIntake extends SequentialCommandGroup {
   /** Creates a new HarvistRecordIntake. */
   public HarvestRecordIntake(boolean isCone) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new HarvesterIntake(isCone),
-      new RecordPlayerIntake()
+      new HarvesterExtensionOut(),
+      Commands.parallel(
+        new HarvesterIntake(isCone),
+        new RecordPlayerIntake()
+      )
     ); 
   }
 }

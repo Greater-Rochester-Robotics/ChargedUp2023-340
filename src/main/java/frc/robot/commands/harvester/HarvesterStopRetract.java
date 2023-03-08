@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.RobotContainer;
 import frc.robot.commands.recordPlayer.RecordOrientCone;
 import frc.robot.commands.recordPlayer.RecordPlayerIntake;
 
@@ -21,11 +20,11 @@ public class HarvesterStopRetract extends SequentialCommandGroup {
       Commands.race(
         new RecordPlayerIntake(),
         Commands.sequence(
-          new ConditionalCommand(new InstantCommand(),isCone?new HarvesterOuttake():new InstantCommand(),RobotContainer.harvester::hasGamePiece),
           new HarvesterExtensionIn(),
-          new ConditionalCommand(new InstantCommand(),isCone?new HarvesterOuttake():new InstantCommand(),RobotContainer.harvester::hasGamePiece),
-          new WaitCommand(.5),
-          new ConditionalCommand(new InstantCommand(),isCone?new HarvesterOuttake():new InstantCommand(),RobotContainer.harvester::hasGamePiece),
+          Commands.race(
+            isCone?new HarvesterOuttake():new InstantCommand(),
+            new WaitCommand(.5)
+          ),
           new HarvesterStop()
         )
       )//,
