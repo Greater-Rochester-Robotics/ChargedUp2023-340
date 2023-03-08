@@ -39,7 +39,8 @@
             "imports": {
                 "three": "./lib/three.module.js",
                 "OrbitControls": "./lib/OrbitControls.module.js",
-                "STLLoader": "./lib/STLLoader.module.js"
+                "STLLoader": "./lib/STLLoader.module.js",
+                "TextSprite": "./lib/TextSprite.module.js"
             }
         }
     </script>
@@ -76,6 +77,7 @@
         import * as THREE from 'three';
         import { OrbitControls } from 'OrbitControls';
         import { STLLoader } from 'STLLoader'
+        import { TextSprite } from 'TextSprite';
 
         let alliance = 2;
         let scoring = null
@@ -99,6 +101,8 @@
         const camera = new THREE.OrthographicCamera(frustum.left, frustum.right, frustum.top, frustum.bottom, 1, 100);
         camera.position.z = 10;
 
+        const raycaster = new THREE.Raycaster();
+
         const scene = new THREE.Scene();
 
         if (ENABLE_ORBIT_CONTROLS) {
@@ -118,6 +122,7 @@
                 mesh.position.set((j * 0.75) - 3, (i * -0.5) + 1.55, 0);
                 mesh.rotation.x = Math.PI / 6;
                 mesh.rotation.y = -Math.PI / 6;
+                mesh.optionData = { x: j, y: i }
                 scene.add(mesh);
                 selectionOptions[i].push(mesh);
             }
@@ -135,6 +140,20 @@
             scene.add(mesh);
             selectionOptionBackgrounds.push(mesh);
         }
+
+        // let instance = new TextSprite({
+        //     alignment: 'center',
+        //     color: '#ffffff',
+        //     fontFamily: `'Trebuchet MS', sans-serif`,
+        //     fontSize: 0.2,
+        //     text: [
+        //         'Twinkle, twinkle, little star,',
+        //         'How I wonder what you are!',
+        //         'Up above the world so high,',
+        //         'Like a diamond in the sky.',
+        //     ].join('\n'),
+        // });
+        // scene.add(instance);
 
         // TODO connection UI
 
@@ -207,6 +226,25 @@
         // Integer: elbow encoder readout
         NetworkTables.addKeyListener(`/dashboard/encoders/elbow`, (_, value) => {}, true);
 
+        window.addEventListener(`resize`, () => {
+            updateCameraFrustum();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            render();
+        });
+
+        document.addEventListener(`click`, (event) => {
+            const x = (event.clientX / window.innerWidth) * 2 - 1;
+            const y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera({ x, y }, camera);
+            const raycasterIntersects = raycaster.intersectObjects(scene.children, false)?.filter((mesh) => selectionOptions.flat().includes(mesh.object))[0]?.object;
+
+            if (raycasterIntersects) {
+                currentSelection.x = raycasterIntersects.optionData.x;
+                currentSelection.y = raycasterIntersects.optionData.y;
+            }
+        });
+
         if (ENABLE_KEYBOARD_CONTROLS) {
             document.onkeydown = (event) => {
                 if (!scoring) {
@@ -235,12 +273,6 @@
         }
 
         animate();
-
-        window.addEventListener(`resize`, () => {
-            updateCameraFrustum();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            render();
-        });
 
         function roundedRectangle (x, y, width, height, radius) {
             const shape = new THREE.Shape();
