@@ -7,18 +7,21 @@ package frc.robot.commands.arm;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.ArmConstants;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
-//InstantCommand that retracts the wrist
 public class ArmWristRetract extends InstantCommand {
   Timer timer = new Timer();
+  boolean waitForRetract;
 
-  public ArmWristRetract() {
+  public ArmWristRetract(){
+    this(true);
+  }
+
+  public ArmWristRetract(boolean waitForRetract) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.arm);
+    this.waitForRetract = waitForRetract;
   }
 
   // Called when the command is initially scheduled.
@@ -41,6 +44,6 @@ public class ArmWristRetract extends InstantCommand {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return timer.hasElapsed(.4);
+    return !waitForRetract || timer.hasElapsed(ArmConstants.WRIST_RETRACTION_DELAY);
   }
 }

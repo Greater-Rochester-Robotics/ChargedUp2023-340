@@ -32,6 +32,7 @@ import java.util.Objects;
  * <p>{@link PoseEstimator#addVisionMeasurement} can be called as infrequently as you
  * want; if you never call it, then this class will behave as regular encoder odometry.
  */
+@Deprecated
 public class PoseEstimator {
   private final SwerveDriveKinematics m_kinematics;
   private final SwerveGRROdometry m_odometry;

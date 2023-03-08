@@ -97,6 +97,7 @@ public final class Constants {
 
       /* Wrist Timeout points */
       public static final double WRIST_EXTENSION_DELAY = .4;
+      public static final double WRIST_RETRACTION_DELAY = .4;
 
       /*Acceletation and max velocities for the arm */
       public static final double MAX_SHOULDER_VELOCITY = 1;
@@ -112,7 +113,7 @@ public final class Constants {
     
     public static class ClawConstants {
       public static final double CLAW_MOTOR_INTAKE_SPEED = 0.9; //TODO: set this to the right value
-      public static final double CLAW_MOTOR_OUTTAKE_SPEED = -0.9; //TODO: set this to the right value
+      public static final double CLAW_MOTOR_OUTTAKE_SPEED = -1.0; //TODO: set this to the right value
       public static final double CLAW_MOTOR_HOLD_SPEED = 0.3; //TODO: set this to the right value
     }
 

@@ -19,6 +19,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
  * <p>Teams can use odometry during the autonomous period for complex tasks like path following.
  * Furthermore, odometry can be used for latency compensation when using computer-vision systems.
  */
+@Deprecated
 public class SwerveGRROdometry{
   private final SwerveDriveKinematics m_kinematics;
   private Pose2d m_poseMeters;

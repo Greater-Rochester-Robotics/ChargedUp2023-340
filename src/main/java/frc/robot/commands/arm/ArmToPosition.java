@@ -20,28 +20,28 @@ import frc.robot.subsystems.ArmPositionSupplier;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ArmToPosition extends SequentialCommandGroup {
-  /** Creates a new ArmToPosition. */
-
+  /** 
+   * A class that moves the robot's arm
+   */
   public ArmToPosition(ArmPosition armPosition) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
+
     addCommands(
-      new InstantCommand(() -> RobotContainer.target.setScoring(true)),
+      new InstantCommand(() -> RobotContainer.target.setScoring(true)),//set scoring in target to true
       new PrintCommand("Moving To ArmPosition: "+Math.abs(Units.radiansToDegrees(armPosition.getShoulderPosition())) +" "+Math.abs(Units.radiansToDegrees(armPosition.getElbowPosition())) ),
-      new ConditionalCommand(
+      new ConditionalCommand(//Retract wrist and wait for retracting if arm is out, nothing otherwise
         new ArmWristRetract(), 
         new InstantCommand(), 
         RobotContainer.arm::isWristOut
       ),
-      new PrintCommand("Has retracted wrist"),
-      new ConditionalCommand(
+      new PrintCommand("Wrist has retracted"),
+      new ConditionalCommand( //if moving around harvester, adjust path though safe points, else do nothing
         new ConditionalCommand(
-          Commands.sequence(
+          Commands.sequence(//if arm is behind harvester now, move shoulder to safe position, then elbow to safe position
             new PrintCommand("is behind harvester"),
             new ArmShoulderToPosition(Units.degreesToRadians(-13)),
             new ArmElbowToPosition(Units.degreesToRadians(55))
           ),
-          Commands.sequence(
+          Commands.sequence(//if arm is front harvester now, move shoulder to safe position, then elbow to safe position
             new PrintCommand("is in front of harvester"),
             new ArmShoulderToPosition(Units.degreesToRadians(-13)),
             new ArmElbowToPosition(Units.degreesToRadians(10))
@@ -52,17 +52,17 @@ public class ArmToPosition extends SequentialCommandGroup {
         armPosition::isOppositeSideFromCurrent
       ),
       new PrintCommand("Arm has started to move"),
-      new ConditionalCommand(
+      new ConditionalCommand(//if the arm is behind the robot, move the shoulder to upright first, else nothing
         new ArmShoulderToPosition(Math.toRadians(5)),
         new InstantCommand(), 
 
         () -> (RobotContainer.arm.getArmPosition().getEndX() <= Units.inchesToMeters(-10.5))
       ),
       new ArmElbowToPosition(armPosition.getElbowPosition()),
-      armPosition.isWristOut()? 
+      armPosition.isWristOut()?///if the target includes the wrist position, extend it, else nothing 
         Commands.sequence(
-          new ArmWristExtend().withTimeout(0),
-          new ConditionalCommand(
+          new ArmWristExtend(false),
+          new ConditionalCommand(//we move the shoulder down while wrist is extending
             new ArmShoulderToPosition(armPosition.getShoulderPosition() + Units.degreesToRadians(5)),
             new ArmShoulderToPosition(armPosition.getShoulderPosition() - Units.degreesToRadians(5)),
             RobotContainer.arm.getArmPosition()::isBehindHarvester

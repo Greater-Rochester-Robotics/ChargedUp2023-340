@@ -40,8 +40,6 @@ import frc.robot.subsystems.swervelib.rev.SwerveRotationNEO;
  * https://docs.google.com/presentation/d/1feVl0L5lgIKSZhKCheWgWhkOydIu-ibgdp7oqA0yqAQ/edit?usp=sharing
  */
 public class SwerveDrive extends SubsystemBase {
-  /** Pose Estimator */
-  PoseEstimator poseEst;
 
   /** Motors */
   private static SwerveMoveNEO swerveMoveNEO[];
@@ -173,7 +171,6 @@ public class SwerveDrive extends SubsystemBase {
     // SmartDashboard.putNumber("GyroRate", this.getRotationalVelocity());
     SmartDashboard.putNumber("Odometry X", getCurPose2d().getX());
     SmartDashboard.putNumber("Odometry Y", getCurPose2d().getY());
-    SmartDashboard.putNumber("Motor encoder", getCurPose2d().getY());
 
     // llResultsFront = LLHelpers.getLatestResults("limelight-front");
     // if(llResultsFront.targetingResults.valid && llResultsFront.targetingResults.getBotPose2d().getX() != 0 && llResultsFront.targetingResults.getBotPose2d().getY() != 0) {

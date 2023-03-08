@@ -9,17 +9,18 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-
-//InstantCommand that extends the wrist
 public class ArmWristExtend extends CommandBase {
   Timer timer = new Timer();
+  boolean waitForExtend;
+  
+  public ArmWristExtend(){
+    this(true);
+  }
 
-  public ArmWristExtend() {
+  public ArmWristExtend(boolean waitForExtend) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.arm);
+    this.waitForExtend = waitForExtend;
   }
 
   // Called when the command is initially scheduled.
@@ -42,6 +43,6 @@ public class ArmWristExtend extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return timer.hasElapsed(ArmConstants.WRIST_EXTENSION_DELAY);
+    return !waitForExtend || timer.hasElapsed(ArmConstants.WRIST_EXTENSION_DELAY);
   }
 }
