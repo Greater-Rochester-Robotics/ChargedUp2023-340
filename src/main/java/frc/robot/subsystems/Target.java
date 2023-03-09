@@ -232,8 +232,8 @@ public class Target extends SubsystemBase {
   public boolean up() {
     if (scoring) return false;
 
-    row--;
-    if(row < 0) row = 2;
+    if(row == 0) row = 2;
+    else row--;
 
     return true;
   }
@@ -247,8 +247,8 @@ public class Target extends SubsystemBase {
   public boolean down() {
     if (scoring) return false;
 
-    row++;
-    if(row > 2) row = 0;
+    if(row == 2) row = 0;
+    else row++;
 
     return true;
   }
@@ -262,10 +262,11 @@ public class Target extends SubsystemBase {
   public boolean right() {
     if (scoring) return false;
 
-    column++;
-    if(column > 2) {
+    if(column == 2) {
       next();
       column = 0;
+    } else {
+      column++;
     }
 
     return true;
@@ -280,10 +281,11 @@ public class Target extends SubsystemBase {
   public boolean left() {
     if (scoring) return false;
 
-    column--;
-    if(column < 0) {
+    if(column == 0) {
       previous();
       column = 2;
+    } else {
+      column--;
     }
 
     return true;
@@ -296,8 +298,8 @@ public class Target extends SubsystemBase {
    * @return If the target was updated.
    */
   public boolean next() {
-    grid++;
-    if(grid > 2) grid = 0;
+    if(grid == 2) grid = 0;
+    else grid++;
 
     return true;
   }
@@ -311,8 +313,8 @@ public class Target extends SubsystemBase {
   public boolean previous() {
     if (scoring) return false;
 
-    grid--;
-    if(grid < 0) grid = 2;
+    if(grid == 0) grid = 2;
+    else grid--;
 
     return true;
   }

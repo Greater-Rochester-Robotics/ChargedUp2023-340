@@ -22,7 +22,7 @@ public class HarvesterStopRetract extends SequentialCommandGroup {
         Commands.sequence(
           new HarvesterExtensionIn(),
           Commands.race(
-            isCone?new HarvesterOuttake():new InstantCommand(),
+            // isCone?new HarvesterOuttake():new InstantCommand(),
             new WaitCommand(.5)
           ),
           new HarvesterStop()

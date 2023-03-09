@@ -87,7 +87,7 @@ public class SwerveMoveNEO implements SwerveMoveMotor{
     }
 
     public void setDriveSpeed(double speed){
-        driveMotor.getPIDController().setReference(speed, CANSparkMax.ControlType.kVelocity,0,.2*Math.signum(speed));
+        driveMotor.getPIDController().setReference(speed, CANSparkMax.ControlType.kVelocity);
     }
 
     public double getDriveDistance(){

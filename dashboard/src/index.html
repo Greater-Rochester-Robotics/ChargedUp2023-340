@@ -278,7 +278,7 @@
                 currentSelection.x = raycasterIntersects.optionData.x;
                 currentSelection.y = raycasterIntersects.optionData.y;
 
-                NetworkTables.putValue(`/dashboard/targetting/selection`, [Math.floor(currentSelection.x / 3), currentSelection.x % 3, currentSelection.y]);
+                NetworkTables.putValue(`/dashboard/target/selection`, [Math.floor(currentSelection.x / 3), currentSelection.x % 3, currentSelection.y]);
             }
         });
 

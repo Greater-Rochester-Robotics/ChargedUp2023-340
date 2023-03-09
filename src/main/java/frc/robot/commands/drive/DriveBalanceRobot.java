@@ -6,7 +6,10 @@ package frc.robot.commands.drive;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.math.controller.PIDController;
-
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.RobotContainer;
 
 /**
@@ -18,26 +21,32 @@ import frc.robot.RobotContainer;
 
 public class DriveBalanceRobot extends CommandBase {
   private double currentAngle = 0;
+  private double prevPitchAng = 0;
+  private double prevTime = 0;
   private PIDController pidX;
-  private PIDController pidY;
+  private ProfiledPIDController pidY;
+  private double maxSpeed = .2;
 
   /** Creates a new DriveFieldCentricAdvanced. */
   public DriveBalanceRobot() {
     addRequirements(RobotContainer.swerveDrive);
+    TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(0.4, 5.0);
     //Instantiats and sets the tolerence for both pid controllers
-    pidX = new PIDController(0.5, 0.0, 0.05); //TODO: Tune all pid and tolerance values
-    pidX.setTolerance(0.05);
-    pidY = new PIDController(0.5, 0.0, 0.05);
-    pidY.setTolerance(0.05);
+    pidX = new PIDController(0.25, 0.0, 0.0); //TODO: Tune all pid and tolerance values
+    // pidX.setTolerance(5);
+    pidY = new ProfiledPIDController(0.25, 0.0, 0.0, constraints);
+    pidY.setTolerance(2.5);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     // RobotContainer.swerveDrive.setIsOdometry(false);
-    currentAngle = RobotContainer.swerveDrive.getGyroInDegYaw();
+    currentAngle = RobotContainer.swerveDrive.getGyroInRadYaw();
     pidX.reset();
-    pidY.reset();
+    pidY.reset(RobotContainer.swerveDrive.getGyroInDegRoll());
+    prevPitchAng = RobotContainer.swerveDrive.getGyroInDegPitch();
+    prevTime = Timer.getFPGATimestamp();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -45,24 +54,33 @@ public class DriveBalanceRobot extends CommandBase {
   public void execute() {
     //Gets the pitch yaw and their velocity's
     double pitchAng = RobotContainer.swerveDrive.getGyroInDegPitch();
+    double time = Timer.getFPGATimestamp();
+    double pitchVel = (pitchAng - prevPitchAng)/(time - prevTime);
+    prevTime = time;
     double rollAng = RobotContainer.swerveDrive.getGyroInDegRoll();
-    double pitchVel = RobotContainer.swerveDrive.getRotationalVelocityPitch();
     double rollVel = RobotContainer.swerveDrive.getRotationalVelocityRoll();
-    double forwardSpeed, strafeSpeed;
-
+    double forwardSpeed = 0.0;
+    double strafeSpeed = 0.0;
+    prevTime = time;
+    prevPitchAng = pitchAng;
     //if we are facing up and the ramp is moving down (or vice versa) we are coming to balance so stop moving
-    if(pitchAng * pitchVel < 0) {
+    if(Math.abs(pitchVel) > 8 || Math.abs(pitchAng) < 5){//Math.signum(pitchAng) * Math.signum(pitchVel) < 0) {//
       forwardSpeed = 0.0;
     } else {
       forwardSpeed = pidX.calculate(pitchAng, 0.0);
     }
 
-    if(rollAng * rollVel < 0) {
-      strafeSpeed = 0.0;
-    } else {
-      strafeSpeed = pidY.calculate(rollAng, 0.0);
+    if(forwardSpeed>maxSpeed){
+      forwardSpeed = maxSpeed;
+    }else if(forwardSpeed < -maxSpeed){
+      forwardSpeed = -maxSpeed;
     }
-  
+    // if(Math.signum(rollAng) * Math.signum(rollVel) < 0) {
+    //   strafeSpeed = 0.0;
+    // } else {
+    //   strafeSpeed = pidY.calculate(rollAng, 0.0);
+    // }
+    System.out.println("pitch: " + Math.round(pitchAng) + "   PitchSpeed: " + pitchVel + "     Output: "+forwardSpeed);
     // TODO: allow driver to move side to side
     //moves the robot using driveRobotCentric
     RobotContainer.swerveDrive.driveRobotCentric(

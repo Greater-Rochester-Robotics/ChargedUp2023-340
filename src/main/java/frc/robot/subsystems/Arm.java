@@ -97,7 +97,7 @@ public class Arm extends SubsystemBase {
     shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
 
     shoulderRight.setClosedLoopRampRate(.25);
-    shoulderRight.getPIDController().setOutputRange(-ArmConstants.MAX_SHOULDER_PID_OUT, ArmConstants.MAX_SHOULDER_PID_OUT);
+    shoulderRight.getPIDController().setOutputRange(-ArmConstants.MAX_SHOULDER_OUT_PID_OUT, ArmConstants.MAX_SHOULDER_IN_PID_OUT);
 
     absoluteEncoderRight.setZeroOffset(1.7072);
 
@@ -131,7 +131,7 @@ public class Arm extends SubsystemBase {
     shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
 
     shoulderLeft.setClosedLoopRampRate(.25);
-    shoulderLeft.getPIDController().setOutputRange(-ArmConstants.MAX_SHOULDER_PID_OUT, ArmConstants.MAX_SHOULDER_PID_OUT);
+    shoulderLeft.getPIDController().setOutputRange(-ArmConstants.MAX_SHOULDER_OUT_PID_OUT, ArmConstants.MAX_SHOULDER_IN_PID_OUT);
 
     absoluteEncoderLeft.setZeroOffset(3.3257);
 

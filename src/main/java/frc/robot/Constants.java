@@ -44,7 +44,8 @@ public final class Constants {
       public static final double SHOULDER_I_LEFT = 0.0;
       public static final double SHOULDER_D_LEFT = 0.0;
       public static final double SHOULDER_F_LEFT = 0.0;
-      public static final double MAX_SHOULDER_PID_OUT = .15;
+      public static final double MAX_SHOULDER_OUT_PID_OUT = .27;
+      public static final double MAX_SHOULDER_IN_PID_OUT = .45;
 
       public static final double ELBOW_P = 1.0;
       public static final double ELBOW_I = 0.0;
@@ -52,7 +53,7 @@ public final class Constants {
       public static final double ELBOW_F = 0.0;
       public static final double KG_WRIST_OUT = 0.30; // The force required to counter gravity i.e prevent the arm from dropping
       public static final double KG_WRIST_IN = 0.3;
-      public static final double MAX_ELBOW_PID_OUT = .35;
+      public static final double MAX_ELBOW_PID_OUT = .45;
 
       /*Scoring constants */
       public static final ArmPosition BACK_HIGH_CONE = new ArmPosition(Math.toRadians(-32.6),Math.toRadians(-159),true);
@@ -110,7 +111,7 @@ public final class Constants {
       public static final double ELBOW_ACCELERATION_TIME = MAX_ELBOW_VELOCITY / MAX_ELBOW_ACCELERATION;
 
     }
-    
+
     public static class ClawConstants {
       public static final double CLAW_MOTOR_INTAKE_SPEED = 0.9; //TODO: set this to the right value
       public static final double CLAW_MOTOR_OUTTAKE_SPEED = -1.0; //TODO: set this to the right value
@@ -123,11 +124,23 @@ public final class Constants {
       public static final double MIN_PRESSURE = 80.0;
       public static final double MAX_PRESSURE = 100.0;
     }
- 
+  
     public static class HarvesterConstants {
       public static final double HARVESTER_MOTOR_INTAKE_SPEED = -0.6; //TODO: set this to the right value
       public static final double HARVESTER_MOTOR_OUTTAKE_SPEED = 0.5; //TODO: set this to the right value
       public static final double HARVESTER_MOTOR_CUBE_SPEED = -0.4; //TODO: set this to the right value
+    }
+  
+    public class RecordPlayerConstants {
+      /* Record Player PID Constants */
+      public static final double RECORD_PLAYER_P = 7.50;
+      public static final double RECORD_PLAYER_I = 0.0;
+      public static final double RECORD_PLAYER_D = 0.0;
+      public static final double RECORD_PLAYER_F = 0.0;
+  
+      public static final double RECORD_PLAYER_CONVERSION_FACTOR = TWO_PI / 25.0;
+      public static final double ROTATE_MOTOR_SPEED = 0.6;
+      // public static final double MAX_PID_SPEED = .;
     }
 
     public static class SwerveDriveConstants {
@@ -138,20 +151,21 @@ public final class Constants {
       public static final Translation2d FRONT_RIGHT_POSITION = new Translation2d(.3016,-.3016); 
 
       /* Swerve Module Drive Motor Constants */
-      public static final double DRIVE_ENC_TO_METERS_FACTOR = Units.inchesToMeters(4.0)*Math.PI/6.54;//7.13;//0.319186/7.13:1//the ratio from mechanical specs
+      public static final double DRIVE_ENC_TO_METERS_FACTOR = Units.inchesToMeters(4.125)*Math.PI/7.13;//6.54;//7.13;//0.319186/7.13:1//the ratio from mechanical specs
       public static final double MINIMUM_DRIVE_SPEED = 0.2;// the slowest the wheels can turn, in m/s
       public static final double MINIMUM_DRIVE_DUTY_CYCLE = 0.05;// the slowest the wheels can turn, in duty cycle
-      public static final double MOTOR_MAXIMUM_VELOCITY = 4.233672;
+      public static final double MOTOR_MAXIMUM_VELOCITY =  4.233672;
+      public static final double MAX_ROBOT_ROT_VELOCITY = MOTOR_MAXIMUM_VELOCITY/((FRONT_LEFT_POSITION.getNorm()+REAR_RIGHT_POSITION.getNorm())/2);
       public static final double PATH_MAXIMUM_VELOCITY = 3.5;
       public static final double MAXIMUM_ACCELERATION = 1.25;
-      public static final double MAX_ROBOT_ROT_VELOCITY = 9.925;//2;
+
 
       // public static final double MAX_ROBOT_ROT_VELOCITY = MAXIMUM_VELOCITY / DISTANCE_TO_MODULE_0;
       public static final double MAXIMUM_VOLTAGE = 12.0;
-      public static final double SWERVE_DRIVE_P_VALUE = .01; // 0.035;
+      public static final double SWERVE_DRIVE_P_VALUE = .04; // 0.035;
       public static final double SWERVE_DRIVE_I_VALUE = 0.0;
       public static final double SWERVE_DRIVE_D_VALUE = 0.0;
-      public static final double SWERVE_DRIVE_FF_VALUE = .24;
+      public static final double SWERVE_DRIVE_FF_VALUE = .23;
       public static final SwervePIDFConfig MOVE_PIDF = new SwervePIDFConfig(SWERVE_DRIVE_P_VALUE, SWERVE_DRIVE_I_VALUE, SWERVE_DRIVE_D_VALUE, SWERVE_DRIVE_FF_VALUE);
       public static final NEOConfig MOVE_CONFIG = new NEOConfig(MOVE_PIDF, false, true, MAXIMUM_VOLTAGE);
 
@@ -184,7 +198,7 @@ public final class Constants {
       public static final double ROBOT_COUNTER_SPIN_D = 0.005;
 
       /* constants for DriveFollowTrajectory */
-      public static final double DRIVE_POS_ERROR_CONTROLLER_P = .33; // 10
+      public static final double DRIVE_POS_ERROR_CONTROLLER_P = 1.2; // 10
       public static final double DRIVE_POS_ERROR_CONTROLLER_I = 0.001;
       public static final double DRIVE_POS_ERROR_CONTROLLER_D = 0.0;//0.05;
       // public static final double DRIVE_HEADING_ERROR_CONTROLLER_P = 0; // 1.05
@@ -200,18 +214,6 @@ public final class Constants {
       /* Driver Scaling Constants */
       public static final double DRIVER_SPEED_SCALE_LINEAR = .75;//0.65 * 0.85;
       public static final double DRIVER_SPEED_SCALE_ROTATIONAL = 1.2;
-  }
-  
-  public class RecordPlayerConstants {
-    /* Record Player PID Constants */
-    public static final double RECORD_PLAYER_P = 7.50;
-    public static final double RECORD_PLAYER_I = 0.0;
-    public static final double RECORD_PLAYER_D = 0.0;
-    public static final double RECORD_PLAYER_F = 0.0;
-
-    public static final double RECORD_PLAYER_CONVERSION_FACTOR = TWO_PI / 25.0;
-    public static final double ROTATE_MOTOR_SPEED = 0.6;
-    // public static final double MAX_PID_SPEED = .;
   }
   
   public class TargetConstants {

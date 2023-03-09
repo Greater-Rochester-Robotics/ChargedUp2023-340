@@ -47,7 +47,7 @@ import frc.robot.commands.claw.ClawIntake;
 import frc.robot.commands.claw.ClawOpen;
 import frc.robot.commands.claw.ClawOpenSpit;
 import frc.robot.commands.claw.ClawSpit;
-
+import frc.robot.commands.drive.DriveBalanceRobot;
 import frc.robot.commands.drive.DriveFieldRelative;
 import frc.robot.commands.drive.DriveFieldRelativeAdvanced;
 import frc.robot.commands.drive.DriveLockWheels;
@@ -180,6 +180,14 @@ public class RobotContainer {
     SmartDashboard.putData("Lock Wheels", new DriveLockWheels());
     SmartDashboard.putData(new DriveTurnToAngleInRad(Math.toRadians(90)));
     SmartDashboard.putData("Reset odometry",new InstantCommand(() -> swerveDrive.setCurPose2d(new Pose2d())){public boolean runsWhenDisabled(){return true;}});
+    // SmartDashboard.putData("FFTune 10per", new DriveTuneDriveMotorFeedForward(.1));
+    // SmartDashboard.putData("FFTune 15per", new DriveTuneDriveMotorFeedForward(.15));
+    // SmartDashboard.putData("FFTune 20per", new DriveTuneDriveMotorFeedForward(.2));
+    // SmartDashboard.putData("FFTune 25per", new DriveTuneDriveMotorFeedForward(.25));
+    // SmartDashboard.putData("FFTune 30per", new DriveTuneDriveMotorFeedForward(.30));
+    // SmartDashboard.putData("DRIVE_PID_TUNE_1",new DriveTuneDriveMotorPID(1.0));
+    // SmartDashboard.putData("DRIVE_PID_TUNE_2",new DriveTuneDriveMotorPID(2.0));
+    // SmartDashboard.putData("DRIVE_PID_TUNE_3",new DriveTuneDriveMotorPID(3.0));
 
     SmartDashboard.putData(new ClawClose());
     SmartDashboard.putData(new ClawOpen());
@@ -210,10 +218,10 @@ public class RobotContainer {
 
     /*autos */
     SmartDashboard.putData("Test Auto", new AutoMidAroundOverRamp());
-    SmartDashboard.putData("Back 1m", new AutoBackOneMeter());
-    SmartDashboard.putData("Back 2m", new AutoBackTwoMeters());
-    SmartDashboard.putData("Diagonal 1m", new AutoDiagonalOneMeter());
-    SmartDashboard.putData("Back 1m, Left 1m", new AutoBackOneMeterLeftOneMeter());
+    // SmartDashboard.putData("Back 1m", new AutoBackOneMeter());
+    // SmartDashboard.putData("Back 2m", new AutoBackTwoMeters());
+    // SmartDashboard.putData("Diagonal 1m", new AutoDiagonalOneMeter());
+    // SmartDashboard.putData("Back 1m, Left 1m", new AutoBackOneMeterLeftOneMeter());
   
 
 
@@ -242,6 +250,7 @@ public class RobotContainer {
     driverB.onTrue(new HarvestRecordIntake(false)).onFalse(new HarvesterStopRetract(false));
     driverX.whileTrue(new ClawOpenSpit());
     driverY.onTrue(new ConditionalCommand(new ArmWristRetract(), new ArmWristExtend(), arm::isWristOut));
+    driverRB.whileTrue(new DriveBalanceRobot());
     driverDLeft.onTrue(new DriveResetGyroToZero());
     driverDRight.onTrue(new HarvesterExtensionOut());
     driverStart.toggleOnTrue(new DriveRobotCentric(false));

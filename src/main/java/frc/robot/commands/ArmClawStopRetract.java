@@ -9,7 +9,7 @@ import frc.robot.commands.arm.ArmWristRetract;
 import frc.robot.commands.claw.ClawStop;
 
 public class ArmClawStopRetract extends SequentialCommandGroup {
-  /** Creates a new StopRetract. */
+  /**  */
   public ArmClawStopRetract() {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
