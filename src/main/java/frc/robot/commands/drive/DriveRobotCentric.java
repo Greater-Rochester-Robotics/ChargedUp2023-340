@@ -50,7 +50,7 @@ public class DriveRobotCentric extends CommandBase {
     double forwardSpeed = Robot.robotContainer.getRobotForwardFull(isVeloMode);
     double strafeSpeed = Robot.robotContainer.getRobotLateralFull(isVeloMode);
     //check if secondary sticks are being used
-    if(Robot.robotContainer.getDriverButton(5)){
+    if(Robot.robotContainer.getDriverButton(9)){
       //if secondary sticks used, replace with secondary sticks witha slow factor
       forwardSpeed *= 0.5;
       strafeSpeed *= 0.5;

@@ -26,7 +26,7 @@ public class RecordPlayerDriverControl extends CommandBase {
   @Override
   public void execute() {
 
-    double rotationSpeed = (Robot.robotContainer.getCoDriverAxis(Axis.kRightTrigger) - Robot.robotContainer.getCoDriverAxis(Axis.kLeftTrigger)) * 0.6;
+    double rotationSpeed = Robot.robotContainer.getRotationSpeed();// (Robot.robotContainer.getCoDriverAxis(Axis.kRightTrigger) - Robot.robotContainer.getCoDriverAxis(Axis.kLeftTrigger)) * 0.6;
 
     RobotContainer.recordPlayer.setRotationMotor(rotationSpeed);
 

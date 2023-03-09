@@ -27,7 +27,6 @@ import frc.robot.commands.ArmWristExtendCone;
 import frc.robot.commands.ArmWristExtendCube;
 import frc.robot.commands.CloseAndRetract;
 import frc.robot.commands.HarvestRecordIntake;
-import frc.robot.commands.ArmClawStopRetract;
 import frc.robot.commands.arm.ArmElbowManual;
 import frc.robot.commands.arm.ArmElbowToPosition;
 import frc.robot.commands.arm.ArmMoveToPosition;
@@ -101,11 +100,11 @@ public class RobotContainer {
   static final Trigger driverB = new JoystickButton(driver, 2);
   static final Trigger driverX = new JoystickButton(driver, 3);
   static final Trigger driverY = new JoystickButton(driver, 4);
-  // static final Trigger driverLB = new JoystickButton(driver, 5);
+  static final Trigger driverLB = new JoystickButton(driver, 5);
   static final Trigger driverRB = new JoystickButton(driver, 6);
   static final Trigger driverBack = new JoystickButton(driver, 7);
   static final Trigger driverStart = new JoystickButton(driver, 8);
-  static final Trigger driverLS = new JoystickButton(driver, 9);
+  // static final Trigger driverLS = new JoystickButton(driver, 9);
   static final Trigger driverRS = new JoystickButton(driver, 10);
   // static final Trigger driverDUp = new POVButton(driver, 0);
   // static final Trigger driverDDown = new POVButton(driver, 180);
@@ -160,7 +159,7 @@ public class RobotContainer {
     harvester = new Harvester();
     target = new Target();
     recordPlayer = new RecordPlayer();
-    recordPlayer.setDefaultCommand(new RecordPlayerDriverControl());
+    // recordPlayer.setDefaultCommand(new RecordPlayerDriverControl());
 
     //Add all autos to the auto selector
     configureAutoModes();
@@ -253,8 +252,8 @@ public class RobotContainer {
     driverRB.whileTrue(new DriveBalanceRobot());
     driverDLeft.onTrue(new DriveResetGyroToZero());
     driverDRight.onTrue(new HarvesterExtensionOut());
-    driverStart.toggleOnTrue(new DriveRobotCentric(false));
-    driverBack.whileTrue(new HarvesterOuttake());
+    driverStart.whileTrue(new HarvesterOuttake());
+    driverBack.toggleOnTrue(new DriveRobotCentric(false));
    
     
     /* =================== CODRIVER BUTTONS =================== */
@@ -262,7 +261,6 @@ public class RobotContainer {
     coDriverB.onTrue(new ArmWristExtendCube()).onFalse(new ArmWristRetract()).onFalse(new ClawHold());
     coDriverX.onTrue(new InstantCommand(()->target.getTargetPosition().getBackArmMoveCommand().schedule()));
     coDriverY.onTrue(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP));
-    coDriverLB.whileTrue(new ArmElbowManual());
     coDriverRB.whileTrue(new ArmShoulderManual());
     coDriverBack.onTrue(new RecordOrientCone());
    
@@ -272,8 +270,9 @@ public class RobotContainer {
     coDriverDLeft.onTrue(new InstantCommand(() -> target.left()){public boolean runsWhenDisabled(){return true;}});
     // coDriverRB.onTrue(new InstantCommand(() -> target.next()){public boolean runsWhenDisabled(){return true;}});
     // coDriverLB.onTrue(new InstantCommand(() -> target.previous()){public boolean runsWhenDisabled(){return true;}});
-
-    coDriverLTButton20.or(coDriverRTButton20).onTrue(new RecordPlayerDriverControl());
+    coDriverLS.whileTrue(new ArmElbowManual());
+    coDriverRS.whileTrue(new RecordPlayerDriverControl());
+    // coDriverLTButton20.or(coDriverRTButton20).onTrue(new RecordPlayerDriverControl());
   }
 
   /**
@@ -439,7 +438,12 @@ public class RobotContainer {
     return getCoDriverAxis(Axis.kLeftY) * .25;
   }
 
+  public double getRotationSpeed(){
+    return getCoDriverAxis(Axis.kRightY) * 0.6;
+  }
+
   public void notifyDriver(boolean notifyOn){
     setDriverRumble(0.0,notifyOn?0.6:0.0);
   }
+
 }
