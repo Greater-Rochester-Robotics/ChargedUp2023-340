@@ -25,7 +25,6 @@ public class ArmToPosition extends SequentialCommandGroup {
   public ArmToPosition(ArmPosition armPosition) {
 
     addCommands(
-      new InstantCommand(() -> RobotContainer.target.setScoring(true)),//set scoring in target to true
       new PrintCommand("Moving To ArmPosition: "+Math.abs(Units.radiansToDegrees(armPosition.getShoulderPosition())) +" "+Math.abs(Units.radiansToDegrees(armPosition.getElbowPosition())) ),
       new ConditionalCommand(//Retract wrist and wait for retracting if arm is out, nothing otherwise
         new ArmWristRetract(), 

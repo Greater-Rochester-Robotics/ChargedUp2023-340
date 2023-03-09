@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,10 +20,27 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * project.
  */
 public class Robot extends TimedRobot {
+  /**
+   * The robot's autonomous command.
+   */
   private Command autonomousCommand;
-  NetworkTableInstance inst = NetworkTableInstance.getDefault();
-  NetworkTable table = inst.getTable("/dashboard");
+  
+  /**
+   * The network table instance used by the robot.
+   */
+  private NetworkTableInstance netInst = NetworkTableInstance.getDefault();
+  /**
+   * The general values network table.
+   */
+  private NetworkTable netTable = netInst.getTable("/dashboard/general");
+  /**
+   * An incrementing integer used to schedule periodic updates to network table values.
+   */
+  private int netCycle = 0;
 
+  /**
+   * The robot container.
+   */
   public static RobotContainer robotContainer;
 
   /**
@@ -53,7 +71,19 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    table.getEntry("alliance").setInteger(DriverStation.getAlliance().ordinal());
+
+    // Update the network tables cycle.
+    netCycle++;
+    if (netCycle > 10) {
+      netCycle = 0;
+    }
+
+    // If the network tables publish cycle has restarted, publish values.
+    if (netCycle == 0) {
+      netTable.getEntry("alliance").setInteger(DriverStation.getAlliance().ordinal());
+      netTable.getEntry("voltage").setDouble(RobotController.getBatteryVoltage());
+      netTable.getEntry("psi").setInteger((int) RobotContainer.compressor.getPressure());
+    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

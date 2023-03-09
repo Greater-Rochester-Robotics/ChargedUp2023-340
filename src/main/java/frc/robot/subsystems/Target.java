@@ -4,54 +4,72 @@
 
 package frc.robot.subsystems;
 
+import java.util.EnumSet;
+
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.IntegerArraySubscriber;
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.TargetConstants;
 import frc.robot.commands.arm.ArmToPosition;
 
+/**
+ * Targetting subsystem.
+ * Used for selecting targets determining goal loctions.
+ */
 public class Target extends SubsystemBase {
-  int grid;
-  int col;
-  int row;
+  /**
+   * Goal locations for the blue alliance.
+   */
   public GoalLocation[][][] blueGoalLocations;
+  /**
+   * Goal locations for the red alliance.
+   */
   public GoalLocation[][][] redGoalLocations;
-  ShuffleboardTab tab;
-  private boolean scoring;
-  // ShuffleboardTab tab;
 
-  /** Creates a new Target. */
+  /**
+   * The current grid selection.
+   */
+  private int grid = 0;
+  /**
+   * The current column selection.
+   */
+  private int column = 0;
+  /**
+   * The current row selection.
+   */
+  private int row = 0;
+  /**
+   * If the robot is in the process of scoring.
+   */
+  private boolean scoring = false;
+
+  /**
+   * The network table instance used by the targetting subsystem.
+   */
+  private NetworkTableInstance netInstance = NetworkTableInstance.getDefault();
+  /**
+   * The network table used by the targetting system.
+   */
+  private NetworkTable netTable = netInstance.getTable("/dashboard/target");
+  /**
+   * The current selection subscription.
+   * Used to pull values from the co-driver touchscreen.
+   */
+  private IntegerArraySubscriber selectionSubscription;
+
+  /**
+   * Creates a new target.
+   */
   public Target() {
-    // MjpegServer serverStream = new MjpegServer("Anything", 1181);
-    // RawSource source = new RawSource("Source", PixelFormat.kRGB565, 10, 10, 1);
-    // CvSource source2 = new CvSource("Source2", PixelFormat.kRGB565, 10, 10, 1);
-    // Mat mat = ;
-    // source2.putFrame();
-    // serverStream.setSource(source);
-
-    //this works
-    // tab = Shuffleboard.getTab("Tab Title");
-    // for(int i = 0; i < 3; i++) {
-    //   for(int j = 0; j < 3; j++) {
-    //     for(int k = 0; k < 3; k++) {
-    //       int ii = i;
-    //       int jj = j;
-    //       int kk = k;
-    //       tab.addBoolean("Boolean G"+ii+"C"+jj+"R"+kk, () -> this.isTarget(ii, jj, kk)).withPosition(i * 3 + j, k);
-    //     }
-    //   }
-    // }
-
+    // Set goal locations for the blue alliance.
     blueGoalLocations = new GoalLocation[][][] {
       {
         {
@@ -105,6 +123,9 @@ public class Target extends SubsystemBase {
         }
       }
     };
+
+    // Set goal locations for the red alliance.
+    // Translates the blue alliance goal locations.
     redGoalLocations = new GoalLocation[3][3][3];
     for(int i = 0; i < 3; i++) {
       for(int j = 0; j < 3; j++) {
@@ -119,130 +140,297 @@ public class Target extends SubsystemBase {
         }
       }
     }
+
+    // Subscribe to the selection table to get updates from the custom dashboard.
+    // Needed for the co-driver to select a target from the touchscreen.
+    selectionSubscription = netTable.getIntegerArrayTopic("selection").subscribe(getTargetLong());
+    netInstance.addListener(
+        selectionSubscription,
+        EnumSet.of(NetworkTableEvent.Kind.kValueRemote),
+        event -> {
+          if (!scoring) { // If not scoring, update the selection.
+            long[] value = event.valueData.value.getIntegerArray();
+            setTarget((int) value[0], (int) value[1], (int) value[2]);
+          } else { // If scoring, ignore and overwrite the remote value.
+            updateDashboard();
+          }
+        });
   }
 
+  /**
+   * Gets the current target.
+   * @return The current target represented as an integer array: [grid, column, row].
+   */
+  public int[] getTarget() {
+    return new int[]{grid, column, row};
+  }
 
-  @Override
-  public void periodic() {
-    NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    NetworkTable table = inst.getTable("/dashboard/targetting");
-    table.getEntry("selection").setIntegerArray(getTargetLong());
-    table.getEntry("scoring").setBoolean(scoring);
+  /**
+   * Gets the current target.
+   * @return The current target represented as a long array: [grid, column, row].
+   */
+  public long[] getTargetLong() {
+    return new long[]{grid, column, row};
+  }
+
+  /**
+   * Get the current target's goal location position.
+   * @return The goal location for the specified target.
+   */
+  public GoalLocation getTargetPosition() {
+    if(DriverStation.getAlliance() == Alliance.Blue) {
+      return blueGoalLocations[grid][column][row];
+    } else { 
+      return redGoalLocations[grid][column][row];
+    }
+  }
+
+  /**
+   * Tests if a specified selection is a target.
+   * @param grid The grid. Should be a value from 0 to 2.
+   * @param column The column. Should be a value from 0 to 2.
+   * @param row The row. Should be a value from 0 to 2.
+   * @return If the selection is a target.
+   */
+  public boolean isTarget(int grid, int column, int row){
+    return (grid == this.grid) && (column == this.column) && (row == this.row);
+  }
+
+  /**
+   * Selects a target and updates the dashboards with the new position.
+   * The target will not be updated if the robot is currently scoring.
+   * @param grid The grid. Should be a value from 0 to 2.
+   * @param column The column. Should be a value from 0 to 2.
+   * @param row The row. Should be a value from 0 to 2.
+   * @return If the target was updated.
+   */
+  public boolean setTarget(int grid, int column, int row) {
+    if (scoring) return false;
+  
+    this.grid = grid;
+    this.column = column;
+    this.row = row;
+    updateDashboard();
+
+    return true;
+  }
+
+  /**
+   * Move the selected target up by 1 row and update the dashboards.
+   * If out of bounds, shift to the opposite bound.
+   * The target will not be updated if the robot is currently scoring.
+   * @return If the target was updated.
+   */
+  public boolean up() {
+    if (scoring) return false;
+
+    row--;
+    if(row < 0) row = 2;
+    updateDashboard();
+
+    return true;
+  }
+
+  /**
+   * Move the selected target down by 1 row and update the dashboards.
+   * If out of bounds, shift to the opposite bound.
+   * The target will not be updated if the robot is currently scoring.
+   * @return If the target was updated.
+   */
+  public boolean down() {
+    if (scoring) return false;
+
+    row++;
+    if(row > 2) row = 0;
+    updateDashboard();
+
+    return true;
+  }
+
+  /**
+   * Move the selected target right by 1 column and update the dashboards.
+   * If out of bounds, shift to the opposite bound and the correct grid.
+   * The target will not be updated if the robot is currently scoring.
+   * @return If the target was updated.
+   */
+  public boolean right() {
+    if (scoring) return false;
+
+    column++;
+    if(column > 2) {
+      next();
+      column = 0;
+    }
+    updateDashboard();
+
+    return true;
+  }
+
+  /**
+   * Move the selected target left by 1 column and update the dashboards.
+   * If out of bounds, shift to the opposite bound and the correct grid.
+   * The target will not be updated if the robot is currently scoring.
+   * @return If the target was updated.
+   */
+  public boolean left() {
+    if (scoring) return false;
+
+    column--;
+    if(column < 0) {
+      previous();
+      column = 2;
+    }
+    updateDashboard();
+
+    return true;
+  }
+
+  /**
+   * Move the selected grid right by 1 and update the dashboards.
+   * If out of bounds, shift to the opposite bound.
+   * The target will not be updated if the robot is currently scoring.
+   * @return If the target was updated.
+   */
+  public boolean next() {
+    grid++;
+    if(grid > 2) grid = 0;
+    updateDashboard();
+
+    return true;
+  }
+
+  /**
+   * Move the selected grid left by 1 and update the dashboards.
+   * If out of bounds, shift to the opposite bound.
+   * The target will not be updated if the robot is currently scoring.
+   * @return If the target was updated.
+   */
+  public boolean previous() {
+    if (scoring) return false;
+
+    grid--;
+    if(grid < 0) grid = 2;
+    updateDashboard();
+
+    return true;
+  }
+
+  /**
+   * Set if the robot is currently in the process of scoring (moving to the goal location, moving the arm).
+   * @param scoring If the robot is scoring.
+   */
+  public void setScoring(boolean scoring) {
+    this.scoring = scoring;
+    updateDashboard();
+  }
+
+  /**
+   * Returns true if the robot is scoring (moving to the goal location, moving the arm).
+   * @return If the robot is scoring.
+   */
+  public boolean isScoring() {
+    return scoring;
+  }
+
+  /**
+   * Update the dashboards based on the stored grid, column, row, and scoring values.
+   */
+  private void updateDashboard() {
+    // Update the custom dashboard.
+    netTable.getEntry("selection").setIntegerArray(getTargetLong());
+    netTable.getEntry("scoring").setBoolean(scoring);
+
+    // Update Smart Dashboard.
     SmartDashboard.putNumber("Target Grid", grid);
-    SmartDashboard.putNumber("Target Column", col);
+    SmartDashboard.putNumber("Target Column", column);
     SmartDashboard.putNumber("Target Row", row);
     SmartDashboard.putNumber("Target X", getTargetPosition().getX());
     SmartDashboard.putNumber("Target Y", getTargetPosition().getY());
   }
 
-  public long[] getTargetLong() {
-    return new long[]{grid, col, row};
-  }
-  // helper function that returns an array for a certain GoalPosition
-  public int[] getTarget() {
-    return new int[]{grid, col, row};
-  }
-
-  public boolean isTarget(int grid, int col, int row){
-    return (grid == this.grid) && (col == this.col) && (row == this.row);
-  }
-
-  public void setTarget(int grid, int col, int row) {
-    this.grid = grid;
-    this.col = col;
-    this.row = row;
-  }
-
-  public GoalLocation getTargetPosition() {
-    if(DriverStation.getAlliance() == Alliance.Blue) {
-      return blueGoalLocations[grid][col][row];
-    } else { 
-      return redGoalLocations[grid][col][row];
-    }
-  }
-
-  public void up() {
-    row--;
-    if(row < 0) row = 2;
-  }
-
-  public void down() {
-    row++;
-    if(row > 2) row = 0;
-  }
-
-  public void right() {
-    col++;
-    if(col > 2) {
-      next();
-      col = 0;
-    }
-  }
-
-  public void left() {
-    col--;
-    if(col < 0) {
-      previous();
-      col = 2;
-    }
-  }
-
-  public void next() {
-    grid++;
-    if(grid > 2) grid = 0;
-  }
-
-  public void previous() {
-    grid--;
-    if(grid < 0) grid = 2;
-  }
-
-  public void setScoring(boolean scoring) {
-    this.scoring = scoring;
-  }
-
-  public boolean isScoring() {
-    return scoring;
-  }
-
+  /**
+   * A goal location.
+   */
   public class GoalLocation {
+    /**
+     * The goal location's position on the field.
+     */
     private Translation2d position;
-    private ArmPosition armPositionBack;
+    /**
+     * The goal location's front arm position.
+     */
     private ArmPosition armPositionFront;
+    /**
+     * The goal location's back arm position.
+     */
+    private ArmPosition armPositionBack;
 
+    /**
+     * Create a goal location.
+     * @param position The goal location's position on the field.
+     * @param frontArmPosition The goal location's front arm position.
+     * @param backArmPosition The goal location's back arm position.
+     */
     public GoalLocation(Translation2d position, ArmPosition frontArmPosition, ArmPosition backArmPosition) {
       this.position = position;
       this.armPositionFront = frontArmPosition;
       this.armPositionBack = backArmPosition;
-
     }
 
+    /**
+     * Get the goal location's X position on the field.
+     * @return The X position.
+     */
     public double getX() {
       return position.getX();
     }
 
+    /**
+     * Get the goal location's Y position on the field.
+     * @return The Y position.
+     */
     public double getY() {
       return position.getY();
     }
 
+    /**
+     * Get the goal location's position on the field.
+     * @return The field position.
+     */
+    public Translation2d getPosition() {
+      return position;
+    }
+
+    /**
+     * Get the goal location's front arm position.
+     * @return The front arm position.
+     */
     public ArmPosition getFrontArmPos() {
       return armPositionFront;
     }
   
+    /**
+     * Get the command to move the front arm to the goal location's position.
+     * @return The ArmToPosition command.
+     */
     public Command getFrontArmMoveCommand(){
       return new ArmToPosition(this.getFrontArmPos());
     }
 
+    /**
+     * Get the goal location's back arm position.
+     * @return The back arm position.
+     */
     public ArmPosition getBackArmPos(){
       return armPositionBack;
     }
 
+    /**
+     * Get the command to move the back arm to the goal location's position.
+     * @return The ArmToPosition command.
+     */
     public Command getBackArmMoveCommand(){
       return new ArmToPosition(this.getBackArmPos());
-    }
-
-    public Translation2d getPosition() {
-      return position;
     }
   }
 }
