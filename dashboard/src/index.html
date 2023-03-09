@@ -227,7 +227,7 @@
         // Double: voltage
         NetworkTables.addKeyListener(`/dashboard/general/voltage`, (_, value) => {
             if (typeof value === `number`) {
-                voltageText.text = `${value}V`;
+                voltageText.text = `${Math.round(value * 10) / 10}V`;
             };
         }, true);
 

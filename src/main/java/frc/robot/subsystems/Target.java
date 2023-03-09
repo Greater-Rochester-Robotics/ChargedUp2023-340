@@ -151,10 +151,19 @@ public class Target extends SubsystemBase {
           if (!scoring) { // If not scoring, update the selection.
             long[] value = event.valueData.value.getIntegerArray();
             setTarget((int) value[0], (int) value[1], (int) value[2]);
-          } else { // If scoring, ignore and overwrite the remote value.
-            updateDashboard();
           }
         });
+  }
+
+  @Override
+  public void periodic() {
+    netTable.getEntry("selection").setIntegerArray(getTargetLong());
+    netTable.getEntry("scoring").setBoolean(scoring);
+    SmartDashboard.putNumber("Target Grid", grid);
+    SmartDashboard.putNumber("Target Column", column);
+    SmartDashboard.putNumber("Target Row", row);
+    SmartDashboard.putNumber("Target X", getTargetPosition().getX());
+    SmartDashboard.putNumber("Target Y", getTargetPosition().getY());
   }
 
   /**
@@ -210,7 +219,6 @@ public class Target extends SubsystemBase {
     this.grid = grid;
     this.column = column;
     this.row = row;
-    updateDashboard();
 
     return true;
   }
@@ -226,7 +234,6 @@ public class Target extends SubsystemBase {
 
     row--;
     if(row < 0) row = 2;
-    updateDashboard();
 
     return true;
   }
@@ -242,7 +249,6 @@ public class Target extends SubsystemBase {
 
     row++;
     if(row > 2) row = 0;
-    updateDashboard();
 
     return true;
   }
@@ -261,7 +267,6 @@ public class Target extends SubsystemBase {
       next();
       column = 0;
     }
-    updateDashboard();
 
     return true;
   }
@@ -280,7 +285,6 @@ public class Target extends SubsystemBase {
       previous();
       column = 2;
     }
-    updateDashboard();
 
     return true;
   }
@@ -294,7 +298,6 @@ public class Target extends SubsystemBase {
   public boolean next() {
     grid++;
     if(grid > 2) grid = 0;
-    updateDashboard();
 
     return true;
   }
@@ -310,7 +313,6 @@ public class Target extends SubsystemBase {
 
     grid--;
     if(grid < 0) grid = 2;
-    updateDashboard();
 
     return true;
   }
@@ -321,7 +323,6 @@ public class Target extends SubsystemBase {
    */
   public void setScoring(boolean scoring) {
     this.scoring = scoring;
-    updateDashboard();
   }
 
   /**
@@ -330,22 +331,6 @@ public class Target extends SubsystemBase {
    */
   public boolean isScoring() {
     return scoring;
-  }
-
-  /**
-   * Update the dashboards based on the stored grid, column, row, and scoring values.
-   */
-  private void updateDashboard() {
-    // Update the custom dashboard.
-    netTable.getEntry("selection").setIntegerArray(getTargetLong());
-    netTable.getEntry("scoring").setBoolean(scoring);
-
-    // Update Smart Dashboard.
-    SmartDashboard.putNumber("Target Grid", grid);
-    SmartDashboard.putNumber("Target Column", column);
-    SmartDashboard.putNumber("Target Row", row);
-    SmartDashboard.putNumber("Target X", getTargetPosition().getX());
-    SmartDashboard.putNumber("Target Y", getTargetPosition().getY());
   }
 
   /**
