@@ -83,6 +83,7 @@ public class Robot extends TimedRobot {
       netTable.getEntry("alliance").setInteger(DriverStation.getAlliance().ordinal());
       netTable.getEntry("voltage").setDouble(RobotController.getBatteryVoltage());
       netTable.getEntry("psi").setInteger((int) RobotContainer.compressor.getPressure());
+      netTable.getEntry("time").setInteger((int) DriverStation.getMatchTime());
     }
   }
 

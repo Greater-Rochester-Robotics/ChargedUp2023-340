@@ -238,6 +238,13 @@
             }
         }, true);
 
+        // Integer: match time in seconds
+        NetworkTables.addKeyListener(`/dashboard/general/time`, (_, value) => {
+            if (typeof value === `number` && value >= 0 && value <= 300) {
+                timerText.text = new Date(value * 1000).toISOString().substring(15, 19);
+            }
+        });
+
         // Integer tuple: [grid, column, row]
         NetworkTables.addKeyListener(`/dashboard/target/selection`, (_, value) => {
             if (value instanceof Array) {
