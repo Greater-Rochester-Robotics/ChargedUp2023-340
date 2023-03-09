@@ -275,10 +275,7 @@
             const raycasterIntersects = raycaster.intersectObjects(scene.children, false)?.filter((mesh) => selectionOptions.flat().includes(mesh.object))[0]?.object;
 
             if (raycasterIntersects) {
-                currentSelection.x = raycasterIntersects.optionData.x;
-                currentSelection.y = raycasterIntersects.optionData.y;
-
-                NetworkTables.putValue(`/dashboard/target/selection`, [Math.floor(currentSelection.x / 3), currentSelection.x % 3, currentSelection.y]);
+                NetworkTables.putValue(`/dashboard/target/touchselection`, [Math.floor(raycasterIntersects.optionData.x / 3), raycasterIntersects.optionData.x % 3, raycasterIntersects.optionData.y]);
             }
         });
 

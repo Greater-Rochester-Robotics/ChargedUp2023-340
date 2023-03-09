@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -60,10 +61,10 @@ public class Target extends SubsystemBase {
    */
   private NetworkTable netTable = netInstance.getTable("/dashboard/target");
   /**
-   * The current selection subscription.
-   * Used to pull values from the co-driver touchscreen.
+   * The previous touch selection pulled from network tables.
    */
-  private IntegerArraySubscriber selectionSubscription;
+  private double[] previousTouchSelection = {0, 0, 0};
+
 
   /**
    * Creates a new target.
@@ -140,23 +141,16 @@ public class Target extends SubsystemBase {
         }
       }
     }
-
-    // Subscribe to the selection table to get updates from the custom dashboard.
-    // Needed for the co-driver to select a target from the touchscreen.
-    selectionSubscription = netTable.getIntegerArrayTopic("selection").subscribe(getTargetLong());
-    netInstance.addListener(
-        selectionSubscription,
-        EnumSet.of(NetworkTableEvent.Kind.kValueRemote),
-        event -> {
-          if (!scoring) { // If not scoring, update the selection.
-            long[] value = event.valueData.value.getIntegerArray();
-            setTarget((int) value[0], (int) value[1], (int) value[2]);
-          }
-        });
   }
 
   @Override
   public void periodic() {
+    double[] touchSelection = netTable.getEntry("touchselection").getDoubleArray(previousTouchSelection);
+    if (!Arrays.equals(touchSelection, previousTouchSelection)) {
+      setTarget((int) touchSelection[0], (int) touchSelection[1], (int) touchSelection[2]);
+      previousTouchSelection = touchSelection.clone();
+    }
+
     netTable.getEntry("selection").setIntegerArray(getTargetLong());
     netTable.getEntry("scoring").setBoolean(scoring);
     SmartDashboard.putNumber("Target Grid", grid);
