@@ -2,33 +2,25 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.auto;
-
-import java.util.List;
-
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
+package frc.robot.commands.auto.test;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.commands.drive.auto.DriveFollowTrajectory;
 import frc.robot.commands.drive.util.DriveSetGyro;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class AutoBackOneMeterLeftOneMeter extends SequentialCommandGroup {
-  /** Creates a new AutoBackOneMeterLeftOneMeter. */
-  public AutoBackOneMeterLeftOneMeter() {
-    List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("BackOneMeterLeftOneMeter", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
+public class AutoBackOneMeter extends SequentialCommandGroup {
+  /** Creates a new AutoBackOneMeter. */
+  public AutoBackOneMeter() {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new DriveSetGyro(180),
       new WaitCommand(.5),
-      new DriveFollowTrajectory(path.get(0)),
-      new DriveFollowTrajectory(path.get(1), false)
+      new DriveFollowTrajectory("BackOneMeter")
     );
   }
 }

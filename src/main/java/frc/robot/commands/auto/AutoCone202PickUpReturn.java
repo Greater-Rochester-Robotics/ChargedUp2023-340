@@ -5,22 +5,17 @@
 package frc.robot.commands.auto;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.drive.auto.DriveFollowTrajectory;
-import frc.robot.commands.drive.util.DriveSetGyro;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class AutoBackTwoMeters extends SequentialCommandGroup {
-  /** Creates a new AutoBackOneMeter. */
-  public AutoBackTwoMeters() {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
+public class AutoCone202PickUpReturn extends SequentialCommandGroup {
+  /** Creates a new AutoCone202PickUpReturn. */
+  public AutoCone202PickUpReturn() {
     addCommands(
-      new DriveSetGyro(180),
-      new WaitCommand(.5),
-      new DriveFollowTrajectory("BackTwoMeters")
+      //score a high cone
+      //drive back, over cable run, to pick up a game pick
+      //return to community
     );
   }
 }

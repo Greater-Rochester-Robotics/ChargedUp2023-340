@@ -36,11 +36,11 @@ import frc.robot.commands.arm.ArmShoulderToPosition;
 import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.arm.ArmWristExtend;
 import frc.robot.commands.arm.ArmWristRetract;
-import frc.robot.commands.auto.AutoBackOneMeter;
-import frc.robot.commands.auto.AutoBackOneMeterLeftOneMeter;
-import frc.robot.commands.auto.AutoBackTwoMeters;
-import frc.robot.commands.auto.AutoDiagonalOneMeter;
 import frc.robot.commands.auto.AutoMidAroundOverRamp;
+import frc.robot.commands.auto.test.AutoBackOneMeter;
+import frc.robot.commands.auto.test.AutoBackOneMeterLeftOneMeter;
+import frc.robot.commands.auto.test.AutoBackTwoMeters;
+import frc.robot.commands.auto.test.AutoDiagonalOneMeter;
 import frc.robot.commands.claw.ClawClose;
 import frc.robot.commands.claw.ClawHold;
 import frc.robot.commands.claw.ClawIntake;
@@ -218,10 +218,10 @@ public class RobotContainer {
 
     /*autos */
     SmartDashboard.putData("Test Auto", new AutoMidAroundOverRamp());
-    // SmartDashboard.putData("Back 1m", new AutoBackOneMeter());
-    // SmartDashboard.putData("Back 2m", new AutoBackTwoMeters());
-    // SmartDashboard.putData("Diagonal 1m", new AutoDiagonalOneMeter());
-    // SmartDashboard.putData("Back 1m, Left 1m", new AutoBackOneMeterLeftOneMeter());
+    SmartDashboard.putData("Back 1m", new AutoBackOneMeter());
+    SmartDashboard.putData("Back 2m", new AutoBackTwoMeters());
+    SmartDashboard.putData("Diagonal 1m", new AutoDiagonalOneMeter());
+    SmartDashboard.putData("Back 1m, Left 1m", new AutoBackOneMeterLeftOneMeter());
   
 
 
