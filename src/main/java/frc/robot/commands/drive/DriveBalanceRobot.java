@@ -15,9 +15,7 @@ import frc.robot.Constants.SwerveDriveConstants;
  * Drive up ramp until balanced
  * relies upon pitch and roll angles and velocities
  * Stops moving when robot is coming to a balance
- * driver only maintains ability to move left and right
  */
-
 public class DriveBalanceRobot extends CommandBase {
   private double currentAngle = 0;
   private double prevPitchAngle = 0;
@@ -102,7 +100,7 @@ public class DriveBalanceRobot extends CommandBase {
     //   strafeSpeed = pidY.calculate(rollAng, 0.0);
     // }
     // System.out.println("pitch: " + Math.round(pitchAngle) + "   PitchSpeed: " + pitchVel + "     Output: "+forwardSpeed);
-    // TODO: allow driver to move side to side
+    // TODO: change to field centric and allow driver to move side to side
     //moves the robot using driveRobotCentric
     RobotContainer.swerveDrive.driveRobotCentric(
       forwardSpeed * -1.0,
