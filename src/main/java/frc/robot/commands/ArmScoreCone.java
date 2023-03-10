@@ -20,10 +20,10 @@ public class ArmScoreCone extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new ArmMoveToPosition(position),
+      // new ArmMoveToPosition(position),
       new ClawOpen(),
-      new WaitCommand(0.5),
-      new ArmMoveToPosition(ArmConstants.INTERNAL_PICK_UP)
+      new WaitCommand(0.5)
+      // new ArmMoveToPosition(ArmConstants.INTERNAL_PICK_UP)
     );
   }
 }

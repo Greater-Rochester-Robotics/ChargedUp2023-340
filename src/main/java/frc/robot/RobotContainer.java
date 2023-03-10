@@ -271,7 +271,7 @@ public class RobotContainer {
     // coDriverRB.onTrue(new InstantCommand(() -> target.next()){public boolean runsWhenDisabled(){return true;}});
     // coDriverLB.onTrue(new InstantCommand(() -> target.previous()){public boolean runsWhenDisabled(){return true;}});
     coDriverLS.whileTrue(new ArmElbowManual());
-    coDriverRS.whileTrue(new RecordPlayerDriverControl());
+    coDriverRS.whileTrue(new RecordPlayerDriverControl()).onFalse(new InstantCommand(()->recordPlayer.stopRotationMotor()));
     // coDriverLTButton20.or(coDriverRTButton20).onTrue(new RecordPlayerDriverControl());
   }
 
