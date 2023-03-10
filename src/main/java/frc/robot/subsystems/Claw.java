@@ -13,6 +13,8 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -27,6 +29,15 @@ public class Claw extends SubsystemBase {
   private TalonSRX clawMotor;
   private DoubleSolenoid openClose;
   private DigitalInput gamePieceSensor;
+
+  /**
+   * The network table instance used by the claw subsystem.
+   */
+  private NetworkTableInstance netInstance = NetworkTableInstance.getDefault();
+  /**
+   * The network table used by the claw system.
+   */
+  private NetworkTable netTable = netInstance.getTable("/dashboard/robotmodel");
 
   /** Creates a new Claw. */
   public Claw() {
@@ -51,6 +62,7 @@ public class Claw extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putBoolean("Claw GamePiece", getGamePieceSensor());
+    netTable.getEntry("claw").setBoolean(isOpen());
   }
 
   /**

@@ -9,6 +9,8 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -29,6 +31,15 @@ public class Harvester extends SubsystemBase {
   private DoubleSolenoid harvesterPistons;
   private boolean hadGamePeice = false;
   Timer rumbleTimer;
+
+  /**
+   * The network table instance used by the harvester subsystem.
+   */
+  private NetworkTableInstance netInstance = NetworkTableInstance.getDefault();
+  /**
+   * The network table used by the harvester system.
+   */
+  private NetworkTable netTable = netInstance.getTable("/dashboard/robotmodel");
 
   /** Creates a new Intake. */
   public Harvester() {
@@ -60,6 +71,8 @@ public class Harvester extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putBoolean("intake has game peice: ", hasGamePiece());
+
+    netTable.getEntry("harvester").setBoolean(isHarvesterOut());
     // if(hadGamePeice && !hasGamePiece())
     //   rumbleTimer.reset();
 

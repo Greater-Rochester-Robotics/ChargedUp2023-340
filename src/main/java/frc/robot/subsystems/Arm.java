@@ -25,6 +25,8 @@ import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -64,6 +66,17 @@ public class Arm extends SubsystemBase {
 
   private boolean shoulderPIDEnable;
   private boolean followingTrajectory = false;
+
+  /**
+   * The network table instance used by the arm subsystem.
+   */
+  private NetworkTableInstance netInstance = NetworkTableInstance.getDefault();
+  /**
+   * The network table used by the arm system.
+   */
+  private NetworkTable netTable = netInstance.getTable("/dashboard/robotmodel");
+
+
 
   /** Creates a new Arm. */
   public Arm() {
@@ -205,6 +218,11 @@ public class Arm extends SubsystemBase {
     double elbowPos = getElbowPosition();
     if (count > 25){
       count = 0;
+
+    netTable.getEntry("shoulder").setDouble((rightPos + leftPos) / 2);
+    netTable.getEntry("elbow").setDouble(elbowPos);
+    netTable.getEntry("wrist").setBoolean(wrist.get() == Value.kForward);
+    
     SmartDashboard.putNumber("Absolute encoder right", Math.round(Math.toDegrees(rightPos) * 10 ) * 0.1);
     // SmartDashboard.putNumber("Internal encoder right", shoulderRight.getEncoder().getPosition());
   

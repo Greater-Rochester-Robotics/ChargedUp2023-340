@@ -8,7 +8,6 @@ import { OrbitControls } from '/lib/OrbitControls.js';
 import { STLLoader } from '/lib/STLLoader.js'
 import { TextSprite } from '/lib/TextSprite.js';
 
-
 let lastShoulderPosition = 0;
 let lastElbowPosition = 0;
 let lastWristAlpha = 0;
@@ -23,11 +22,16 @@ const currentSelection = {
     y: 0
 };
 
+const clock = new THREE.Clock();
+const frameInterval = 1 / 30;
+let frameDelta = 0;
+
 const loader = new STLLoader();
 
 const renderer = new THREE.WebGLRenderer({
     alpha: true,
-    antialias: true
+    antialias: true,
+    powerPreference: `high-performance`
 });
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -87,8 +91,8 @@ const robotModels = {
 const harvesterLateralHelper = new THREE.Object3D();
 
 const robotPoseData = {
-    shoulder: 0,
-    elbow: 0,
+    shoulder: { value: 0, since: Date.now(), startingValue: 0 },
+    elbow: { value: 0, since: Date.now(), startingValue: 0 },
     wrist: { state: false, since: Date.now(), startingAlpha: 0 },
     claw: { state: false, since: Date.now(), startingAlpha: 0 },
     recordPlayer: 0,
@@ -110,24 +114,21 @@ robotModels.driveBase.rotation.set(0.3,  0.6, Math.PI);
 robotModels.driveBase.geometry.scale(1.2, 1.2, 1.2);
 scene.add(robotModels.driveBase);
 
-const voltageText = new TextSprite(`0V`, 0.3, `#ffffff`);
+const voltageText = new TextSprite(`0.0V`, 0.45, `#ffffff`);
 voltageText.fontSize = 100;
 voltageText.fontFace = `'Library'`;
-voltageText._genCanvas();
-voltageText.position.set(-2.4375, -0.675, 0);
+voltageText.position.set(-2.4375, -0.7, 0);
 scene.add(voltageText);
 
-const psiText = new TextSprite(`0 PSI`, 0.3, `#ffffff`);
+const psiText = new TextSprite(`0.0 PSI`, 0.3, `#ffffff`);
 psiText.fontSize = 100;
 psiText.fontFace = `'Library'`;
-psiText._genCanvas();
-psiText.position.set(-2.4375, -1.075, 0);
+psiText.position.set(-2.4375, -1.125, 0);
 scene.add(psiText);
 
-const timerText = new TextSprite(`0:00`, 0.3, `#ffffff`);
+const timerText = new TextSprite(`0:00`, 0.525, `#ffffff`);
 timerText.fontSize = 100;
 timerText.fontFace = `'Library'`;
-timerText._genCanvas();
 timerText.position.set(2.4375, -0.875, 0);
 scene.add(timerText);
 
@@ -144,6 +145,8 @@ for (let i = 0; i < 2; i++) {
     mesh.position.z = -2;
     scene.add(mesh);
 }
+
+setInterval(() => refreshText(), 1000);
 
 // TODO connection UI
 
@@ -179,16 +182,14 @@ NetworkTables.addKeyListener(`/dashboard/general/alliance`, (_, value) => {
 // Double: voltage
 NetworkTables.addKeyListener(`/dashboard/general/voltage`, (_, value) => {
     if (typeof value === `number`) {
-        voltageText.text = `${Math.round(value * 10) / 10}V`;
-        voltageText._genCanvas();
+        voltageText.text = `${(Math.round(value * 10) / 10).toFixed(1)}V`;
     };
 }, true);
 
-// Integer: PSI
+// Double: PSI
 NetworkTables.addKeyListener(`/dashboard/general/psi`, (_, value) => {
     if (typeof value === `number`) {
-        psiText.text = `${value} PSI`;
-        psiText._genCanvas();
+        psiText.text = `${value.toFixed(1)} PSI`;
     }
 }, true);
 
@@ -196,7 +197,6 @@ NetworkTables.addKeyListener(`/dashboard/general/psi`, (_, value) => {
 NetworkTables.addKeyListener(`/dashboard/general/time`, (_, value) => {
     if (typeof value === `number` && value >= 0 && value <= 300) {
         timerText.text = new Date(value * 1000).toISOString().substring(15, 19);
-        timerText._genCanvas();
     }
 });
 
@@ -219,15 +219,18 @@ NetworkTables.addKeyListener(`/dashboard/target/scoring`, (_, value) => {
 // Double: radians
 NetworkTables.addKeyListener(`/dashboard/robotmodel/shoulder`, (_, value) => {
     if (typeof value === `number`) {
-        robotPoseData.shoulder = value;
+        robotPoseData.shoulder = { value, since: Date.now(), startingValue: lastShoulderPosition };
     }
 }, true);
 
+let last = Date.now();
 // Double: radians
 NetworkTables.addKeyListener(`/dashboard/robotmodel/elbow`, (_, value) => {
     if (typeof value === `number`) {
-        robotPoseData.elbow = value;
+        robotPoseData.elbow = { value, since: Date.now(), startingValue: lastElbowPosition };
     }
+    console.log(Date.now() - last)
+    last = Date.now();
 }, true);
 
 // Boolean: extended
@@ -255,6 +258,7 @@ NetworkTables.addKeyListener(`/dashboard/robotmodel/recordplayer`, (_, value) =>
 NetworkTables.addKeyListener(`/dashboard/robotmodel/harvester`, (_, value) => {
     if (typeof value === `boolean`) {
         robotPoseData.harvester = { state: value, since: Date.now(), startingAlpha: lastHarvesterAlpha };
+        console.log(robotPoseData.harvester)
     }
 });
 
@@ -364,25 +368,29 @@ function createMeshFromSTL (geometry) {
 function animate() {
     requestAnimationFrame(animate);
 
+    frameDelta += clock.getDelta();
+    if (frameDelta <= frameInterval) return;
+    frameDelta = frameDelta % frameInterval;
+
     if (currentFrustumScale !== 4) {
-        currentFrustumScale += (4 - currentFrustumScale) * 0.15;
+        currentFrustumScale += (4 - currentFrustumScale) * 0.3;
         updateCameraFrustum();
     }
 
     if (DEBUG_ROBOT_MODEL_POSE) {
         debugRobotModelPoseCount++;
-        setShoulder(Math.sin(debugRobotModelPoseCount / 100) * Math.PI / 8);
-        setElbow(-1.1 + Math.sin(debugRobotModelPoseCount / 100) * 1.4);
-        extendWrist(Math.min(Math.max(Math.sin(debugRobotModelPoseCount / 50) * 5, 0), 1));
-        openClaw(Math.min(Math.max(Math.sin(debugRobotModelPoseCount / 50) * 5, 0), 1));
-        spinRecordPlayer(0.02);
-        deployHarvester(Math.min(Math.max(Math.sin(debugRobotModelPoseCount / 50) * 2, 0), 1));
+        setShoulder(Math.sin(debugRobotModelPoseCount / 50) * Math.PI / 8);
+        setElbow(-1.1 + Math.sin(debugRobotModelPoseCount / 50) * 1.4);
+        extendWrist(Math.min(Math.max(Math.sin(debugRobotModelPoseCount / 25) * 5, 0), 1));
+        openClaw(Math.min(Math.max(Math.sin(debugRobotModelPoseCount / 25) * 5, 0), 1));
+        spinRecordPlayer(0.04);
+        deployHarvester(Math.min(Math.max(Math.sin(debugRobotModelPoseCount / 25) * 2, 0), 1));
     } else {
-        setShoulder(robotPoseData.shoulder);
-        setElbow(robotPoseData.elbow);
-        extendWrist(determineBooleanAlpha(robotPoseData.wrist, 400));
-        openClaw(determineBooleanAlpha(robotPoseData.claw, 300));
-        spinRecordPlayer(robotPoseData.recordPlayer / 60);
+        setShoulder(interpolateArm(robotPoseData.shoulder, 500));
+        setElbow(interpolateArm(robotPoseData.elbow, 500));
+        extendWrist(determineBooleanAlpha(robotPoseData.wrist, 100));
+        openClaw(determineBooleanAlpha(robotPoseData.claw, 150));
+        spinRecordPlayer(robotPoseData.recordPlayer / 30);
         deployHarvester(determineBooleanAlpha(robotPoseData.harvester, 350));
     }
 
@@ -393,13 +401,13 @@ function animate() {
 
             if (currentSelection.x === x && currentSelection.y === y) {
                 if (scoring?.x === x && scoring?.y === y) {
-                    rotationDelta = -0.3;
+                    rotationDelta = -0.6;
                     targetScale = 1.6;
 
                     const alpha = (Math.sin((Date.now() - scoring.since) / 75) + 1) / 2;
                     selectionOption.material.uniforms.color.value.lerpColors(new THREE.Color(0xffffff), new THREE.Color(x % 3 === 1 ? 0xa718b2 : 0xefdf0d), alpha);
                 } else {
-                    rotationDelta = -0.04;
+                    rotationDelta = -0.08;
                     targetScale = 1.3;
                 }
             } else {
@@ -409,12 +417,12 @@ function animate() {
             if (typeof rotationDelta === `number`) selectionOption.rotation.y += rotationDelta;
             else selectionOption.rotation.y = -Math.PI / 6;
 
-            const newScale = selectionOption.scale.x + ((targetScale - selectionOption.scale.x) * 0.125)
+            const newScale = selectionOption.scale.x + ((targetScale - selectionOption.scale.x) * 0.25)
             selectionOption.scale.set(newScale, newScale, newScale)
         });
     });
 
-    render();
+    if (document.hasFocus()) render();
 }
 
 function render() {
@@ -534,7 +542,17 @@ function deployHarvester (alpha) {
     lastHarvesterAlpha = alpha;
 }
 
+function interpolateArm (poseData, period) {
+    return poseData.value - (Math.max(1 - ((Date.now() - poseData.since) / period), 0) * (poseData.value - poseData.startingValue));
+}
+
 function determineBooleanAlpha (poseData, period) {
-    const p = ((Date.now() - poseData.since) / period) + poseData.startingAlpha;
+    const p = ((Date.now() - poseData.since) / period) + (poseData.state ? poseData.startingAlpha : 1 - poseData.startingAlpha);
     return Math.max(Math.min(poseData.state ? p : 1 - p, 1), 0);
+}
+
+function refreshText () {
+    voltageText.text = voltageText.text;
+    psiText.text = psiText.text;
+    timerText.text = timerText.text;
 }
