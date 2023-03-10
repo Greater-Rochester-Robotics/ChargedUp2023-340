@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -35,11 +36,11 @@ import frc.robot.commands.arm.ArmShoulderToPosition;
 import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.arm.ArmWristExtend;
 import frc.robot.commands.arm.ArmWristRetract;
-import frc.robot.commands.auto.AutoBackOneMeter;
-import frc.robot.commands.auto.AutoBackOneMeterLeftOneMeter;
-import frc.robot.commands.auto.AutoBackTwoMeters;
-import frc.robot.commands.auto.AutoDiagonalOneMeter;
 import frc.robot.commands.auto.AutoMidAroundOverRamp;
+import frc.robot.commands.auto.test.AutoBackOneMeter;
+import frc.robot.commands.auto.test.AutoBackOneMeterLeftOneMeter;
+import frc.robot.commands.auto.test.AutoBackTwoMeters;
+import frc.robot.commands.auto.test.AutoDiagonalOneMeter;
 import frc.robot.commands.claw.ClawClose;
 import frc.robot.commands.claw.ClawHold;
 import frc.robot.commands.claw.ClawIntake;
@@ -217,10 +218,10 @@ public class RobotContainer {
 
     /*autos */
     SmartDashboard.putData("Test Auto", new AutoMidAroundOverRamp());
-    // SmartDashboard.putData("Back 1m", new AutoBackOneMeter());
-    // SmartDashboard.putData("Back 2m", new AutoBackTwoMeters());
-    // SmartDashboard.putData("Diagonal 1m", new AutoDiagonalOneMeter());
-    // SmartDashboard.putData("Back 1m, Left 1m", new AutoBackOneMeterLeftOneMeter());
+    SmartDashboard.putData("Back 1m", new AutoBackOneMeter());
+    SmartDashboard.putData("Back 2m", new AutoBackTwoMeters());
+    SmartDashboard.putData("Diagonal 1m", new AutoDiagonalOneMeter());
+    SmartDashboard.putData("Back 1m, Left 1m", new AutoBackOneMeterLeftOneMeter());
   
 
 
@@ -247,12 +248,12 @@ public class RobotContainer {
     /* ==================== DRIVER BUTTONS ==================== */
     driverA.onTrue(new HarvestRecordIntake(true)).onFalse(new HarvesterStopRetract(true));
     driverB.onTrue(new HarvestRecordIntake(false)).onFalse(new HarvesterStopRetract(false));
-    driverX.whileTrue(new ClawOpenSpit());
+    driverX.onTrue(new ConditionalCommand(new ClawClose(), new ClawOpen(), claw::isOpen));
     driverY.onTrue(new ConditionalCommand(new ArmWristRetract(), new ArmWristExtend(), arm::isWristOut));
     driverRB.whileTrue(new DriveBalanceRobot());
     driverDLeft.onTrue(new DriveResetGyroToZero());
-    driverDRight.onTrue(new HarvesterExtensionOut());
-    driverStart.whileTrue(new HarvesterOuttake());
+    driverDRight.onTrue(new ConditionalCommand(new HarvesterExtensionIn(), new HarvesterExtensionOut(), harvester::isHarvesterOut));
+    driverStart.whileTrue(new HarvesterIntake());
     driverBack.toggleOnTrue(new DriveRobotCentric(false));
    
     
@@ -261,25 +262,19 @@ public class RobotContainer {
     coDriverA.onTrue(new ArmWristExtendCone()).onFalse(new CloseAndRetract());
     coDriverB.onTrue(new ArmWristExtendCube()).onFalse(new ArmWristRetract()).onFalse(new ClawHold());
     coDriverX.onTrue(new InstantCommand(()->target.getTargetPosition().getBackArmMoveCommand().schedule()));
-    coDriverY.onTrue(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP));
+    coDriverY.onTrue(new SequentialCommandGroup(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP), new ClawClose()));
     coDriverRB.whileTrue(new ArmShoulderManual());
-    coDriverLS.whileTrue(new ArmElbowManual());
+    coDriverLB.whileTrue(new ArmElbowManual());
 
     /* Record Player */
-    coDriverRS.whileTrue(new RecordPlayerDriverControl());
+    coDriverLTButton20.or(coDriverRTButton20).whileTrue(new RecordPlayerDriverControl()).onFalse(new InstantCommand(()->recordPlayer.stopRotationMotor()));
     coDriverBack.onTrue(new RecordOrientCone());
-    // coDriverLTButton20.or(coDriverRTButton20).onTrue(new RecordPlayerDriverControl());
    
     /* Targetting Control */
     coDriverDUp.onTrue(new InstantCommand(() -> target.up()){public boolean runsWhenDisabled(){return true;}});
     coDriverDRight.onTrue(new InstantCommand(() -> target.right()){public boolean runsWhenDisabled(){return true;}});
     coDriverDDown.onTrue(new InstantCommand(() -> target.down()){public boolean runsWhenDisabled(){return true;}});
     coDriverDLeft.onTrue(new InstantCommand(() -> target.left()){public boolean runsWhenDisabled(){return true;}});
-    // coDriverRB.onTrue(new InstantCommand(() -> target.next()){public boolean runsWhenDisabled(){return true;}});
-    // coDriverLB.onTrue(new InstantCommand(() -> target.previous()){public boolean runsWhenDisabled(){return true;}});
-    coDriverLS.whileTrue(new ArmElbowManual());
-    coDriverRS.whileTrue(new RecordPlayerDriverControl()).onFalse(new InstantCommand(()->recordPlayer.stopRotationMotor()));
-    // coDriverLTButton20.or(coDriverRTButton20).onTrue(new RecordPlayerDriverControl());
   }
 
   /**
