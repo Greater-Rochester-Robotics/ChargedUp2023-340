@@ -35,7 +35,7 @@ public class Claw extends SubsystemBase {
    */
   private NetworkTableInstance netInstance = NetworkTableInstance.getDefault();
   /**
-   * The network table used by the claw system.
+   * The network table used by the claw subsystem.
    */
   private NetworkTable netTable = netInstance.getTable("/dashboard/robotmodel");
 

@@ -229,7 +229,6 @@ NetworkTables.addKeyListener(`/dashboard/robotmodel/elbow`, (_, value) => {
     if (typeof value === `number`) {
         robotPoseData.elbow = { value, since: Date.now(), startingValue: lastElbowPosition };
     }
-    console.log(Date.now() - last)
     last = Date.now();
 }, true);
 
@@ -258,7 +257,6 @@ NetworkTables.addKeyListener(`/dashboard/robotmodel/recordplayer`, (_, value) =>
 NetworkTables.addKeyListener(`/dashboard/robotmodel/harvester`, (_, value) => {
     if (typeof value === `boolean`) {
         robotPoseData.harvester = { state: value, since: Date.now(), startingAlpha: lastHarvesterAlpha };
-        console.log(robotPoseData.harvester)
     }
 });
 
@@ -390,7 +388,7 @@ function animate() {
         setElbow(interpolateArm(robotPoseData.elbow, 500));
         extendWrist(determineBooleanAlpha(robotPoseData.wrist, 100));
         openClaw(determineBooleanAlpha(robotPoseData.claw, 150));
-        spinRecordPlayer(robotPoseData.recordPlayer / 30);
+        spinRecordPlayer((robotPoseData.recordPlayer / 30) * 2 * Math.PI);
         deployHarvester(determineBooleanAlpha(robotPoseData.harvester, 350));
     }
 

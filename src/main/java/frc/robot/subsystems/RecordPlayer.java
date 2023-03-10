@@ -11,6 +11,8 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,6 +25,15 @@ public class RecordPlayer extends SubsystemBase {
   private DigitalInput gamePieceSensor;
   private DigitalInput conePositionSensor0;
   private DigitalInput conePositionSensor1;
+
+  /**
+   * The network table instance used by the record player subsystem.
+   */
+  private NetworkTableInstance netInstance = NetworkTableInstance.getDefault();
+  /**
+   * The network table used by the record player subsystem.
+   */
+  private NetworkTable netTable = netInstance.getTable("/dashboard/robotmodel");
 
   /** Creates a new RecordPlayer. */
   public RecordPlayer() {
@@ -67,6 +78,8 @@ public class RecordPlayer extends SubsystemBase {
     }else{
       SmartDashboard.putString("RecordPlayer Current Command", curCommand.getName());
     }
+
+    netTable.getEntry("recordplayer").setDouble(rotationMotor.getEncoder().getVelocity());
   }
 
   public boolean getGamePieceSensor(){

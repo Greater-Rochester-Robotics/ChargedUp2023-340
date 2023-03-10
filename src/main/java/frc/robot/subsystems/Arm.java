@@ -72,7 +72,7 @@ public class Arm extends SubsystemBase {
    */
   private NetworkTableInstance netInstance = NetworkTableInstance.getDefault();
   /**
-   * The network table used by the arm system.
+   * The network table used by the arm subsystem.
    */
   private NetworkTable netTable = netInstance.getTable("/dashboard/robotmodel");
 

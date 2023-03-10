@@ -37,7 +37,7 @@ public class Harvester extends SubsystemBase {
    */
   private NetworkTableInstance netInstance = NetworkTableInstance.getDefault();
   /**
-   * The network table used by the harvester system.
+   * The network table used by the harvester subsystem.
    */
   private NetworkTable netTable = netInstance.getTable("/dashboard/robotmodel");
 
