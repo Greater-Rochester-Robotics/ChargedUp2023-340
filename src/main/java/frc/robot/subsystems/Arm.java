@@ -224,6 +224,7 @@ public class Arm extends SubsystemBase {
     // SmartDashboard.putBoolean("compare score", ArmConstants.REAR_LOWER_SCORE.isOppositeSideFromCurrent());
     // SmartDashboard.putBoolean("compare front",ArmConstants.FRONT_MIDDLE_CONE.isOppositeSideFromCurrent());
     // //Checks to see if both shoulders are at the same position,
+    
     //stops one closer to goal position
     if(shoulderPIDEnable){
       if(rightPos - leftPos < -0.19625 || rightPos - leftPos > 0.19625){
@@ -387,10 +388,17 @@ public class Arm extends SubsystemBase {
    * @param position an angle the arm should go to
    */
   public void setElbowPosition(double position) {
+    if(Math.abs(this.getElbowPosition()) > ArmConstants.MAX_ELBOW_ANGLE){
+      elbowMotor.stopMotor();
+      elbowBrake.set(false);
+      return;
+    }
+
     if(Math.abs(position) > ArmConstants.MAX_ELBOW_ANGLE) {
       System.out.println("ELBOW CAN'T BE SET TO ANGLE " + Math.toDegrees(position) + "\u00b0" + ", OUT OF RANGE!");
       return;
     }
+    
     position += Math.PI;
     double gravCounterConstant = isWristOut()?ArmConstants.KG_WRIST_OUT:ArmConstants.KG_WRIST_IN;
     double theta = getElbowPosition() - getShoulderPosition();

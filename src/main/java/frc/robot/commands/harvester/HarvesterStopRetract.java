@@ -27,9 +27,9 @@ public class HarvesterStopRetract extends SequentialCommandGroup {
           ),
           new HarvesterStop()
         )
-      )//,
-     // new WaitCommand(.5),
-     // (isCone?new RecordOrientCone():new InstantCommand())
+      ),
+     new WaitCommand(.5),
+     (isCone?new RecordOrientCone():new InstantCommand())
     );
   }
 

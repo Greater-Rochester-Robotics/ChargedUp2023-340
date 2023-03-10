@@ -257,13 +257,20 @@ public class RobotContainer {
    
     
     /* =================== CODRIVER BUTTONS =================== */
+    /* Arm */
     coDriverA.onTrue(new ArmWristExtendCone()).onFalse(new CloseAndRetract());
     coDriverB.onTrue(new ArmWristExtendCube()).onFalse(new ArmWristRetract()).onFalse(new ClawHold());
     coDriverX.onTrue(new InstantCommand(()->target.getTargetPosition().getBackArmMoveCommand().schedule()));
     coDriverY.onTrue(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP));
     coDriverRB.whileTrue(new ArmShoulderManual());
+    coDriverLS.whileTrue(new ArmElbowManual());
+
+    /* Record Player */
+    coDriverRS.whileTrue(new RecordPlayerDriverControl());
     coDriverBack.onTrue(new RecordOrientCone());
+    // coDriverLTButton20.or(coDriverRTButton20).onTrue(new RecordPlayerDriverControl());
    
+    /* Targetting Control */
     coDriverDUp.onTrue(new InstantCommand(() -> target.up()){public boolean runsWhenDisabled(){return true;}});
     coDriverDRight.onTrue(new InstantCommand(() -> target.right()){public boolean runsWhenDisabled(){return true;}});
     coDriverDDown.onTrue(new InstantCommand(() -> target.down()){public boolean runsWhenDisabled(){return true;}});
@@ -439,7 +446,7 @@ public class RobotContainer {
   }
 
   public double getRotationSpeed(){
-    return getCoDriverAxis(Axis.kRightY) * 0.6;
+    return getCoDriverAxis(Axis.kRightY) * 0.8;
   }
 
   public void notifyDriver(boolean notifyOn){

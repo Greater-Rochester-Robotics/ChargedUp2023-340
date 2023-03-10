@@ -4,6 +4,7 @@
 
 package frc.robot.commands.recordPlayer;
 
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
@@ -26,7 +27,7 @@ public class RecordPlayerDriverControl extends CommandBase {
   @Override
   public void execute() {
 
-    double rotationSpeed = Robot.robotContainer.getRotationSpeed();// (Robot.robotContainer.getCoDriverAxis(Axis.kRightTrigger) - Robot.robotContainer.getCoDriverAxis(Axis.kLeftTrigger)) * 0.6;
+    double rotationSpeed = (Robot.robotContainer.getCoDriverAxis(Axis.kRightTrigger) - Robot.robotContainer.getCoDriverAxis(Axis.kLeftTrigger)) * 0.6;
 
     RobotContainer.recordPlayer.setRotationMotor(rotationSpeed);
 
@@ -34,7 +35,9 @@ public class RecordPlayerDriverControl extends CommandBase {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    RobotContainer.recordPlayer.stopRotationMotor();
+  }
 
   // Returns true when the command should end.
   @Override
