@@ -140,6 +140,7 @@ public class Arm extends SubsystemBase {
     absoluteEncoderElbow = elbowMotor.getAbsoluteEncoder(Type.kDutyCycle);
     elbowController = elbowMotor.getPIDController();
     absoluteEncoderElbow.setPositionConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONV_FACTOR);
+    absoluteEncoderElbow.setVelocityConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONV_FACTOR/60);
     absoluteEncoderElbow.setInverted(true);
 
     elbowController.setFeedbackDevice(absoluteEncoderElbow);
@@ -154,6 +155,7 @@ public class Arm extends SubsystemBase {
     elbowMotor.getPIDController().setFF(ArmConstants.ELBOW_F);
     elbowMotor.getPIDController().setPositionPIDWrappingEnabled(false);
 
+
     elbowMotor.setIdleMode(IdleMode.kBrake);
 
     elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
@@ -166,6 +168,11 @@ public class Arm extends SubsystemBase {
 
     elbowMotor.setClosedLoopRampRate(1);
     elbowMotor.getPIDController().setOutputRange(-ArmConstants.MAX_ELBOW_PID_OUT, ArmConstants.MAX_ELBOW_PID_OUT);
+
+    // elbowController.setSmartMotionMaxVelocity(ArmConstants.MAX_ELBOW_VELOCITY_IN_RPM, 0); // MAX_ELBOW_VELOCITY_IN_RPM is currently 0!!!
+    // elbowController.setSmartMotionMinOutputVelocity(-ArmConstants.MAX_ELBOW_VELOCITY_IN_RPM, 0);
+    // elbowController.setSmartMotionMaxAccel(ArmConstants.MAX_ELBOW_ACCELERATION_IN_RPM, 0);
+    // elbowController.setSmartMotionAllowedClosedLoopError(ArmConstants.ELBOW_CLOSED_LOOP_ERROR, 0);
 
     elbowMotor.set(0);
 
@@ -213,7 +220,7 @@ public class Arm extends SubsystemBase {
     ArmPosition armPosition = getArmPosition();
     SmartDashboard.putNumber("ArmXend", armPosition.getEndX());
     // SmartDashboard.putBoolean("is in front of harvester", armPosition.isInFrontOfHarvester());
-    // SmartDashboard.putBoolean("is in abehind of harvester", armPosition.isBehindHarvester());
+    // SmartDashboard.putBoolean("is in behind of harvester", armPosition.isBehindHarvester());
     // SmartDashboard.putBoolean("compare score", ArmConstants.REAR_LOWER_SCORE.isOppositeSideFromCurrent());
     // SmartDashboard.putBoolean("compare front",ArmConstants.FRONT_MIDDLE_CONE.isOppositeSideFromCurrent());
     // //Checks to see if both shoulders are at the same position,
@@ -347,6 +354,10 @@ public class Arm extends SubsystemBase {
   public double getElbowPosition(){
     return absoluteEncoderElbow.getPosition() - Math.PI; // Scales positions -pi to pi
   }
+
+  public double getElbowVelocity(){
+    return absoluteEncoderElbow.getVelocity();
+  }
   
 
   /**
@@ -370,7 +381,7 @@ public class Arm extends SubsystemBase {
 
   /**
    * a method to set the elbow based on pid position,
-   * this runs an arbitraty output in addition to PID, 
+   * this runs an arbitrary output in addition to PID, 
    * so it should continue to be called in code loop.
    * 
    * @param position an angle the arm should go to

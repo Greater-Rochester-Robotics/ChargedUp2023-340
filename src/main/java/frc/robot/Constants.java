@@ -109,7 +109,9 @@ public final class Constants {
       public static final double ELBOW_ACCELERATION_DISTANCE = 1;
       public static final double SHOULDER_ACCELERATION_TIME = MAX_SHOULDER_VELOCITY / MAX_SHOULDER_ACCELERATION;
       public static final double ELBOW_ACCELERATION_TIME = MAX_ELBOW_VELOCITY / MAX_ELBOW_ACCELERATION;
-
+      public static final double MAX_ELBOW_VELOCITY_IN_RPM = 0;
+      public static final double MAX_ELBOW_ACCELERATION_IN_RPM = 0;
+      public static final double ELBOW_CLOSED_LOOP_ERROR = 0;
     }
 
     public static class ClawConstants {
@@ -159,6 +161,10 @@ public final class Constants {
       public static final double PATH_MAXIMUM_VELOCITY = 3.5;
       public static final double MAXIMUM_ACCELERATION = 1.25;
 
+      /*Drive balance robot constants */
+      public static final double DRIVE_BALANCE_ROBOT_VELOCITY_TOLERANCE = 8;
+      public static final double DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE = 5;
+      public static final double DRIVE_BALANCE_ROBOT_MAX_SPEED = 0.2;
 
       // public static final double MAX_ROBOT_ROT_VELOCITY = MAXIMUM_VELOCITY / DISTANCE_TO_MODULE_0;
       public static final double MAXIMUM_VOLTAGE = 12.0;

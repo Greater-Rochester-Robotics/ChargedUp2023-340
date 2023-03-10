@@ -11,6 +11,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.SwerveDriveConstants;
 
 /**
  * Drive up ramp until balanced
@@ -21,21 +22,20 @@ import frc.robot.RobotContainer;
 
 public class DriveBalanceRobot extends CommandBase {
   private double currentAngle = 0;
-  private double prevPitchAng = 0;
+  private double prevPitchAngle = 0;
+  private double prevRollAngle = 0;
   private double prevTime = 0;
   private PIDController pidX;
-  private ProfiledPIDController pidY;
-  private double maxSpeed = .2;
+  private PIDController pidY;
 
   /** Creates a new DriveFieldCentricAdvanced. */
   public DriveBalanceRobot() {
     addRequirements(RobotContainer.swerveDrive);
-    TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(0.4, 5.0);
+    // TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(0.4, 5.0);
     //Instantiats and sets the tolerence for both pid controllers
     pidX = new PIDController(0.25, 0.0, 0.0); //TODO: Tune all pid and tolerance values
     // pidX.setTolerance(5);
-    pidY = new ProfiledPIDController(0.25, 0.0, 0.0, constraints);
-    pidY.setTolerance(2.5);
+    pidY = new PIDController(0.25, 0.0, 0.0);
   }
 
   // Called when the command is initially scheduled.
@@ -44,8 +44,9 @@ public class DriveBalanceRobot extends CommandBase {
     // RobotContainer.swerveDrive.setIsOdometry(false);
     currentAngle = RobotContainer.swerveDrive.getGyroInRadYaw();
     pidX.reset();
-    pidY.reset(RobotContainer.swerveDrive.getGyroInDegRoll());
-    prevPitchAng = RobotContainer.swerveDrive.getGyroInDegPitch();
+    pidY.reset();
+    prevPitchAngle = RobotContainer.swerveDrive.getGyroInDegPitch();
+    prevRollAngle = RobotContainer.swerveDrive.getGyroInDegRoll();
     prevTime = Timer.getFPGATimestamp();
   }
 
@@ -53,34 +54,50 @@ public class DriveBalanceRobot extends CommandBase {
   @Override
   public void execute() {
     //Gets the pitch yaw and their velocity's
-    double pitchAng = RobotContainer.swerveDrive.getGyroInDegPitch();
+    double pitchAngle = RobotContainer.swerveDrive.getGyroInDegPitch();
+    double rollAngle = RobotContainer.swerveDrive.getGyroInDegRoll();
     double time = Timer.getFPGATimestamp();
-    double pitchVel = (pitchAng - prevPitchAng)/(time - prevTime);
+    double pitchVel = (pitchAngle - prevPitchAngle)/(time - prevTime);
+    double rollVel = (pitchAngle - prevPitchAngle)/(time - prevTime);
     prevTime = time;
-    double rollAng = RobotContainer.swerveDrive.getGyroInDegRoll();
-    double rollVel = RobotContainer.swerveDrive.getRotationalVelocityRoll();
     double forwardSpeed = 0.0;
     double strafeSpeed = 0.0;
-    prevTime = time;
-    prevPitchAng = pitchAng;
+    prevPitchAngle = pitchAngle;
+    prevRollAngle = rollAngle;
     //if we are facing up and the ramp is moving down (or vice versa) we are coming to balance so stop moving
-    if(Math.abs(pitchVel) > 8 || Math.abs(pitchAng) < 5){//Math.signum(pitchAng) * Math.signum(pitchVel) < 0) {//
+    if(Math.abs(pitchVel) > SwerveDriveConstants.DRIVE_BALANCE_ROBOT_VELOCITY_TOLERANCE || Math.abs(pitchAngle) < SwerveDriveConstants.DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE){
+      //Math.signum(pitchAng) * Math.signum(pitchVel) < 0) {//
       forwardSpeed = 0.0;
     } else {
-      forwardSpeed = pidX.calculate(pitchAng, 0.0);
+      forwardSpeed = pidX.calculate(pitchAngle, 0.0);
     }
 
-    if(forwardSpeed>maxSpeed){
-      forwardSpeed = maxSpeed;
-    }else if(forwardSpeed < -maxSpeed){
-      forwardSpeed = -maxSpeed;
+    //same thing for roll
+    if(Math.abs(rollVel) > SwerveDriveConstants.DRIVE_BALANCE_ROBOT_VELOCITY_TOLERANCE || Math.abs(rollAngle) < SwerveDriveConstants.DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE){
+      strafeSpeed = 0.0;
+    } else {
+      strafeSpeed = pidY.calculate(rollAngle, 0.0);
+    }
+
+    //puts the value of forward speed between maxSpeed and -maxSpeed
+    if(forwardSpeed > SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED){
+      forwardSpeed = SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED;
+    }else if(forwardSpeed < -SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED){
+      forwardSpeed = -SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED;
+    }
+
+    //puts the value of strafe speed between maxSpeed and -maxSpeed
+    if(strafeSpeed > SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED){
+      strafeSpeed = SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED;
+    }else if(strafeSpeed < -SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED){
+      strafeSpeed = -SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED;
     }
     // if(Math.signum(rollAng) * Math.signum(rollVel) < 0) {
     //   strafeSpeed = 0.0;
     // } else {
     //   strafeSpeed = pidY.calculate(rollAng, 0.0);
     // }
-    System.out.println("pitch: " + Math.round(pitchAng) + "   PitchSpeed: " + pitchVel + "     Output: "+forwardSpeed);
+    // System.out.println("pitch: " + Math.round(pitchAngle) + "   PitchSpeed: " + pitchVel + "     Output: "+forwardSpeed);
     // TODO: allow driver to move side to side
     //moves the robot using driveRobotCentric
     RobotContainer.swerveDrive.driveRobotCentric(
