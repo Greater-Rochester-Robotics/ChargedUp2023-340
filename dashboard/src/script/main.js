@@ -1,5 +1,6 @@
 const ENABLE_ORBIT_CONTROLS = false;
 const ENABLE_KEYBOARD_DEBUGGING = false;
+const DEBUG_ROBOT_MODEL_POSE = false;
 
 import { NetworkTables } from '/lib/networktables.js';
 import * as THREE from '/lib/three.js';
@@ -7,19 +8,20 @@ import { OrbitControls } from '/lib/OrbitControls.js';
 import { STLLoader } from '/lib/STLLoader.js'
 import { TextSprite } from '/lib/TextSprite.js';
 
+
+let lastShoulderPosition = 0;
+let lastElbowPosition = 0;
+let lastWristAlpha = 0;
+let lastClawAlpha = 0;
+let lastHarvesterAlpha = 0;
+let debugRobotModelPoseCount = 0;
+
 let scoring = null
 let currentFrustumScale = 1000;
 const currentSelection = {
     x: 0,
     y: 0
 };
-
-let _lastShoulderPosition = 0;
-let _lastElbowPosition = 0;
-let _lastClawAlpha = 0;
-let _lastHarvesterAlpha = 0;
-
-let _tempCount = 0;
 
 const loader = new STLLoader();
 
@@ -55,34 +57,6 @@ for (let i = 0; i < 3; i++) {
     }
 }
 
-const robotModels = {
-    driveBase: createMeshFromSTL(await loadSTL(`./assets/models/drivebase.stl`)),
-    shoulder: createMeshFromSTL(await loadSTL(`./assets/models/shoulder.stl`)),
-    elbow: createMeshFromSTL(await loadSTL(`./assets/models/elbow.stl`)),
-    wrist: createMeshFromSTL(await loadSTL(`./assets/models/wrist.stl`)),
-    clawLeft: createMeshFromSTL(await loadSTL(`./assets/models/clawleft.stl`)),
-    clawRight: createMeshFromSTL(await loadSTL(`./assets/models/clawright.stl`)),
-    recordPlayer: createMeshFromSTL(await loadSTL(`./assets/models/recordPlayer.stl`)),
-    harvester: createMeshFromSTL(await loadSTL(`./assets/models/harvester.stl`))
-}
-
-const harvesterLateralHelper = new THREE.Object3D();
-
-robotModels.driveBase.add(robotModels.shoulder);
-robotModels.shoulder.add(robotModels.elbow);
-robotModels.elbow.add(robotModels.wrist);
-robotModels.wrist.add(robotModels.clawLeft).add(robotModels.clawRight);
-robotModels.driveBase.add(robotModels.recordPlayer);
-robotModels.driveBase.add(harvesterLateralHelper);
-harvesterLateralHelper.add(robotModels.harvester);
-
-robotModels.driveBase.material.uniforms.thickness.value = 0.3;
-
-robotModels.driveBase.position.set(0, -1.6, 0);
-robotModels.driveBase.rotation.set(0.3,  0.6, Math.PI);
-robotModels.driveBase.geometry.scale(1.2, 1.2, 1.2);
-scene.add(robotModels.driveBase);
-
 const selectionOptionBackgrounds = [];
 for (let i = 0; i < 3; i++) {
     const mesh = new THREE.Mesh(
@@ -98,6 +72,43 @@ for (let i = 0; i < 3; i++) {
     scene.add(mesh);
     selectionOptionBackgrounds.push(mesh);
 }
+
+const robotModels = {
+    driveBase: createMeshFromSTL(await loadSTL(`./assets/models/drivebase.stl`)),
+    shoulder: createMeshFromSTL(await loadSTL(`./assets/models/shoulder.stl`)),
+    elbow: createMeshFromSTL(await loadSTL(`./assets/models/elbow.stl`)),
+    wrist: createMeshFromSTL(await loadSTL(`./assets/models/wrist.stl`)),
+    clawLeft: createMeshFromSTL(await loadSTL(`./assets/models/clawleft.stl`)),
+    clawRight: createMeshFromSTL(await loadSTL(`./assets/models/clawright.stl`)),
+    recordPlayer: createMeshFromSTL(await loadSTL(`./assets/models/recordPlayer.stl`)),
+    harvester: createMeshFromSTL(await loadSTL(`./assets/models/harvester.stl`))
+};
+
+const harvesterLateralHelper = new THREE.Object3D();
+
+const robotPoseData = {
+    shoulder: 0,
+    elbow: 0,
+    wrist: { state: false, since: Date.now(), startingAlpha: 0 },
+    claw: { state: false, since: Date.now(), startingAlpha: 0 },
+    recordPlayer: 0,
+    harvester: { state: false, since: Date.now(), startingAlpha: 0 }
+};
+
+robotModels.driveBase.add(robotModels.shoulder);
+robotModels.shoulder.add(robotModels.elbow);
+robotModels.elbow.add(robotModels.wrist);
+robotModels.wrist.add(robotModels.clawLeft).add(robotModels.clawRight);
+robotModels.driveBase.add(robotModels.recordPlayer);
+robotModels.driveBase.add(harvesterLateralHelper);
+harvesterLateralHelper.add(robotModels.harvester);
+
+robotModels.driveBase.material.uniforms.thickness.value = 0.3;
+
+robotModels.driveBase.position.set(0, -1.6, 0);
+robotModels.driveBase.rotation.set(0.3,  0.6, Math.PI);
+robotModels.driveBase.geometry.scale(1.2, 1.2, 1.2);
+scene.add(robotModels.driveBase);
 
 const voltageText = new TextSprite(`0V`, 0.3, `#ffffff`);
 voltageText.fontSize = 100;
@@ -199,23 +210,53 @@ NetworkTables.addKeyListener(`/dashboard/target/selection`, (_, value) => {
 
 // Boolean: true = scoring, false = finished scoring
 NetworkTables.addKeyListener(`/dashboard/target/scoring`, (_, value) => {
-    if (value) startScoring();
-    else finishScoring();
+    if (typeof value === `boolean`) {
+        if (value) startScoring();
+        else finishScoring();
+    }
 }, false);
 
-// Float: radians
-NetworkTables.addKeyListener(`/dashboard/visualizer/shoulder`, (_, value) => {
+// Double: radians
+NetworkTables.addKeyListener(`/dashboard/robotmodel/shoulder`, (_, value) => {
     if (typeof value === `number`) {
-        setShoulder(value);
+        robotPoseData.shoulder = value;
     }
 }, true);
 
-// Float: radians
-NetworkTables.addKeyListener(`/dashboard/visualizer/elbow`, (_, value) => {
+// Double: radians
+NetworkTables.addKeyListener(`/dashboard/robotmodel/elbow`, (_, value) => {
     if (typeof value === `number`) {
-        setElbow(value);
+        robotPoseData.elbow = value;
     }
 }, true);
+
+// Boolean: extended
+NetworkTables.addKeyListener(`/dashboard/robotmodel/wrist`, (_, value) => {
+    if (typeof value === `boolean`) {
+        robotPoseData.wrist = { state: value, since: Date.now(), startingAlpha: lastWristAlpha };
+    }
+});
+
+// Boolean: open
+NetworkTables.addKeyListener(`/dashboard/robotmodel/claw`, (_, value) => {
+    if (typeof value === `boolean`) {
+        robotPoseData.claw = { state: value, since: Date.now(), startingAlpha: lastClawAlpha };
+    }
+});
+
+// Double: speed
+NetworkTables.addKeyListener(`/dashboard/robotmodel/recordplayer`, (_, value) => {
+    if (typeof value === `number`) {
+        robotPoseData.recordPlayer = value;
+    }
+});
+
+// Boolean: deployed
+NetworkTables.addKeyListener(`/dashboard/robotmodel/harvester`, (_, value) => {
+    if (typeof value === `boolean`) {
+        robotPoseData.harvester = { state: value, since: Date.now(), startingAlpha: lastHarvesterAlpha };
+    }
+});
 
 window.addEventListener(`resize`, () => {
     updateCameraFrustum();
@@ -229,7 +270,6 @@ document.addEventListener(`click`, (event) => {
 
     raycaster.setFromCamera({ x: clickX, y: clickY }, camera);
     const raycasterIntersects = raycaster.intersectObjects(scene.children, false)?.filter((mesh) => selectionOptions.flat().includes(mesh.object))[0]?.object?.optionData;
-    console.log(raycaster.intersectObjects(robotModels.driveBase.children, false))
 
     if (raycasterIntersects) {
         currentSelection.x = raycasterIntersects.x;
@@ -321,8 +361,6 @@ function createMeshFromSTL (geometry) {
     return new THREE.Mesh(geometryClone, material);
 }
 
-console.log(robotModels.recordPlayer);
-
 function animate() {
     requestAnimationFrame(animate);
 
@@ -331,13 +369,22 @@ function animate() {
         updateCameraFrustum();
     }
 
-    _tempCount++;
-    setShoulder(Math.sin(_tempCount / 200) * Math.PI / 8);
-    setElbow(-1.1 + Math.sin(_tempCount / 200) * 1.4);
-    extendWrist(Math.min(Math.max(Math.sin(_tempCount / 100) * 5, 0), 1));
-    openClaw(Math.min(Math.max(Math.sin(_tempCount / 100) * 5, 0), 1));
-    deployHarvester(Math.min(Math.max(Math.sin(_tempCount / 100) * 2, 0), 1));
-    spinRecordPlayer(0.01);
+    if (DEBUG_ROBOT_MODEL_POSE) {
+        debugRobotModelPoseCount++;
+        setShoulder(Math.sin(debugRobotModelPoseCount / 100) * Math.PI / 8);
+        setElbow(-1.1 + Math.sin(debugRobotModelPoseCount / 100) * 1.4);
+        extendWrist(Math.min(Math.max(Math.sin(debugRobotModelPoseCount / 50) * 5, 0), 1));
+        openClaw(Math.min(Math.max(Math.sin(debugRobotModelPoseCount / 50) * 5, 0), 1));
+        spinRecordPlayer(0.02);
+        deployHarvester(Math.min(Math.max(Math.sin(debugRobotModelPoseCount / 50) * 2, 0), 1));
+    } else {
+        setShoulder(robotPoseData.shoulder);
+        setElbow(robotPoseData.elbow);
+        extendWrist(determineBooleanAlpha(robotPoseData.wrist, 400));
+        openClaw(determineBooleanAlpha(robotPoseData.claw, 300));
+        spinRecordPlayer(robotPoseData.recordPlayer / 60);
+        deployHarvester(determineBooleanAlpha(robotPoseData.harvester, 350));
+    }
 
     selectionOptions.forEach((row, y) => {
         row.forEach((selectionOption, x) => {
@@ -345,7 +392,7 @@ function animate() {
             let targetScale;
 
             if (currentSelection.x === x && currentSelection.y === y) {
-                if (scoring.x === x && scoring.y === y) {
+                if (scoring?.x === x && scoring?.y === y) {
                     rotationDelta = -0.3;
                     targetScale = 1.6;
 
@@ -418,9 +465,9 @@ function setShoulder (theta) {
         robotModels.shoulder.rotateOnAxis(axis, delta);
     }
 
-    _moveShoulder(-_lastShoulderPosition);
+    _moveShoulder(-lastShoulderPosition);
     _moveShoulder(theta);
-    _lastShoulderPosition = theta;
+    lastShoulderPosition = theta;
 }
 
 function setElbow (theta) {
@@ -435,17 +482,18 @@ function setElbow (theta) {
         robotModels.elbow.rotateOnAxis(axis, -delta);
     }
 
-    _moveElbow(-_lastElbowPosition);
+    _moveElbow(-lastElbowPosition);
     _moveElbow(theta);
-    _lastElbowPosition = theta;
+    lastElbowPosition = theta;
 }
 
 function extendWrist (alpha) {
     robotModels.wrist.position.set(0, alpha * 0.25, 0);
+    lastWristAlpha = alpha;
 }
 
 function openClaw (alpha) {
-    const delta = (_lastClawAlpha - alpha) * Math.PI / 4;
+    const delta = (lastClawAlpha - alpha) * Math.PI / 4;
 
     [robotModels.clawLeft, robotModels.clawRight].forEach((claw, i) => {
         const origin = new THREE.Vector3(0.05, -.5, 0);
@@ -456,23 +504,8 @@ function openClaw (alpha) {
         claw.position.add(origin);
 
         claw.rotateOnAxis(axis, delta * (i === 0 ? -1 : 1));
-        _lastClawAlpha = alpha;
+        lastClawAlpha = alpha;
     });
-}
-
-function deployHarvester (alpha) {
-    const delta = (_lastHarvesterAlpha - alpha) * -Math.PI / 6;
-    const origin = new THREE.Vector3(0.313, 0.3, 0);
-    const axis = new THREE.Vector3(0, 0, 1);
-
-    robotModels.harvester.position.sub(origin);
-    robotModels.harvester.position.applyAxisAngle(axis, delta);
-    robotModels.harvester.position.add(origin);
-
-    robotModels.harvester.rotateOnAxis(axis, delta);
-    harvesterLateralHelper.position.set(alpha * 0.035, 0, 0);
-    
-    _lastHarvesterAlpha = alpha;
 }
 
 function spinRecordPlayer (alpha) {
@@ -484,4 +517,24 @@ function spinRecordPlayer (alpha) {
     robotModels.recordPlayer.position.add(origin);
 
     robotModels.recordPlayer.rotateOnAxis(axis, alpha);
+}
+
+function deployHarvester (alpha) {
+    const delta = (lastHarvesterAlpha - alpha) * -Math.PI / 6;
+    const origin = new THREE.Vector3(0.313, 0.3, 0);
+    const axis = new THREE.Vector3(0, 0, 1);
+
+    robotModels.harvester.position.sub(origin);
+    robotModels.harvester.position.applyAxisAngle(axis, delta);
+    robotModels.harvester.position.add(origin);
+
+    robotModels.harvester.rotateOnAxis(axis, delta);
+    harvesterLateralHelper.position.set(alpha * 0.035, 0, 0);
+    
+    lastHarvesterAlpha = alpha;
+}
+
+function determineBooleanAlpha (poseData, period) {
+    const p = ((Date.now() - poseData.since) / period) + poseData.startingAlpha;
+    return Math.max(Math.min(poseData.state ? p : 1 - p, 1), 0);
 }
