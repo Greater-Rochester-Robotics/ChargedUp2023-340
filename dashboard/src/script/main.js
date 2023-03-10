@@ -420,7 +420,7 @@ function animate() {
         });
     });
 
-    if (document.hasFocus()) render();
+    render();
 }
 
 function render() {
