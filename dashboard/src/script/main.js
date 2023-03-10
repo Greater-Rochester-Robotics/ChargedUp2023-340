@@ -345,7 +345,7 @@ function animate() {
             let targetScale;
 
             if (currentSelection.x === x && currentSelection.y === y) {
-                if (scoring) {
+                if (scoring.x === x && scoring.y === y) {
                     rotationDelta = -0.3;
                     targetScale = 1.6;
 
