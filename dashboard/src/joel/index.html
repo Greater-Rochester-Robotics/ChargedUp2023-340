@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>340 Dashboard Joel Edition</title>
+
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
+
+    <style>
+        @font-face {
+            font-family: 'Library';
+            src: url('/assets/fonts/library-webfont.woff2') format('woff2'),
+                url('/assets/fonts/library-webfont.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            color: white;
+            background-color: #292929;
+            font-family: 'Library';
+            overflow: hidden;
+        }
+
+        .timer-container {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -20%);
+            width: 80vw;
+            height: 60vh;
+            background-color: #00000019;
+            border-radius: 4vh;
+            text-align: center;
+        }
+
+        .timer {
+            margin: 0;
+            position: relative;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40vh;
+        }
+
+        .joel-container {
+            position: absolute;
+            top: 90%;
+            left: 50%;
+            transform: translate(-50%, -90%);
+            width: 80vw;
+            height: 20vh;
+            background-color: #00000019;
+            border-radius: 4vh;
+            text-align: center;
+        }
+
+        .joel {
+            margin: 0;
+            position: relative;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8vh;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="timer-container" class="timer-container">
+        <p id="timer" class="timer">0:00</p>
+    </div>
+
+    <div id="joel-container" class="joel-container">
+        <p id="joel" class="joel">Dashboard: Joel Edition</p>
+    </div>
+
+    <script type="module">
+        import { NetworkTables } from '/lib/networktables.js';
+
+        // Integer: match time in seconds
+        NetworkTables.addKeyListener(`/dashboard/general/time`, (_, value) => {
+            if (typeof value === `number` && value >= 0 && value <= 300) {
+                document.getElementById(`timer`).innerText = new Date(value * 1000).toISOString().substring(15, 19);
+            }
+        });
+    </script>
+</body>
+
+</html>
