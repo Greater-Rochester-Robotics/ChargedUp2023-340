@@ -6,10 +6,8 @@ package frc.robot.commands.drive;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.Timer;
+
 import frc.robot.RobotContainer;
 import frc.robot.Constants.SwerveDriveConstants;
 
@@ -31,9 +29,8 @@ public class DriveBalanceRobot extends CommandBase {
   /** Creates a new DriveFieldCentricAdvanced. */
   public DriveBalanceRobot() {
     addRequirements(RobotContainer.swerveDrive);
-    // TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(0.4, 5.0);
     //Instantiats and sets the tolerence for both pid controllers
-    pidX = new PIDController(0.25, 0.0, 0.0); //TODO: Tune all pid and tolerance values
+    pidX = new PIDController(0.25, 0.0, 0.0); 
     // pidX.setTolerance(5);
     pidY = new PIDController(0.25, 0.0, 0.0);
   }
@@ -53,19 +50,25 @@ public class DriveBalanceRobot extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    double forwardSpeed = 0.0;
+    double strafeSpeed = 0.0;
+
     //Gets the pitch yaw and their velocity's
     double pitchAngle = RobotContainer.swerveDrive.getGyroInDegPitch();
     double rollAngle = RobotContainer.swerveDrive.getGyroInDegRoll();
+
     double time = Timer.getFPGATimestamp();
-    double pitchVel = (pitchAngle - prevPitchAngle)/(time - prevTime);
-    double rollVel = (pitchAngle - prevPitchAngle)/(time - prevTime);
+    double deltaTime = time - prevTime;
+    double pitchVel = (pitchAngle - prevPitchAngle)/deltaTime;
+    double rollVel = (rollAngle - prevRollAngle)/deltaTime;
+
     prevTime = time;
-    double forwardSpeed = 0.0;
-    double strafeSpeed = 0.0;
     prevPitchAngle = pitchAngle;
     prevRollAngle = rollAngle;
+
     //if we are facing up and the ramp is moving down (or vice versa) we are coming to balance so stop moving
-    if(Math.abs(pitchVel) > SwerveDriveConstants.DRIVE_BALANCE_ROBOT_VELOCITY_TOLERANCE || Math.abs(pitchAngle) < SwerveDriveConstants.DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE){
+    if(Math.abs(pitchVel) > SwerveDriveConstants.DRIVE_BALANCE_ROBOT_VELOCITY_TOLERANCE || 
+        Math.abs(pitchAngle) < SwerveDriveConstants.DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE){
       //Math.signum(pitchAng) * Math.signum(pitchVel) < 0) {//
       forwardSpeed = 0.0;
     } else {
@@ -73,7 +76,8 @@ public class DriveBalanceRobot extends CommandBase {
     }
 
     //same thing for roll
-    if(Math.abs(rollVel) > SwerveDriveConstants.DRIVE_BALANCE_ROBOT_VELOCITY_TOLERANCE || Math.abs(rollAngle) < SwerveDriveConstants.DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE){
+    if(Math.abs(rollVel) > SwerveDriveConstants.DRIVE_BALANCE_ROBOT_VELOCITY_TOLERANCE || 
+        Math.abs(rollAngle) < SwerveDriveConstants.DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE){
       strafeSpeed = 0.0;
     } else {
       strafeSpeed = pidY.calculate(rollAngle, 0.0);
