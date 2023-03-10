@@ -13,38 +13,50 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.SwerveDriveConstants;
-import frc.robot.commands.ArmClawStopRetract;
-import frc.robot.commands.ArmScoreCone;
+import frc.robot.commands.HarvestRecordIntake;
 import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.claw.ClawOpen;
 import frc.robot.commands.drive.DriveBalanceRobot;
 import frc.robot.commands.drive.auto.DriveFollowTrajectory;
 import frc.robot.commands.drive.util.DriveSetGyro;
-import frc.robot.subsystems.ArmPosition;
-import frc.robot.subsystems.SwerveDrive;
+import frc.robot.commands.harvester.HarvesterIntake;
+import frc.robot.commands.harvester.HarvesterStopRetract;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class AutoCone20ChargeBalance extends SequentialCommandGroup {
-  /** Creates a new AutoCone20ChargeBalance. */
-  public AutoCone20ChargeBalance() {
-    List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("AutoCone20ChargeBalance", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
+public class AutoCube200PickUpReturn extends SequentialCommandGroup {
+  /** Creates a new AutoCone20PickUpChargeBalance. */
+  public AutoCube200PickUpReturn() {
+    List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("AutoCone20PickUpReturn", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
+    //TODO:fix this at the end, this is for when another team is balancing
     addCommands(
       new DriveSetGyro(0),
-      new ArmToPosition(ArmConstants.BACK_HIGH_CONE),
+      new ArmToPosition(ArmConstants.BACK_HIGH_CUBE),
       new ClawOpen(),
       new WaitCommand(0.5),
+      Commands.race(
+        new HarvesterIntake(false),
+        Commands.parallel(
+          new ArmToPosition(ArmConstants.INTERNAL_PICK_UP),
+          Commands.sequence(new DriveFollowTrajectory(path.get(0))),
+            new WaitCommand(0.5)
+          ),
+          Commands.sequence(
+            new WaitUntilCommand(RobotContainer.harvester::hasGamePiece),
+            new WaitUntilCommand(()-> (!RobotContainer.harvester.hasGamePiece()))
+        ),
+      new DriveFollowTrajectory(path.get(1),false),
+      new WaitCommand(0.5),
       Commands.parallel(
-        new ArmToPosition(ArmConstants.INTERNAL_PICK_UP),
-        new DriveFollowTrajectory(path.get(0))
+        new HarvesterStopRetract(false),
+        new DriveFollowTrajectory(path.get(2),false)
+        )
       ),
-      new DriveFollowTrajectory(path.get(1)),
       new DriveBalanceRobot()
     );
   }
