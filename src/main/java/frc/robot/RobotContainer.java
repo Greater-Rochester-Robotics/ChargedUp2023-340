@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -112,14 +113,16 @@ public class RobotContainer {
   static final Trigger driverRB = new JoystickButton(driver, 6);
   static final Trigger driverBack = new JoystickButton(driver, 7);
   static final Trigger driverStart = new JoystickButton(driver, 8);
-  // static final Trigger driverLS = new JoystickButton(driver, 9);
+  // static final Trigger driverLS = new JoystickButton(driver, 9); // USED BY COMMAND DON'T ENABLE
   static final Trigger driverRS = new JoystickButton(driver, 10);
-  // static final Trigger driverDUp = new POVButton(driver, 0);
-  // static final Trigger driverDDown = new POVButton(driver, 180);
+  // static final Trigger driverDUp = new POVButton(driver, 0); // USED BY COMMAND DON'T ENABLE
+  // static final Trigger driverDDown = new POVButton(driver, 180); // USED BY COMMAND DON'T ENABLE
   static final Trigger driverDLeft = new POVButton(driver, 270);
   static final Trigger driverDRight = new POVButton(driver, 90);
-  // final Trigger driverLTButton = new JoyTriggerButton(driver, .3, Axis.LEFT_TRIGGER);//This is used in driving, don't enable
-  // final Trigger driverRTButton = new JoyTriggerButton(driver, .3, Axis.RIGHT_TRIGGER);//This is used in driving, don't enable
+  static final Trigger driverStickRightUp = new JoyTriggerButton(driver, -.3, Axis.kRightY);
+  static final Trigger driverStickRightRight = new JoyTriggerButton(driver, .3, Axis.kRightX);
+  static final Trigger driverStickRightDown = new JoyTriggerButton(driver, .3, Axis.kRightY);
+  static final Trigger driverStickRightLeft = new JoyTriggerButton(driver, -.3, Axis.kRightY);
 
   ///////////////////////
   // CO-DRIVER BUTTONS //
@@ -249,30 +252,31 @@ public class RobotContainer {
     /* ==================== DRIVER BUTTONS ==================== */
     driverA.onTrue(new HarvestRecordIntake(true)).onFalse(new HarvesterStopRetract(true));
     driverB.onTrue(new HarvestRecordIntake(false)).onFalse(new HarvesterStopRetract(false));
-    driverX.onTrue(new ConditionalCommand(new ClawClose(), new ClawOpen(), claw::isOpen));
+    driverX.onTrue(new ClawOpenSpit());//new ConditionalCommand(new ClawClose(), new ClawOpen(), claw::isOpen));
     driverY.onTrue(new ConditionalCommand(new ArmWristRetract(), new ArmWristExtend(), arm::isWristOut));
     driverLB.onTrue(new DriveToTarget()).onFalse(new DriveStopAllModules());
     driverRB.whileTrue(new DriveBalanceAdvanced()).onFalse(new DriveLockWheels());
     driverDLeft.onTrue(new DriveResetGyroToZero());
-    driverDRight.onTrue(new ConditionalCommand(new HarvesterExtensionIn(), new HarvesterExtensionOut(), harvester::isHarvesterOut));
+    driverDRight.onTrue(new ConditionalCommand(new HarvesterExtensionIn(), Commands.parallel(new HarvesterExtensionOut(), new ClawClose()), harvester::isHarvesterOut));
     driverStart.whileTrue(new HarvesterIntake());
     driverBack.toggleOnTrue(new DriveRobotCentric(false));
-   
+    driverStickRightUp.onTrue(new HarvesterExtensionOut());
+    driverStickRightDown.onTrue(new HarvesterExtensionIn());
     
     /* =================== CODRIVER BUTTONS =================== */
     /* Arm */
     coDriverA.onTrue(new ArmWristExtendCone()).onFalse(new CloseAndRetract());
     coDriverB.onTrue(new ArmWristExtendCube()).onFalse(new ArmWristRetract()).onFalse(new ClawHold());
     coDriverX.onTrue(new InstantCommand(()->target.getTargetPosition().getBackArmMoveCommand().schedule()));
-    coDriverY.onTrue(new SequentialCommandGroup(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP), new ClawClose()));
-    coDriverRB.whileTrue(new ArmShoulderManual());
+    coDriverY.onTrue(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP));
     coDriverLB.whileTrue(new ArmElbowManual());
+    coDriverRB.whileTrue(new ArmShoulderManual());
 
     coDriverLTButton20.or(coDriverRTButton20).whileTrue(new RecordPlayerDriverControl()).onFalse(new InstantCommand(()->recordPlayer.stopRotationMotor()));
     coDriverStart.onTrue(new ArmToPosition(ArmConstants.FRONT_PICK_UP));
     coDriverBack.onTrue(new RecordOrientCone());
     
-    /* Targetting Control */
+    /* Targeting Control */
     coDriverDUp.onTrue(new InstantCommand(() -> target.up()){public boolean runsWhenDisabled(){return true;}});
     coDriverDRight.onTrue(new InstantCommand(() -> target.right()){public boolean runsWhenDisabled(){return true;}});
     coDriverDDown.onTrue(new InstantCommand(() -> target.down()){public boolean runsWhenDisabled(){return true;}});

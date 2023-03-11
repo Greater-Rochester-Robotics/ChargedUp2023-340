@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -13,10 +14,13 @@ import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.I2C;
+
 import frc.robot.Constants;
 import frc.robot.Constants.RecordPlayerConstants;
 
@@ -25,6 +29,8 @@ public class RecordPlayer extends SubsystemBase {
   private DigitalInput gamePieceSensor;
   private DigitalInput conePositionSensor0;
   private DigitalInput conePositionSensor1;
+  private ColorSensorV3 colorSensor;
+  private ColorSensorState colorSensorState;
 
   /**
    * The network table instance used by the record player subsystem.
@@ -64,15 +70,18 @@ public class RecordPlayer extends SubsystemBase {
     rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);  
     rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
     rotationMotor.burnFlash();
+
+    colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
+    colorSensorState = ColorSensorState.kUnknown;
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putBoolean("record player has cone: ", getConePositionSensor0());
-    SmartDashboard.putBoolean("record player has game peice: ", getGamePieceSensor());
-    // SmartDashboard.putNumber("record player angle",getEncoderAngle());
-    
+    SmartDashboard.putBoolean("record player has game piece: ", getGamePieceSensor());
+    // SmartDashboard.putNumber("record player angle", getEncoderAngle());
+
     // Command curCommand = this.getCurrentCommand();
     // if(curCommand == null){
     //   SmartDashboard.putString("RecordPlayer Current Command", "noCommand");
@@ -81,6 +90,29 @@ public class RecordPlayer extends SubsystemBase {
     // }
 
     netTable.getEntry("recordplayer").setDouble(rotationMotor.getEncoder().getVelocity());
+
+    // Poll color sensor values
+    int proximity = colorSensor.getProximity();
+    int blue = colorSensor.getBlue();
+    int red = colorSensor.getRed();
+    boolean connected = !colorSensor.isConnected();
+
+    // Set color sensor state
+    if(!connected || (proximity == 0 && blue == 0 && red == 0)) {
+      if(red > 100 || blue > 100) {
+        colorSensorState = ColorSensorState.kCone;
+      } else {
+        colorSensorState = ColorSensorState.kCube;
+      }
+    } else {
+      colorSensorState = ColorSensorState.kUnknown;
+    }
+
+    // Print color sensor values
+    SmartDashboard.putNumber("Color Red", red);
+    SmartDashboard.putNumber("Color Blue", blue);
+    SmartDashboard.putNumber("Color Proximity", proximity);
+    SmartDashboard.putBoolean("Color Connected", connected);
   }
 
   public boolean getGamePieceSensor(){
@@ -128,4 +160,10 @@ public class RecordPlayer extends SubsystemBase {
   //   double position = conePosition + distanceAhead;
   //   return position % Constants.TWO_PI;
   // }
+
+  public enum ColorSensorState {
+    kCone,
+    kCube,
+    kUnknown
+  }
 }

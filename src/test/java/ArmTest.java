@@ -1,18 +1,10 @@
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.simulation.DoubleSolenoidSim;
-import edu.wpi.first.wpilibj.simulation.PWMSim;
 import frc.robot.subsystems.ArmPosition;
+import frc.robot.subsystems.Target;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class ArmTest {
@@ -24,19 +16,6 @@ public class ArmTest {
   @AfterEach
   void shutdown(){
   }
-
-  /* Helper function to print out errors in command line so we don't have to dig through the stack trace*/
-  // Low priority TODO: this should be moved to a common location or a testHelperClass
-  // Low priority TODO: make this into a template function so it isn't hardocded to doubles
-  public static void assertEqualsPrint(double expected, double actual, double error, String message){
-    try{
-      assertEquals(expected, actual, error, message);
-    } catch (AssertionError e){
-      System.out.println(e.getMessage());
-      throw e;
-    }
-  }
-
 
   /* ArmPosition.getEndPosition Tests */
   @Test
@@ -55,15 +34,54 @@ public class ArmTest {
     Pose2d resultPosition = armPosition.getEndPosition();
 
     // Assert
-    assertEqualsPrint(expectedX, resultPosition.getX(), ERROR, "X Value:");
-    assertEqualsPrint(expectedY, resultPosition.getY(), ERROR, "Y Value:");
+    TestHelper.assertEqualsPrint(expectedX, resultPosition.getX(), ERROR, "X Value:");
+    TestHelper.assertEqualsPrint(expectedY, resultPosition.getY(), ERROR, "Y Value:");
   }
 
-  // TODO: Test arm position at a forward angle
+  @Test
+  void testGetEndPositionForward(){
+    // Set-Up
+    ArmPosition armPosition = new ArmPosition(Math.PI/2, Math.PI, false);
+    double expectedX = 0;
+    double expectedY = Units.inchesToMeters(9);
 
-  // TODO: Test arm position at a backwards angle
+    // Act
+    Pose2d resultPosition = armPosition.getEndPosition();
 
-  // TODO: Test arm position with the wrist extended
+    // Assert
+    TestHelper.assertEqualsPrint(expectedX, resultPosition.getX(), ERROR, "X Value:");
+    TestHelper.assertEqualsPrint(expectedY, resultPosition.getY(), ERROR, "Y Value:");
+  }
+
+  @Test
+  void testGetEndPositionBackward(){
+    // Set-Up
+    ArmPosition armPosition = new ArmPosition(Math.PI/2, Math.PI, false);
+    double expectedX = 0;
+    double expectedY = Units.inchesToMeters(9);
+
+    // Act
+    Pose2d resultPosition = armPosition.getEndPosition();
+
+    // Assert
+    TestHelper.assertEqualsPrint(expectedX, resultPosition.getX(), ERROR, "X Value:");
+    TestHelper.assertEqualsPrint(expectedY, resultPosition.getY(), ERROR, "Y Value:");
+  }
+
+  @Test
+  void testGetEndPositionStraightDownWristOut(){
+    // Set-Up
+    ArmPosition armPosition = new ArmPosition(Math.PI/2, Math.PI, false);
+    double expectedX = 0;
+    double expectedY = Units.inchesToMeters(9);
+
+    // Act
+    Pose2d resultPosition = armPosition.getEndPosition();
+
+    // Assert
+    TestHelper.assertEqualsPrint(expectedX, resultPosition.getX(), ERROR, "X Value:");
+    TestHelper.assertEqualsPrint(expectedY, resultPosition.getY(), ERROR, "Y Value:");
+  }
 
   /* AmrPosition.inverseKinematics tests */
   
@@ -97,4 +115,17 @@ public class ArmTest {
 
   /* ArmTrajectory.getTrajectory() Tests */
   // TODO: Basically same tests as above, but now check the time on the path points it returns
+
+  /* Extra Target Test */
+  @Test
+  void testFlipTargetPosition() {
+    // Set-Up
+    Target target = new Target();
+    double expectedX = 1.85;
+    double expectedY = 7.5;
+
+    // Assert
+    TestHelper.assertEqualsPrint(expectedX, target.redGoalLocations[0][0][0].getX(), ERROR, "X Value: ");
+    TestHelper.assertEqualsPrint(expectedY, target.redGoalLocations[0][0][0].getY(), ERROR, "Y Value: ");
+  }
 }

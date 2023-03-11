@@ -74,53 +74,53 @@ public class Target extends SubsystemBase {
     blueGoalLocations = new GoalLocation[][][] {
       {
         {
-          new GoalLocation(new Translation2d(.5, 1.85), ArmConstants.FRONT_HIGH_CONE,ArmConstants.BACK_HIGH_CONE),
-          new GoalLocation(new Translation2d(.5, 1.85), ArmConstants.FRONT_MIDDLE_CONE,ArmConstants.BACK_MIDDLE_CONE),
-          new GoalLocation(new Translation2d(.5, 1.85), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)
+          new GoalLocation(new Translation2d(1.85, .5), ArmConstants.FRONT_HIGH_CONE,ArmConstants.BACK_HIGH_CONE),
+          new GoalLocation(new Translation2d(1.85, .5), ArmConstants.FRONT_MIDDLE_CONE,ArmConstants.BACK_MIDDLE_CONE),
+          new GoalLocation(new Translation2d(1.85, .5), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)
         },
         {
-          new GoalLocation(new Translation2d(1.07, 1.85), ArmConstants.FRONT_HIGH_CUBE,ArmConstants.BACK_HIGH_CUBE),
-          new GoalLocation(new Translation2d(1.07, 1.85), ArmConstants.FRONT_MIDDLE_CUBE,ArmConstants.BACK_MIDDLE_CUBE),
-          new GoalLocation(new Translation2d(1.07, 1.85), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)
+          new GoalLocation(new Translation2d(1.85, 1.07), ArmConstants.FRONT_HIGH_CUBE,ArmConstants.BACK_HIGH_CUBE),
+          new GoalLocation(new Translation2d(1.85, 1.07), ArmConstants.FRONT_MIDDLE_CUBE,ArmConstants.BACK_MIDDLE_CUBE),
+          new GoalLocation(new Translation2d(1.85, 1.07), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)
         },
         {
-          new GoalLocation(new Translation2d(1.63, 1.85), ArmConstants.FRONT_HIGH_CONE,ArmConstants.BACK_HIGH_CONE),
-          new GoalLocation(new Translation2d(1.63, 1.85),ArmConstants.FRONT_MIDDLE_CONE,ArmConstants.BACK_MIDDLE_CONE),
-          new GoalLocation(new Translation2d(1.63, 1.85), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)       
+          new GoalLocation(new Translation2d(1.85, 1.63), ArmConstants.FRONT_HIGH_CONE,ArmConstants.BACK_HIGH_CONE),
+          new GoalLocation(new Translation2d(1.85, 1.63),ArmConstants.FRONT_MIDDLE_CONE,ArmConstants.BACK_MIDDLE_CONE),
+          new GoalLocation(new Translation2d(1.85, 1.63), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)       
          }
       },
       {
         {
-          new GoalLocation(new Translation2d(2.16, 1.85),ArmConstants.FRONT_HIGH_CONE,ArmConstants.BACK_HIGH_CONE),
-          new GoalLocation(new Translation2d(2.16, 1.85), ArmConstants.FRONT_MIDDLE_CONE,ArmConstants.BACK_MIDDLE_CONE),
-          new GoalLocation(new Translation2d(2.16, 1.85), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)        
+          new GoalLocation(new Translation2d(1.85, 2.16),ArmConstants.FRONT_HIGH_CONE,ArmConstants.BACK_HIGH_CONE),
+          new GoalLocation(new Translation2d(1.85, 2.16), ArmConstants.FRONT_MIDDLE_CONE,ArmConstants.BACK_MIDDLE_CONE),
+          new GoalLocation(new Translation2d(1.85, 2.16), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)        
         },
         {
-          new GoalLocation(new Translation2d(2.68, 1.85), ArmConstants.FRONT_HIGH_CUBE,ArmConstants.BACK_HIGH_CUBE),
-          new GoalLocation(new Translation2d(2.68, 1.85), ArmConstants.FRONT_MIDDLE_CUBE,ArmConstants.BACK_MIDDLE_CUBE),
-          new GoalLocation(new Translation2d(2.68, 1.85), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)       
+          new GoalLocation(new Translation2d(1.85, 2.68), ArmConstants.FRONT_HIGH_CUBE,ArmConstants.BACK_HIGH_CUBE),
+          new GoalLocation(new Translation2d(1.85, 2.68), ArmConstants.FRONT_MIDDLE_CUBE,ArmConstants.BACK_MIDDLE_CUBE),
+          new GoalLocation(new Translation2d(1.85, 2.68), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)       
         },
         {
-          new GoalLocation(new Translation2d(3.28, 1.85), ArmConstants.FRONT_HIGH_CONE,ArmConstants.BACK_HIGH_CONE),
-          new GoalLocation(new Translation2d(3.28, 1.85), ArmConstants.FRONT_MIDDLE_CONE,ArmConstants.BACK_MIDDLE_CONE),
-          new GoalLocation(new Translation2d(3.28, 1.85), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)        
+          new GoalLocation(new Translation2d(1.85, 3.28), ArmConstants.FRONT_HIGH_CONE,ArmConstants.BACK_HIGH_CONE),
+          new GoalLocation(new Translation2d(1.85, 3.28), ArmConstants.FRONT_MIDDLE_CONE,ArmConstants.BACK_MIDDLE_CONE),
+          new GoalLocation(new Translation2d(1.85, 3.28), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)        
         }
       },
       {
         {
-          new GoalLocation(new Translation2d(3.88, 1.85), ArmConstants.FRONT_HIGH_CONE,ArmConstants.BACK_HIGH_CONE),
-          new GoalLocation(new Translation2d(3.88, 1.85), ArmConstants.FRONT_MIDDLE_CONE,ArmConstants.BACK_MIDDLE_CONE),
-          new GoalLocation(new Translation2d(3.88, 1.85), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)        
+          new GoalLocation(new Translation2d(1.85, 3.88), ArmConstants.FRONT_HIGH_CONE,ArmConstants.BACK_HIGH_CONE),
+          new GoalLocation(new Translation2d(1.85, 3.88), ArmConstants.FRONT_MIDDLE_CONE,ArmConstants.BACK_MIDDLE_CONE),
+          new GoalLocation(new Translation2d(1.85, 3.88), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)        
         },
         {
-          new GoalLocation(new Translation2d(4.39, 1.85), ArmConstants.FRONT_HIGH_CUBE,ArmConstants.BACK_HIGH_CUBE),
-          new GoalLocation(new Translation2d(4.39, 1.85), ArmConstants.FRONT_MIDDLE_CUBE,ArmConstants.BACK_MIDDLE_CUBE),
-          new GoalLocation(new Translation2d(4.39, 1.85), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)        
+          new GoalLocation(new Translation2d(1.85, 4.39), ArmConstants.FRONT_HIGH_CUBE,ArmConstants.BACK_HIGH_CUBE),
+          new GoalLocation(new Translation2d(1.85, 4.39), ArmConstants.FRONT_MIDDLE_CUBE,ArmConstants.BACK_MIDDLE_CUBE),
+          new GoalLocation(new Translation2d(1.85, 4.39), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)        
         },
         {
-          new GoalLocation(new Translation2d(4.97, 1.85), ArmConstants.FRONT_HIGH_CONE,ArmConstants.BACK_HIGH_CONE),
-          new GoalLocation(new Translation2d(4.97, 1.85), ArmConstants.FRONT_MIDDLE_CONE,ArmConstants.BACK_MIDDLE_CONE),
-          new GoalLocation(new Translation2d(4.97, 1.85), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)        
+          new GoalLocation(new Translation2d(1.85, 4.97), ArmConstants.FRONT_HIGH_CONE,ArmConstants.BACK_HIGH_CONE),
+          new GoalLocation(new Translation2d(1.85, 4.97), ArmConstants.FRONT_MIDDLE_CONE,ArmConstants.BACK_MIDDLE_CONE),
+          new GoalLocation(new Translation2d(1.85, 4.97), ArmConstants.FRONT_LOWER_SCORE,ArmConstants.BACK_LOWER_SCORE)        
         }
       }
     };
