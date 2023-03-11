@@ -29,10 +29,10 @@ import frc.robot.commands.harvester.HarvesterStopRetract;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class AutoCube000PickUpChargeBalance extends SequentialCommandGroup {
-  /** Creates a new AutoCone20PickUpChargeBalance. */
-  public AutoCube000PickUpChargeBalance() {
-    List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("AutoCone000PickUpChargeBalance", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
+public class AutoCube220PickUpChargeBalance extends SequentialCommandGroup {
+  /** Creates a new AutoCone220PickUpChargeBalance. */
+  public AutoCube220PickUpChargeBalance() {
+    List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("AutoCone220PickUpChargeBalance", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(

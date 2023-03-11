@@ -37,10 +37,11 @@ import frc.robot.commands.arm.ArmShoulderToPosition;
 import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.arm.ArmWristExtend;
 import frc.robot.commands.arm.ArmWristRetract;
-import frc.robot.commands.auto.AutoCone010PickUpReturn;
-import frc.robot.commands.auto.AutoCone210ChargeBalance;
-import frc.robot.commands.auto.AutoCone210ChargeLeaveBalance;
-import frc.robot.commands.auto.AutoCone212PickUpReturn;
+import frc.robot.commands.auto.AutoCone221PickUpReturn;
+import frc.robot.commands.auto.AutoCone201ChargeBalance;
+import frc.robot.commands.auto.AutoCone201ChargeLeaveBalance;
+import frc.robot.commands.auto.AutoCone001PickUpReturn;
+import frc.robot.commands.auto.AutoCone021ChargeBalance;
 import frc.robot.commands.auto.AutoMidAroundOverRamp;
 import frc.robot.commands.auto.AutoScoreCone;
 // import frc.robot.commands.auto.test.AutoBackOneMeter;
@@ -291,10 +292,13 @@ public class RobotContainer {
   private void configureAutoModes() {
     autoChooser.setDefaultOption("Wait 1 sec(do nothing)", new WaitCommand(1));
     autoChooser.addOption("Score middle cone", new AutoScoreCone(ArmConstants.BACK_MIDDLE_CUBE));
-    autoChooser.addOption("Mid Cone, cube pickup, return", new AutoCone010PickUpReturn());
-    autoChooser.addOption("Mid cone, balance", new AutoCone210ChargeBalance());
-    autoChooser.addOption("Mid cone, charge leave, return balance", new AutoCone210ChargeLeaveBalance());
-    autoChooser.addOption("Mid cone, cable cube pickup, return", new AutoCone212PickUpReturn());
+    autoChooser.addOption("Mid Cone, cube pickup, return", new AutoCone221PickUpReturn());
+    autoChooser.addOption("Mid cone, balance", new AutoCone201ChargeBalance());
+    autoChooser.addOption("Mid cone, charge leave, return balance", new AutoCone201ChargeLeaveBalance());
+    autoChooser.addOption("Mid cone, cable cube pickup, return", new AutoCone001PickUpReturn());
+    autoChooser.addOption("Mid cone, balance", new AutoCone021ChargeBalance());
+
+    /* Testing */
     // autoChooser.addOption("Back 2m", new AutoBackTwoMeters());
     // autoChooser.addOption("Diagonal 1m", new AutoDiagonalOneMeter());
     // autoChooser.addOption("Back 1m, Left 1m", new AutoBackOneMeterLeftOneMeter());

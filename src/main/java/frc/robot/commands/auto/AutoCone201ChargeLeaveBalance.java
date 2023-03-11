@@ -11,30 +11,23 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.SwerveDriveConstants;
-import frc.robot.commands.ArmClawStopRetract;
-import frc.robot.commands.ArmScoreCone;
 import frc.robot.commands.arm.ArmToPosition;
-import frc.robot.commands.claw.ClawOpen;
 import frc.robot.commands.drive.DriveBalanceRobot;
 import frc.robot.commands.drive.auto.DriveFollowTrajectory;
 import frc.robot.commands.drive.util.DriveSetGyro;
-import frc.robot.subsystems.ArmPosition;
-import frc.robot.subsystems.SwerveDrive;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class AutoCone210ChargeBalance extends SequentialCommandGroup {
-  /** Creates a new AutoCone20ChargeBalance. */
-  public AutoCone210ChargeBalance() {
-    List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("Cone210ChargeBalance", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
+public class AutoCone201ChargeLeaveBalance extends SequentialCommandGroup {
+  /** Creates a new AutoCone021ChargeBalance. */
+  public AutoCone201ChargeLeaveBalance() {
+    List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("Cone021ChargeLeaveBalance", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
+
     addCommands(
       new DriveSetGyro(0),
       new AutoScoreCone(ArmConstants.BACK_MIDDLE_CONE),
@@ -42,7 +35,12 @@ public class AutoCone210ChargeBalance extends SequentialCommandGroup {
         new ArmToPosition(ArmConstants.INTERNAL_PICK_UP),
         new DriveFollowTrajectory(path.get(0))
       ),
-      new DriveBalanceRobot()
+      Commands.race(
+        new DriveBalanceRobot(),
+        new WaitUntilCommand(()->(Math.abs( RobotContainer.swerveDrive.getGyroInDegPitch()) < SwerveDriveConstants.DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE))
+      ),
+      new DriveFollowTrajectory(path.get(1),true),
+      new DriveBalanceRobot()      
     );
   }
 }
