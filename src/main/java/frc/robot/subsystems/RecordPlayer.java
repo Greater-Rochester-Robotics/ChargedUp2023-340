@@ -71,13 +71,14 @@ public class RecordPlayer extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putBoolean("record player has cone: ", getConePositionSensor0());
     SmartDashboard.putBoolean("record player has game peice: ", getGamePieceSensor());
-    SmartDashboard.putNumber("record player angle",getEncoderAngle());
-    Command curCommand = this.getCurrentCommand();
-    if(curCommand == null){
-      SmartDashboard.putString("RecordPlayer Current Command", "noCommand");
-    }else{
-      SmartDashboard.putString("RecordPlayer Current Command", curCommand.getName());
-    }
+    // SmartDashboard.putNumber("record player angle",getEncoderAngle());
+    
+    // Command curCommand = this.getCurrentCommand();
+    // if(curCommand == null){
+    //   SmartDashboard.putString("RecordPlayer Current Command", "noCommand");
+    // }else{
+    //   SmartDashboard.putString("RecordPlayer Current Command", curCommand.getName());
+    // }
 
     netTable.getEntry("recordplayer").setDouble(rotationMotor.getEncoder().getVelocity());
   }

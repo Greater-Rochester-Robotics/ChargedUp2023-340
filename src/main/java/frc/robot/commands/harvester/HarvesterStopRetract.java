@@ -18,7 +18,7 @@ public class HarvesterStopRetract extends SequentialCommandGroup {
     // Use addRequirements() here to declare subsystem dependencies.
     addCommands(
       Commands.race(
-        new RecordPlayerIntake(),
+        isCone?new RecordPlayerIntake():new InstantCommand(),
         Commands.sequence(
           new HarvesterExtensionIn(),
           Commands.race(
@@ -29,7 +29,7 @@ public class HarvesterStopRetract extends SequentialCommandGroup {
         )
       ),
      new WaitCommand(.5),
-     (isCone?new RecordOrientCone():new InstantCommand())
+     (isCone?new RecordOrientCone():new HarvesterIntake().withTimeout(2))
     );
   }
 

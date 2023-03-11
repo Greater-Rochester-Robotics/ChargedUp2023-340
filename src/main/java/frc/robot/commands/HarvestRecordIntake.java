@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.harvester.HarvesterExtensionOut;
 import frc.robot.commands.harvester.HarvesterIntake;
@@ -17,13 +18,12 @@ import frc.robot.commands.recordPlayer.RecordPlayerIntake;
 public class HarvestRecordIntake extends SequentialCommandGroup {
   /** Creates a new HarvistRecordIntake. */
   public HarvestRecordIntake(boolean isCone) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
+    
     addCommands(
       new HarvesterExtensionOut(),
       Commands.parallel(
         new HarvesterIntake(isCone),
-        new RecordPlayerIntake()
+        isCone?new RecordPlayerIntake():new InstantCommand()
       )
     ); 
   }

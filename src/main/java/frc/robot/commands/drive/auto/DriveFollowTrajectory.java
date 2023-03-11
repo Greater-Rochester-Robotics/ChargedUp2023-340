@@ -80,8 +80,7 @@ public class DriveFollowTrajectory extends CommandBase {
     timer.reset();
     timer.start();
 
-    //TODO: When ready comment back in getAlliance
-    trajectory = PathPlannerTrajectory.transformTrajectoryForAlliance(trajectory, Alliance.Blue);//DriverStation.getAlliance());
+    trajectory = PathPlannerTrajectory.transformTrajectoryForAlliance(trajectory, DriverStation.getAlliance());
 
     //poll the trajectory to find the first point
     // PathPlannerState initialState = (PathPlannerState) trajectory.sample(0.0);

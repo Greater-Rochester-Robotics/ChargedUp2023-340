@@ -12,7 +12,6 @@ import frc.robot.Constants.ArmConstants;
 
 public class ArmElbowToPosition extends CommandBase {
   double position;
-  double targetTolerance = Units.degreesToRadians(1);
   int onTarget;
   double maxVelReached;
   /** Creates a new ArmElbowToPosition. */
@@ -32,16 +31,19 @@ public class ArmElbowToPosition extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(Math.abs(RobotContainer.arm.getElbowVelocity()) > maxVelReached){
-      maxVelReached = Math.abs(RobotContainer.arm.getElbowVelocity());
-      SmartDashboard.putNumber("elbow max velocity reached", maxVelReached);
-    }
-
+    // if(Math.abs(RobotContainer.arm.getElbowVelocity()) > maxVelReached){
+    //   maxVelReached = Math.abs(RobotContainer.arm.getElbowVelocity());
+    //   SmartDashboard.putNumber("elbow max velocity reached", maxVelReached);
+    // }
+    // System.out.print("angle: " + Math.round(Units.radiansToDegrees(RobotContainer.arm.getElbowPosition()))+"  ");
     RobotContainer.arm.setElbowPosition(position);
-    if(Math.abs(RobotContainer.arm.getElbowPosition()-position) < targetTolerance)
+    if(Math.abs(RobotContainer.arm.getElbowPosition()-position) < ArmConstants.ELBOW_CLOSED_LOOP_ERROR){
       onTarget++;
-    else
+      // System.out.println("ON Target");
+    }else{
       onTarget = 0;
+      // System.out.println("OFF Target");
+    }
   }
 
   // Called once the command ends or is interrupted.

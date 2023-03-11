@@ -7,10 +7,10 @@ package frc.robot.commands.arm;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.ArmConstants;
 
 public class ArmShoulderToPosition extends CommandBase {
   double position;
-  double targetTolerance = Units.degreesToRadians(1);
   /** Creates a new ArmShoulderToPosition. */
   public ArmShoulderToPosition(double position) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -37,6 +37,6 @@ public class ArmShoulderToPosition extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(RobotContainer.arm.getShoulderPosition()-position) < targetTolerance;
+    return Math.abs(RobotContainer.arm.getShoulderPosition()-position) < ArmConstants.SHOULDER_CLOSED_LOOP_ERROR;
   }
 }

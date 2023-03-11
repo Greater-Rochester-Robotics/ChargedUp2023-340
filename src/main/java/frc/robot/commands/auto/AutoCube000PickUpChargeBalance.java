@@ -29,26 +29,27 @@ import frc.robot.commands.harvester.HarvesterStopRetract;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class AutoCube200PickUpReturn extends SequentialCommandGroup {
+public class AutoCube000PickUpChargeBalance extends SequentialCommandGroup {
   /** Creates a new AutoCone20PickUpChargeBalance. */
-  public AutoCube200PickUpReturn() {
-    List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("AutoCone20PickUpReturn", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
-    //TODO:fix this at the end, this is for when another team is balancing
+  public AutoCube000PickUpChargeBalance() {
+    List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("AutoCone000PickUpChargeBalance", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
+    // Add your commands in the addCommands() call, e.g.
+    // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new DriveSetGyro(0),
-      new ArmToPosition(ArmConstants.BACK_HIGH_CUBE),
-      new ClawOpen(),
-      new WaitCommand(0.5),
+      new AutoScoreCone(ArmConstants.BACK_HIGH_CONE),
       Commands.race(
         new HarvesterIntake(false),
         Commands.parallel(
           new ArmToPosition(ArmConstants.INTERNAL_PICK_UP),
-          Commands.sequence(new DriveFollowTrajectory(path.get(0))),
+          Commands.sequence(
+            new DriveFollowTrajectory(path.get(0))),
             new WaitCommand(0.5)
           ),
           Commands.sequence(
             new WaitUntilCommand(RobotContainer.harvester::hasGamePiece),
-            new WaitUntilCommand(()-> (!RobotContainer.harvester.hasGamePiece()))
+            new WaitUntilCommand(()-> (!RobotContainer.harvester.hasGamePiece())
+          )
         ),
       new DriveFollowTrajectory(path.get(1),false),
       new WaitCommand(0.5),

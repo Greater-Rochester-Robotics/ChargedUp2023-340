@@ -182,9 +182,9 @@ public class Arm extends SubsystemBase {
     elbowMotor.setClosedLoopRampRate(1);
     elbowMotor.getPIDController().setOutputRange(-ArmConstants.MAX_ELBOW_PID_OUT, ArmConstants.MAX_ELBOW_PID_OUT);
 
-    // elbowController.setSmartMotionMaxVelocity(ArmConstants.MAX_ELBOW_VELOCITY_IN_RPM, 0); // MAX_ELBOW_VELOCITY_IN_RPM is currently 0!!!
+    // elbowController.setSmartMotionMaxVelocity(ArmConstants.MAX_ELBOW_VELOCITY_IN_RPM, 0);
     // elbowController.setSmartMotionMinOutputVelocity(-ArmConstants.MAX_ELBOW_VELOCITY_IN_RPM, 0);
-    // elbowController.setSmartMotionMaxAccel(ArmConstants.MAX_ELBOW_ACCELERATION_IN_RPM, 0);
+    // elbowController.setSmartMotionMaxAccel(ArmConstants.MAX_ELBOW_ACCELERATION_IN_RPM_PER_SEC, 0);
     // elbowController.setSmartMotionAllowedClosedLoopError(ArmConstants.ELBOW_CLOSED_LOOP_ERROR, 0);
 
     elbowMotor.set(0);
@@ -216,27 +216,29 @@ public class Arm extends SubsystemBase {
     rightPos = getRightShoulderPosition();
     leftPos = getLeftShoulderPosition();
     double elbowPos = getElbowPosition();
+
+    //let's not send data every code cycle
     if (count > 25){
       count = 0;
 
-    netTable.getEntry("shoulder").setDouble((rightPos + leftPos) / 2);
-    netTable.getEntry("elbow").setDouble(elbowPos);
-    netTable.getEntry("wrist").setBoolean(wrist.get() == Value.kForward);
+      netTable.getEntry("shoulder").setDouble((rightPos + leftPos) / 2);
+      netTable.getEntry("elbow").setDouble(elbowPos);
+      netTable.getEntry("wrist").setBoolean(this.isWristOut());
     
-    SmartDashboard.putNumber("Absolute encoder right", Math.round(Math.toDegrees(rightPos) * 10 ) * 0.1);
-    // SmartDashboard.putNumber("Internal encoder right", shoulderRight.getEncoder().getPosition());
-  
+      SmartDashboard.putNumber("Absolute encoder right", Math.round(Math.toDegrees(rightPos) * 10 ) * 0.1);
+      // SmartDashboard.putNumber("Internal encoder right", shoulderRight.getEncoder().getPosition());
+    
 
-    SmartDashboard.putNumber("Absolute encoder left", Math.round(Math.toDegrees(leftPos) * 10 ) * 0.1);
-    // SmartDashboard.putNumber("Internal encoder left", shoulderLeft.getEncoder().getPosition());
+      SmartDashboard.putNumber("Absolute encoder left", Math.round(Math.toDegrees(leftPos) * 10 ) * 0.1);
+      // SmartDashboard.putNumber("Internal encoder left", shoulderLeft.getEncoder().getPosition());
 
-    SmartDashboard.putNumber("Absolute encoder elbow", Math.round(Math.toDegrees(elbowPos) * 10 ) * 0.1);
-    // SmartDashboard.putNumber("Internal encoder elbow", elbowMotor.getEncoder().getPosition());
+      SmartDashboard.putNumber("Absolute encoder elbow", Math.round(Math.toDegrees(elbowPos) * 10 ) * 0.1);
+      // SmartDashboard.putNumber("Internal encoder elbow", elbowMotor.getEncoder().getPosition());
     }
     count++;
     
     ArmPosition armPosition = getArmPosition();
-    SmartDashboard.putNumber("ArmXend", armPosition.getEndX());
+    // SmartDashboard.putNumber("ArmXend", armPosition.getEndX());
     // SmartDashboard.putBoolean("is in front of harvester", armPosition.isInFrontOfHarvester());
     // SmartDashboard.putBoolean("is in behind of harvester", armPosition.isBehindHarvester());
     // SmartDashboard.putBoolean("compare score", ArmConstants.REAR_LOWER_SCORE.isOppositeSideFromCurrent());
@@ -406,21 +408,25 @@ public class Arm extends SubsystemBase {
    * @param position an angle the arm should go to
    */
   public void setElbowPosition(double position) {
+    //protection from going over the top via momentum
     if(Math.abs(this.getElbowPosition()) > ArmConstants.MAX_ELBOW_ANGLE){
       elbowMotor.stopMotor();
       elbowBrake.set(false);
       return;
     }
 
+    //protection from being set at the top
     if(Math.abs(position) > ArmConstants.MAX_ELBOW_ANGLE) {
       System.out.println("ELBOW CAN'T BE SET TO ANGLE " + Math.toDegrees(position) + "\u00b0" + ", OUT OF RANGE!");
       return;
     }
     
+    //convert to motor's perspective
     position += Math.PI;
     double gravCounterConstant = isWristOut()?ArmConstants.KG_WRIST_OUT:ArmConstants.KG_WRIST_IN;
     double theta = getElbowPosition() - getShoulderPosition();
-    SmartDashboard.putNumber("Theta", theta);
+    // SmartDashboard.putNumber("Theta", theta);//this was for testing
+
     elbowController.setReference(position, ControlType.kPosition, 0, gravCounterConstant* Math.sin(theta));
     elbowBrake.set(true);
   }

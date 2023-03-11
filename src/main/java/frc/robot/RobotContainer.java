@@ -36,11 +36,16 @@ import frc.robot.commands.arm.ArmShoulderToPosition;
 import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.arm.ArmWristExtend;
 import frc.robot.commands.arm.ArmWristRetract;
+import frc.robot.commands.auto.AutoCone010PickUpReturn;
+import frc.robot.commands.auto.AutoCone210ChargeBalance;
+import frc.robot.commands.auto.AutoCone210ChargeLeaveBalance;
+import frc.robot.commands.auto.AutoCone212PickUpReturn;
 import frc.robot.commands.auto.AutoMidAroundOverRamp;
-import frc.robot.commands.auto.test.AutoBackOneMeter;
-import frc.robot.commands.auto.test.AutoBackOneMeterLeftOneMeter;
-import frc.robot.commands.auto.test.AutoBackTwoMeters;
-import frc.robot.commands.auto.test.AutoDiagonalOneMeter;
+import frc.robot.commands.auto.AutoScoreCone;
+// import frc.robot.commands.auto.test.AutoBackOneMeter;
+// import frc.robot.commands.auto.test.AutoBackOneMeterLeftOneMeter;
+// import frc.robot.commands.auto.test.AutoBackTwoMeters;
+// import frc.robot.commands.auto.test.AutoDiagonalOneMeter;
 import frc.robot.commands.claw.ClawClose;
 import frc.robot.commands.claw.ClawHold;
 import frc.robot.commands.claw.ClawIntake;
@@ -156,11 +161,9 @@ public class RobotContainer {
     claw = new Claw();
     compressor = new Compressor();
     arm = new Arm();
-    // arm.setDefaultCommand(new ArmElbowManual());
     harvester = new Harvester();
     target = new Target();
     recordPlayer = new RecordPlayer();
-    // recordPlayer.setDefaultCommand(new RecordPlayerDriverControl());
 
     //Add all autos to the auto selector
     configureAutoModes();
@@ -189,39 +192,36 @@ public class RobotContainer {
     // SmartDashboard.putData("DRIVE_PID_TUNE_2",new DriveTuneDriveMotorPID(2.0));
     // SmartDashboard.putData("DRIVE_PID_TUNE_3",new DriveTuneDriveMotorPID(3.0));
 
-    SmartDashboard.putData(new ClawClose());
-    SmartDashboard.putData(new ClawOpen());
-    SmartDashboard.putData(new ClawIntake());
-    SmartDashboard.putData(new ClawHold());
-    SmartDashboard.putData(new ClawSpit());
+    // SmartDashboard.putData(new ClawClose());
+    // SmartDashboard.putData(new ClawOpen());
+    // SmartDashboard.putData(new ClawIntake());
+    // SmartDashboard.putData(new ClawHold());
+    // SmartDashboard.putData(new ClawSpit());
 
-    SmartDashboard.putData(new ArmWristExtend());
-    SmartDashboard.putData(new ArmWristRetract());
+    // SmartDashboard.putData("Elbow to 0",new ArmElbowToPosition(0));
+    // SmartDashboard.putData("Elbow to -70",new ArmElbowToPosition(Math.toRadians(-70)));
+    // SmartDashboard.putData("Elbow to -159",new ArmElbowToPosition(Math.toRadians(-159)));
+    // SmartDashboard.putData("Shoulders to 0", new ArmShoulderToPosition(0));
+    // SmartDashboard.putData("Shoulders to 10", new ArmShoulderToPosition(Math.toRadians(10)));
+    // SmartDashboard.putData("Shoulders to -20", new ArmShoulderToPosition(Math.toRadians(-20)));
+
+    // SmartDashboard.putData("Harvester out", new HarvesterExtensionOut());
+
     
-    SmartDashboard.putData(new RecordPlayerSpinManual(-.2));
-
-    SmartDashboard.putData("Elbow to 0",new ArmElbowToPosition(0));
-    SmartDashboard.putData("Elbow to -70",new ArmElbowToPosition(Math.toRadians(-70)));
-    SmartDashboard.putData("Shoulders to 0", new ArmShoulderToPosition(0));
-    SmartDashboard.putData("Shoulders to 10", new ArmShoulderToPosition(Math.toRadians(10)));
-    SmartDashboard.putData("Shoulders to -20", new ArmShoulderToPosition(Math.toRadians(-20)));
-
-    SmartDashboard.putData("Harvester out", new HarvesterExtensionOut());
-
-    SmartDashboard.putData("back high cone",new ArmToPosition(ArmConstants.BACK_HIGH_CONE));
-    SmartDashboard.putNumber("high cone shoulderAngle", ArmConstants.BACK_HIGH_CONE.getShoulderPosition());
-    SmartDashboard.putNumber("high cone elbowAngle", ArmConstants.BACK_HIGH_CONE.getElbowPosition());
+    // SmartDashboard.putNumber("high cone shoulderAngle", ArmConstants.BACK_HIGH_CONE.getShoulderPosition());
+    // SmartDashboard.putNumber("high cone elbowAngle", ArmConstants.BACK_HIGH_CONE.getElbowPosition());
     
-    SmartDashboard.putData("Front middle cone",new ArmToPosition(ArmConstants.FRONT_MIDDLE_CONE));
-    SmartDashboard.putData("back lower score", new ArmToPosition(ArmConstants.BACK_LOWER_SCORE));
-    SmartDashboard.putData("internal pick up", new ArmToPosition(ArmConstants.INTERNAL_PICK_UP));
+    // SmartDashboard.putData("Front middle cone",new ArmToPosition(ArmConstants.FRONT_MIDDLE_CONE));
+    // SmartDashboard.putData("back lower score", new ArmToPosition(ArmConstants.BACK_LOWER_SCORE));
+    // SmartDashboard.putData("internal pick up", new ArmToPosition(ArmConstants.INTERNAL_PICK_UP));
 
     /*autos */
-    SmartDashboard.putData("Test Auto", new AutoMidAroundOverRamp());
-    SmartDashboard.putData("Back 1m", new AutoBackOneMeter());
-    SmartDashboard.putData("Back 2m", new AutoBackTwoMeters());
-    SmartDashboard.putData("Diagonal 1m", new AutoDiagonalOneMeter());
-    SmartDashboard.putData("Back 1m, Left 1m", new AutoBackOneMeterLeftOneMeter());
+    // SmartDashboard.putData("Back 1m", new AutoBackOneMeter());
+    // SmartDashboard.putData("Back 2m", new AutoBackTwoMeters());
+    // SmartDashboard.putData("Diagonal 1m", new AutoDiagonalOneMeter());
+    // SmartDashboard.putData("Back 1m, Left 1m", new AutoBackOneMeterLeftOneMeter());
+
+    SmartDashboard.putData("Arm score high cone", new AutoScoreCone(ArmConstants.BACK_MIDDLE_CONE));
   
 
 
@@ -236,7 +236,6 @@ public class RobotContainer {
     //   }
     // }
     // NetworkTableInstance instance = NetworkTableInstance.getDefault();
-    // NetworkTable table = instance.getTable("drive/navx/yaw");
     // NetworkTableEntry entry = table.getEntry("entry");
     // entry.setBoolean(true);
   }
@@ -250,6 +249,7 @@ public class RobotContainer {
     driverB.onTrue(new HarvestRecordIntake(false)).onFalse(new HarvesterStopRetract(false));
     driverX.onTrue(new ConditionalCommand(new ClawClose(), new ClawOpen(), claw::isOpen));
     driverY.onTrue(new ConditionalCommand(new ArmWristRetract(), new ArmWristExtend(), arm::isWristOut));
+    driverLB.onTrue(new DriveResetGyroToZero());
     driverRB.whileTrue(new DriveBalanceRobot());
     driverDLeft.onTrue(new DriveResetGyroToZero());
     driverDRight.onTrue(new ConditionalCommand(new HarvesterExtensionIn(), new HarvesterExtensionOut(), harvester::isHarvesterOut));
@@ -266,10 +266,10 @@ public class RobotContainer {
     coDriverRB.whileTrue(new ArmShoulderManual());
     coDriverLB.whileTrue(new ArmElbowManual());
 
-    /* Record Player */
     coDriverLTButton20.or(coDriverRTButton20).whileTrue(new RecordPlayerDriverControl()).onFalse(new InstantCommand(()->recordPlayer.stopRotationMotor()));
+    coDriverStart.onTrue(new ArmToPosition(ArmConstants.FRONT_PICK_UP));
     coDriverBack.onTrue(new RecordOrientCone());
-   
+    
     /* Targetting Control */
     coDriverDUp.onTrue(new InstantCommand(() -> target.up()){public boolean runsWhenDisabled(){return true;}});
     coDriverDRight.onTrue(new InstantCommand(() -> target.right()){public boolean runsWhenDisabled(){return true;}});
@@ -284,8 +284,11 @@ public class RobotContainer {
    */
   private void configureAutoModes() {
     autoChooser.setDefaultOption("Wait 1 sec(do nothing)", new WaitCommand(1));
-    // autoChooser.addOption("Test Auto", new AutoMidAroundOverRamp());
-    // autoChooser.addOption("Back 1m", new AutoBackOneMeter());
+    autoChooser.addOption("Score middle cone", new AutoScoreCone(ArmConstants.BACK_MIDDLE_CUBE));
+    autoChooser.addOption("Mid Cone, cube pickup, return", new AutoCone010PickUpReturn());
+    autoChooser.addOption("Mid cone, balance", new AutoCone210ChargeBalance());
+    autoChooser.addOption("Mid cone, charge leave, return balance", new AutoCone210ChargeLeaveBalance());
+    autoChooser.addOption("Mid cone, cable cube pickup, return", new AutoCone212PickUpReturn());
     // autoChooser.addOption("Back 2m", new AutoBackTwoMeters());
     // autoChooser.addOption("Diagonal 1m", new AutoDiagonalOneMeter());
     // autoChooser.addOption("Back 1m, Left 1m", new AutoBackOneMeterLeftOneMeter());

@@ -49,11 +49,11 @@ public final class Constants {
 
       public static final double ELBOW_P = 1.0;
       public static final double ELBOW_I = 0.0;
-      public static final double ELBOW_D = 0.0;
+      public static final double ELBOW_D = 2.0;
       public static final double ELBOW_F = 0.0;
       public static final double KG_WRIST_OUT = 0.30; // The force required to counter gravity i.e prevent the arm from dropping
       public static final double KG_WRIST_IN = 0.3;
-      public static final double MAX_ELBOW_PID_OUT = .45;
+      public static final double MAX_ELBOW_PID_OUT = .35;//if this changes it won't hit targets
 
       /*Scoring constants */
       /* WARNING DO NOT CHANGE WITHOUT TESTING IN A CONTROLLED ENVIRONMENT */
@@ -62,15 +62,14 @@ public final class Constants {
       public static final ArmPosition BACK_HIGH_CUBE = new ArmPosition(Math.toRadians(-24.5),Math.toRadians(-127), false);
       public static final ArmPosition BACK_MIDDLE_CUBE = new ArmPosition(Math.toRadians(-5.4), Math.toRadians(-82.2), false);
       public static final ArmPosition BACK_LOWER_SCORE = new ArmPosition(Math.toRadians(5.2), Math.toRadians(-50), false);
-      public static final ArmPosition BACK_PICK_UP = new ArmPosition(
-        0,0,false);
+      public static final ArmPosition BACK_PICK_UP = new ArmPosition(0,0,false);
 
       public static final ArmPosition FRONT_HIGH_CONE = new ArmPosition(Math.toRadians(0), Math.toRadians(0), false);  //Fix
       public static final ArmPosition FRONT_MIDDLE_CONE = new ArmPosition(Math.toRadians(11.96),Math.toRadians(109.45),true);
       public static final ArmPosition FRONT_HIGH_CUBE = new ArmPosition(Math.toRadians(0), Math.toRadians(0), false);  //Fix
       public static final ArmPosition FRONT_MIDDLE_CUBE = new ArmPosition(Math.toRadians(0), Math.toRadians(0), false);  //Fix
       public static final ArmPosition FRONT_LOWER_SCORE = new ArmPosition(Math.toRadians(0), Math.toRadians(0), false);  //Fix
-      public static final ArmPosition FRONT_PICK_UP = new ArmPosition(Math.toRadians(0), Math.toRadians(0), false);  //Fix
+      public static final ArmPosition FRONT_PICK_UP = new ArmPosition(Math.toRadians(2.5), Math.toRadians(93), false); 
 
       public static final ArmPosition INTERNAL_PICK_UP = new ArmPosition(Math.toRadians(5.2), Math.toRadians(13), false);
 
@@ -102,7 +101,7 @@ public final class Constants {
       public static final double WRIST_EXTENSION_DELAY = .4;
       public static final double WRIST_RETRACTION_DELAY = .4;
 
-      /*Acceletation and max velocities for the arm */
+      /*Acceleration and max velocities for the arm */
       public static final double MAX_SHOULDER_VELOCITY = 1;
       public static final double MAX_ELBOW_VELOCITY = 1;
       public static final double MAX_SHOULDER_ACCELERATION = 1;
@@ -111,15 +110,16 @@ public final class Constants {
       public static final double ELBOW_ACCELERATION_DISTANCE = 1;
       public static final double SHOULDER_ACCELERATION_TIME = MAX_SHOULDER_VELOCITY / MAX_SHOULDER_ACCELERATION;
       public static final double ELBOW_ACCELERATION_TIME = MAX_ELBOW_VELOCITY / MAX_ELBOW_ACCELERATION;
-      public static final double MAX_ELBOW_VELOCITY_IN_RPM = 0;
-      public static final double MAX_ELBOW_ACCELERATION_IN_RPM = 0;
-      public static final double ELBOW_CLOSED_LOOP_ERROR = 0;
+      public static final double MAX_ELBOW_VELOCITY_IN_RPM = .48;//Yes this is in RPM
+      public static final double MAX_ELBOW_ACCELERATION_IN_RPM_PER_SEC = 10200.0;//watch out, this is in RPM per second
+      public static final double ELBOW_CLOSED_LOOP_ERROR = Units.degreesToRadians(1);
+      public static final double SHOULDER_CLOSED_LOOP_ERROR = Units.degreesToRadians(1);
     }
 
     public static class ClawConstants {
-      public static final double CLAW_MOTOR_INTAKE_SPEED = 0.9; //TODO: set this to the right value
-      public static final double CLAW_MOTOR_OUTTAKE_SPEED = -1.0; //TODO: set this to the right value
-      public static final double CLAW_MOTOR_HOLD_SPEED = 0.3; //TODO: set this to the right value
+      public static final double CLAW_MOTOR_INTAKE_SPEED = 0.9; 
+      public static final double CLAW_MOTOR_OUTTAKE_SPEED = -1.0; 
+      public static final double CLAW_MOTOR_HOLD_SPEED = 0.3; 
     }
 
     public class CompressorConstants {

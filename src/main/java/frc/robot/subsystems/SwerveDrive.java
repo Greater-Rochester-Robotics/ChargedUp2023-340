@@ -69,6 +69,7 @@ public class SwerveDrive extends SubsystemBase {
   /** Booleans */
   private boolean hasPoseBeenSet = false;
 
+  int count = 0;
 
   /**
    * This enumeration clarifies the numbering of the swerve module for new users.
@@ -158,18 +159,20 @@ public class SwerveDrive extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("GyroRoll", Math.round(this.getGyroInDegRoll()));
-    SmartDashboard.putNumber("GyroPitch", Math.round(this.getGyroInDegPitch()));
-    SmartDashboard.putNumber("GyroYaw", Math.round(this.getGyroInDegYaw()));
-
-    SmartDashboard.putNumber("GyroRollVel", this.getRotationalVelocityRoll());
-    SmartDashboard.putNumber("GyroPitchVel", this.getRotationalVelocityPitch());
+    
+    if(count >10){
+      count = 0;
+      // SmartDashboard.putNumber("GyroRoll", Math.round(this.getGyroInDegRoll()));
+      // SmartDashboard.putNumber("GyroPitch", Math.round(this.getGyroInDegPitch()));
+      SmartDashboard.putNumber("GyroYaw", Math.round(this.getGyroInDegYaw()));
+    }
+    count++;
 
     //run odometry update on the odometry object
     driveOdometry.update(getGyroRotation2d(), getSwerveModulePositions());//, getGyroInRadPitch(), getGyroInRadRoll());
     // SmartDashboard.putNumber("GyroRate", this.getRotationalVelocity());
-    SmartDashboard.putNumber("Odometry X", getCurPose2d().getX());
-    SmartDashboard.putNumber("Odometry Y", getCurPose2d().getY());
+    // SmartDashboard.putNumber("Odometry X", getCurPose2d().getX());
+    // SmartDashboard.putNumber("Odometry Y", getCurPose2d().getY());
 
     // llResultsFront = LLHelpers.getLatestResults("limelight-front");
     // if(llResultsFront.targetingResults.valid && llResultsFront.targetingResults.getBotPose2d().getX() != 0 && llResultsFront.targetingResults.getBotPose2d().getY() != 0) {
@@ -192,7 +195,7 @@ public class SwerveDrive extends SubsystemBase {
     // }
 
     //TODO: Put correct angles
-    if(Math.abs(getGyroInDegPitch()) > 45 || Math.abs(getGyroInDegRoll()) > 45) {
+    if(Math.abs(getGyroInDegPitch()) > 10 || Math.abs(getGyroInDegRoll()) > 10) {
       hasPoseBeenSet = false;
     }
   }
