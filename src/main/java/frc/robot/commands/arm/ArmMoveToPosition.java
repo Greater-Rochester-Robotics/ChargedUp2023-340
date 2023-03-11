@@ -24,7 +24,8 @@ public class ArmMoveToPosition extends CommandBase {
   public ArmMoveToPosition(double x, double y) {
     this(ArmPosition.inverseKinematics(x, y));
   }
-
+  
+  @Deprecated
   public ArmMoveToPosition(ArmPosition goalPosition){
     this.goalPosition = goalPosition;
     // Use addRequirements() here to declare subsystem dependencies.

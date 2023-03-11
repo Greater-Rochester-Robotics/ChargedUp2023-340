@@ -183,16 +183,16 @@ public class SwerveDrive extends SubsystemBase {
     //   }
     // }
 
-    // llResultsBack = LLHelpers.getLatestResults("limelight-back");
-    // if(llResultsBack.targetingResults.valid && llResultsBack.targetingResults.getBotPose2d().getX() != 0 && llResultsBack.targetingResults.getBotPose2d().getY() != 0) {
-    //   if(DriverStation.getAlliance().equals(Alliance.Blue)) {
-    //     driveOdometry.addVisionMeasurement(llResultsBack.targetingResults.getBotPose2d_wpiBlue(), llResultsBack.targetingResults.timestamp_RIOFPGA_capture);
-    //     hasPoseBeenSet = true;
-    //   } else {
-    //     driveOdometry.addVisionMeasurement(llResultsBack.targetingResults.getBotPose2d_wpiRed(), llResultsBack.targetingResults.timestamp_RIOFPGA_capture);
-    //     hasPoseBeenSet = true;
-    //   }
-    // }
+    llResultsBack = LLHelpers.getLatestResults("limelight-back");
+    if(llResultsBack.targetingResults.valid && llResultsBack.targetingResults.getBotPose2d().getX() != 0 && llResultsBack.targetingResults.getBotPose2d().getY() != 0) {
+      if(DriverStation.getAlliance().equals(Alliance.Blue)) {
+        driveOdometry.addVisionMeasurement(llResultsBack.targetingResults.getBotPose2d_wpiBlue(), llResultsBack.targetingResults.timestamp_RIOFPGA_capture);
+        hasPoseBeenSet = true;
+      } else {
+        driveOdometry.addVisionMeasurement(llResultsBack.targetingResults.getBotPose2d_wpiRed(), llResultsBack.targetingResults.timestamp_RIOFPGA_capture);
+        hasPoseBeenSet = true;
+      }
+    }
 
     //TODO: Put correct angles
     if(Math.abs(getGyroInDegPitch()) > 10 || Math.abs(getGyroInDegRoll()) > 10) {

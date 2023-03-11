@@ -15,6 +15,7 @@ import frc.robot.commands.drive.util.DriveTurnToAngleInRad;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class DriveOntoPlatform extends SequentialCommandGroup {
   /** Creates a new DriveOntoPlatform. */
+  @Deprecated
   public DriveOntoPlatform() {
     addCommands(
       //Aligns robot to go straight onto platform
