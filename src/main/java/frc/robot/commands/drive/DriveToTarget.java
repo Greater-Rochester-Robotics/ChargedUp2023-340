@@ -37,6 +37,7 @@ public class DriveToTarget extends InstantCommand {
     Rotation2d goalRotation = new Rotation2d(0);//TODO: fix for scoring out the front
 
     Pose2d startPosition = RobotContainer.swerveDrive.getCurPose2d();
+    System.out.println("Start pose: " + startPosition + "\tGoal pose: " + goalTranslation);
 
     PathConstraints constraints = new PathConstraints(SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
     List<EventMarker> eventMarkers = new ArrayList<EventMarker>();

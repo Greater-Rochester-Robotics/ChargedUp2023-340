@@ -124,9 +124,8 @@ public final class Constants {
 
     public class CompressorConstants {
       /* Compressor Pressure Constants */
-      //TODO: change when release valve fixed
-      public static final double MIN_PRESSURE = 80.0;
-      public static final double MAX_PRESSURE = 100.0;
+      public static final double MIN_PRESSURE = 90.0;
+      public static final double MAX_PRESSURE = 105.0;
     }
   
     public static class HarvesterConstants {
@@ -229,7 +228,7 @@ public final class Constants {
     public static final double HIGH_POLE = 5.0;
     public static final double MED_POLE = 3.883;
     public static final double LOW_POLE = 3.324;
-    public static final int FIELD_WIDTH = 16;
+    public static final int FIELD_WIDTH = 8;
   }  
 
   /* IDENTIFICATION NUMBERS FOR DEVICES */

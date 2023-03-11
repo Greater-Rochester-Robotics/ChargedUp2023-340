@@ -102,11 +102,11 @@ public class Arm extends SubsystemBase {
     shoulderRight.setIdleMode(IdleMode.kBrake);
 
     shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
-    shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 10);
+    shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
     shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 10);
-    shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 2000);
-    shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
-    shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 10);
+    shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 62003);
+    shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 62004);
+    shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 7);
     shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
 
     shoulderRight.setClosedLoopRampRate(.25);
@@ -136,11 +136,11 @@ public class Arm extends SubsystemBase {
     shoulderLeft.setIdleMode(IdleMode.kBrake);
 
     shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
-    shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 10);
+    shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
     shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 10);
-    shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 2000);
-    shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
-    shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 10);  
+    shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 62000);
+    shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 62001);
+    shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 7);  
     shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
 
     shoulderLeft.setClosedLoopRampRate(.25);
@@ -174,8 +174,8 @@ public class Arm extends SubsystemBase {
     elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
     elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 10);
     elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 10);
-    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 2000);
-    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
+    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 62006);
+    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 62007);
     elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 10);  
     elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
 
@@ -237,7 +237,7 @@ public class Arm extends SubsystemBase {
     }
     count++;
     
-    ArmPosition armPosition = getArmPosition();
+    // ArmPosition armPosition = getArmPosition();
     // SmartDashboard.putNumber("ArmXend", armPosition.getEndX());
     // SmartDashboard.putBoolean("is in front of harvester", armPosition.isInFrontOfHarvester());
     // SmartDashboard.putBoolean("is in behind of harvester", armPosition.isBehindHarvester());
@@ -469,6 +469,10 @@ public class Arm extends SubsystemBase {
     forearmLength = ArmConstants.ELBOW_TO_CLAW_DISTANCE;
   }
 
+  /**
+   * 
+   * @return true if robot thinks wrist is out, i.e. robot has set wrist to be out
+   */
   public boolean isWristOut(){
     return wrist.get() == Value.kForward;
   }

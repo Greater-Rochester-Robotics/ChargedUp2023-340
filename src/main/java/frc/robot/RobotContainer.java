@@ -59,6 +59,7 @@ import frc.robot.commands.drive.DriveFieldRelativeAdvanced;
 import frc.robot.commands.drive.DriveLockWheels;
 import frc.robot.commands.drive.DriveRobotCentric;
 import frc.robot.commands.drive.DriveStopAllModules;
+import frc.robot.commands.drive.DriveToTarget;
 import frc.robot.commands.drive.util.DriveAdjustModulesManually;
 import frc.robot.commands.drive.util.DriveAllModulesPositionOnly;
 import frc.robot.commands.drive.util.DriveOneModule;
@@ -250,7 +251,7 @@ public class RobotContainer {
     driverB.onTrue(new HarvestRecordIntake(false)).onFalse(new HarvesterStopRetract(false));
     driverX.onTrue(new ConditionalCommand(new ClawClose(), new ClawOpen(), claw::isOpen));
     driverY.onTrue(new ConditionalCommand(new ArmWristRetract(), new ArmWristExtend(), arm::isWristOut));
-    driverLB.onTrue(new DriveResetGyroToZero());
+    driverLB.onTrue(new DriveToTarget()).onFalse(new DriveStopAllModules());
     driverRB.whileTrue(new DriveBalanceAdvanced()).onFalse(new DriveLockWheels());
     driverDLeft.onTrue(new DriveResetGyroToZero());
     driverDRight.onTrue(new ConditionalCommand(new HarvesterExtensionIn(), new HarvesterExtensionOut(), harvester::isHarvesterOut));

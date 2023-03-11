@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -23,7 +25,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.ADIS16470_IMU.IMUAxis;
@@ -68,9 +71,14 @@ public class SwerveDrive extends SubsystemBase {
 
   /** Booleans */
   private boolean hasPoseBeenSet = false;
+  private boolean isPoseTrusted = false;
 
   int count = 0;
 
+  public final Matrix<N3, N1> stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.05);
+  public final Matrix<N3, N1> visionStdDevs = VecBuilder.fill(0.9, 0.9, 0.9);
+  public final Matrix<N3, N1> visionStdDevsForce = VecBuilder.fill(0.2, 0.2, 0.2);
+  
   /**
    * This enumeration clarifies the numbering of the swerve module for new users.
    * frontLeft  | 0
@@ -132,7 +140,7 @@ public class SwerveDrive extends SubsystemBase {
     imu = new ADIS16470_IMU(IMUAxis.kZ, IMUAxis.kX, IMUAxis.kY);
 
     //construct the odometry class.
-    driveOdometry = new SwerveDrivePoseEstimator(driveKinematics, getGyroRotation2d(), getSwerveModulePositions(), new Pose2d());
+    driveOdometry = new SwerveDrivePoseEstimator(driveKinematics, getGyroRotation2d(), getSwerveModulePositions(), new Pose2d(), stateStdDevs, visionStdDevs);
 
     //construct the wpilib PIDcontroller for rotation.
 
@@ -171,8 +179,8 @@ public class SwerveDrive extends SubsystemBase {
     //run odometry update on the odometry object
     driveOdometry.update(getGyroRotation2d(), getSwerveModulePositions());//, getGyroInRadPitch(), getGyroInRadRoll());
     // SmartDashboard.putNumber("GyroRate", this.getRotationalVelocity());
-    // SmartDashboard.putNumber("Odometry X", getCurPose2d().getX());
-    // SmartDashboard.putNumber("Odometry Y", getCurPose2d().getY());
+    SmartDashboard.putNumber("Odometry X", getCurPose2d().getX());
+    SmartDashboard.putNumber("Odometry Y", getCurPose2d().getY());
 
     // llResultsFront = LLHelpers.getLatestResults("limelight-front");
     // if(llResultsFront.targetingResults.valid && llResultsFront.targetingResults.getBotPose2d().getX() != 0 && llResultsFront.targetingResults.getBotPose2d().getY() != 0) {
@@ -184,19 +192,26 @@ public class SwerveDrive extends SubsystemBase {
     // }
 
     llResultsBack = LLHelpers.getLatestResults("limelight-back");
-    if(llResultsBack.targetingResults.valid && llResultsBack.targetingResults.getBotPose2d().getX() != 0 && llResultsBack.targetingResults.getBotPose2d().getY() != 0) {
+    if(llResultsBack.targetingResults.valid && llResultsBack.targetingResults.getBotPose2d_wpiBlue().getX() > 0 && llResultsBack.targetingResults.getBotPose2d_wpiBlue().getY() > 0) {
+      Matrix<N3, N1> stdDev = (isPoseTrusted)?visionStdDevs:visionStdDevsForce;
+      Pose2d visionPose;
       if(DriverStation.getAlliance().equals(Alliance.Blue)) {
-        driveOdometry.addVisionMeasurement(llResultsBack.targetingResults.getBotPose2d_wpiBlue(), llResultsBack.targetingResults.timestamp_RIOFPGA_capture);
-        hasPoseBeenSet = true;
+        visionPose = llResultsBack.targetingResults.getBotPose2d_wpiBlue();
       } else {
-        driveOdometry.addVisionMeasurement(llResultsBack.targetingResults.getBotPose2d_wpiRed(), llResultsBack.targetingResults.timestamp_RIOFPGA_capture);
-        hasPoseBeenSet = true;
+        visionPose = llResultsBack.targetingResults.getBotPose2d_wpiRed();
+      }
+      if(!hasPoseBeenSet){
+        setCurPose2d(visionPose);
+      }else{
+        driveOdometry.addVisionMeasurement(visionPose, llResultsBack.targetingResults.timestamp_RIOFPGA_capture, stdDev);
+        isPoseTrusted = true;
+        // System.out.println("pose updated by "+ visionPose.getX()+"==="+visionPose.getY() + "      \todometry "+getCurPose2d().getX()+"==="+getCurPose2d().getY());
       }
     }
 
-    //TODO: Put correct angles
-    if(Math.abs(getGyroInDegPitch()) > 10 || Math.abs(getGyroInDegRoll()) > 10) {
-      hasPoseBeenSet = false;
+
+    if(Math.abs(getGyroInDegPitch()) > 10 || Math.abs(getGyroInDegRoll()) > 10 || getCurPose2d().getX() < 0 || getCurPose2d().getY() < 0) {
+      isPoseTrusted = false;
     }
   }
 
@@ -319,6 +334,7 @@ public class SwerveDrive extends SubsystemBase {
 
     driveOdometry.resetPosition(getGyroRotation2d(), getSwerveModulePositions(), pose);
     hasPoseBeenSet = true;
+    isPoseTrusted = true;
   }
 
   /**
@@ -328,6 +344,10 @@ public class SwerveDrive extends SubsystemBase {
    */
   public boolean hasPoseBeenSet() {
     return hasPoseBeenSet;
+  }
+
+  public boolean isPoseTrusted(){
+    return isPoseTrusted;
   }
 
   /**
