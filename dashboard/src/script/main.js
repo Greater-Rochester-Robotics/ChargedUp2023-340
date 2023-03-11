@@ -148,26 +148,6 @@ for (let i = 0; i < 2; i++) {
 
 setInterval(() => refreshText(), 1000);
 
-// TODO connection UI
-
-// pynetworktables2js websocket connection
-NetworkTables.addWsConnectionListener((connected) => {
-    if (connected) {
-        console.log(`pynetworktables2js websocket connected`);
-    } else {
-        console.log(`pynetworktables2js websocket disconnected`)
-    }
-}, true);
-
-// Connection from pynetworktables2js to robot via NetworkTables
-NetworkTables.addRobotConnectionListener((connected) => {
-    if (connected) {
-        console.log(`Robot NetworkTables connected`);
-    } else {
-        console.log(`Robot NetworkTables disconnected`);
-    }
-}, true);
-
 // Integer enum: 0 = Red, 1 = Blue, 2 = Invalid
 NetworkTables.addKeyListener(`/dashboard/general/alliance`, (_, value) => {
     if (typeof value === `number`) {
