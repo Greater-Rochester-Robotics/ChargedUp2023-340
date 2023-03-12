@@ -193,7 +193,7 @@ public class Arm extends SubsystemBase {
     elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 10);
     elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 62006);
     elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 62007);
-    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 10);  
+    elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 6);  
     elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
 
     elbowMotor.setClosedLoopRampRate(1);
