@@ -71,7 +71,7 @@ public final class Constants {
       public static final ArmPosition FRONT_LOWER_SCORE = new ArmPosition(Math.toRadians(0), Math.toRadians(0), false);  //Fix
       public static final ArmPosition FRONT_PICK_UP = new ArmPosition(Math.toRadians(2.5), Math.toRadians(93), false); 
 
-      public static final ArmPosition INTERNAL_PICK_UP = new ArmPosition(Math.toRadians(5.2), Math.toRadians(13), false);
+      public static final ArmPosition INTERNAL_PICK_UP = new ArmPosition(Math.toRadians(5.2), Math.toRadians(16), false);
 
 
       /* Arm Limits */
@@ -117,20 +117,20 @@ public final class Constants {
     }
 
     public static class ClawConstants {
-      public static final double CLAW_MOTOR_INTAKE_SPEED = 0.9; 
-      public static final double CLAW_MOTOR_OUTTAKE_SPEED = -1.0; 
-      public static final double CLAW_MOTOR_HOLD_SPEED = 0.3; 
+      public static final double CLAW_MOTOR_INTAKE_SPEED = -0.9; 
+      public static final double CLAW_MOTOR_OUTTAKE_SPEED = 1.0; 
+      public static final double CLAW_MOTOR_HOLD_SPEED = -0.35;
     }
 
     public class CompressorConstants {
       /* Compressor Pressure Constants */
-      public static final double MIN_PRESSURE = 90.0;
-      public static final double MAX_PRESSURE = 105.0;
+      public static final double MIN_PRESSURE = 110.0;
+      public static final double MAX_PRESSURE = 120.0;
     }
   
     public static class HarvesterConstants {
-      public static final double HARVESTER_MOTOR_INTAKE_SPEED = -0.6; //TODO: set this to the right value
-      public static final double HARVESTER_MOTOR_OUTTAKE_SPEED = 0.5; //TODO: set this to the right value
+      public static final double HARVESTER_MOTOR_INTAKE_SPEED = -0.8; //TODO: set this to the right value
+      public static final double HARVESTER_MOTOR_OUTTAKE_SPEED = 0.7; //TODO: set this to the right value
       public static final double HARVESTER_MOTOR_CUBE_SPEED = -0.4; //TODO: set this to the right value
     }
   

@@ -53,6 +53,7 @@ import frc.robot.commands.claw.ClawIntake;
 import frc.robot.commands.claw.ClawOpen;
 import frc.robot.commands.claw.ClawOpenSpit;
 import frc.robot.commands.claw.ClawSpit;
+import frc.robot.commands.claw.ClawStop;
 import frc.robot.commands.drive.DriveBalanceAdvanced;
 import frc.robot.commands.drive.DriveBalanceRobot;
 import frc.robot.commands.drive.DriveFieldRelative;
@@ -252,7 +253,7 @@ public class RobotContainer {
     /* ==================== DRIVER BUTTONS ==================== */
     driverA.onTrue(new HarvestRecordIntake(true)).onFalse(new HarvesterStopRetract(true));
     driverB.onTrue(new HarvestRecordIntake(false)).onFalse(new HarvesterStopRetract(false));
-    driverX.onTrue(new ClawOpenSpit());//new ConditionalCommand(new ClawClose(), new ClawOpen(), claw::isOpen));
+    driverX.onTrue(new ClawOpenSpit()).onFalse(new ClawStop());
     driverY.onTrue(new ConditionalCommand(new ArmWristRetract(), new ArmWristExtend(), arm::isWristOut));
     driverLB.onTrue(new DriveToTarget()).onFalse(new DriveStopAllModules());
     driverRB.whileTrue(new DriveBalanceAdvanced()).onFalse(new DriveLockWheels());
