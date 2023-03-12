@@ -25,6 +25,11 @@
       }
     },
   ],
+  "wpilib.skipTests": true,
   "java.test.defaultConfig": "WPIlibUnitTests",
-  "wpilib.skipTests": true
+  "java.format.settings.url": ".vscode/java-formatter.xml",
+  "java.completion.importOrder": ["java", "javax"],
+  "[java]": {
+    "editor.detectIndentation": false
+  }
 }
