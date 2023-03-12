@@ -26,7 +26,7 @@ import frc.robot.commands.drive.util.DriveSetGyro;
 public class AutoCone201ChargeLeaveBalance extends SequentialCommandGroup {
   /** Creates a new AutoCone021ChargeBalance. */
   public AutoCone201ChargeLeaveBalance() {
-    List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("Cone021ChargeLeaveBalance", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
+    List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("Cone201ChargeLeaveBalance", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
 
     addCommands(
       new DriveSetGyro(0),

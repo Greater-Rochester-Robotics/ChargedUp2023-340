@@ -16,15 +16,20 @@ import java.util.List;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANPIDController.AccelStrategy;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -44,6 +49,8 @@ public class Arm extends SubsystemBase {
   private AbsoluteEncoder absoluteEncoderRight;
   private AbsoluteEncoder absoluteEncoderLeft;
   private AbsoluteEncoder absoluteEncoderElbow;
+  private ProfiledPIDController shoulderRightProPidController;
+  private ProfiledPIDController shoulderLeftProPidController;
   private SparkMaxPIDController shoulderRightController;
   private SparkMaxPIDController shoulderLeftController;
   private SparkMaxPIDController elbowController;
@@ -85,6 +92,11 @@ public class Arm extends SubsystemBase {
     shoulderRight = new CANSparkMax(Constants.SHOULDER_MOTOR_RIGHT, MotorType.kBrushless);
     absoluteEncoderRight = shoulderRight.getAbsoluteEncoder(Type.kDutyCycle);
     shoulderRightController = shoulderRight.getPIDController();
+    shoulderRightProPidController = new ProfiledPIDController(
+      ArmConstants.SHOULDER_P_RIGHT,
+      ArmConstants.SHOULDER_I_RIGHT,
+      ArmConstants.SHOULDER_D_RIGHT,
+      new Constraints(ArmConstants.MAX_SHOULDER_VELOCITY, ArmConstants.MAX_SHOULDER_ACCELERATION));
     absoluteEncoderRight.setPositionConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONV_FACTOR);
     absoluteEncoderRight.setInverted(false);
 
@@ -94,10 +106,10 @@ public class Arm extends SubsystemBase {
     
     shoulderRight.setInverted(false);
 
-    shoulderRight.getPIDController().setP(ArmConstants.SHOULDER_P_RIGHT);  
-    shoulderRight.getPIDController().setI(ArmConstants.SHOULDER_I_RIGHT);
-    shoulderRight.getPIDController().setD(ArmConstants.SHOULDER_D_RIGHT);
-    shoulderRight.getPIDController().setFF(ArmConstants.SHOULDER_F_RIGHT);
+    shoulderRightController.setP(ArmConstants.SHOULDER_P_RIGHT);  
+    shoulderRightController.setI(ArmConstants.SHOULDER_I_RIGHT);
+    shoulderRightController.setD(ArmConstants.SHOULDER_D_RIGHT);
+    shoulderRightController.setFF(ArmConstants.SHOULDER_F_RIGHT);
 
     shoulderRight.setIdleMode(IdleMode.kBrake);
 
@@ -110,7 +122,7 @@ public class Arm extends SubsystemBase {
     shoulderRight.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
 
     shoulderRight.setClosedLoopRampRate(.25);
-    shoulderRight.getPIDController().setOutputRange(-ArmConstants.MAX_SHOULDER_OUT_PID_OUT, ArmConstants.MAX_SHOULDER_IN_PID_OUT);
+    shoulderRightController.setOutputRange(-ArmConstants.MAX_SHOULDER_OUT_PID_OUT, ArmConstants.MAX_SHOULDER_IN_PID_OUT);
 
     absoluteEncoderRight.setZeroOffset(1.7072);
 
@@ -118,6 +130,11 @@ public class Arm extends SubsystemBase {
     shoulderLeft = new CANSparkMax(Constants.SHOULDER_MOTOR_LEFT, MotorType.kBrushless);
     absoluteEncoderLeft = shoulderLeft.getAbsoluteEncoder(Type.kDutyCycle);
     shoulderLeftController = shoulderLeft.getPIDController();
+    shoulderLeftProPidController = new ProfiledPIDController(
+      ArmConstants.SHOULDER_P_LEFT,
+      ArmConstants.SHOULDER_I_LEFT,
+      ArmConstants.SHOULDER_D_LEFT,
+      new Constraints(ArmConstants.MAX_SHOULDER_VELOCITY, ArmConstants.MAX_SHOULDER_ACCELERATION));
 
     absoluteEncoderLeft.setPositionConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONV_FACTOR);
     absoluteEncoderLeft.setInverted(true);
@@ -128,10 +145,10 @@ public class Arm extends SubsystemBase {
 
     shoulderLeft.setInverted(false);
  
-    shoulderLeft.getPIDController().setP(ArmConstants.SHOULDER_P_LEFT);
-    shoulderLeft.getPIDController().setI(ArmConstants.SHOULDER_I_LEFT);
-    shoulderLeft.getPIDController().setD(ArmConstants.SHOULDER_D_LEFT);
-    shoulderLeft.getPIDController().setFF(ArmConstants.SHOULDER_F_LEFT);
+    shoulderLeftController.setP(ArmConstants.SHOULDER_P_LEFT);
+    shoulderLeftController.setI(ArmConstants.SHOULDER_I_LEFT);
+    shoulderLeftController.setD(ArmConstants.SHOULDER_D_LEFT);
+    shoulderLeftController.setFF(ArmConstants.SHOULDER_F_LEFT);
 
     shoulderLeft.setIdleMode(IdleMode.kBrake);
 
@@ -144,7 +161,7 @@ public class Arm extends SubsystemBase {
     shoulderLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
 
     shoulderLeft.setClosedLoopRampRate(.25);
-    shoulderLeft.getPIDController().setOutputRange(-ArmConstants.MAX_SHOULDER_OUT_PID_OUT, ArmConstants.MAX_SHOULDER_IN_PID_OUT);
+    shoulderLeftController.setOutputRange(-ArmConstants.MAX_SHOULDER_OUT_PID_OUT, ArmConstants.MAX_SHOULDER_IN_PID_OUT);
 
     absoluteEncoderLeft.setZeroOffset(3.3257);
 
@@ -162,11 +179,11 @@ public class Arm extends SubsystemBase {
 
     elbowMotor.setInverted(true);
  
-    elbowMotor.getPIDController().setP(ArmConstants.ELBOW_P);
-    elbowMotor.getPIDController().setI(ArmConstants.ELBOW_I);
-    elbowMotor.getPIDController().setD(ArmConstants.ELBOW_D);
-    elbowMotor.getPIDController().setFF(ArmConstants.ELBOW_F);
-    elbowMotor.getPIDController().setPositionPIDWrappingEnabled(false);
+    elbowController.setP(ArmConstants.ELBOW_P);
+    elbowController.setI(ArmConstants.ELBOW_I);
+    elbowController.setD(ArmConstants.ELBOW_D);
+    elbowController.setFF(ArmConstants.ELBOW_F);
+    elbowController.setPositionPIDWrappingEnabled(false);
 
 
     elbowMotor.setIdleMode(IdleMode.kBrake);
@@ -180,12 +197,12 @@ public class Arm extends SubsystemBase {
     elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
 
     elbowMotor.setClosedLoopRampRate(1);
-    elbowMotor.getPIDController().setOutputRange(-ArmConstants.MAX_ELBOW_PID_OUT, ArmConstants.MAX_ELBOW_PID_OUT);
+    elbowController.setOutputRange(-ArmConstants.MAX_ELBOW_PID_OUT, ArmConstants.MAX_ELBOW_PID_OUT);
 
-    // elbowController.setSmartMotionMaxVelocity(ArmConstants.MAX_ELBOW_VELOCITY_IN_RPM, 0);
-    // elbowController.setSmartMotionMinOutputVelocity(-ArmConstants.MAX_ELBOW_VELOCITY_IN_RPM, 0);
-    // elbowController.setSmartMotionMaxAccel(ArmConstants.MAX_ELBOW_ACCELERATION_IN_RPM_PER_SEC, 0);
-    // elbowController.setSmartMotionAllowedClosedLoopError(ArmConstants.ELBOW_CLOSED_LOOP_ERROR, 0);
+    elbowController.setSmartMotionMaxVelocity(ArmConstants.MAX_ELBOW_VELOCITY_IN_RPM, 0);
+    elbowController.setSmartMotionMinOutputVelocity(-ArmConstants.MAX_ELBOW_VELOCITY_IN_RPM, 0);
+    elbowController.setSmartMotionMaxAccel(ArmConstants.MAX_ELBOW_ACCELERATION_IN_RPM_PER_SEC, 0);
+    elbowController.setSmartMotionAllowedClosedLoopError(ArmConstants.ELBOW_CLOSED_LOOP_ERROR, 0);
 
     elbowMotor.set(0);
 
@@ -254,21 +271,24 @@ public class Arm extends SubsystemBase {
         if(Math.abs(rightDiff) > Math.abs(leftDiff)){
           shoulderLeft.set(0.0);
           setRightShoulderPosition(shoulderGoalPos);
+          // shoulderRight.set(shoulderRightProPidController.calculate(absoluteEncoderRight.getPosition()));
         }
         else{
           shoulderRight.set(0.0);
           setLeftShoulderPosition(shoulderGoalPos);
+          // shoulderLeft.set(shoulderLeftProPidController.calculate(absoluteEncoderLeft.getPosition()));
         }
       }
       else{
         setLeftShoulderPosition(shoulderGoalPos);
         setRightShoulderPosition(shoulderGoalPos);
+        // shoulderLeft.set(shoulderLeftProPidController.calculate(absoluteEncoderLeft.getPosition()));
+        // shoulderRight.set(shoulderRightProPidController.calculate(absoluteEncoderRight.getPosition()));
       }
 
       if(followingTrajectory){
         //
       }
-
     }
   }
 
@@ -323,6 +343,7 @@ public class Arm extends SubsystemBase {
     }
     // shoulderAngle += Math.PI;
     shoulderLeft.getPIDController().setReference(shoulderAngle + Math.PI, CANSparkMax.ControlType.kPosition);
+    // shoulderLeftProPidController.setGoal(shoulderAngle);
   }
 
   private void setRightShoulderPosition(double shoulderAngle) {
@@ -332,6 +353,7 @@ public class Arm extends SubsystemBase {
     }
     // shoulderAngle += Math.PI;
     shoulderRight.getPIDController().setReference(shoulderAngle + Math.PI, CANSparkMax.ControlType.kPosition);
+    // shoulderRightProPidController.setGoal(shoulderAngle);
   }
 
   public void setBothShoulderMotorPosition(double shoulderAngle){

@@ -38,11 +38,11 @@ import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.arm.ArmWristExtend;
 import frc.robot.commands.arm.ArmWristRetract;
 import frc.robot.commands.auto.AutoCone221PickUpReturn;
+import frc.robot.commands.auto.AutoCone220PickUpChargeBalance;
 import frc.robot.commands.auto.AutoCone201ChargeBalance;
 import frc.robot.commands.auto.AutoCone201ChargeLeaveBalance;
 import frc.robot.commands.auto.AutoCone001PickUpReturn;
 import frc.robot.commands.auto.AutoCone021ChargeBalance;
-import frc.robot.commands.auto.AutoMidAroundOverRamp;
 import frc.robot.commands.auto.AutoScoreCone;
 // import frc.robot.commands.auto.test.AutoBackOneMeter;
 // import frc.robot.commands.auto.test.AutoBackOneMeterLeftOneMeter;
@@ -82,7 +82,6 @@ import frc.robot.commands.recordPlayer.RecordOrientCone;
 import frc.robot.commands.recordPlayer.RecordPlayerDriverControl;
 import frc.robot.commands.recordPlayer.RecordPlayerSpinManual;
 import frc.robot.commands.recordPlayer.RecordRotateByAngle;
-import frc.robot.commands.target.TargetMoveSelection;
 
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.ArmPosition;
@@ -189,7 +188,11 @@ public class RobotContainer {
     SmartDashboard.putData(new DriveStopAllModules());//For setup of swerve
     SmartDashboard.putData("Lock Wheels", new DriveLockWheels());
     SmartDashboard.putData(new DriveTurnToAngleInRad(Math.toRadians(90)));
-    SmartDashboard.putData("Reset odometry",new InstantCommand(() -> swerveDrive.setCurPose2d(new Pose2d())){public boolean runsWhenDisabled(){return true;}});
+    SmartDashboard.putData("Reset Odometry",new InstantCommand(() -> swerveDrive.setCurPose2d(new Pose2d())){public boolean runsWhenDisabled(){return true;}});
+
+    SmartDashboard.putData("Arm score mid cone", new AutoScoreCone(ArmConstants.BACK_MIDDLE_CONE));
+    SmartDashboard.putData("Left outer cone high, cube pickup, balance", new AutoCone220PickUpChargeBalance());
+
     // SmartDashboard.putData("FFTune 10per", new DriveTuneDriveMotorFeedForward(.1));
     // SmartDashboard.putData("FFTune 15per", new DriveTuneDriveMotorFeedForward(.15));
     // SmartDashboard.putData("FFTune 20per", new DriveTuneDriveMotorFeedForward(.2));
@@ -228,7 +231,6 @@ public class RobotContainer {
     // SmartDashboard.putData("Diagonal 1m", new AutoDiagonalOneMeter());
     // SmartDashboard.putData("Back 1m, Left 1m", new AutoBackOneMeterLeftOneMeter());
 
-    SmartDashboard.putData("Arm score high cone", new AutoScoreCone(ArmConstants.BACK_MIDDLE_CONE));
   
 
 
@@ -291,13 +293,14 @@ public class RobotContainer {
    * They will appear in the order entered
    */
   private void configureAutoModes() {
-    autoChooser.setDefaultOption("Wait 1 sec(do nothing)", new WaitCommand(1));
-    autoChooser.addOption("Score middle cone", new AutoScoreCone(ArmConstants.BACK_MIDDLE_CUBE));
-    autoChooser.addOption("Mid Cone, cube pickup, return", new AutoCone221PickUpReturn());
-    autoChooser.addOption("Mid cone, balance", new AutoCone201ChargeBalance());
-    autoChooser.addOption("Mid cone, charge leave, return balance", new AutoCone201ChargeLeaveBalance());
-    autoChooser.addOption("Mid cone, cable cube pickup, return", new AutoCone001PickUpReturn());
-    autoChooser.addOption("Mid cone, balance", new AutoCone021ChargeBalance());
+    autoChooser.setDefaultOption("Wait 1 second (do nothing)", new WaitCommand(1));
+    autoChooser.addOption("Score middle cone back", new AutoScoreCone(ArmConstants.BACK_MIDDLE_CUBE));
+    autoChooser.addOption("Left outer cone mid, cube pickup, return", new AutoCone221PickUpReturn());
+    // autoChooser.addOption("Left outer cone high, cube pickup, balance", new AutoCone220PickUpChargeBalance());
+    autoChooser.addOption("Left inner cone mid, balance", new AutoCone201ChargeBalance());
+    autoChooser.addOption("Left inner cone mid, charge leave, return balance", new AutoCone201ChargeLeaveBalance());
+    autoChooser.addOption("Right outer cone mid, cable cube pickup, return", new AutoCone001PickUpReturn());
+    autoChooser.addOption("Right inner cone mid, balance", new AutoCone021ChargeBalance());
 
     /* Testing */
     // autoChooser.addOption("Back 2m", new AutoBackTwoMeters());
@@ -307,7 +310,7 @@ public class RobotContainer {
   }
 
   /**
-   * retrieve the autonomous mode selected on the 
+   * Retrieve the autonomous mode selected on the 
    * ShuffleDashboard/SmartDashboard
    * @return Autonomous Command
    */

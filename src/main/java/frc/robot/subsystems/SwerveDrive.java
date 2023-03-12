@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
@@ -16,10 +15,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -53,7 +50,7 @@ public class SwerveDrive extends SubsystemBase {
   /** Gyro */
   public ADIS16470_IMU imu;
 
-  /** Kineatics and Odometry */
+  /** Kinematics and Odometry */
   private SwerveDriveKinematics driveKinematics;
   public SwerveDrivePoseEstimator driveOdometry;
   // private LLResults llResultsFront;
@@ -143,7 +140,6 @@ public class SwerveDrive extends SubsystemBase {
     driveOdometry = new SwerveDrivePoseEstimator(driveKinematics, getGyroRotation2d(), getSwerveModulePositions(), new Pose2d(), stateStdDevs, visionStdDevs);
 
     //construct the wpilib PIDcontroller for rotation.
-
     robotSpinController = new PIDController(Constants.SwerveDriveConstants.ROBOT_SPIN_P, Constants.SwerveDriveConstants.ROBOT_SPIN_I, Constants.SwerveDriveConstants.ROBOT_SPIN_D);
     robotSpinController.setTolerance(Constants.SwerveDriveConstants.ROBOT_SPIN_PID_TOLERANCE);
 
@@ -156,7 +152,7 @@ public class SwerveDrive extends SubsystemBase {
     yController = new PIDController(Constants.SwerveDriveConstants.DRIVE_POS_ERROR_CONTROLLER_P, Constants.SwerveDriveConstants.DRIVE_POS_ERROR_CONTROLLER_I, Constants.SwerveDriveConstants.DRIVE_POS_ERROR_CONTROLLER_D);
     rotationController = new PIDController(Constants.SwerveDriveConstants.DRIVE_ROTATION_CONTROLLER_P, Constants.SwerveDriveConstants.DRIVE_ROTATION_CONTROLLER_I, Constants.SwerveDriveConstants.DRIVE_ROTATION_CONTROLLER_D);
 
-    rotationController.disableContinuousInput();//our gyro isn't discontinous
+    rotationController.disableContinuousInput();//our gyro isn't discontinuous
 
     //pass the three PID controllers into the one drive controller
     this.pathController = new PPHolonomicDriveController(xController, yController, rotationController);
@@ -167,8 +163,7 @@ public class SwerveDrive extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    
-    if(count >10){
+    if(count > 10){
       count = 0;
       // SmartDashboard.putNumber("GyroRoll", Math.round(this.getGyroInDegRoll()));
       // SmartDashboard.putNumber("GyroPitch", Math.round(this.getGyroInDegPitch()));
@@ -177,8 +172,7 @@ public class SwerveDrive extends SubsystemBase {
     count++;
 
     //run odometry update on the odometry object
-    driveOdometry.update(getGyroRotation2d(), getSwerveModulePositions());//, getGyroInRadPitch(), getGyroInRadRoll());
-    // SmartDashboard.putNumber("GyroRate", this.getRotationalVelocity());
+    driveOdometry.update(getGyroRotation2d(), getSwerveModulePositions());
     SmartDashboard.putNumber("Odometry X", getCurPose2d().getX());
     SmartDashboard.putNumber("Odometry Y", getCurPose2d().getY());
 
@@ -282,7 +276,7 @@ public class SwerveDrive extends SubsystemBase {
     driveRobotCentric(ChassisSpeeds.fromFieldRelativeSpeeds(awaySpeed, lateralSpeed, rotSpeed, getGyroRotation2d()), isVeloMode, false);
   }
 
-/**
+  /**
    * This function is meant to drive one module at a time for testing purposes.
    * @param moduleNumber which of the four modules(0-3) we are using
    * @param moveSpeed move speed -1.0 to 1.0, where 0.0 is stopped
@@ -331,7 +325,6 @@ public class SwerveDrive extends SubsystemBase {
    * @param pose new current position
    */
   public void setCurPose2d(Pose2d pose) {
-
     driveOdometry.resetPosition(getGyroRotation2d(), getSwerveModulePositions(), pose);
     hasPoseBeenSet = true;
     isPoseTrusted = true;
@@ -370,10 +363,24 @@ public class SwerveDrive extends SubsystemBase {
     imu.setGyroAngleY(newCurrentAngle);
   }
 
+  /**
+   * A function that allows the user to set the gyro to a 
+   * specific angle. This will make the current orientation 
+   * of the robot the input value. This must be in degrees 
+   * for gyro.
+   * @param newCurrentAngle value the gyro should now read in degrees.
+   */
   public void setGyroRollAngle(double newCurrentAngle){
     imu.setGyroAngleX(newCurrentAngle);
   }
 
+  /**
+   * A function that allows the user to set the gyro to a 
+   * specific angle. This will make the current orientation 
+   * of the robot the input value. This must be in degrees 
+   * for gyro.
+   * @param newCurrentAngle value the gyro should now read in degrees.
+   */
   public void setGyroYawAngle(double newCurrentAngle){
     imu.setGyroAngleZ(newCurrentAngle);
   }
@@ -391,11 +398,6 @@ public class SwerveDrive extends SubsystemBase {
     return Rotation2d.fromDegrees(getGyroInDegYaw());
     //note that counterclockwise rotation is positive
   }
-
-  // public double getGyroInRad(){
-  //   return Math.toRadians(getGyroInDeg()); // Pull the gyro in degrees, convert and return in radians
-  //   //note that counterclockwise rotation is positive
-  // }
 
   /**
    * This polls the onboard gyro, which, when the robot boots,
@@ -597,20 +599,6 @@ public class SwerveDrive extends SubsystemBase {
     for(SwerveMoveNEO NEO : swerveMoveNEO) {
       NEO.setDriveMotorPIDF(P, I, D, F);
     }
-  }
-
-
-  /**
-   * a method to print all module positions for testing purposes
-   */
-  public void printAllModuleAngles(){
-    //Use a for loop to and print() all modules' angles(degrees) on one line  
-    System.out.print("Angle = ");
-    for (SwerveModule module : swerveModules) {
-      System.out.print(module.getModulePosition().angle.getDegrees()+"\t");
-    }
-    //make sure to newline "\n" at the end
-    System.out.print("\n");
   }
   
   /**
