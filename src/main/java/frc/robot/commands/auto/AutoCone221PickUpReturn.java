@@ -13,27 +13,23 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.commands.HarvestRecordIntake;
 import frc.robot.commands.arm.ArmToPosition;
-import frc.robot.commands.claw.ClawOpen;
-import frc.robot.commands.drive.DriveBalanceRobot;
 import frc.robot.commands.drive.auto.DriveFollowTrajectory;
 import frc.robot.commands.drive.util.DriveSetGyro;
 import frc.robot.commands.harvester.HarvesterExtensionOut;
-import frc.robot.commands.harvester.HarvesterIntake;
 import frc.robot.commands.harvester.HarvesterStopRetract;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class AutoCone010PickUpReturn extends SequentialCommandGroup {
-  /** Creates a new AutoCone20PickUpChargeBalance. */
-  public AutoCone010PickUpReturn() {
-    List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("Cone010PickUpReturn", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
+public class AutoCone221PickUpReturn extends SequentialCommandGroup {
+  /** Creates a new AutoCone221PickUpChargeBalance. */
+  public AutoCone221PickUpReturn() {
+    List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("Cone221PickUpReturn", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
     
     addCommands(
       new DriveSetGyro(0),

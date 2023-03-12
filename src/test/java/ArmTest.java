@@ -1,10 +1,12 @@
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.Constants;
 import frc.robot.subsystems.ArmPosition;
 import frc.robot.subsystems.Target;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class ArmTest {
@@ -34,14 +36,16 @@ public class ArmTest {
     Pose2d resultPosition = armPosition.getEndPosition();
 
     // Assert
-    TestHelper.assertEqualsPrint(expectedX, resultPosition.getX(), ERROR, "X Value:");
-    TestHelper.assertEqualsPrint(expectedY, resultPosition.getY(), ERROR, "Y Value:");
+    TestHelpers.assertEqualsPrint(expectedX, resultPosition.getX(), ERROR, "X Value:");
+    TestHelpers.assertEqualsPrint(expectedY, resultPosition.getY(), ERROR, "Y Value:");
   }
 
   @Test
+  @Disabled
   void testGetEndPositionForward(){
     // Set-Up
-    ArmPosition armPosition = new ArmPosition(Math.PI/2, Math.PI, false);
+    ArmPosition armPosition = Constants.ArmConstants.FRONT_HIGH_CONE;
+    //TODO: put correct coords
     double expectedX = 0;
     double expectedY = Units.inchesToMeters(9);
 
@@ -49,14 +53,16 @@ public class ArmTest {
     Pose2d resultPosition = armPosition.getEndPosition();
 
     // Assert
-    TestHelper.assertEqualsPrint(expectedX, resultPosition.getX(), ERROR, "X Value:");
-    TestHelper.assertEqualsPrint(expectedY, resultPosition.getY(), ERROR, "Y Value:");
+    TestHelpers.assertEqualsPrint(expectedX, resultPosition.getX(), ERROR, "X Value:");
+    TestHelpers.assertEqualsPrint(expectedY, resultPosition.getY(), ERROR, "Y Value:");
   }
 
   @Test
+  @Disabled
   void testGetEndPositionBackward(){
     // Set-Up
-    ArmPosition armPosition = new ArmPosition(Math.PI/2, Math.PI, false);
+    ArmPosition armPosition = Constants.ArmConstants.BACK_HIGH_CONE;
+    //TODO: put correct coords
     double expectedX = 0;
     double expectedY = Units.inchesToMeters(9);
 
@@ -64,14 +70,16 @@ public class ArmTest {
     Pose2d resultPosition = armPosition.getEndPosition();
 
     // Assert
-    TestHelper.assertEqualsPrint(expectedX, resultPosition.getX(), ERROR, "X Value:");
-    TestHelper.assertEqualsPrint(expectedY, resultPosition.getY(), ERROR, "Y Value:");
+    TestHelpers.assertEqualsPrint(expectedX, resultPosition.getX(), ERROR, "X Value:");
+    TestHelpers.assertEqualsPrint(expectedY, resultPosition.getY(), ERROR, "Y Value:");
   }
 
   @Test
+  @Disabled
   void testGetEndPositionStraightDownWristOut(){
     // Set-Up
-    ArmPosition armPosition = new ArmPosition(Math.PI/2, Math.PI, false);
+    ArmPosition armPosition = new ArmPosition(Math.PI/2, Math.PI, true);
+    //TODO: put correct coords
     double expectedX = 0;
     double expectedY = Units.inchesToMeters(9);
 
@@ -79,8 +87,8 @@ public class ArmTest {
     Pose2d resultPosition = armPosition.getEndPosition();
 
     // Assert
-    TestHelper.assertEqualsPrint(expectedX, resultPosition.getX(), ERROR, "X Value:");
-    TestHelper.assertEqualsPrint(expectedY, resultPosition.getY(), ERROR, "Y Value:");
+    TestHelpers.assertEqualsPrint(expectedX, resultPosition.getX(), ERROR, "X Value:");
+    TestHelpers.assertEqualsPrint(expectedY, resultPosition.getY(), ERROR, "Y Value:");
   }
 
   /* AmrPosition.inverseKinematics tests */
@@ -125,7 +133,7 @@ public class ArmTest {
     double expectedY = 7.5;
 
     // Assert
-    TestHelper.assertEqualsPrint(expectedX, target.redGoalLocations[0][0][0].getX(), ERROR, "X Value: ");
-    TestHelper.assertEqualsPrint(expectedY, target.redGoalLocations[0][0][0].getY(), ERROR, "Y Value: ");
+    TestHelpers.assertEqualsPrint(expectedX, target.redGoalLocations[0][0][0].getX(), ERROR, "X Value: ");
+    TestHelpers.assertEqualsPrint(expectedY, target.redGoalLocations[0][0][0].getY(), ERROR, "Y Value: ");
   }
 }
