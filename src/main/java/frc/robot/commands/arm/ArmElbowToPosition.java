@@ -14,6 +14,7 @@ public class ArmElbowToPosition extends CommandBase {
   double position;
   int onTarget;
   double maxVelReached;
+  boolean goingDown;
   /** Creates a new ArmElbowToPosition. */
   public ArmElbowToPosition(double position) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -26,6 +27,7 @@ public class ArmElbowToPosition extends CommandBase {
   public void initialize() {
     onTarget = 0;
     maxVelReached = 0;
+    goingDown = Math.abs(RobotContainer.arm.getElbowPosition()) > Math.abs(position);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -55,6 +57,6 @@ public class ArmElbowToPosition extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return  onTarget >= 10 || Math.abs(RobotContainer.arm.getElbowPosition()) > ArmConstants.MAX_ELBOW_ANGLE;
+    return  onTarget >= 10 || (!goingDown && Math.abs(RobotContainer.arm.getElbowPosition()) > ArmConstants.MAX_ELBOW_ANGLE);
   }
 }

@@ -44,7 +44,7 @@ public final class Constants {
       public static final double SHOULDER_I_LEFT = 0.0;
       public static final double SHOULDER_D_LEFT = 0.0;
       public static final double SHOULDER_F_LEFT = 0.0;
-      public static final double MAX_SHOULDER_OUT_PID_OUT = .27;
+      public static final double MAX_SHOULDER_OUT_PID_OUT = .2;
       public static final double MAX_SHOULDER_IN_PID_OUT = .45;
 
       public static final double ELBOW_P = 1.0;
@@ -53,7 +53,7 @@ public final class Constants {
       public static final double ELBOW_F = 0.0;
       public static final double KG_WRIST_OUT = 0.30; // The force required to counter gravity i.e prevent the arm from dropping
       public static final double KG_WRIST_IN = 0.3;
-      public static final double MAX_ELBOW_PID_OUT = .35;//if this changes it won't hit targets
+      public static final double MAX_ELBOW_PID_OUT = .40;//if this changes it won't hit targets
 
       /*Scoring constants */
       /* WARNING DO NOT CHANGE WITHOUT TESTING IN A CONTROLLED ENVIRONMENT */

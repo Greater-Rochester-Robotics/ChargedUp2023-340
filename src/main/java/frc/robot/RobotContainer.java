@@ -43,6 +43,7 @@ import frc.robot.commands.auto.AutoCone201ChargeBalance;
 import frc.robot.commands.auto.AutoCone201ChargeLeaveBalance;
 import frc.robot.commands.auto.AutoCone001PickUpReturn;
 import frc.robot.commands.auto.AutoCone021ChargeBalance;
+import frc.robot.commands.auto.AutoCone021ChargeLeaveBalance;
 import frc.robot.commands.auto.AutoScoreCone;
 // import frc.robot.commands.auto.test.AutoBackOneMeter;
 // import frc.robot.commands.auto.test.AutoBackOneMeterLeftOneMeter;
@@ -294,14 +295,14 @@ public class RobotContainer {
    */
   private void configureAutoModes() {
     autoChooser.setDefaultOption("Wait 1 second (do nothing)", new WaitCommand(1));
-    autoChooser.addOption("Score middle cone back", new AutoScoreCone(ArmConstants.BACK_MIDDLE_CUBE));
-    autoChooser.addOption("Left outer cone mid, cube pickup, return", new AutoCone221PickUpReturn());
+    autoChooser.addOption("Score middle cone", new AutoScoreCone(ArmConstants.BACK_MIDDLE_CUBE));
+    autoChooser.addOption("Loading Station outer cone mid, cube pickup, return", new AutoCone221PickUpReturn());
     // autoChooser.addOption("Left outer cone high, cube pickup, balance", new AutoCone220PickUpChargeBalance());
-    autoChooser.addOption("Left inner cone mid, balance", new AutoCone201ChargeBalance());
-    autoChooser.addOption("Left inner cone mid, charge leave, return balance", new AutoCone201ChargeLeaveBalance());
-    autoChooser.addOption("Right outer cone mid, cable cube pickup, return", new AutoCone001PickUpReturn());
-    autoChooser.addOption("Right inner cone mid, balance", new AutoCone021ChargeBalance());
-
+    autoChooser.addOption("Loading Station inner cone mid, balance", new AutoCone201ChargeBalance());
+    autoChooser.addOption("Loading Station inner cone mid, charge leave, balance", new AutoCone201ChargeLeaveBalance());
+    autoChooser.addOption("Score Table outer cone mid, cube pickup, return", new AutoCone001PickUpReturn());
+    autoChooser.addOption("Score Table inner cone mid, balance", new AutoCone021ChargeBalance());
+    // autoChooser.addOption("Score Table inner cone mid, charge leave, balance", new AutoCone021ChargeLeaveBalance());//NOT FUNCTIONAL LAST TEST 3-12
     /* Testing */
     // autoChooser.addOption("Back 2m", new AutoBackTwoMeters());
     // autoChooser.addOption("Diagonal 1m", new AutoDiagonalOneMeter());

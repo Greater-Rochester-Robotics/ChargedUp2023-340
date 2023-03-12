@@ -29,8 +29,8 @@ public class RecordPlayer extends SubsystemBase {
   private DigitalInput gamePieceSensor;
   private DigitalInput conePositionSensor0;
   private DigitalInput conePositionSensor1;
-  private ColorSensorV3 colorSensor;
-  private ColorSensorState colorSensorState;
+//   private ColorSensorV3 colorSensor;
+//   private ColorSensorState colorSensorState;
 
   /**
    * The network table instance used by the record player subsystem.
@@ -62,17 +62,17 @@ public class RecordPlayer extends SubsystemBase {
     rotationMotor.getEncoder().setVelocityConversionFactor(.01/60);
     rotationMotor.setIdleMode(IdleMode.kBrake);
 
-    rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
+    rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 547);
     rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
     rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
-    rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 2000);
-    rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 2000);
-    rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);  
-    rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
+    rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 59981);
+    rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 59999);
+    rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 59957);  
+    rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 59951);
     rotationMotor.burnFlash();
 
-    colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
-    colorSensorState = ColorSensorState.kUnknown;
+    // colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
+    // colorSensorState = ColorSensorState.kUnknown;
   }
 
   @Override
@@ -92,27 +92,27 @@ public class RecordPlayer extends SubsystemBase {
     netTable.getEntry("recordplayer").setDouble(rotationMotor.getEncoder().getVelocity());
 
     // Poll color sensor values
-    int proximity = colorSensor.getProximity();
-    int blue = colorSensor.getBlue();
-    int red = colorSensor.getRed();
-    boolean connected = !colorSensor.isConnected();
+    // int proximity = colorSensor.getProximity();
+    // int blue = colorSensor.getBlue();
+    // int red = colorSensor.getRed();
+    // boolean connected = !colorSensor.isConnected();
 
     // Set color sensor state
-    if(!connected || (proximity == 0 && blue == 0 && red == 0)) {
-      if(red > 100 || blue > 100) {
-        colorSensorState = ColorSensorState.kCone;
-      } else {
-        colorSensorState = ColorSensorState.kCube;
-      }
-    } else {
-      colorSensorState = ColorSensorState.kUnknown;
-    }
+    // if(!connected || (proximity == 0 && blue == 0 && red == 0)) {
+    //   if(red > 100 || blue > 100) {
+    //     colorSensorState = ColorSensorState.kCone;
+    //   } else {
+    //     colorSensorState = ColorSensorState.kCube;
+    //   }
+    // } else {
+    //   colorSensorState = ColorSensorState.kUnknown;
+    // }
 
     // Print color sensor values
-    SmartDashboard.putNumber("Color Red", red);
-    SmartDashboard.putNumber("Color Blue", blue);
-    SmartDashboard.putNumber("Color Proximity", proximity);
-    SmartDashboard.putBoolean("Color Connected", connected);
+    // SmartDashboard.putNumber("Color Red", red);
+    // SmartDashboard.putNumber("Color Blue", blue);
+    // SmartDashboard.putNumber("Color Proximity", proximity);
+    // SmartDashboard.putBoolean("Color Connected", connected);
   }
 
   public boolean getGamePieceSensor(){
