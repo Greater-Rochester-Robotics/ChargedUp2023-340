@@ -38,12 +38,12 @@ public final class Constants {
       public static final double SHOULDER_P_RIGHT = 1.80;
       public static final double SHOULDER_I_RIGHT = 0.0;
       public static final double SHOULDER_D_RIGHT = 0.0;
+      public static final double SHOULDER_F_RIGHT = 0.0;
 
       public static final double SHOULDER_P_LEFT = 1.80;
       public static final double SHOULDER_I_LEFT = 0.0;
       public static final double SHOULDER_D_LEFT = 0.0;
-      
-      public static final double SHOULDER_F = 0.0;
+      public static final double SHOULDER_F_LEFT = 0.0;
       public static final double MAX_SHOULDER_OUT_PID_OUT = .2;
       public static final double MAX_SHOULDER_IN_PID_OUT = .45;
 

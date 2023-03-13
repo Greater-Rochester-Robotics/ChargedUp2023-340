@@ -274,24 +274,25 @@ public class Arm extends SubsystemBase {
         if(Math.abs(rightDiff) > Math.abs(leftDiff)){
           shoulderLeft.set(0.0);
           setRightShoulderPosition(shoulderGoalPos);
+          // shoulderRight.set(shoulderRightProPidController.calculate(absoluteEncoderRight.getPosition()));
         }
         else{
           shoulderRight.set(0.0);
           setLeftShoulderPosition(shoulderGoalPos);
+          // shoulderLeft.set(shoulderLeftProPidController.calculate(absoluteEncoderLeft.getPosition()));
         }
       }
       else{
         setLeftShoulderPosition(shoulderGoalPos);
         setRightShoulderPosition(shoulderGoalPos);
+        // shoulderLeft.set(shoulderLeftProPidController.calculate(absoluteEncoderLeft.getPosition()));
+        // shoulderRight.set(shoulderRightProPidController.calculate(absoluteEncoderRight.getPosition()));
       }
 
       if(followingTrajectory){
         //
       }
     }
-
-    // TODO: comment in when ready to use profiled pid
-    // driveBothShoulderMotors(shoulderGoalPos);
   }
 
   
@@ -411,23 +412,6 @@ public class Arm extends SubsystemBase {
     zeroLeftShoulder();
     zeroRightShoulder();
   }
-
-  /**
-   * Drives both shoulder motors using profiled
-   * PID controllers, uses feed forward based on
-   * difference in shoulder angles to sync shoulders
-   * 
-   * @param angle The angle motors should drive to
-   */
-  public void driveBothShoulderMotors(double angle) {
-    double leftSensor = absoluteEncoderLeft.getPosition();
-    double rightSensor = absoluteEncoderRight.getPosition();
-    double diff = leftSensor - rightSensor;
-    // TODO: set F
-    shoulderLeft.set(shoulderLeftProPidController.calculate(leftSensor, angle) + ArmConstants.SHOULDER_F * diff);
-    shoulderRight.set(shoulderRightProPidController.calculate(rightSensor, angle) + ArmConstants.SHOULDER_F * diff);
-  }
-
   // -------------------------- Elbow Motor Methods -------------------------- //
 
   /**
