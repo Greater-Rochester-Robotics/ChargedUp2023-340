@@ -29,7 +29,6 @@ public class Harvester extends SubsystemBase {
   // private CANSparkMax motor2;
   private DigitalInput gamePieceSensor;
   private DoubleSolenoid harvesterPistons;
-  private boolean hadGamePeice = false;
   Timer rumbleTimer;
 
   /**

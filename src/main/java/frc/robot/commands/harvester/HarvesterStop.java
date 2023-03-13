@@ -4,33 +4,23 @@
 
 package frc.robot.commands.harvester;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.RobotContainer;
 
-public class HarvesterStop extends CommandBase {
-  /** Creates a new IntakeStop. */
-  public HarvesterStop() {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.harvester);
-  }
+/**
+ * Stops the harvester motors.
+ */
+public class HarvesterStop extends InstantCommand {
+    /**
+     * Creates a new HarvesterStop command.
+     */
+    public HarvesterStop () {
+        addRequirements(RobotContainer.harvester);
+    }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    RobotContainer.harvester.motorStop();
-  }
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return true;
-  }
+    @Override
+    public void initialize () {
+        // Stop the harvester motors.
+        RobotContainer.harvester.motorStop();
+    }
 }

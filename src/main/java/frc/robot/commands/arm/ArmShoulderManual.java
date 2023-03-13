@@ -8,40 +8,36 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
+/**
+ * Controls the arm's shoulder manually using 2 joysticks.
+ * @see RobotContainer#getRightShoulderManualValue()
+ * @see RobotContainer#getLeftShoulderManualValue()
+ */
 public class ArmShoulderManual extends CommandBase {
-  double rightAxis;
-  double leftAxis;
-  /** Creates a new ArmManualShoulder. */
-  public ArmShoulderManual() {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.arm);
-  }
+    /**
+     * Creates a new ArmManualShoulder command.
+     */
+    public ArmShoulderManual () {
+        addRequirements(RobotContainer.arm);
+    }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
+    @Override
+    public void execute () {
+        // Set the shoulder's duty cycle based on the joystick's value.
+        RobotContainer.arm.setRightShoulderDutyCycle(Robot.robotContainer.getRightShoulderManualValue());
+        RobotContainer.arm.setLeftShoulderDutyCycle(Robot.robotContainer.getLeftShoulderManualValue());
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    rightAxis = Robot.robotContainer.getRightShoulderManual();
-    leftAxis = Robot.robotContainer.getLeftShoulderManual();
+    }
 
-    RobotContainer.arm.setRightDutyCycle(rightAxis);
-    RobotContainer.arm.setLeftDutyCycle(leftAxis);
+    @Override
+    public void end (boolean interrupted) {
+        // If ended, stop the shoulder from moving.
+        RobotContainer.arm.stopShoulder();
+    }
 
-  }
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    RobotContainer.arm.stopShoulder();
-
-  }
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+    @Override
+    public boolean isFinished () {
+        // Run continuously.
+        return false;
+    }
 }

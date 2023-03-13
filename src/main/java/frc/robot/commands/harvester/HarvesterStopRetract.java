@@ -9,28 +9,38 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.recordPlayer.RecordOrientCone;
-import frc.robot.commands.recordPlayer.RecordPlayerIntake;
+import frc.robot.commands.recordPlayer.RecordPlayerOrientCone;
+import frc.robot.commands.recordPlayer.RecordPlayerSpin;
 
+/**
+ * Stops the harvester motors and retracts the harvester into the robot.
+ */
 public class HarvesterStopRetract extends SequentialCommandGroup {
-  /** Creates a new IntakeStopRetract. */
-  public HarvesterStopRetract(boolean isCone) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addCommands(
-      Commands.race(
-        isCone?new RecordPlayerIntake():new InstantCommand(),
-        Commands.sequence(
-          new HarvesterExtensionIn(),
-          Commands.race(
-            // isCone?new HarvesterOuttake():new InstantCommand(),
-            new WaitCommand(.5)
-          ),
-          new HarvesterStop()
-        )
-      ),
-     new WaitCommand(.5),
-     (isCone?new RecordOrientCone():new HarvesterIntake().withTimeout(2))
-    );
-  }
+    /**
+     * Creates a new HarvesterStopRetract command.
+     */
+    public HarvesterStopRetract (boolean isCone) {
+        addCommands(
+            // Bring in the harvester extension, delay to ensure the game piece is entirely inside the robot, then stop the harvester motors.
+            // If grabbing a cone, start running the record player at the same time.
+            Commands.race(
+                Commands.sequence(
+                    new HarvesterExtensionIn(),
+                    new WaitCommand(isCone ? 0.5 : 2.5),
+                    new HarvesterStop()
+                ),
+                new ConditionalCommand(new RecordPlayerSpin(), new InstantCommand(), () -> isCone)
+            ),
 
+            // If we grabbed a cone, add delay to ensure the cone is in position then run the record player.
+            new ConditionalCommand(
+                Commands.sequence(
+                    new WaitCommand(0.5),
+                    new RecordPlayerOrientCone()
+                ),
+                new InstantCommand(),
+                () -> isCone
+            )
+        );
+    }
 }

@@ -93,7 +93,7 @@ public class Claw extends SubsystemBase {
   /**
    * cause the intake motor to spit out
    */
-  public void outtake(){
+  public void spit(){
     clawMotor.set(TalonSRXControlMode.PercentOutput, ClawConstants.CLAW_MOTOR_OUTTAKE_SPEED);
   }
 
@@ -107,7 +107,7 @@ public class Claw extends SubsystemBase {
   /**
    * causes the claw motor to intake slowly to hold object
    */
-  public void hold() {
+  public void intakeSlow() {
     clawMotor.set(ControlMode.PercentOutput, ClawConstants.CLAW_MOTOR_HOLD_SPEED);
   }
 

@@ -10,9 +10,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.Constants.SwerveDriveConstants;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -73,17 +73,14 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    // Update the network tables cycle.
-    netCycle++;
-    if (netCycle > 10) {
-      netCycle = 0;
-    }
+    // Increment the network tables cycle.
+    RobotContainer.incrementNetCycle();
 
-    // If the network tables publish cycle has restarted, publish values.
-    if (netCycle == 0) {
+    // Publish to network tables.
+    if (RobotContainer.shouldPublishToNet()) {
       netTable.getEntry("alliance").setInteger(DriverStation.getAlliance().ordinal());
-      netTable.getEntry("voltage").setDouble(RobotController.getBatteryVoltage());
-      netTable.getEntry("psi").setDouble(RobotContainer.compressor.getPressure());
+      netTable.getEntry("voltage").setDouble(Math.round(RobotController.getBatteryVoltage() * 10) / 10);
+      netTable.getEntry("psi").setDouble(Math.round(RobotContainer.compressor.getPressure() * 10) / 10);
       netTable.getEntry("time").setInteger((int) DriverStation.getMatchTime());
     }
   }

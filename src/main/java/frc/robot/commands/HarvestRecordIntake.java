@@ -5,28 +5,41 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.claw.ClawClose;
 import frc.robot.commands.harvester.HarvesterExtensionOut;
 import frc.robot.commands.harvester.HarvesterIntake;
-import frc.robot.commands.recordPlayer.RecordPlayerIntake;
+import frc.robot.commands.recordPlayer.RecordPlayerSpin;
 
-
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
+/**
+ * Deploys the harvester and runs the harvester motors.
+ */
 public class HarvestRecordIntake extends SequentialCommandGroup {
-  /** Creates a new HarvistRecordIntake. */
-  public HarvestRecordIntake(boolean isCone) {
-    
-    addCommands(
-      new HarvesterExtensionOut(),
-      isCone?new ClawClose():new InstantCommand(),
-      Commands.parallel(
-        new HarvesterIntake(isCone),
-        isCone?new RecordPlayerIntake():new InstantCommand()
-      )
-    ); 
-  }
+    /**
+     * Creates a new HarvestRecordIntake command.
+     * 
+     * @param isCone If the harvester is grabbing a cone.
+     */
+    public HarvestRecordIntake (boolean isCone) {
+        addCommands(
+            // Deploy the harvester.
+            new HarvesterExtensionOut(),
+
+            // Run the intake motors.
+            new HarvesterIntake(isCone),
+
+            // If picking up a cone, close the claw to utilize the flanges to knock over
+            // upright cones in the record player, and spin the record player.
+            new ConditionalCommand(
+                Commands.sequence(
+                    new RecordPlayerSpin(),
+                    new ClawClose()
+                ),
+                new InstantCommand(),
+                () -> isCone
+            )
+        );
+    }
 }

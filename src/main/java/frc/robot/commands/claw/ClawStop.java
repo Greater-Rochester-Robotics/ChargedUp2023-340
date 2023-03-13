@@ -7,18 +7,20 @@ package frc.robot.commands.claw;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.RobotContainer;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
+/**
+ * Stops the claw motors.
+ */
 public class ClawStop extends InstantCommand {
-  public ClawStop() {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.claw);
-  }
+    /**
+     * Creates a new ClawStop command.
+     */
+    public ClawStop () {
+        addRequirements(RobotContainer.claw);
+    }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    RobotContainer.claw.stop();
-  }
+    @Override
+    public void initialize () {
+        // Stop the claw motors.
+        RobotContainer.claw.stop();
+    }
 }

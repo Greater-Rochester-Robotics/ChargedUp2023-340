@@ -2,26 +2,25 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.claw;
+package frc.robot.commands.recordPlayer;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.RobotContainer;
 
 /**
- * Runs the claw motors to spit a game piece.
+ * Stops the record player.
  */
-public class ClawSpit extends InstantCommand {
+public class RecordPlayerStop extends InstantCommand {
     /**
-     * Creates a new ClawSpit command.
+     * Creates a new RecordPlayerStop command.
      */
-    public ClawSpit () {
-        addRequirements(RobotContainer.claw);
+    public RecordPlayerStop () {
+        addRequirements(RobotContainer.recordPlayer);
     }
 
-    // Called when the command is initially scheduled.
     @Override
     public void initialize () {
-        // Run the claw motors out.
-        RobotContainer.claw.spit();
+        // Stop the record player.
+        RobotContainer.recordPlayer.stopRotationMotor();
     }
 }

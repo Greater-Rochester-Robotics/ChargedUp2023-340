@@ -6,44 +6,47 @@ package frc.robot.commands.arm;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.RobotContainer;
 
-
+/**
+ * Retracts the wrist.
+ */
 public class ArmWristRetract extends InstantCommand {
-  Timer timer = new Timer();
-  boolean waitForRetract;
+    /**
+     * The timer used to wait for the wrist to be retracted, as the robot only
+     * knows the robot's solenoid states, not the affected piston's current position.
+     */
+    Timer timer = new Timer();
+    /**
+     * If the command should wait for the wrist to be retracted to finish.
+     */
+    boolean waitForRetract;
 
-  public ArmWristRetract(){
-    this(true);
-  }
+    /**
+     * Creates a new ArmWristRetract command.
+     * 
+     * @param waitForRetract If the command should wait for the wrist to be retracted to finish.
+     * @see ArmConstants#WRIST_RETRACTION_DELAY
+     */
+    public ArmWristRetract (boolean waitForRetract) {
+        addRequirements(RobotContainer.arm);
+        this.waitForRetract = waitForRetract;
+    }
 
-  public ArmWristRetract(boolean waitForRetract) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.arm);
-    this.waitForRetract = waitForRetract;
-  }
+    @Override
+    public void initialize () {
+        // Start the timer.
+        timer.reset();
+        timer.start();
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    timer.reset();
-    timer.start();
-  }
+        // Retract the wrist.
+        RobotContainer.arm.retractWrist();
+    }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    RobotContainer.arm.retractWrist();
-  }
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return !waitForRetract || timer.hasElapsed(ArmConstants.WRIST_RETRACTION_DELAY);
-  }
+    @Override
+    public boolean isFinished () {
+        // Finish if the wrist is retracted, or if the command ignores if the wrist should be retracted.
+        return timer.hasElapsed(ArmConstants.WRIST_RETRACTION_DELAY) || !waitForRetract;
+    }
 }

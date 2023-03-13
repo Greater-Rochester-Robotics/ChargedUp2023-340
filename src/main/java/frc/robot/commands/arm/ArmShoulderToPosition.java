@@ -4,39 +4,44 @@
 
 package frc.robot.commands.arm;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.RobotContainer;
 
+/**
+ * Moves the shoulder to a set position (in radians).
+ */
 public class ArmShoulderToPosition extends CommandBase {
-  double position;
-  /** Creates a new ArmShoulderToPosition. */
-  public ArmShoulderToPosition(double position) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.arm);
-    this.position = position;
-  }
+    /**
+     * The target position to move to.
+     */
+    private double position;
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
+    /**
+     * Creates a new ArmShoulderToPosition command.
+     * 
+     * @param position The position to set the shoulder to in radians.
+     */
+    public ArmShoulderToPosition (double position) {
+        addRequirements(RobotContainer.arm);
+        this.position = position;
+    }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    RobotContainer.arm.setBothShoulderMotorPosition(position);
-  }
+    @Override
+    public void execute () {
+        // Set the shoulder position.
+        RobotContainer.arm.setShoulderPosition(position);
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    RobotContainer.arm.stopShoulder();
-  }
+    @Override
+    public void end (boolean interrupted) {
+        // If ended, stop the shoulder from moving.
+        RobotContainer.arm.stopShoulder();
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return Math.abs(RobotContainer.arm.getShoulderPosition()-position) < ArmConstants.SHOULDER_CLOSED_LOOP_ERROR;
-  }
+    @Override
+    public boolean isFinished () {
+        // Finish if the shoulder is within tolerance of the target position.
+        return Math.abs(RobotContainer.arm.getShoulderPosition() - position) < ArmConstants.SHOULDER_CLOSED_LOOP_ERROR;
+    }
 }

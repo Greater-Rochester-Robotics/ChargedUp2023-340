@@ -8,20 +8,19 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.RobotContainer;
 
 /**
- * Runs the claw motors to spit a game piece.
+ * Slowly runs the claw motors. Used for holding game pieces.
  */
-public class ClawSpit extends InstantCommand {
+public class ClawIntakeSlow extends InstantCommand {
     /**
-     * Creates a new ClawSpit command.
+     * Creates a new ClawIntakeSlow command.
      */
-    public ClawSpit () {
+    public ClawIntakeSlow () {
         addRequirements(RobotContainer.claw);
     }
 
-    // Called when the command is initially scheduled.
     @Override
     public void initialize () {
-        // Run the claw motors out.
-        RobotContainer.claw.spit();
+        // Run the claw motors in slowly.
+        RobotContainer.claw.intakeSlow();
     }
 }

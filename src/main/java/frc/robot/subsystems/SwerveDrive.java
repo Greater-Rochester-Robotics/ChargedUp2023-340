@@ -26,7 +26,8 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 
 import frc.robot.Constants;
-import frc.robot.subsystems.ADIS16470_IMU.IMUAxis;
+import frc.robot.subsystems.swervelib.ADIS16470_IMU;
+import frc.robot.subsystems.swervelib.ADIS16470_IMU.IMUAxis;
 import frc.robot.subsystems.LLHelpers.LLResults;
 import frc.robot.subsystems.swervelib.SwerveModule;
 import frc.robot.subsystems.swervelib.rev.SwerveMoveNEO;

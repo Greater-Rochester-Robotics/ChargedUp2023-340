@@ -7,7 +7,6 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
-import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.ArmPosition;
 import frc.robot.subsystems.swervelib.SwervePIDFConfig;
 import frc.robot.subsystems.swervelib.rev.NEOConfig;
@@ -32,6 +31,8 @@ public final class Constants {
     public static final double ROBOT_LENGTH = 30.0;
     public static final double ROBOT_BASE_HEIGHT = 5;
     public static final double MAXIMUM_VOLTAGE = 12.0;
+
+    public static final int NETWORK_TABLES_CYCLE = 20;
     
     public static class ArmConstants{
       /* Arm PID Constants */
@@ -54,6 +55,8 @@ public final class Constants {
       public static final double KG_WRIST_OUT = 0.30; // The force required to counter gravity i.e prevent the arm from dropping
       public static final double KG_WRIST_IN = 0.3;
       public static final double MAX_ELBOW_PID_OUT = .40;//if this changes it won't hit targets
+
+      public static final double SHOULDER_ALLOWED_DIFFERENCE = 0.19625;
 
       /*Scoring constants */
       /* WARNING DO NOT CHANGE WITHOUT TESTING IN A CONTROLLED ENVIRONMENT */
@@ -120,6 +123,9 @@ public final class Constants {
       public static final double CLAW_MOTOR_INTAKE_SPEED = -0.9; 
       public static final double CLAW_MOTOR_OUTTAKE_SPEED = 1.0; 
       public static final double CLAW_MOTOR_HOLD_SPEED = -0.35;
+
+      public static final double CLAW_OPEN_DELAY = 0.3;
+      public static final double CLAW_CLOSE_DELAY = 0.3;
     }
 
     public class CompressorConstants {

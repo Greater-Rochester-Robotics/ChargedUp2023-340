@@ -4,41 +4,31 @@
 
 package frc.robot.commands.harvester;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.RobotContainer;
 
-public class HarvesterIntake extends CommandBase {
-  boolean isCone;
-  /** Creates a new IntakeIntake. */
-  public HarvesterIntake() {
-    this(true);
-  }
-  public HarvesterIntake(boolean isCone) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.isCone = isCone;
-    addRequirements(RobotContainer.harvester);
-  }
+/**
+ * Runs the harvester motors to intake a game piece.
+ */
+public class HarvesterIntake extends InstantCommand {
+    /**
+     * If the harvester is grabbing a cone.
+     */
+    boolean isCone;
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-  }
+    /**
+     * Creates a new HarvesterIntake command.
+     * 
+     * @param isCone If the harvester is grabbing a cone.
+     */
+    public HarvesterIntake (boolean isCone) {
+        addRequirements(RobotContainer.harvester);
+        this.isCone = isCone;
+    }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    RobotContainer.harvester.motorIn(isCone);
-  }
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    RobotContainer.harvester.motorStop();
-  }
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+    @Override
+    public void initialize () {
+        // Run the harvester motors in.
+        RobotContainer.harvester.motorIn(isCone);
+    }
 }

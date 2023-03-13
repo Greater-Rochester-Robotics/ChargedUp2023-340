@@ -8,34 +8,33 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
+/**
+ * Controls the arm's elbow manually using a joystick.
+ * @see RobotContainer#getElbowManualValue()
+ */
 public class ArmElbowManual extends CommandBase {
-  double axis;
-  /** Creates a new ArmElbowManual. */
-  public ArmElbowManual() {
-    addRequirements(RobotContainer.arm);
-  }
-  
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
+    /**
+     * Creates a new ArmElbowManual command.
+     */
+    public ArmElbowManual () {
+        addRequirements(RobotContainer.arm);
+    }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    axis = Robot.robotContainer.getElbowManual();
+    @Override
+    public void execute () {
+        // Set the elbow's duty cycle based on the joystick's value.
+        RobotContainer.arm.setElbowDutyCycle(Robot.robotContainer.getElbowManualValue());
+    }
 
-    RobotContainer.arm.setElbowDutyCycle(axis);
-  }
+    @Override
+    public void end (boolean interrupted) {
+        // If ended, stop the elbow from moving.
+        RobotContainer.arm.stopElbow();
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    RobotContainer.arm.stopElbow();
-  }
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+    @Override
+    public boolean isFinished () {
+        // Run continuously.
+        return false;
+    }
 }

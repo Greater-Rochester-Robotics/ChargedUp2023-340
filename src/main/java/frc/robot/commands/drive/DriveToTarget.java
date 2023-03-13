@@ -18,7 +18,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.SwerveDriveConstants;
-import frc.robot.commands.drive.auto.DriveFollowTrajectory;
+import frc.robot.commands.auto.util.AutoDriveFollowTrajectory;
 
 
 public class DriveToTarget extends InstantCommand {
@@ -47,7 +47,7 @@ public class DriveToTarget extends InstantCommand {
     
     trajectory = PathPlanner.generatePath(constraints, eventMarkers, startPose, goalPose);
 
-    (new DriveFollowTrajectory(trajectory)).schedule();
+    (new AutoDriveFollowTrajectory(trajectory)).schedule();
 
     
   }

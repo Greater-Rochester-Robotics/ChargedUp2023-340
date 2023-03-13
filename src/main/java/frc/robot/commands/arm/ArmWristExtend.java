@@ -6,43 +6,47 @@ package frc.robot.commands.arm;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.RobotContainer;
 
+/**
+ * Extends the wrist.
+ */
 public class ArmWristExtend extends CommandBase {
-  Timer timer = new Timer();
-  boolean waitForExtend;
-  
-  public ArmWristExtend(){
-    this(true);
-  }
+    /**
+     * The timer used to wait for the wrist to be extended, as the robot only
+     * knows the robot's solenoid states, not the affected piston's current position.
+     */
+    private Timer timer = new Timer();
+    /**
+     * If the command should wait for the wrist to be extended to finish.
+     */
+    private boolean waitForExtend;
 
-  public ArmWristExtend(boolean waitForExtend) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.arm);
-    this.waitForExtend = waitForExtend;
-  }
+    /**
+     * Creates a new ArmWristExtend command.
+     * 
+     * @param waitForExtend If the command should wait for the wrist to be extended to finish.
+     * @see ArmConstants#WRIST_EXTENSION_DELAY
+     */
+    public ArmWristExtend (boolean waitForExtend) {
+        addRequirements(RobotContainer.arm);
+        this.waitForExtend = waitForExtend;
+    }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    timer.reset();
-    timer.start();
-  }
+    @Override
+    public void initialize () {
+        // Start the timer.
+        timer.reset();
+        timer.start();
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    RobotContainer.arm.extendWrist();
-  }
+        // Extend the wrist.
+        RobotContainer.arm.extendWrist();
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return !waitForExtend || timer.hasElapsed(ArmConstants.WRIST_EXTENSION_DELAY);
-  }
+    @Override
+    public boolean isFinished () {
+        // Finish if the wrist is extended, or if the command ignores if the wrist should be extended.
+        return timer.hasElapsed(ArmConstants.WRIST_EXTENSION_DELAY) || !waitForExtend;
+    }
 }
