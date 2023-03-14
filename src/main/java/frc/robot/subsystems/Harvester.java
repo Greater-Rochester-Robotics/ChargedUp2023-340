@@ -30,6 +30,7 @@ public class Harvester extends SubsystemBase {
   private DigitalInput gamePieceSensor;
   private DoubleSolenoid harvesterPistons;
   private boolean hadGamePeice = false;
+  private boolean isHarvesterOut;
   Timer rumbleTimer;
 
   /**
@@ -65,6 +66,8 @@ public class Harvester extends SubsystemBase {
     gamePieceSensor = new DigitalInput(Constants.HARVESTER_GAME_PIECE_SENSOR);
 
     harvesterPistons = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.HARVESTER_SOLENOID_OUT, Constants.HARVESTER_SOLENOID_IN);
+
+    isHarvesterOut = harvesterPistons.get() == Value.kForward;
   }
 
   @Override
@@ -86,6 +89,7 @@ public class Harvester extends SubsystemBase {
    */
   public void harvesterExtensionIn() {
     harvesterPistons.set(Value.kReverse);
+    isHarvesterOut = harvesterPistons.get() == Value.kForward;
   }
 
   /**
@@ -93,6 +97,7 @@ public class Harvester extends SubsystemBase {
    */
   public void harvesterExtensionOut() {
     harvesterPistons.set(Value.kForward);
+    isHarvesterOut = harvesterPistons.get() == Value.kForward;
   }
 
   public boolean isHarvesterOut(){
