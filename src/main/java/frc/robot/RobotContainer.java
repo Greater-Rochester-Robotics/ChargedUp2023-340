@@ -52,6 +52,7 @@ import frc.robot.commands.drive.util.ResetOdometry;
 import frc.robot.commands.harvester.HarvesterExtensionIn;
 import frc.robot.commands.harvester.HarvesterExtensionOut;
 import frc.robot.commands.harvester.HarvesterIntake;
+import frc.robot.commands.harvester.HarvesterStop;
 import frc.robot.commands.recordPlayer.RecordPlayerManual;
 import frc.robot.commands.recordPlayer.RecordPlayerOrientCone;
 import frc.robot.commands.recordPlayer.RecordPlayerSpin;
@@ -175,7 +176,7 @@ public class RobotContainer {
         // D Right => 
         driverDRight.onTrue(new ConditionalCommand(new HarvesterExtensionIn(), Commands.parallel(new HarvesterExtensionOut(), new ClawClose()), harvester::isHarvesterOut));
         driverBack.toggleOnTrue(new DriveRobotCentric(false));
-        driverStart.whileTrue(new HarvesterIntake(true));
+        driverStart.onTrue(new HarvesterIntake(true)).onFalse(new HarvesterStop());
         driverStickRightUp.onTrue(new HarvesterExtensionOut());
         driverStickRightDown.onTrue(new HarvesterExtensionIn());
 

@@ -60,8 +60,8 @@ public final class Constants {
 
       /*Scoring constants */
       /* WARNING DO NOT CHANGE WITHOUT TESTING IN A CONTROLLED ENVIRONMENT */
-      public static final ArmPosition BACK_HIGH_CONE = new ArmPosition(Math.toRadians(-32.6),Math.toRadians(-159),true);
-      public static final ArmPosition BACK_MIDDLE_CONE = new ArmPosition(Math.toRadians(-13),Math.toRadians(-115),false);
+      public static final ArmPosition BACK_HIGH_CONE = new ArmPosition(Math.toRadians(-32.6),Math.toRadians(-154),true);
+      public static final ArmPosition BACK_MIDDLE_CONE = new ArmPosition(Math.toRadians(-13),Math.toRadians(-110),false);
       public static final ArmPosition BACK_HIGH_CUBE = new ArmPosition(Math.toRadians(-24.5),Math.toRadians(-127), false);
       public static final ArmPosition BACK_MIDDLE_CUBE = new ArmPosition(Math.toRadians(-5.4), Math.toRadians(-82.2), false);
       public static final ArmPosition BACK_LOWER_SCORE = new ArmPosition(Math.toRadians(5.2), Math.toRadians(-50), false);
@@ -120,9 +120,9 @@ public final class Constants {
     }
 
     public static class ClawConstants {
-      public static final double CLAW_MOTOR_INTAKE_SPEED = -0.9; 
-      public static final double CLAW_MOTOR_OUTTAKE_SPEED = 1.0; 
-      public static final double CLAW_MOTOR_HOLD_SPEED = -0.35;
+      public static final double CLAW_MOTOR_INTAKE_SPEED = 0.9; 
+      public static final double CLAW_MOTOR_OUTTAKE_SPEED = -1.0; 
+      public static final double CLAW_MOTOR_HOLD_SPEED = 0.35;
 
       public static final double CLAW_OPEN_DELAY = 0.3;
       public static final double CLAW_CLOSE_DELAY = 0.3;
