@@ -454,17 +454,20 @@ public class LLHelpers {
      * Parses Limelight's JSON results dump into a LimelightResults Object
      */
     public static LLResults getLatestResults(String limelightName) {
-
         long start = System.nanoTime();
         LLHelpers.LLResults results = new LLHelpers.LLResults();
+
+        String json = getJSONDump(limelightName);
+        if (json.equals("")) return results;
+
         if (mapper == null) {
             mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         }
 
         try {
-            results = mapper.readValue(getJSONDump(limelightName), LLResults.class);
+            results = mapper.readValue(json, LLResults.class);
         } catch (JsonProcessingException e) {
-            System.err.println("lljson error: " + e.getMessage());
+            e.printStackTrace();
         }
 
         long end = System.nanoTime();
