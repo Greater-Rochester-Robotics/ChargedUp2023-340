@@ -46,6 +46,7 @@ public final class Constants {
       public static final double SHOULDER_F_LEFT = 0.0;
       public static final double MAX_SHOULDER_OUT_PID_OUT = .2;
       public static final double MAX_SHOULDER_IN_PID_OUT = .45;
+      public static final double SHOULDER_F_DIFFERENCE = 0.0;
 
       public static final double ELBOW_P = 1.0;
       public static final double ELBOW_I = 0.0;
