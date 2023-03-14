@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.arm.ArmWristExtend;
 import frc.robot.commands.claw.ClawIntake;
 import frc.robot.commands.claw.ClawOpen;
@@ -21,6 +22,7 @@ public class ClawWristExtend extends SequentialCommandGroup {
         addCommands(
             new ClawOpen(),
             new ClawIntake(),
+            new WaitCommand(0.3),
             new ArmWristExtend(true)
         );
     }

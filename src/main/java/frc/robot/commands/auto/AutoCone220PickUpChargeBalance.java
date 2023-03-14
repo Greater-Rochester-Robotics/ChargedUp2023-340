@@ -15,13 +15,13 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.RobotContainer;
+import frc.robot.commands.HarvesterRecordRetract;
 import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.auto.util.AutoDriveFollowTrajectory;
 import frc.robot.commands.auto.util.AutoScoreCone;
 import frc.robot.commands.drive.DriveBalanceRobot;
 import frc.robot.commands.drive.util.DriveSetGyro;
 import frc.robot.commands.harvester.HarvesterIntake;
-import frc.robot.commands.harvester.HarvesterStopRetract;
 
 public class AutoCone220PickUpChargeBalance extends SequentialCommandGroup {
     public AutoCone220PickUpChargeBalance () {
@@ -30,24 +30,22 @@ public class AutoCone220PickUpChargeBalance extends SequentialCommandGroup {
         addCommands(
             new DriveSetGyro(0),
             new AutoScoreCone(ArmConstants.BACK_HIGH_CONE),
-            Commands.race(
+            Commands.parallel(
                 new HarvesterIntake(false),
-                Commands.parallel(
-                    new ArmToPosition(ArmConstants.INTERNAL_PICK_UP),
-                    Commands.sequence(
-                        new AutoDriveFollowTrajectory(path.get(0)),
-                        new WaitCommand(0.5)
-                    ),
-                    Commands.sequence(
-                        new WaitUntilCommand(RobotContainer.harvester::hasGamePiece),
-                        new WaitUntilCommand(() -> (!RobotContainer.harvester.hasGamePiece()))
-                    )
+                new ArmToPosition(ArmConstants.INTERNAL_PICK_UP),
+                Commands.sequence(
+                    new AutoDriveFollowTrajectory(path.get(0)),
+                    new WaitCommand(0.5)
+                ),
+                Commands.sequence(
+                    new WaitUntilCommand(RobotContainer.harvester::hasGamePiece),
+                    new WaitUntilCommand(() -> (!RobotContainer.harvester.hasGamePiece()))
                 )
             ),
             new AutoDriveFollowTrajectory(path.get(1), false),
             new WaitCommand(0.5),
             Commands.parallel(
-                new HarvesterStopRetract(false),
+                new HarvesterRecordRetract(false),
                 new AutoDriveFollowTrajectory(path.get(2), false)
             ),
             new DriveBalanceRobot()

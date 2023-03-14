@@ -248,7 +248,7 @@ public class Arm extends SubsystemBase {
          // If the shoulder should move to the target, continue to move it.
          if (moveToShoulderTarget) {
             // If the shoulders are out of sync.
-            if (rightPos - leftPos < ArmConstants.SHOULDER_ALLOWED_DIFFERENCE || rightPos - leftPos > ArmConstants.SHOULDER_ALLOWED_DIFFERENCE) {
+            if (rightPos - leftPos > ArmConstants.SHOULDER_ALLOWED_DIFFERENCE) {
                 double rightDiff = shoulderTarget - rightPos;
                 double leftDiff = shoulderTarget - leftPos;
 

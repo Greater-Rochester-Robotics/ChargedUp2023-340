@@ -21,6 +21,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.ClawWristExtend;
 import frc.robot.commands.ClawWristRetract;
 import frc.robot.commands.HarvestRecordIntake;
+import frc.robot.commands.HarvesterRecordRetract;
 import frc.robot.commands.arm.ArmElbowManual;
 import frc.robot.commands.arm.ArmShoulderManual;
 import frc.robot.commands.arm.ArmToPosition;
@@ -51,9 +52,9 @@ import frc.robot.commands.drive.util.ResetOdometry;
 import frc.robot.commands.harvester.HarvesterExtensionIn;
 import frc.robot.commands.harvester.HarvesterExtensionOut;
 import frc.robot.commands.harvester.HarvesterIntake;
-import frc.robot.commands.harvester.HarvesterStopRetract;
 import frc.robot.commands.recordPlayer.RecordPlayerManual;
 import frc.robot.commands.recordPlayer.RecordPlayerOrientCone;
+import frc.robot.commands.recordPlayer.RecordPlayerSpin;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Compressor;
@@ -151,10 +152,10 @@ public class RobotContainer {
          */
 
         // A => Hold to intake cones with the harvester
-        driverA.onTrue(new HarvestRecordIntake(true)).onFalse(new HarvesterStopRetract(true));
+        driverA.onTrue(new HarvestRecordIntake(true)).onFalse(new HarvesterRecordRetract(true));
 
         // B => Hold to intake cubes with the harvester
-        driverB.onTrue(new HarvestRecordIntake(false)).onFalse(new HarvesterStopRetract(false));
+        driverB.onTrue(new HarvestRecordIntake(false)).onFalse(new HarvesterRecordRetract(false));
 
         // X => Hold to open the claw and spit
         driverX.onTrue(new ClawOpenSpit()).onFalse(new ClawStop());
@@ -188,7 +189,7 @@ public class RobotContainer {
 
         coDriverLTButton.or(coDriverRTButton).whileTrue(new RecordPlayerManual());
         coDriverStart.onTrue(new ArmToPosition(ArmConstants.FRONT_PICK_UP));
-        coDriverBack.onTrue(new RecordPlayerOrientCone());
+        coDriverBack.onTrue(Commands.sequence(new RecordPlayerSpin(), new WaitCommand(1.0), new RecordPlayerOrientCone()));
 
         /* Targeting Control */
         coDriverDUp.onTrue(new InstantCommand(() -> target.up()) { public boolean runsWhenDisabled () { return true; } });

@@ -15,7 +15,7 @@ public class RecordPlayerOrientCone extends CommandBase {
     /**
      * The previous state of sensor 0.
      */
-    private boolean previousSensor0 = false;
+    private boolean previousSensor0;
     /**
      * If the cone position has been found.
      */
@@ -37,28 +37,30 @@ public class RecordPlayerOrientCone extends CommandBase {
     public void initialize () {
         // Start spinning the record player.
         RobotContainer.recordPlayer.setRotationMotor(RecordPlayerConstants.ROTATE_MOTOR_SPEED);
+
+        // Set the previous sensor 0 state.
+        previousSensor0 = RobotContainer.recordPlayer.getConePositionSensor0();
     }
 
     @Override
     public void execute () {
-        // If the cone's position hasn't been found, continue to spin and read sensor states.
-        if (!hasFoundPosition) {
-            // Get the current sensor states.
-            boolean sensor0 = RobotContainer.recordPlayer.getConePositionSensor0();
-            boolean sensor1 = RobotContainer.recordPlayer.getConePositionSensor1();
+        // Get the current sensor states.
+        boolean sensor0 = RobotContainer.recordPlayer.getConePositionSensor0();
+        boolean sensor1 = RobotContainer.recordPlayer.getConePositionSensor1();
 
-            // Check to see if the cone position has been found.
-            if (!sensor0 && sensor1 && previousSensor0) {
-                // If the position was found, set the target position for the record player.
-                targetPosition = RobotContainer.recordPlayer.getEncoderAngle() + 0.25;
-                hasFoundPosition = true;
-            }
+        // Check to see if the cone position has been found.
+        if (!sensor0 && sensor1 && previousSensor0) {
+            // If the position was found, set the target position for the record player.
+            targetPosition = RobotContainer.recordPlayer.getEncoderAngle() + 0.25;
+            hasFoundPosition = true;
+        }
 
-            previousSensor0 = sensor0;
-        } else {
+        if (hasFoundPosition) {
             // Once the position is found, rotate to the goal position.
             RobotContainer.recordPlayer.rotateToAngle(targetPosition);
         }
+
+        previousSensor0 = sensor0;
     }
 
     // Called once the command ends or is interrupted.

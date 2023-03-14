@@ -17,12 +17,12 @@ import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.commands.HarvestRecordIntake;
+import frc.robot.commands.HarvesterRecordRetract;
 import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.auto.util.AutoScoreCone;
 import frc.robot.commands.auto.util.AutoDriveFollowTrajectory;
 import frc.robot.commands.drive.util.DriveSetGyro;
 import frc.robot.commands.harvester.HarvesterExtensionOut;
-import frc.robot.commands.harvester.HarvesterStopRetract;
 
 public class AutoCone221PickUpReturn extends SequentialCommandGroup {
     public AutoCone221PickUpReturn () {
@@ -32,21 +32,19 @@ public class AutoCone221PickUpReturn extends SequentialCommandGroup {
             new DriveSetGyro(0),
             new AutoScoreCone(ArmConstants.BACK_MIDDLE_CONE),
             new HarvesterExtensionOut(),
-            Commands.race(
+            Commands.parallel(
                 new HarvestRecordIntake(false),
-                Commands.parallel(
-                    new ArmToPosition(ArmConstants.INTERNAL_PICK_UP),
-                    Commands.sequence(
-                        new AutoDriveFollowTrajectory(path.get(0)),
-                        new WaitCommand(1.5)
-                    ),
-                    Commands.sequence(
-                        new WaitUntilCommand(RobotContainer.harvester::hasGamePiece),
-                        new WaitUntilCommand(() -> (!RobotContainer.harvester.hasGamePiece()))
-                    )
+                new ArmToPosition(ArmConstants.INTERNAL_PICK_UP),
+                Commands.sequence(
+                    new AutoDriveFollowTrajectory(path.get(0)),
+                    new WaitCommand(1.5)
+                ),
+                Commands.sequence(
+                    new WaitUntilCommand(RobotContainer.harvester::hasGamePiece),
+                    new WaitUntilCommand(() -> (!RobotContainer.harvester.hasGamePiece()))
                 )
             ),
-            new HarvesterStopRetract(false).withTimeout(0),
+            new HarvesterRecordRetract(false).withTimeout(0),
             new AutoDriveFollowTrajectory(path.get(1), false)
         );
     }
