@@ -34,7 +34,7 @@ public class AutoCone221PickUpReturn extends SequentialCommandGroup {
             new HarvesterExtensionOut(),
             Commands.parallel(
                 new HarvestRecordIntake(false),
-                new ArmToPosition(ArmConstants.INTERNAL_PICK_UP),
+                new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE),
                 Commands.sequence(
                     new AutoDriveFollowTrajectory(path.get(0)),
                     new WaitCommand(1.5)
