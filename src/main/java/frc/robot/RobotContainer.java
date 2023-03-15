@@ -38,7 +38,7 @@ import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.arm.ArmWristExtend;
 import frc.robot.commands.arm.ArmWristRetract;
 import frc.robot.commands.auto.AutoCone221PickUpReturn;
-import frc.robot.commands.auto.AutoCone220PickUpChargeBalance;
+import frc.robot.commands.auto.AutoCone221PickUpChargeBalance;
 import frc.robot.commands.auto.AutoCone201ChargeBalance;
 import frc.robot.commands.auto.AutoCone201ChargeLeaveBalance;
 import frc.robot.commands.auto.AutoCone001PickUpReturn;
@@ -192,7 +192,7 @@ public class RobotContainer {
     SmartDashboard.putData("Reset Odometry",new InstantCommand(() -> swerveDrive.setCurPose2d(new Pose2d())){public boolean runsWhenDisabled(){return true;}});
 
     SmartDashboard.putData("Arm score mid cone", new AutoScoreCone(ArmConstants.BACK_MIDDLE_CONE));
-    SmartDashboard.putData("Left outer cone high, cube pickup, balance", new AutoCone220PickUpChargeBalance());
+    SmartDashboard.putData("Left outer cone mid, cube pickup, balance", new AutoCone221PickUpChargeBalance());
 
     // SmartDashboard.putData("FFTune 10per", new DriveTuneDriveMotorFeedForward(.1));
     // SmartDashboard.putData("FFTune 15per", new DriveTuneDriveMotorFeedForward(.15));
@@ -297,7 +297,7 @@ public class RobotContainer {
     autoChooser.setDefaultOption("Wait 1 second (do nothing)", new WaitCommand(1));
     autoChooser.addOption("Score middle cone", new AutoScoreCone(ArmConstants.BACK_MIDDLE_CUBE));
     autoChooser.addOption("Loading Station outer cone mid, cube pickup, return", new AutoCone221PickUpReturn());
-    // autoChooser.addOption("Loading Station outer cone high, cube pickup, balance", new AutoCone220PickUpChargeBalance());
+    // autoChooser.addOption("Loading Station outer cone mid, cube pickup, balance", new AutoCone221PickUpChargeBalance());
     autoChooser.addOption("Loading Station inner cone mid, balance", new AutoCone201ChargeBalance());
     autoChooser.addOption("Loading Station inner cone mid, charge leave, balance", new AutoCone201ChargeLeaveBalance());
     autoChooser.addOption("Score Table outer cone mid, cube pickup, return", new AutoCone001PickUpReturn());
