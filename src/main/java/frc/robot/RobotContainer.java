@@ -32,6 +32,7 @@ import frc.robot.commands.auto.AutoCone201ChargeLeaveBalance;
 import frc.robot.commands.auto.AutoCone221PickUpReturn;
 import frc.robot.commands.auto.util.AutoScoreCone;
 import frc.robot.commands.claw.ClawClose;
+import frc.robot.commands.claw.ClawIntake;
 import frc.robot.commands.claw.ClawOpen;
 import frc.robot.commands.claw.ClawOpenSpit;
 import frc.robot.commands.claw.ClawSpit;
@@ -182,7 +183,7 @@ public class RobotContainer {
         driverStickRightDown.onTrue(new HarvesterExtensionIn());
 
         /* =================== CO-DRIVER BUTTONS =================== */
-        coDriverA.onTrue(Commands.sequence(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE), new ClawWristExtend())).onFalse(new ClawWristRetract(true));
+        coDriverA.onTrue(new ClawWristExtend()).onFalse(new ClawWristRetract(true));
         coDriverB.onTrue(Commands.sequence(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CUBE), new ClawWristExtend())).onFalse(new ClawWristRetract(false));
         coDriverX.onTrue(new InstantCommand(() -> target.getTargetPosition().getBackArmMoveCommand().schedule()));
         coDriverY.onTrue(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE));
@@ -190,7 +191,7 @@ public class RobotContainer {
         coDriverRB.whileTrue(new ArmShoulderManual());
 
         coDriverLTButton.or(coDriverRTButton).whileTrue(new RecordPlayerManual());
-        coDriverStart.onTrue(new ArmToPosition(ArmConstants.FRONT_PICK_UP));
+        coDriverStart.onTrue(Commands.parallel(new ArmToPosition(ArmConstants.BACK_PICK_UP), Commands.sequence(new ClawOpen(), new ClawIntake())));
         coDriverBack.onTrue(Commands.sequence(new RecordPlayerSpin(), new WaitCommand(1.0), new RecordPlayerOrientCone()));
 
         /* Targeting Control */

@@ -62,11 +62,11 @@ public final class Constants {
       /*Scoring constants */
       /* WARNING DO NOT CHANGE WITHOUT TESTING IN A CONTROLLED ENVIRONMENT */
       public static final ArmPosition BACK_HIGH_CONE = new ArmPosition(Math.toRadians(-30.0),Math.toRadians(-155),true);
-      public static final ArmPosition BACK_MIDDLE_CONE = new ArmPosition(Math.toRadians(-12.0),Math.toRadians(-110.0),false);
+      public static final ArmPosition BACK_MIDDLE_CONE = new ArmPosition(Math.toRadians(-14.5),Math.toRadians(-115.0),false);
       public static final ArmPosition BACK_HIGH_CUBE = new ArmPosition(Math.toRadians(-24.5),Math.toRadians(-127), false);
       public static final ArmPosition BACK_MIDDLE_CUBE = new ArmPosition(Math.toRadians(-5.4), Math.toRadians(-82.2), false);
       public static final ArmPosition BACK_LOWER_SCORE = new ArmPosition(Math.toRadians(5.2), Math.toRadians(-50), false);
-      public static final ArmPosition BACK_PICK_UP = new ArmPosition(0,0,false);
+      public static final ArmPosition BACK_PICK_UP = new ArmPosition(Math.toRadians(4.5), Math.toRadians(-97),false);
 
       public static final ArmPosition FRONT_HIGH_CONE = new ArmPosition(Math.toRadians(0), Math.toRadians(0), false);  //Fix
       public static final ArmPosition FRONT_MIDDLE_CONE = new ArmPosition(Math.toRadians(11.96),Math.toRadians(109.45),true);
@@ -165,7 +165,7 @@ public final class Constants {
       public static final double DRIVE_ENC_TO_METERS_FACTOR = Units.inchesToMeters(4.125)*Math.PI/7.13;//6.54;//7.13;//0.319186/7.13:1//the ratio from mechanical specs
       public static final double MINIMUM_DRIVE_SPEED = 0.2;// the slowest the wheels can turn, in m/s
       public static final double MINIMUM_DRIVE_DUTY_CYCLE = 0.05;// the slowest the wheels can turn, in duty cycle
-      public static final double MOTOR_MAXIMUM_VELOCITY =  4.233672;
+      public static final double MOTOR_MAXIMUM_VELOCITY =  6;
       public static final double MAX_ROBOT_ROT_VELOCITY = MOTOR_MAXIMUM_VELOCITY/((FRONT_LEFT_POSITION.getNorm()+REAR_RIGHT_POSITION.getNorm())/2);
       public static final double PATH_MAXIMUM_VELOCITY = 3.5;
       public static final double MAXIMUM_ACCELERATION = 1.25;
