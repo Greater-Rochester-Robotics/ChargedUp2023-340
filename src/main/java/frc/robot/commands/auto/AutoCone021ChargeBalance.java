@@ -19,17 +19,19 @@ import frc.robot.commands.drive.DriveBalanceRobot;
 import frc.robot.commands.drive.util.DriveSetGyro;
 
 public class AutoCone021ChargeBalance extends SequentialCommandGroup {
-    public AutoCone021ChargeBalance () {
-        List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("Cone021ChargeBalance", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
-
-        addCommands(
-            new DriveSetGyro(0),
-            new AutoScoreCone(ArmConstants.BACK_MIDDLE_CONE),
-            Commands.parallel(
-                new ArmToPosition(ArmConstants.INTERNAL_PICK_UP),
-                new AutoDriveFollowTrajectory(path.get(0))
-            ),
-            new DriveBalanceRobot()
-        );
-    }
+  /** Creates a new AutoCone021ChargeBalance. */
+  public AutoCone021ChargeBalance() {
+    List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("Cone021ChargeBalance", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
+    // Add your commands in the addCommands() call, e.g.
+    // addCommands(new FooCommand(), new BarCommand());
+    addCommands(
+      new DriveSetGyro(0),
+      new AutoScoreCone(ArmConstants.BACK_MIDDLE_CONE),
+      Commands.deadline(
+        new AutoDriveFollowTrajectory(path.get(0)),
+        new ArmToPosition(ArmConstants.INTERNAL_PICK_UP)
+      ),
+      new DriveBalanceRobot()
+    );
+  }
 }

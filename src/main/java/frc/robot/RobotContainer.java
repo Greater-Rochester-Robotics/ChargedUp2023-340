@@ -25,8 +25,6 @@ import frc.robot.commands.HarvesterRecordRetract;
 import frc.robot.commands.arm.ArmElbowManual;
 import frc.robot.commands.arm.ArmShoulderManual;
 import frc.robot.commands.arm.ArmToPosition;
-import frc.robot.commands.arm.ArmWristExtend;
-import frc.robot.commands.arm.ArmWristRetract;
 import frc.robot.commands.auto.AutoCone001PickUpReturn;
 import frc.robot.commands.auto.AutoCone021ChargeBalance;
 import frc.robot.commands.auto.AutoCone201ChargeBalance;
@@ -159,10 +157,10 @@ public class RobotContainer {
         // B => Hold to intake cubes with the harvester
         driverB.onTrue(new HarvestRecordIntake(false)).onFalse(new HarvesterRecordRetract(false));
 
-        // X => Hold to open the claw and spit
+        // X => Toggle opening the claw
         driverX.toggleOnTrue(new ConditionalCommand(Commands.sequence(new ClawStop(), new ClawClose()), new ClawOpen(), claw::isOpen));
 
-        // Y => Press to extend or retract the wrist based on its current state
+        // Y => Toggle opening the claw and spitting
         driverY.toggleOnTrue(new ConditionalCommand(Commands.sequence(new ClawStop(), new ClawClose()), new ClawOpenSpit(), claw::isOpen));
 
         // LB => Hold to drive to the selected scoring position (Currently non-functional)

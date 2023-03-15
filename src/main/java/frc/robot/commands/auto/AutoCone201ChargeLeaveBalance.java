@@ -24,19 +24,19 @@ public class AutoCone201ChargeLeaveBalance extends SequentialCommandGroup {
     public AutoCone201ChargeLeaveBalance () {
         List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("Cone201ChargeLeaveBalance", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
 
-        addCommands(
-            new DriveSetGyro(0),
-            new AutoScoreCone(ArmConstants.BACK_MIDDLE_CONE),
-            Commands.parallel(
-                new ArmToPosition(ArmConstants.INTERNAL_PICK_UP),
-                new AutoDriveFollowTrajectory(path.get(0))
-            ),
-            Commands.race(
-                new DriveBalanceRobot(),
-                new WaitUntilCommand(() -> (Math.abs(RobotContainer.swerveDrive.getGyroInDegPitch()) < SwerveDriveConstants.DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE))
-            ),
-            new AutoDriveFollowTrajectory(path.get(1), true),
-            new DriveBalanceRobot()
-        );
-    }
+    addCommands(
+      new DriveSetGyro(0),
+      new AutoScoreCone(ArmConstants.BACK_MIDDLE_CONE),
+      Commands.deadline(
+        new AutoDriveFollowTrajectory(path.get(0)),
+        new ArmToPosition(ArmConstants.INTERNAL_PICK_UP)
+      ),
+      Commands.race(
+        new DriveBalanceRobot(),
+        new WaitUntilCommand(()->(Math.abs( RobotContainer.swerveDrive.getGyroInDegPitch()) < SwerveDriveConstants.DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE))
+      ),
+      new AutoDriveFollowTrajectory(path.get(1),true),
+      new DriveBalanceRobot()      
+    );
+  }
 }

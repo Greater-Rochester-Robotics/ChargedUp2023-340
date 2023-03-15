@@ -12,6 +12,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.SparkMaxPIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -41,6 +43,10 @@ public class Arm extends SubsystemBase {
      * The right shoulder's PID controller.
      */
     private SparkMaxPIDController shoulderRightPID;
+    /**
+     * The right shoulder's profiled PID controller.
+     */
+    private ProfiledPIDController shoulderRightProPID;
 
     /**
      * The left shoulder motor.
@@ -54,6 +60,10 @@ public class Arm extends SubsystemBase {
      * The left shoulder's PID controller.
      */
     private SparkMaxPIDController shoulderLeftPID;
+    /**
+     * The left shoulder's profiled PID controller.
+     */
+    private ProfiledPIDController shoulderLeftProPID;
 
     /**
      * The elbow motor.
@@ -103,6 +113,12 @@ public class Arm extends SubsystemBase {
         shoulderRight = new CANSparkMax(Constants.SHOULDER_MOTOR_RIGHT, MotorType.kBrushless);
         shoulderRightEncoder = shoulderRight.getAbsoluteEncoder(Type.kDutyCycle);
         shoulderRightPID = shoulderRight.getPIDController();
+        shoulderRightProPID = new ProfiledPIDController(
+            ArmConstants.SHOULDER_P_RIGHT,
+            ArmConstants.SHOULDER_I_RIGHT,
+            ArmConstants.SHOULDER_D_RIGHT,
+            new Constraints(ArmConstants.MAX_SHOULDER_VELOCITY, ArmConstants.MAX_SHOULDER_ACCELERATION)
+        );
 
         // Right shoulder motor settings.
         shoulderRight.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
@@ -138,6 +154,12 @@ public class Arm extends SubsystemBase {
         shoulderLeft = new CANSparkMax(Constants.SHOULDER_MOTOR_LEFT, MotorType.kBrushless);
         shoulderLeftEncoder = shoulderLeft.getAbsoluteEncoder(Type.kDutyCycle);
         shoulderLeftPID = shoulderLeft.getPIDController();
+        shoulderLeftProPID = new ProfiledPIDController(
+            ArmConstants.SHOULDER_P_LEFT,
+            ArmConstants.SHOULDER_I_LEFT,
+            ArmConstants.SHOULDER_D_LEFT,
+            new Constraints(ArmConstants.MAX_SHOULDER_VELOCITY, ArmConstants.MAX_SHOULDER_ACCELERATION)
+        );
 
         // Left shoulder motor settings.
         shoulderLeft.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
@@ -230,8 +252,6 @@ public class Arm extends SubsystemBase {
         double rightPos = getRightShoulderPosition();
         double leftPos = getLeftShoulderPosition();
         double elbowPos = getElbowPosition();
-
-        // TODO: Add Math.PI? Will these checks work or will it cause stuttering in movement? Best way to move back to a safe angle?
 
         // If the shoulder is no longer in a safe position, stop it.
          if (rightPos > ArmConstants.MAX_SHOULDER_ANGLE || leftPos > ArmConstants.MAX_SHOULDER_ANGLE || rightPos < ArmConstants.MIN_SHOULDER_ANGLE || leftPos < ArmConstants.MIN_SHOULDER_ANGLE) {
@@ -416,6 +436,23 @@ public class Arm extends SubsystemBase {
     }
 
     /**
+     * Drives both shoulder motors using profiled
+     * PID controllers, uses feed forward based on
+     * difference in shoulder angles to sync shoulders
+     * 
+     * @param targetAngle The target angle in radians.
+     * @unused
+     */
+    public void setShoulderPositionPID (double targetAngle) {
+        double leftSensor = getLeftShoulderPosition();
+        double rightSensor = getRightShoulderPosition();
+        double diff = leftSensor - rightSensor;
+
+        shoulderLeft.set(shoulderLeftProPID.calculate(getLeftShoulderPosition(), targetAngle) + ArmConstants.SHOULDER_F_DIFFERENCE * diff);
+        shoulderRight.set(shoulderRightProPID.calculate(getRightShoulderPosition(), targetAngle) + ArmConstants.SHOULDER_F_DIFFERENCE * diff);
+    }
+
+    /**
      * Stops both shoulder motors.
      */
     public void stopShoulder () {
@@ -455,8 +492,6 @@ public class Arm extends SubsystemBase {
      * @param targetAngle The target angle in radians.
      */
     public void setElbowPosition (double targetAngle) {
-        // TODO: See periodic (elbow safety check was here).
-
         // Check if the specified angle is out of range.
         if (Math.abs(targetAngle) > ArmConstants.MAX_ELBOW_ANGLE) {
             System.out.println("Cannot set elbow target to " + Math.round(Math.toDegrees(targetAngle)) + " degrees: Out of Range");

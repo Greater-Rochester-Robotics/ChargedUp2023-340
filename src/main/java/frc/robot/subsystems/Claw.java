@@ -29,6 +29,7 @@ public class Claw extends SubsystemBase {
   private TalonSRX clawMotor;
   private DoubleSolenoid openClose;
   private DigitalInput gamePieceSensor;
+  private boolean isClawOpen;
 
   /**
    * The network table instance used by the claw subsystem.
@@ -56,6 +57,8 @@ public class Claw extends SubsystemBase {
     openClose = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.CLAW_SOLENOID_CLOSED, Constants.CLAW_SOLENOID_OPEN); //open is in is reverse, close is out is forward
 
     gamePieceSensor = new DigitalInput(Constants.CLAW_GAMEPIECE_SENSOR);
+
+    isClawOpen = openClose.get() == Value.kForward;
   }
 
   @Override
@@ -70,6 +73,7 @@ public class Claw extends SubsystemBase {
    */
   public void close(){
     openClose.set(Value.kForward);
+    isClawOpen = openClose.get() == Value.kForward;
   }
 
   /**
@@ -77,10 +81,11 @@ public class Claw extends SubsystemBase {
    */
   public void open(){
     openClose.set(Value.kReverse);
+    isClawOpen = openClose.get() == Value.kForward;
   }
 
   public boolean isOpen(){
-    return openClose.get() == Value.kReverse;
+    return openClose.get() == Value.kForward;
   }
 
   /**
