@@ -254,19 +254,19 @@ public class Arm extends SubsystemBase {
         double elbowPos = getElbowPosition();
 
         // If the shoulder is no longer in a safe position, stop it.
-         if (rightPos > ArmConstants.MAX_SHOULDER_ANGLE || leftPos > ArmConstants.MAX_SHOULDER_ANGLE || rightPos < ArmConstants.MIN_SHOULDER_ANGLE || leftPos < ArmConstants.MIN_SHOULDER_ANGLE) {
-            System.out.println("Shoulder is no longer at a safe angle, halting movement");
-            stopShoulder();
-        }
+        // if (rightPos > ArmConstants.MAX_SHOULDER_ANGLE || leftPos > ArmConstants.MAX_SHOULDER_ANGLE || rightPos < ArmConstants.MIN_SHOULDER_ANGLE || leftPos < ArmConstants.MIN_SHOULDER_ANGLE) {
+        //     System.out.println("Shoulder is no longer at a safe angle, halting movement");
+        //     stopShoulder();
+        // }
 
         // If the elbow is no longer in a safe position, stop it.
-        if (Math.abs(elbowPos) > ArmConstants.MAX_ELBOW_ANGLE) {
-            System.out.println("Elbow is no longer at a safe angle, halting movement");
-            stopElbow();
-        }
+        // if (Math.abs(elbowPos) > ArmConstants.MAX_ELBOW_ANGLE) {
+        //     System.out.println("Elbow is no longer at a safe angle, halting movement");
+        //     stopElbow();
+        // }
 
          // If the shoulder should move to the target, continue to move it.
-         if (moveToShoulderTarget) {
+        if (moveToShoulderTarget) {
             // If the shoulders are out of sync.
             if (rightPos - leftPos > ArmConstants.SHOULDER_ALLOWED_DIFFERENCE) {
                 double rightDiff = shoulderTarget - rightPos;

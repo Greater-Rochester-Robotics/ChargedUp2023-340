@@ -73,7 +73,7 @@ public class Claw extends SubsystemBase {
    */
   public void close(){
     openClose.set(Value.kForward);
-    isClawOpen = openClose.get() == Value.kForward;
+    isClawOpen = false;
   }
 
   /**
@@ -81,11 +81,11 @@ public class Claw extends SubsystemBase {
    */
   public void open(){
     openClose.set(Value.kReverse);
-    isClawOpen = openClose.get() == Value.kForward;
+    isClawOpen = true;
   }
 
   public boolean isOpen(){
-    return openClose.get() == Value.kForward;
+    return isClawOpen;
   }
 
   /**

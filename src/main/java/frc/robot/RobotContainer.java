@@ -158,10 +158,10 @@ public class RobotContainer {
         driverB.onTrue(new HarvestRecordIntake(false)).onFalse(new HarvesterRecordRetract(false));
 
         // X => Toggle opening the claw
-        driverX.toggleOnTrue(new ConditionalCommand(Commands.sequence(new ClawStop(), new ClawClose()), new ClawOpen(), claw::isOpen));
+        driverX.onTrue(new ConditionalCommand(Commands.sequence(new ClawClose(), new ClawStop()), new ClawOpen(), claw::isOpen));
 
         // Y => Toggle opening the claw and spitting
-        driverY.toggleOnTrue(new ConditionalCommand(Commands.sequence(new ClawStop(), new ClawClose()), new ClawOpenSpit(), claw::isOpen));
+        driverY.onTrue(new ConditionalCommand(Commands.sequence(new ClawClose(), new ClawStop()), new ClawOpenSpit(), claw::isOpen));
 
         // LB => Hold to drive to the selected scoring position (Currently non-functional)
         driverLB.onTrue(new DriveToTarget()).onFalse(new DriveStopAllModules());
