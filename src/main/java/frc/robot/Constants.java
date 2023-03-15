@@ -61,7 +61,7 @@ public final class Constants {
 
       /*Scoring constants */
       /* WARNING DO NOT CHANGE WITHOUT TESTING IN A CONTROLLED ENVIRONMENT */
-      public static final ArmPosition BACK_HIGH_CONE = new ArmPosition(Math.toRadians(-30.0),Math.toRadians(-148),true);
+      public static final ArmPosition BACK_HIGH_CONE = new ArmPosition(Math.toRadians(-30.0),Math.toRadians(-155),true);
       public static final ArmPosition BACK_MIDDLE_CONE = new ArmPosition(Math.toRadians(-12.0),Math.toRadians(-110.0),false);
       public static final ArmPosition BACK_HIGH_CUBE = new ArmPosition(Math.toRadians(-24.5),Math.toRadians(-127), false);
       public static final ArmPosition BACK_MIDDLE_CUBE = new ArmPosition(Math.toRadians(-5.4), Math.toRadians(-82.2), false);
@@ -121,7 +121,7 @@ public final class Constants {
     }
 
     public static class ClawConstants {
-      public static final double CLAW_MOTOR_INTAKE_SPEED = 0.9; 
+      public static final double CLAW_MOTOR_INTAKE_SPEED = 1.0; 
       public static final double CLAW_MOTOR_OUTTAKE_SPEED = -1.0; 
       public static final double CLAW_MOTOR_HOLD_SPEED = 0.35;
 

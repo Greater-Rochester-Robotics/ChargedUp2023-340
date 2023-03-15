@@ -34,6 +34,7 @@ import frc.robot.commands.auto.util.AutoScoreCone;
 import frc.robot.commands.claw.ClawClose;
 import frc.robot.commands.claw.ClawOpen;
 import frc.robot.commands.claw.ClawOpenSpit;
+import frc.robot.commands.claw.ClawSpit;
 import frc.robot.commands.claw.ClawStop;
 import frc.robot.commands.drive.DriveBalanceAdvanced;
 import frc.robot.commands.drive.DriveFieldRelativeAdvanced;
@@ -51,6 +52,7 @@ import frc.robot.commands.drive.util.ResetOdometry;
 import frc.robot.commands.harvester.HarvesterExtensionIn;
 import frc.robot.commands.harvester.HarvesterExtensionOut;
 import frc.robot.commands.harvester.HarvesterIntake;
+import frc.robot.commands.harvester.HarvesterSpit;
 import frc.robot.commands.harvester.HarvesterStop;
 import frc.robot.commands.recordPlayer.RecordPlayerManual;
 import frc.robot.commands.recordPlayer.RecordPlayerOrientCone;
@@ -161,7 +163,7 @@ public class RobotContainer {
         driverX.onTrue(new ConditionalCommand(Commands.sequence(new ClawClose(), new ClawStop()), new ClawOpen(), claw::isOpen));
 
         // Y => Toggle opening the claw and spitting
-        driverY.onTrue(new ConditionalCommand(Commands.sequence(new ClawClose(), new ClawStop()), new ClawOpenSpit(), claw::isOpen));
+        driverY.onTrue(new ClawSpit()).onFalse(new ClawStop());
 
         // LB => Hold to drive to the selected scoring position (Currently non-functional)
         driverLB.onTrue(new DriveToTarget()).onFalse(new DriveStopAllModules());
@@ -173,7 +175,7 @@ public class RobotContainer {
         driverDLeft.onTrue(new DriveResetGyroToZero());
 
         // D Right => 
-        driverDRight.onTrue(new ConditionalCommand(new HarvesterExtensionIn(), Commands.parallel(new HarvesterExtensionOut(), new ClawClose()), harvester::isHarvesterOut));
+        driverDRight.onTrue(new HarvesterSpit()).onFalse(new HarvesterStop());
         driverBack.toggleOnTrue(new DriveRobotCentric(false));
         driverStart.onTrue(new HarvesterIntake(true)).onFalse(new HarvesterStop());
         driverStickRightUp.onTrue(new HarvesterExtensionOut());
