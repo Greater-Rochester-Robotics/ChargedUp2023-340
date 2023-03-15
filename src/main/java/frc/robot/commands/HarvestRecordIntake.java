@@ -27,6 +27,9 @@ public class HarvestRecordIntake extends SequentialCommandGroup {
             // Deploy the harvester.
             new HarvesterExtensionOut(),
 
+            // Close the claw if it is a cone.
+            new ConditionalCommand(new ClawClose(), new InstantCommand(), () -> isCone),
+
             // Run the intake motors.
             new HarvesterIntake(isCone),
 

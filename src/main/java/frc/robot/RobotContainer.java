@@ -34,6 +34,7 @@ import frc.robot.commands.auto.AutoCone201ChargeLeaveBalance;
 import frc.robot.commands.auto.AutoCone221PickUpReturn;
 import frc.robot.commands.auto.util.AutoScoreCone;
 import frc.robot.commands.claw.ClawClose;
+import frc.robot.commands.claw.ClawOpen;
 import frc.robot.commands.claw.ClawOpenSpit;
 import frc.robot.commands.claw.ClawStop;
 import frc.robot.commands.drive.DriveBalanceAdvanced;
@@ -159,10 +160,10 @@ public class RobotContainer {
         driverB.onTrue(new HarvestRecordIntake(false)).onFalse(new HarvesterRecordRetract(false));
 
         // X => Hold to open the claw and spit
-        driverX.onTrue(new ClawOpenSpit()).onFalse(new ClawStop());
+        driverX.toggleOnTrue(new ConditionalCommand(Commands.sequence(new ClawStop(), new ClawClose()), new ClawOpen(), claw::isOpen));
 
         // Y => Press to extend or retract the wrist based on its current state
-        driverY.onTrue(new ConditionalCommand(new ArmWristRetract(false), new ArmWristExtend(false), arm::isWristExtended));
+        driverY.toggleOnTrue(new ConditionalCommand(Commands.sequence(new ClawStop(), new ClawClose()), new ClawOpenSpit(), claw::isOpen));
 
         // LB => Hold to drive to the selected scoring position (Currently non-functional)
         driverLB.onTrue(new DriveToTarget()).onFalse(new DriveStopAllModules());

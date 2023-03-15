@@ -60,8 +60,8 @@ public final class Constants {
 
       /*Scoring constants */
       /* WARNING DO NOT CHANGE WITHOUT TESTING IN A CONTROLLED ENVIRONMENT */
-      public static final ArmPosition BACK_HIGH_CONE = new ArmPosition(Math.toRadians(-32.6),Math.toRadians(-154),true);
-      public static final ArmPosition BACK_MIDDLE_CONE = new ArmPosition(Math.toRadians(-13),Math.toRadians(-110),false);
+      public static final ArmPosition BACK_HIGH_CONE = new ArmPosition(Math.toRadians(-30.0),Math.toRadians(-148),true);
+      public static final ArmPosition BACK_MIDDLE_CONE = new ArmPosition(Math.toRadians(-12.0),Math.toRadians(-110.0),false);
       public static final ArmPosition BACK_HIGH_CUBE = new ArmPosition(Math.toRadians(-24.5),Math.toRadians(-127), false);
       public static final ArmPosition BACK_MIDDLE_CUBE = new ArmPosition(Math.toRadians(-5.4), Math.toRadians(-82.2), false);
       public static final ArmPosition BACK_LOWER_SCORE = new ArmPosition(Math.toRadians(5.2), Math.toRadians(-50), false);
@@ -74,7 +74,7 @@ public final class Constants {
       public static final ArmPosition FRONT_LOWER_SCORE = new ArmPosition(Math.toRadians(0), Math.toRadians(0), false);  //Fix
       public static final ArmPosition FRONT_PICK_UP = new ArmPosition(Math.toRadians(2.5), Math.toRadians(93), false); 
 
-      public static final ArmPosition INTERNAL_PICK_UP = new ArmPosition(Math.toRadians(5.2), Math.toRadians(16), false);
+      public static final ArmPosition INTERNAL_PICK_UP = new ArmPosition(Math.toRadians(4.5), Math.toRadians(16), false);
 
 
       /* Arm Limits */
