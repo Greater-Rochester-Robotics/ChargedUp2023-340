@@ -56,6 +56,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
+    netTable.getEntry("teleop").setBoolean(false);
   }
 
   /**
@@ -121,6 +122,8 @@ public class Robot extends TimedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+
+    netTable.getEntry("teleop").setBoolean(true);
   }
 
   /** This function is called periodically during operator control. */
@@ -128,7 +131,9 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {}
 
   @Override
-  public void teleopExit() {}
+  public void teleopExit() {
+    netTable.getEntry("teleop").setBoolean(false);
+  }
 
   @Override
   public void testInit() {

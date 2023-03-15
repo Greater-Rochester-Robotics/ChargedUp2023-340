@@ -95,7 +95,7 @@
         NetworkTables.addKeyListener(`/dashboard/general/time`, (_, value) => {
             if (typeof value === `number` && value >= 0 && value <= 300) {
                 document.getElementById(`timer`).innerText = new Date(value * 1000).toISOString().substring(15, 19);
-                if (value === 1) setTimeout(() => activateJoel(), 1000);
+                if (value === 1 && NetworkTables.getValue("teleop", false)) setTimeout(() => activateJoel(), 1000);
             }
         });
 
