@@ -30,9 +30,9 @@ public class AutoCone021ChargeBalance extends SequentialCommandGroup {
     addCommands(
       new DriveSetGyro(0),
       new AutoScoreCone(ArmConstants.BACK_MIDDLE_CONE),
-      Commands.parallel(
-        new ArmToPosition(ArmConstants.INTERNAL_PICK_UP),
-        new DriveFollowTrajectory(path.get(0))
+      Commands.deadline(
+        new DriveFollowTrajectory(path.get(0)),
+        new ArmToPosition(ArmConstants.INTERNAL_PICK_UP)
       ),
       new DriveBalanceRobot()
     );
