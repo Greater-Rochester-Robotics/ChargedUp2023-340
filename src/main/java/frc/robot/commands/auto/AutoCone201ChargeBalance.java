@@ -30,7 +30,7 @@ public class AutoCone201ChargeBalance extends SequentialCommandGroup {
       Commands.deadline(
         new AutoDriveFollowTrajectory(path.get(0)),
         new ArmToPosition(ArmConstants.INTERNAL_PICK_UP)
-      ),
+      ).withTimeout(6),
       new DriveBalanceRobot()
     );
   }

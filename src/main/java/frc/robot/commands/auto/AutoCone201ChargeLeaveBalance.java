@@ -30,7 +30,7 @@ public class AutoCone201ChargeLeaveBalance extends SequentialCommandGroup {
       Commands.deadline(
         new AutoDriveFollowTrajectory(path.get(0)),
         new ArmToPosition(ArmConstants.INTERNAL_PICK_UP)
-      ),
+      ).withTimeout(6),
       Commands.race(
         new DriveBalanceRobot(),
         new WaitUntilCommand(()->(Math.abs( RobotContainer.swerveDrive.getGyroInDegPitch()) < SwerveDriveConstants.DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE))
