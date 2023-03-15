@@ -37,7 +37,7 @@ public class AutoCone220PickupCone221ChargeBalance extends SequentialCommandGrou
         Commands.race(
             new HarvesterIntake(false),
             Commands.parallel(
-            new ArmToPosition(ArmConstants.INTERNAL_PICK_UP),
+            new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE),
             Commands.sequence(
                 new AutoDriveFollowTrajectory(path.get(0)),
                 new WaitCommand(0.5)

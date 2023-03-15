@@ -29,7 +29,7 @@ public class AutoCone201ChargeLeaveBalance extends SequentialCommandGroup {
       new AutoScoreCone(ArmConstants.BACK_MIDDLE_CONE),
       Commands.deadline(
         new AutoDriveFollowTrajectory(path.get(0)),
-        new ArmToPosition(ArmConstants.INTERNAL_PICK_UP)
+        new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE)
       ).withTimeout(6),
       Commands.race(
         new DriveBalanceRobot(),

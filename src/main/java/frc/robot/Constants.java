@@ -75,7 +75,8 @@ public final class Constants {
       public static final ArmPosition FRONT_LOWER_SCORE = new ArmPosition(Math.toRadians(0), Math.toRadians(0), false);  //Fix
       public static final ArmPosition FRONT_PICK_UP = new ArmPosition(Math.toRadians(2.5), Math.toRadians(93), false); 
 
-      public static final ArmPosition INTERNAL_PICK_UP = new ArmPosition(Math.toRadians(4.5), Math.toRadians(16), false);
+      public static final ArmPosition INTERNAL_PICK_UP_CONE = new ArmPosition(Math.toRadians(4.5), Math.toRadians(16), false);
+      public static final ArmPosition INTERNAL_PICK_UP_CUBE = new ArmPosition(Math.toRadians(4.5), Math.toRadians(10), false);
 
 
       /* Arm Limits */

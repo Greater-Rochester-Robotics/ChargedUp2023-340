@@ -180,10 +180,10 @@ public class RobotContainer {
         driverStickRightDown.onTrue(new HarvesterExtensionIn());
 
         /* =================== CO-DRIVER BUTTONS =================== */
-        coDriverA.onTrue(new ClawWristExtend()).onFalse(new ClawWristRetract(true));
-        coDriverB.onTrue(new ClawWristExtend()).onFalse(new ClawWristRetract(false));
+        coDriverA.onTrue(Commands.sequence(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE), new ClawWristExtend())).onFalse(new ClawWristRetract(true));
+        coDriverB.onTrue(Commands.sequence(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CUBE), new ClawWristExtend())).onFalse(new ClawWristRetract(false));
         coDriverX.onTrue(new InstantCommand(() -> target.getTargetPosition().getBackArmMoveCommand().schedule()));
-        coDriverY.onTrue(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP));
+        coDriverY.onTrue(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE));
         coDriverLB.whileTrue(new ArmElbowManual());
         coDriverRB.whileTrue(new ArmShoulderManual());
 
