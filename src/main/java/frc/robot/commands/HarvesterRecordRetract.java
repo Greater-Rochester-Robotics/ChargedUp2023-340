@@ -4,10 +4,13 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants.ArmConstants;
+import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.harvester.HarvesterExtensionIn;
 import frc.robot.commands.harvester.HarvesterStop;
 import frc.robot.commands.recordPlayer.RecordPlayerOrientCone;
@@ -22,17 +25,16 @@ public class HarvesterRecordRetract extends SequentialCommandGroup {
      */
     public HarvesterRecordRetract (boolean isCone) {
         addCommands(
-            // If grabbing a cone, spin the record player.s
-            new ConditionalCommand(new RecordPlayerSpin(), new InstantCommand(), () -> isCone),
-
             // Bring in the harvester.
             new HarvesterExtensionIn(),
 
-            // Wait for the game piece to be inside the robot.
-            new WaitCommand(isCone ? 1.0 : 2.5),
+            // Add delay to ensure the game piece is in the record player.
+            new WaitCommand(1),
 
             // Stop the harvester motors.
             new HarvesterStop(),
+
+            new WaitCommand(2.5),
 
             // If we grabbed a cone, add delay to ensure the cone is in position then run the record player.
             new ConditionalCommand(new RecordPlayerOrientCone(), new InstantCommand(), () -> isCone)

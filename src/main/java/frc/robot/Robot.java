@@ -123,6 +123,8 @@ public class Robot extends TimedRobot {
       autonomousCommand.cancel();
     }
 
+    RobotContainer.swerveDrive.stopAllModules();
+
     netTable.getEntry("teleop").setBoolean(true);
   }
 

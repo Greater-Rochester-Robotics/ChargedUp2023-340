@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.arm.ArmWristRetract;
@@ -31,7 +32,7 @@ public class ClawWristRetract extends SequentialCommandGroup {
             new ConditionalCommand(
                 Commands.sequence(
                     new ClawStop(),
-                    new ClawClose(),
+                    new ConditionalCommand(new ClawClose(), new InstantCommand(), () -> isCone),
                     new WaitCommand(0.3)
                 ),
                 new ClawIntakeSlow(),

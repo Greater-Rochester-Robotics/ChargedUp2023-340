@@ -66,7 +66,7 @@ public class ArmToPosition extends SequentialCommandGroup {
             new ConditionalCommand(new ArmShoulderToPosition(Math.toRadians(5)), new InstantCommand(), () -> (RobotContainer.arm.getArmPosition().getEndX() <= Units.inchesToMeters(-10.5))),
 
             // Move the elbow to its final position.
-            new ArmElbowToPosition(armPosition.getElbowPosition()),
+            new ArmElbowToPosition(armPosition.getElbowPosition()).withTimeout(4),
 
             // If the wrist should be extended, extend the wrist while moving the shoulder 5 degrees.
             new ConditionalCommand(

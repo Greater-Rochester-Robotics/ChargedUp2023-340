@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.RobotContainer;
-import frc.robot.commands.HarvestRecordIntake;
+import frc.robot.commands.HarvesterClawIntake;
 import frc.robot.commands.HarvesterRecordRetract;
 import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.auto.util.AutoDriveFollowTrajectory;
@@ -32,8 +32,7 @@ public class AutoCone001PickUpReturn extends SequentialCommandGroup {
             new AutoScoreCone(ArmConstants.BACK_MIDDLE_CONE),
             new HarvesterExtensionOut(),
             Commands.parallel(
-                new HarvestRecordIntake(false),
-                new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE),
+                new HarvesterClawIntake(false),
                 Commands.sequence(
                     new AutoDriveFollowTrajectory(path.get(0)),
                     new WaitCommand(1.5)

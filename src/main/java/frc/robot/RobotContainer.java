@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.ClawWristExtend;
 import frc.robot.commands.ClawWristRetract;
-import frc.robot.commands.HarvestRecordIntake;
+import frc.robot.commands.HarvesterClawIntake;
 import frc.robot.commands.HarvesterRecordRetract;
 import frc.robot.commands.arm.ArmElbowManual;
 import frc.robot.commands.arm.ArmShoulderManual;
@@ -144,6 +144,8 @@ public class RobotContainer {
 
         // add some commands to dashboard for testing/
         configureTestingCommands();
+
+        SmartDashboard.putData("Score middle cone", new AutoScoreCone(ArmConstants.BACK_MIDDLE_CUBE));
     }
 
     /**
@@ -155,10 +157,10 @@ public class RobotContainer {
          */
 
         // A => Hold to intake cones with the harvester
-        driverA.onTrue(new HarvestRecordIntake(true)).onFalse(new HarvesterRecordRetract(true));
+        driverA.onTrue(new HarvesterClawIntake(true)).onFalse(new HarvesterRecordRetract(true));
 
         // B => Hold to intake cubes with the harvester
-        driverB.onTrue(new HarvestRecordIntake(false)).onFalse(new HarvesterRecordRetract(false));
+        driverB.onTrue(new HarvesterClawIntake(false)).onFalse(new HarvesterRecordRetract(false));
 
         // X => Toggle opening the claw
         driverX.onTrue(new ConditionalCommand(Commands.sequence(new ClawClose(), new ClawStop()), new ClawOpen(), claw::isOpen));
@@ -184,14 +186,14 @@ public class RobotContainer {
 
         /* =================== CO-DRIVER BUTTONS =================== */
         coDriverA.onTrue(new ClawWristExtend()).onFalse(new ClawWristRetract(true));
-        coDriverB.onTrue(Commands.sequence(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CUBE), new ClawWristExtend())).onFalse(new ClawWristRetract(false));
+        coDriverB.onTrue(Commands.sequence(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CUBE).withTimeout(.75), new ClawWristExtend())).onFalse(new ClawWristRetract(false));
         coDriverX.onTrue(new InstantCommand(() -> target.getTargetPosition().getBackArmMoveCommand().schedule()));
         coDriverY.onTrue(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE));
         coDriverLB.whileTrue(new ArmElbowManual());
         coDriverRB.whileTrue(new ArmShoulderManual());
 
         coDriverLTButton.or(coDriverRTButton).whileTrue(new RecordPlayerManual());
-        coDriverStart.onTrue(Commands.parallel(new ArmToPosition(ArmConstants.BACK_PICK_UP), Commands.sequence(new ClawOpen(), new ClawIntake())));
+        coDriverStart.onTrue(Commands.sequence( new ClawOpen(), new ClawIntake(), new ArmToPosition(ArmConstants.BACK_PICK_UP)));
         coDriverBack.onTrue(Commands.sequence(new RecordPlayerSpin(), new WaitCommand(1.0), new RecordPlayerOrientCone()));
 
         /* Targeting Control */

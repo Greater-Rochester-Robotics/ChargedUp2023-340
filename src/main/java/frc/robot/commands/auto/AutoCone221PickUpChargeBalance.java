@@ -22,6 +22,7 @@ import frc.robot.commands.auto.util.AutoScoreCone;
 import frc.robot.commands.drive.DriveBalanceRobot;
 import frc.robot.commands.drive.util.DriveSetGyro;
 import frc.robot.commands.harvester.HarvesterIntake;
+import frc.robot.subsystems.swervelib.ADIS16470_IMU.IMUAxis;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -34,6 +35,8 @@ public class AutoCone221PickUpChargeBalance extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new DriveSetGyro(0),
+      new DriveSetGyro(0, IMUAxis.kPitch),
+      new DriveSetGyro(0, IMUAxis.kRoll),
       new AutoScoreCone(ArmConstants.BACK_MIDDLE_CONE),
       Commands.race(
         new HarvesterIntake(false),

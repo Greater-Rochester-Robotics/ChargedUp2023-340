@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.ArmConstants;
+import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.claw.ClawClose;
 import frc.robot.commands.harvester.HarvesterExtensionOut;
 import frc.robot.commands.harvester.HarvesterIntake;
@@ -16,33 +18,29 @@ import frc.robot.commands.recordPlayer.RecordPlayerSpin;
 /**
  * Deploys the harvester and runs the harvester motors.
  */
-public class HarvestRecordIntake extends SequentialCommandGroup {
+public class HarvesterClawIntake extends SequentialCommandGroup {
     /**
      * Creates a new HarvestRecordIntake command.
      * 
      * @param isCone If the harvester is grabbing a cone.
      */
-    public HarvestRecordIntake (boolean isCone) {
+    public HarvesterClawIntake (boolean isCone) {
         addCommands(
             // Deploy the harvester.
             new HarvesterExtensionOut(),
 
-            // Close the claw if it is a cone.
-            new ConditionalCommand(new ClawClose(), new InstantCommand(), () -> isCone),
-
             // Run the intake motors.
             new HarvesterIntake(isCone),
 
-            // If picking up a cone, close the claw to utilize the flanges to knock over
-            // upright cones in the record player, and spin the record player.
+            // If picking up a cone, close the claw to utilize the flanges to knock over upright cones in the record player.
             new ConditionalCommand(
-                Commands.sequence(
-                    new RecordPlayerSpin(),
-                    new ClawClose()
-                ),
+                new ClawClose(),
                 new InstantCommand(),
                 () -> isCone
-            )
+            ),
+
+            // Move the arm back.
+            new ArmToPosition(ArmConstants.INTERNAL_DEFAULT).withTimeout(3)
         );
     }
 }

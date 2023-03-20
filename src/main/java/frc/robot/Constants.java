@@ -55,7 +55,7 @@ public final class Constants {
       public static final double ELBOW_F = 0.0;
       public static final double KG_WRIST_OUT = 0.30; // The force required to counter gravity i.e prevent the arm from dropping
       public static final double KG_WRIST_IN = 0.3;
-      public static final double MAX_ELBOW_PID_OUT = .40;//if this changes it won't hit targets
+      public static final double MAX_ELBOW_PID_OUT = .35;//if this changes it won't hit targets
 
       public static final double SHOULDER_ALLOWED_DIFFERENCE = 0.19625;
 
@@ -65,8 +65,8 @@ public final class Constants {
       public static final ArmPosition BACK_MIDDLE_CONE = new ArmPosition(Math.toRadians(-14.5),Math.toRadians(-115.0),false);
       public static final ArmPosition BACK_HIGH_CUBE = new ArmPosition(Math.toRadians(-24.5),Math.toRadians(-127), false);
       public static final ArmPosition BACK_MIDDLE_CUBE = new ArmPosition(Math.toRadians(-5.4), Math.toRadians(-82.2), false);
-      public static final ArmPosition BACK_LOWER_SCORE = new ArmPosition(Math.toRadians(5.2), Math.toRadians(-50), false);
-      public static final ArmPosition BACK_PICK_UP = new ArmPosition(Math.toRadians(4.5), Math.toRadians(-97),false);
+      public static final ArmPosition BACK_LOWER_SCORE = new ArmPosition(Math.toRadians(5.2), Math.toRadians(-65), false);
+      public static final ArmPosition BACK_PICK_UP = new ArmPosition(Math.toRadians(4.5), Math.toRadians(-96),false);
 
       public static final ArmPosition FRONT_HIGH_CONE = new ArmPosition(Math.toRadians(0), Math.toRadians(0), false);  //Fix
       public static final ArmPosition FRONT_MIDDLE_CONE = new ArmPosition(Math.toRadians(11.96),Math.toRadians(109.45),true);
@@ -75,7 +75,8 @@ public final class Constants {
       public static final ArmPosition FRONT_LOWER_SCORE = new ArmPosition(Math.toRadians(0), Math.toRadians(0), false);  //Fix
       public static final ArmPosition FRONT_PICK_UP = new ArmPosition(Math.toRadians(2.5), Math.toRadians(93), false); 
 
-      public static final ArmPosition INTERNAL_PICK_UP_CONE = new ArmPosition(Math.toRadians(4.5), Math.toRadians(16), false);
+      public static final ArmPosition INTERNAL_DEFAULT = new ArmPosition(Math.toRadians(4.5), Math.toRadians(-7.5), false);
+      public static final ArmPosition INTERNAL_PICK_UP_CONE = new ArmPosition(Math.toRadians(4.5), Math.toRadians(14.5), false);
       public static final ArmPosition INTERNAL_PICK_UP_CUBE = new ArmPosition(Math.toRadians(4.5), Math.toRadians(10), false);
 
 
@@ -117,7 +118,7 @@ public final class Constants {
       public static final double ELBOW_ACCELERATION_TIME = MAX_ELBOW_VELOCITY / MAX_ELBOW_ACCELERATION;
       public static final double MAX_ELBOW_VELOCITY_IN_RPM = .48;//Yes this is in RPM
       public static final double MAX_ELBOW_ACCELERATION_IN_RPM_PER_SEC = 10200.0;//watch out, this is in RPM per second
-      public static final double ELBOW_CLOSED_LOOP_ERROR = Units.degreesToRadians(1);
+      public static final double ELBOW_CLOSED_LOOP_ERROR = Units.degreesToRadians(2);
       public static final double SHOULDER_CLOSED_LOOP_ERROR = Units.degreesToRadians(1);
     }
 
@@ -137,7 +138,7 @@ public final class Constants {
     }
   
     public static class HarvesterConstants {
-      public static final double HARVESTER_MOTOR_INTAKE_SPEED = -0.8; //TODO: set this to the right value
+      public static final double HARVESTER_MOTOR_INTAKE_SPEED = -0.7; //TODO: set this to the right value
       public static final double HARVESTER_MOTOR_OUTTAKE_SPEED = 0.7; //TODO: set this to the right value
       public static final double HARVESTER_MOTOR_CUBE_SPEED = -0.4; //TODO: set this to the right value
     }
@@ -165,15 +166,16 @@ public final class Constants {
       public static final double DRIVE_ENC_TO_METERS_FACTOR = Units.inchesToMeters(4.125)*Math.PI/7.13;//6.54;//7.13;//0.319186/7.13:1//the ratio from mechanical specs
       public static final double MINIMUM_DRIVE_SPEED = 0.2;// the slowest the wheels can turn, in m/s
       public static final double MINIMUM_DRIVE_DUTY_CYCLE = 0.05;// the slowest the wheels can turn, in duty cycle
-      public static final double MOTOR_MAXIMUM_VELOCITY =  6;
+      public static final double MOTOR_MAXIMUM_VELOCITY = 4.233672;
       public static final double MAX_ROBOT_ROT_VELOCITY = MOTOR_MAXIMUM_VELOCITY/((FRONT_LEFT_POSITION.getNorm()+REAR_RIGHT_POSITION.getNorm())/2);
       public static final double PATH_MAXIMUM_VELOCITY = 3.5;
       public static final double MAXIMUM_ACCELERATION = 1.25;
 
       /*Drive balance robot constants */
-      public static final double DRIVE_BALANCE_ROBOT_VELOCITY_TOLERANCE = 8;
-      public static final double DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE = 5;
-      public static final double DRIVE_BALANCE_ROBOT_MAX_SPEED = 0.2;
+      public static final double DRIVE_BALANCE_ROBOT_VELOCITY_TOLERANCE = 7;
+      public static final double DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE = 3;
+      public static final double DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE_AUTO = 13;
+      public static final double DRIVE_BALANCE_ROBOT_MAX_SPEED = 0.11;
 
       // public static final double MAX_ROBOT_ROT_VELOCITY = MAXIMUM_VELOCITY / DISTANCE_TO_MODULE_0;
       public static final double MAXIMUM_VOLTAGE = 12.0;

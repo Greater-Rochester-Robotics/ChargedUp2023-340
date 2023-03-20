@@ -164,13 +164,24 @@ public class SwerveDrive extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if(count > 10){
-      count = 0;
-      // SmartDashboard.putNumber("GyroRoll", Math.round(this.getGyroInDegRoll()));
-      // SmartDashboard.putNumber("GyroPitch", Math.round(this.getGyroInDegPitch()));
-      SmartDashboard.putNumber("GyroYaw", Math.round(this.getGyroInDegYaw()));
+    // if(count > 10){
+    //   count = 0;
+    //   // SmartDashboard.putNumber("GyroRoll", Math.round(this.getGyroInDegRoll()));
+    //   // SmartDashboard.putNumber("GyroPitch", Math.round(this.getGyroInDegPitch()));
+    //   SmartDashboard.putNumber("GyroYaw", Math.round(this.getGyroInDegYaw()));
+    // }
+    // count++;
+
+    if(count > 300) {
+        count = 0;
+        frontLeft.setPeriodicFramePeriods();
+        rearLeft.setPeriodicFramePeriods();
+        frontRight.setPeriodicFramePeriods();
+        rearRight.setPeriodicFramePeriods();
     }
     count++;
+
+
 
     //run odometry update on the odometry object
     driveOdometry.update(getGyroRotation2d(), getSwerveModulePositions());

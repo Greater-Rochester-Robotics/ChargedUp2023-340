@@ -90,18 +90,22 @@ public class SwerveRotationNEO implements SwerveRotationMotor , SwerveAbsoluteSe
         //     areValuesUpdated = true;
         // }
 
-        rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
-        rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-        rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 9);
-        rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 59863);
-        rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 59879);
-        rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 8);
-        rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
+        setPeriodicFramePeriods();
 
         //if values have changed burn NEO flash
         // if(areValuesUpdated){
             rotationMotor.burnFlash();
         // }
+    }
+
+    public void setPeriodicFramePeriods() {
+        rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
+        rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 23);
+        rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
+        rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 59863);
+        rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 59879);
+        rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 117);
+        rotationMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
     }
 
     public void setRotationMotorBrake(boolean brakeOn){

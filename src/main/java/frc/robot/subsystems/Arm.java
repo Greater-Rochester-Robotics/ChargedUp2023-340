@@ -216,7 +216,7 @@ public class Arm extends SubsystemBase {
         elbowEncoder.setPositionConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONV_FACTOR);
         elbowEncoder.setVelocityConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONV_FACTOR / 60);
         elbowEncoder.setInverted(true);
-        elbowEncoder.setZeroOffset(0.6779);
+        elbowEncoder.setZeroOffset(5.8760048535897932384626433832795);
 
         // Elbow PID settings.
         elbowPID.setFeedbackDevice(elbowEncoder);
