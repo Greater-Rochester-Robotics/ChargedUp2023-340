@@ -19,7 +19,7 @@ public class RecordPlayerOrientCone extends CommandBase {
     /**
      * If the cone position has been found.
      */
-    private boolean hasFoundPosition = false;
+    private boolean hasFoundPosition;
     /**
      * The position to target to orient the cone.
      * Set after the cone's position has been found.
@@ -40,6 +40,9 @@ public class RecordPlayerOrientCone extends CommandBase {
 
         // Set the previous sensor 0 state.
         previousSensor0 = RobotContainer.recordPlayer.getConePositionSensor0();
+
+        // We have not found the position.
+        hasFoundPosition = false;
     }
 
     @Override
@@ -48,16 +51,13 @@ public class RecordPlayerOrientCone extends CommandBase {
         boolean sensor0 = RobotContainer.recordPlayer.getConePositionSensor0();
         boolean sensor1 = RobotContainer.recordPlayer.getConePositionSensor1();
 
-        // Check to see if the cone position has been found.
-        if (!sensor0 && sensor1 && previousSensor0) {
+        if (!hasFoundPosition && !sensor0 && sensor1 && previousSensor0) {
             // If the position was found, set the target position for the record player.
             targetPosition = RobotContainer.recordPlayer.getEncoderAngle() + 0.25;
-            hasFoundPosition = true;
-        }
-
-        if (hasFoundPosition) {
-            // Once the position is found, rotate to the goal position.
             RobotContainer.recordPlayer.rotateToAngle(targetPosition);
+
+            // We have found the position.
+            hasFoundPosition = true;
         }
 
         previousSensor0 = sensor0;
