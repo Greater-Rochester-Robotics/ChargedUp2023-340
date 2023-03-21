@@ -20,21 +20,25 @@ import frc.robot.commands.recordPlayer.RecordPlayerSpin;
  * Stops the harvester motors and retracts the harvester into the robot.
  */
 public class HarvesterRecordRetract extends SequentialCommandGroup {
+    public HarvesterRecordRetract (boolean isCone) {
+        this(isCone, 1, 2.5);
+    }
+
     /**
      * Creates a new HarvesterRecordRetract command.
      */
-    public HarvesterRecordRetract (boolean isCone) {
+    public HarvesterRecordRetract (boolean isCone, double firstDelay, double secondDelay) {
         addCommands(
             // Bring in the harvester.
             new HarvesterExtensionIn(),
 
             // Add delay to ensure the game piece is in the record player.
-            new WaitCommand(1),
+            new WaitCommand(firstDelay),
 
             // Stop the harvester motors.
             new HarvesterStop(),
 
-            new WaitCommand(2.5),
+            new WaitCommand(secondDelay),
 
             // If we grabbed a cone, add delay to ensure the cone is in position then run the record player.
             new ConditionalCommand(new RecordPlayerOrientCone(), new InstantCommand(), () -> isCone)

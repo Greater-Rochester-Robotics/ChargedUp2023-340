@@ -25,6 +25,7 @@ import frc.robot.commands.HarvesterRecordRetract;
 import frc.robot.commands.arm.ArmElbowManual;
 import frc.robot.commands.arm.ArmShoulderManual;
 import frc.robot.commands.arm.ArmToPosition;
+import frc.robot.commands.auto.AutoCone001PickUpCone021ChargeBalance;
 import frc.robot.commands.auto.AutoCone001PickUpReturn;
 import frc.robot.commands.auto.AutoCone021ChargeBalance;
 import frc.robot.commands.auto.AutoCone201ChargeBalance;
@@ -231,6 +232,7 @@ public class RobotContainer {
         autoChooser.addOption("Loading Station inner cone mid, charge leave, balance", new AutoCone201ChargeLeaveBalance());
         autoChooser.addOption("Score Table outer cone mid, cube pickup, return", new AutoCone001PickUpReturn());
         autoChooser.addOption("Score Table inner cone mid, balance", new AutoCone021ChargeBalance());
+        autoChooser.addOption("Score Table outer cone mid, cone pickup, score table inner cone mid, balance", new AutoCone001PickUpCone021ChargeBalance());
         // autoChooser.addOption("Score Table inner cone mid, charge leave, balance", new AutoCone021ChargeLeaveBalance()); // NOT FUNCTIONAL LAST TEST 3-12
 
         SmartDashboard.putData(RobotContainer.autoChooser);

@@ -168,8 +168,8 @@ public final class Constants {
       public static final double MINIMUM_DRIVE_DUTY_CYCLE = 0.05;// the slowest the wheels can turn, in duty cycle
       public static final double MOTOR_MAXIMUM_VELOCITY = 4.233672;
       public static final double MAX_ROBOT_ROT_VELOCITY = MOTOR_MAXIMUM_VELOCITY/((FRONT_LEFT_POSITION.getNorm()+REAR_RIGHT_POSITION.getNorm())/2);
-      public static final double PATH_MAXIMUM_VELOCITY = 3.5;
-      public static final double MAXIMUM_ACCELERATION = 1.25;
+      public static final double PATH_MAXIMUM_VELOCITY = 4;
+      public static final double MAXIMUM_ACCELERATION = 2.25;
 
       /*Drive balance robot constants */
       public static final double DRIVE_BALANCE_ROBOT_VELOCITY_TOLERANCE = 7;
