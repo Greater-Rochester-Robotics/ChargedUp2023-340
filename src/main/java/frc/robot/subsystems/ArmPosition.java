@@ -21,14 +21,10 @@ public class ArmPosition {
     double elbowAngle;
     boolean wristExtended;
 
-    public ArmPosition (double shoulderAngle, double elbowAngle, boolean wristExtended) {
-        this.shoulderAngle = shoulderAngle;
+    public ArmPosition (double elbowAngle, boolean wristExtended) {
+        this.shoulderAngle = ArmConstants.SHOULDER_FIXED_ANGLE;
         this.elbowAngle = elbowAngle;
         this.wristExtended = wristExtended;
-    }
-
-    public double getShoulderPosition () {
-        return shoulderAngle;
     }
 
     public double getElbowPosition () {
@@ -145,7 +141,6 @@ public class ArmPosition {
                 * (x > 0 ? 1 : -1); // gets the Angle from the y axis up to the end point
 
         return new ArmPosition(
-            newShoulderAngle,
             newElbowAngle,
             isExtended);
 
@@ -172,7 +167,6 @@ public class ArmPosition {
         boolean wristExtended = time < 0.5 ? firstPosition.wristExtended : secondPosition.wristExtended;
 
         return new ArmPosition(
-            shoulderAngle,
             elbowAngle,
             wristExtended);
 

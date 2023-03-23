@@ -36,19 +36,6 @@ public final class Constants {
     
     public static class ArmConstants{
       /* Arm PID Constants */
-      public static final double SHOULDER_P_RIGHT = 1.80;
-      public static final double SHOULDER_I_RIGHT = 0.0;
-      public static final double SHOULDER_D_RIGHT = 0.0;
-      public static final double SHOULDER_F_RIGHT = 0.0;
-
-      public static final double SHOULDER_P_LEFT = 1.80;
-      public static final double SHOULDER_I_LEFT = 0.0;
-      public static final double SHOULDER_D_LEFT = 0.0;
-      public static final double SHOULDER_F_LEFT = 0.0;
-      public static final double MAX_SHOULDER_OUT_PID_OUT = .2;
-      public static final double MAX_SHOULDER_IN_PID_OUT = .45;
-      public static final double SHOULDER_F_DIFFERENCE = 0.0;
-
       public static final double ELBOW_P = 1.0;
       public static final double ELBOW_I = 0.0;
       public static final double ELBOW_D = 2.0;
@@ -57,35 +44,32 @@ public final class Constants {
       public static final double KG_WRIST_IN = 0.3;
       public static final double MAX_ELBOW_PID_OUT = .35;//if this changes it won't hit targets
 
-      public static final double SHOULDER_ALLOWED_DIFFERENCE = 0.19625;
-
       /*Scoring constants */
       /* WARNING DO NOT CHANGE WITHOUT TESTING IN A CONTROLLED ENVIRONMENT */
-      public static final ArmPosition BACK_HIGH_CONE = new ArmPosition(Math.toRadians(-30.0),Math.toRadians(-155),true);
-      public static final ArmPosition BACK_MIDDLE_CONE = new ArmPosition(Math.toRadians(-14.5),Math.toRadians(-115.0),false);
-      public static final ArmPosition BACK_HIGH_CUBE = new ArmPosition(Math.toRadians(-24.5),Math.toRadians(-127), false);
-      public static final ArmPosition BACK_MIDDLE_CUBE = new ArmPosition(Math.toRadians(-5.4), Math.toRadians(-82.2), false);
-      public static final ArmPosition BACK_LOWER_SCORE = new ArmPosition(Math.toRadians(5.2), Math.toRadians(-65), false);
-      public static final ArmPosition BACK_PICK_UP = new ArmPosition(Math.toRadians(4.5), Math.toRadians(-96),false);
+      public static final ArmPosition BACK_HIGH_CONE = new ArmPosition(Math.toRadians(-155),true);
+      public static final ArmPosition BACK_MIDDLE_CONE = new ArmPosition(Math.toRadians(-115.0),false);
+      public static final ArmPosition BACK_HIGH_CUBE = new ArmPosition(Math.toRadians(-127), false);
+      public static final ArmPosition BACK_MIDDLE_CUBE = new ArmPosition(Math.toRadians(-82.2), false);
+      public static final ArmPosition BACK_LOWER_SCORE = new ArmPosition(Math.toRadians(-65), false);
+      public static final ArmPosition BACK_PICK_UP = new ArmPosition(Math.toRadians(-96),false);
 
-      public static final ArmPosition FRONT_HIGH_CONE = new ArmPosition(Math.toRadians(0), Math.toRadians(0), false);  //Fix
-      public static final ArmPosition FRONT_MIDDLE_CONE = new ArmPosition(Math.toRadians(11.96),Math.toRadians(109.45),true);
-      public static final ArmPosition FRONT_HIGH_CUBE = new ArmPosition(Math.toRadians(0), Math.toRadians(0), false);  //Fix
-      public static final ArmPosition FRONT_MIDDLE_CUBE = new ArmPosition(Math.toRadians(0), Math.toRadians(0), false);  //Fix
-      public static final ArmPosition FRONT_LOWER_SCORE = new ArmPosition(Math.toRadians(0), Math.toRadians(0), false);  //Fix
-      public static final ArmPosition FRONT_PICK_UP = new ArmPosition(Math.toRadians(2.5), Math.toRadians(93), false); 
+      public static final ArmPosition FRONT_HIGH_CONE = new ArmPosition(Math.toRadians(0), false);  //Fix
+      public static final ArmPosition FRONT_MIDDLE_CONE = new ArmPosition(Math.toRadians(109.45),true);
+      public static final ArmPosition FRONT_HIGH_CUBE = new ArmPosition(Math.toRadians(0), false);  //Fix
+      public static final ArmPosition FRONT_MIDDLE_CUBE = new ArmPosition(Math.toRadians(0), false);  //Fix
+      public static final ArmPosition FRONT_LOWER_SCORE = new ArmPosition(Math.toRadians(0), false);  //Fix
+      public static final ArmPosition FRONT_PICK_UP = new ArmPosition(Math.toRadians(93), false); 
 
-      public static final ArmPosition INTERNAL_DEFAULT = new ArmPosition(Math.toRadians(4.5), Math.toRadians(-7.5), false);
-      public static final ArmPosition INTERNAL_PICK_UP_CONE = new ArmPosition(Math.toRadians(4.5), Math.toRadians(14.5), false);
-      public static final ArmPosition INTERNAL_PICK_UP_CUBE = new ArmPosition(Math.toRadians(4.5), Math.toRadians(10), false);
+      public static final ArmPosition INTERNAL_DEFAULT = new ArmPosition(Math.toRadians(-7.5), false);
+      public static final ArmPosition INTERNAL_PICK_UP_CONE = new ArmPosition(Math.toRadians(14.5), false);
+      public static final ArmPosition INTERNAL_PICK_UP_CUBE = new ArmPosition(Math.toRadians(10), false);
 
 
       /* Arm Limits */
       public static final double MAX_ELBOW_ANGLE = Math.toRadians(165);
-      public static final double MAX_SHOULDER_ANGLE = Math.toRadians(15);
-      public static final double MIN_SHOULDER_ANGLE = Math.toRadians(-33);
 
       /*arm dimensions */
+      public static final double SHOULDER_FIXED_ANGLE = Math.toRadians(38); //TODO: put correct angle
       public static final double SHOULDER_TO_ELBOW_DISTANCE = Units.inchesToMeters(38);
       public static final double ELBOW_TO_CLAW_DISTANCE = Units.inchesToMeters(29);
       public static final double WRIST_EXTENSION_LENGTH = Units.inchesToMeters(10);
@@ -108,18 +92,13 @@ public final class Constants {
       public static final double WRIST_RETRACTION_DELAY = .4;
 
       /*Acceleration and max velocities for the arm */
-      public static final double MAX_SHOULDER_VELOCITY = 1;
       public static final double MAX_ELBOW_VELOCITY = 1;
-      public static final double MAX_SHOULDER_ACCELERATION = 1;
       public static final double MAX_ELBOW_ACCELERATION = 1;
-      public static final double SHOULDER_ACCELERATION_DISTANCE = 1;
       public static final double ELBOW_ACCELERATION_DISTANCE = 1;
-      public static final double SHOULDER_ACCELERATION_TIME = MAX_SHOULDER_VELOCITY / MAX_SHOULDER_ACCELERATION;
       public static final double ELBOW_ACCELERATION_TIME = MAX_ELBOW_VELOCITY / MAX_ELBOW_ACCELERATION;
       public static final double MAX_ELBOW_VELOCITY_IN_RPM = .48;//Yes this is in RPM
       public static final double MAX_ELBOW_ACCELERATION_IN_RPM_PER_SEC = 10200.0;//watch out, this is in RPM per second
       public static final double ELBOW_CLOSED_LOOP_ERROR = Units.degreesToRadians(2);
-      public static final double SHOULDER_CLOSED_LOOP_ERROR = Units.degreesToRadians(1);
     }
 
     public static class ClawConstants {
@@ -255,8 +234,6 @@ public final class Constants {
   public static final int FRONT_RIGHT_MOVE_MOTOR = 8;//drive module 3
   public static final int FRONT_RIGHT_ROTATE_MOTOR = 9;//drive module 3
 
-  public static final int SHOULDER_MOTOR_LEFT = 20;
-  public static final int SHOULDER_MOTOR_RIGHT = 21;
   public static final int ELBOW_MOTOR = 25;
 
   public static final int RECORD_PLAYER_MOTOR = 34;
