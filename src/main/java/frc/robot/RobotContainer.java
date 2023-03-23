@@ -29,6 +29,7 @@ import frc.robot.commands.auto.AutoCone001PickUpReturn;
 import frc.robot.commands.auto.AutoCone021ChargeBalance;
 import frc.robot.commands.auto.AutoCone201ChargeBalance;
 import frc.robot.commands.auto.AutoCone201ChargeLeaveBalance;
+import frc.robot.commands.auto.AutoCone221PickUpCone201Pickup;
 import frc.robot.commands.auto.AutoCone221PickUpReturn;
 import frc.robot.commands.auto.util.AutoScoreCone;
 import frc.robot.commands.claw.ClawClose;
@@ -233,6 +234,7 @@ public class RobotContainer {
         autoChooser.addOption("Score Table inner cone mid, balance", new AutoCone021ChargeBalance());
         // autoChooser.addOption("Score Table inner cone mid, charge leave, balance", new AutoCone021ChargeLeaveBalance()); // NOT FUNCTIONAL LAST TEST 3-12
 
+        autoChooser.addOption("test", new AutoCone221PickUpCone201Pickup());
         SmartDashboard.putData(RobotContainer.autoChooser);
     }
 
