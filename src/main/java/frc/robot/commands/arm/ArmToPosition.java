@@ -18,7 +18,6 @@ import frc.robot.subsystems.ArmPosition;
  * Moves the arm to a set position utilizing the shoulder, elbow, and wrist.
  * 
  * @see ArmElbowToPosition
- * @see ArmShoulderToPosition
  * @see ArmWristExtend
  * @see ArmWristRetract
  */
@@ -31,7 +30,7 @@ public class ArmToPosition extends SequentialCommandGroup {
     public ArmToPosition (ArmPosition armPosition) {
         addCommands(
             // Print the target position.
-            new PrintCommand("ArmToPosition: Begin moving to position: " + Math.abs(Units.radiansToDegrees(armPosition.getShoulderPosition())) + " " + Math.abs(Units.radiansToDegrees(armPosition.getElbowPosition()))),
+            new PrintCommand("ArmToPosition: Begin moving to position: " + Math.abs(Units.radiansToDegrees(armPosition.getElbowPosition()))),
 
             // Retract the wrist if it is extended.
             new ConditionalCommand(new ArmWristRetract(true), new InstantCommand(), RobotContainer.arm::isWristExtended),
@@ -44,13 +43,11 @@ public class ArmToPosition extends SequentialCommandGroup {
                     // If the arm is currently behind the harvester, move the shoulder then the elbow to a safe position.
                     Commands.sequence(
                         new PrintCommand("ArmToPosition: Behind the harvester, moving to safe position..."),
-                        new ArmShoulderToPosition(Units.degreesToRadians(-13)),
                         new ArmElbowToPosition(Units.degreesToRadians(55))
                     ),
                     // If the arm is currently in front of the harvester, move the shoulder then the elbow to a safe position.
                     Commands.sequence(
                         new PrintCommand("ArmToPosition: In front of the harvester, moving to safe position..."),
-                        new ArmShoulderToPosition(Units.degreesToRadians(-13)),
                         new ArmElbowToPosition(Units.degreesToRadians(10))
                     ),
                     RobotContainer.arm.getArmPosition()::isBehindHarvester
@@ -62,31 +59,18 @@ public class ArmToPosition extends SequentialCommandGroup {
             // Print that the arm is now starting its movement.
             new PrintCommand("ArmToPosition: Moving arm..."),
 
-            // Move the shoulder upright if the arm is behind the robot. Otherwise, do nothing.
-            new ConditionalCommand(new ArmShoulderToPosition(Math.toRadians(5)), new InstantCommand(), () -> (RobotContainer.arm.getArmPosition().getEndX() <= Units.inchesToMeters(-10.5))),
-
             // Move the elbow to its final position.
             new ArmElbowToPosition(armPosition.getElbowPosition()).withTimeout(4),
 
             // If the wrist should be extended, extend the wrist while moving the shoulder 5 degrees.
             new ConditionalCommand(
-                Commands.sequence(
-                    new ArmWristExtend(false),
-                    new ConditionalCommand(
-                        new ArmShoulderToPosition(armPosition.getShoulderPosition() + Units.degreesToRadians(5)),
-                        new ArmShoulderToPosition(armPosition.getShoulderPosition() - Units.degreesToRadians(5)),
-                        RobotContainer.arm.getArmPosition()::isBehindHarvester
-                    ).withTimeout(ArmConstants.WRIST_EXTENSION_DELAY) // Add the wrist extension delay, as the invocation of ArmWristExtend doesn't wait for extension.
-                ),
+                new ArmWristExtend(false),
                 new InstantCommand(),
                 armPosition::isWristOut
             ),
 
-            // Move the shoulder to its final position.
-            new ArmShoulderToPosition(armPosition.getShoulderPosition()),
-
             // Print that the arm has been moved.
-            new PrintCommand("ArmToPosition: Finished moving to position: " + Math.abs(Units.radiansToDegrees(armPosition.getShoulderPosition())) + " " + Math.abs(Units.radiansToDegrees(armPosition.getElbowPosition())))
+            new PrintCommand("ArmToPosition: Finished moving to position: " + Math.abs(Units.radiansToDegrees(armPosition.getElbowPosition())))
         );
     }
 }

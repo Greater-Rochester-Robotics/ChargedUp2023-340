@@ -23,8 +23,8 @@ import frc.robot.commands.ClawWristRetract;
 import frc.robot.commands.HarvesterClawIntake;
 import frc.robot.commands.HarvesterRecordRetract;
 import frc.robot.commands.arm.ArmElbowManual;
-import frc.robot.commands.arm.ArmShoulderManual;
 import frc.robot.commands.arm.ArmToPosition;
+import frc.robot.commands.auto.AutoCone001PickUpCone021ChargeBalance;
 import frc.robot.commands.auto.AutoCone001PickUpReturn;
 import frc.robot.commands.auto.AutoCone021ChargeBalance;
 import frc.robot.commands.auto.AutoCone201ChargeBalance;
@@ -191,7 +191,6 @@ public class RobotContainer {
         coDriverX.onTrue(new InstantCommand(() -> target.getTargetPosition().getBackArmMoveCommand().schedule()));
         coDriverY.onTrue(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE));
         coDriverLB.whileTrue(new ArmElbowManual());
-        coDriverRB.whileTrue(new ArmShoulderManual());
 
         coDriverLTButton.or(coDriverRTButton).whileTrue(new RecordPlayerManual());
         coDriverStart.onTrue(Commands.sequence( new ClawOpen(), new ClawIntake(), new ArmToPosition(ArmConstants.BACK_PICK_UP)));
@@ -232,6 +231,7 @@ public class RobotContainer {
         autoChooser.addOption("Loading Station inner cone mid, charge leave, balance", new AutoCone201ChargeLeaveBalance());
         autoChooser.addOption("Score Table outer cone mid, cube pickup, return", new AutoCone001PickUpReturn());
         autoChooser.addOption("Score Table inner cone mid, balance", new AutoCone021ChargeBalance());
+        autoChooser.addOption("Score Table outer cone mid, cone pickup, score table inner cone mid, balance", new AutoCone001PickUpCone021ChargeBalance());
         // autoChooser.addOption("Score Table inner cone mid, charge leave, balance", new AutoCone021ChargeLeaveBalance()); // NOT FUNCTIONAL LAST TEST 3-12
 
         autoChooser.addOption("test", new AutoCone221PickUpCone201Pickup());
@@ -374,26 +374,6 @@ public class RobotContainer {
             * Math.signum(value)
             * -1.0
             * (isVeloMode ? Constants.SwerveDriveConstants.MAX_ROBOT_ROT_VELOCITY : Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_ROTATIONAL);
-    }
-
-    /**
-     * accessor for the right shoulder motor's manual function
-     * 
-     * @return
-     */
-    public double getRightShoulderManualValue () {
-        return getCoDriverAxis(Axis.kRightY)
-            * .25;
-    }
-
-    /**
-     * accessor for the left shoulder motor's manual function
-     * 
-     * @return
-     */
-    public double getLeftShoulderManualValue () {
-        return getCoDriverAxis(Axis.kLeftY)
-            * .25;
     }
 
     /**
