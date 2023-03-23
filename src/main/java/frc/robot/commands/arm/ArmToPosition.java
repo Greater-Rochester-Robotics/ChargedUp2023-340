@@ -66,7 +66,7 @@ public class ArmToPosition extends SequentialCommandGroup {
             new ConditionalCommand(
                 new ArmWristExtend(false),
                 new InstantCommand(),
-                armPosition::isWristOut
+                armPosition::getWristPosition
             ),
 
             // Print that the arm has been moved.

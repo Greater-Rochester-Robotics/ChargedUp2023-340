@@ -19,20 +19,22 @@ public class ArmPosition {
     // find where angles are measured from (relative to the ground or relative to something else?)
     double shoulderAngle;
     double elbowAngle;
-    boolean wristExtended;
+    double wristLength;
 
-    public ArmPosition (double elbowAngle, boolean wristExtended) {
+    public ArmPosition (double elbowAngle, double wristLength) {
         this.shoulderAngle = ArmConstants.SHOULDER_FIXED_ANGLE;
         this.elbowAngle = elbowAngle;
-        this.wristExtended = wristExtended;
+        this.wristLength = wristLength;
     }
+
+
 
     public double getElbowPosition () {
         return elbowAngle;
     }
 
-    public boolean isWristOut () {
-        return wristExtended;
+    public double getWristPosition () {
+        return wristLength;
     }
 
     public ArmPosition getAsArmPosition () {
@@ -40,8 +42,7 @@ public class ArmPosition {
     }
 
     public Pose2d getEndPosition () {
-        double forearmLength = ArmConstants.ELBOW_TO_CLAW_DISTANCE; // Gets the forearm distance and acounts for wrist extention
-        if (wristExtended) forearmLength += ArmConstants.WRIST_EXTENSION_LENGTH;
+        double forearmLength = ArmConstants.ELBOW_TO_CLAW_DISTANCE + wristLength; // Gets the forearm distance and acounts for wrist extention
 
         AffineTransform rotate = new AffineTransform();// Makes a new AffineTransform
         Point2D source = new Point2D.Double(
@@ -67,8 +68,8 @@ public class ArmPosition {
     public double getEndX () {
         return (ArmConstants.SHOULDER_TO_ELBOW_DISTANCE
             * Math.sin(shoulderAngle))
-            + ((wristExtended ? ArmConstants.WRIST_EXTENSION_LENGTH
-                + ArmConstants.ELBOW_TO_CLAW_DISTANCE : ArmConstants.ELBOW_TO_CLAW_DISTANCE)
+            + ((wristLength
+                + ArmConstants.ELBOW_TO_CLAW_DISTANCE)
                 * Math.sin(elbowAngle
                     - shoulderAngle));
     }
@@ -142,34 +143,34 @@ public class ArmPosition {
 
         return new ArmPosition(
             newElbowAngle,
-            isExtended);
+            newShoulderAngle);
 
         // If the arm is extended out the front of the robbot, then the shoulder angle is positive.
 
     }
 
-    public ArmPosition interpolateArmPosition (ArmPosition nextPosition, double time) {
-        return interpolateArmPosition(this, nextPosition, time);
+    // public ArmPosition interpolateArmPosition (ArmPosition nextPosition, double time) {
+    //     return interpolateArmPosition(this, nextPosition, time);
+    // }
+
+    // public static ArmPosition interpolateArmPosition (ArmPosition firstPosition, ArmPosition secondPosition, double time) {
+
+    //     double shoulderAngle = firstPosition.shoulderAngle
+    //         * time
+    //         + secondPosition.shoulderAngle
+    //             * (1.0
+    //                 - time);
+    //     double elbowAngle = firstPosition.elbowAngle
+    //         * time
+    //         + secondPosition.elbowAngle
+    //             * (1.0
+    //                 - time);
+        // boolean wristExtended = time < 0.5 ? firstPosition.wristLength : secondPosition.wristLength;
+
+        // return new ArmPosition(
+        //     elbowAngle,
+        //     wristExtended);
+
     }
 
-    public static ArmPosition interpolateArmPosition (ArmPosition firstPosition, ArmPosition secondPosition, double time) {
 
-        double shoulderAngle = firstPosition.shoulderAngle
-            * time
-            + secondPosition.shoulderAngle
-                * (1.0
-                    - time);
-        double elbowAngle = firstPosition.elbowAngle
-            * time
-            + secondPosition.elbowAngle
-                * (1.0
-                    - time);
-        boolean wristExtended = time < 0.5 ? firstPosition.wristExtended : secondPosition.wristExtended;
-
-        return new ArmPosition(
-            elbowAngle,
-            wristExtended);
-
-    }
-
-}
