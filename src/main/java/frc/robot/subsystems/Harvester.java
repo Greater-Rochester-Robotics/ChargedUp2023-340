@@ -4,25 +4,24 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.HarvesterConstants.HARVESTER_MOTOR_CUBE_SPEED;
+import static frc.robot.Constants.HarvesterConstants.HARVESTER_MOTOR_INTAKE_SPEED;
+import static frc.robot.Constants.HarvesterConstants.HARVESTER_MOTOR_OUTTAKE_SPEED;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Robot;
-import frc.robot.RobotContainer;
-
-import static frc.robot.Constants.HarvesterConstants.*;
 
 public class Harvester extends SubsystemBase {
   private TalonSRX harvesterMotor;
@@ -30,7 +29,6 @@ public class Harvester extends SubsystemBase {
   private DigitalInput gamePieceSensor;
   private DoubleSolenoid harvesterPistons;
   Timer rumbleTimer;
-  private boolean hadGamePeice = false;
   private boolean isHarvesterOut;
 
   /**
@@ -101,7 +99,7 @@ public class Harvester extends SubsystemBase {
   }
 
   public boolean isHarvesterOut(){
-    return harvesterPistons.get() == Value.kForward;
+    return isHarvesterOut;
   }
 
   /**

@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -19,9 +18,8 @@ import frc.robot.commands.HarvesterRecordRetract;
 import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.auto.util.AutoDriveFollowTrajectory;
 import frc.robot.commands.auto.util.AutoScoreCone;
-import frc.robot.commands.drive.DriveBalanceRobot;
+import frc.robot.commands.drive.DriveBalance;
 import frc.robot.commands.drive.util.DriveSetGyro;
-import frc.robot.commands.harvester.HarvesterIntake;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -52,7 +50,7 @@ public class AutoCone221PickUpCone201Pickup extends SequentialCommandGroup {
             new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE),
             new AutoDriveFollowTrajectory(path.get(3))
         ),
-        new DriveBalanceRobot()
+        new DriveBalance()
     );
     
   }

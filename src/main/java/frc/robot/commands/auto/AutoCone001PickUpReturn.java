@@ -17,7 +17,6 @@ import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.RobotContainer;
 import frc.robot.commands.HarvesterClawIntake;
 import frc.robot.commands.HarvesterRecordRetract;
-import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.auto.util.AutoDriveFollowTrajectory;
 import frc.robot.commands.auto.util.AutoScoreCone;
 import frc.robot.commands.drive.util.DriveSetGyro;

@@ -20,9 +20,8 @@ import frc.robot.commands.HarvesterRecordRetract;
 import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.auto.util.AutoDriveFollowTrajectory;
 import frc.robot.commands.auto.util.AutoScoreCone;
-import frc.robot.commands.drive.DriveBalanceRobot;
+import frc.robot.commands.drive.DriveBalance;
 import frc.robot.commands.drive.util.DriveSetGyro;
-import frc.robot.commands.harvester.HarvesterExtensionOut;
 import frc.robot.subsystems.swervelib.ADIS16470_IMU.IMUAxis;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -98,7 +97,7 @@ public class AutoCone001PickUpCone021ChargeBalance extends SequentialCommandGrou
         ).withTimeout(6),
 
         // Balance robot with feedback loop
-        new DriveBalanceRobot()
+        new DriveBalance()
     );
   }
 }

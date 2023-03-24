@@ -5,12 +5,9 @@
 package frc.robot.subsystems;
 
 import java.util.Arrays;
-import java.util.EnumSet;
 
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.networktables.IntegerArraySubscriber;
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -23,7 +20,7 @@ import frc.robot.commands.arm.ArmToPosition;
 
 /**
  * Targetting subsystem.
- * Used for selecting targets determining goal loctions.
+ * Used for selecting targets determining goal locations.
  */
 public class Target extends SubsystemBase {
   /**
@@ -136,7 +133,7 @@ public class Target extends SubsystemBase {
               blueGoalLocations[i][j][k].getX(), 
               Constants.TargetConstants.FIELD_WIDTH - blueGoalLocations[i][j][k].getY()),
             blueGoalLocations[i][j][k].getFrontArmPos(),
-            blueGoalLocations[i][j][k].getBackArmPos()
+            blueGoalLocations[i][j][k].getArmPosition()
           );
         }
       }
@@ -402,7 +399,7 @@ public class Target extends SubsystemBase {
      * Get the goal location's back arm position.
      * @return The back arm position.
      */
-    public ArmPosition getBackArmPos(){
+    public ArmPosition getArmPosition(){
       return armPositionBack;
     }
 
@@ -410,8 +407,8 @@ public class Target extends SubsystemBase {
      * Get the command to move the back arm to the goal location's position.
      * @return The ArmToPosition command.
      */
-    public Command getBackArmMoveCommand(){
-      return new ArmToPosition(this.getBackArmPos());
+    public Command getArmMoveCommand(){
+      return new ArmToPosition(this.getArmPosition());
     }
   }
 }

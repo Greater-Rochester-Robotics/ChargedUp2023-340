@@ -29,7 +29,6 @@ public class ArmElbowToPosition extends CommandBase {
 
     /**
      * Creates a new ArmElbowToPosition command.
-     * 
      * @param position The position to set the elbow to in radians.
      */
     public ArmElbowToPosition (double position) {
@@ -42,13 +41,13 @@ public class ArmElbowToPosition extends CommandBase {
         // Set helpers.
         goingDown = Math.abs(RobotContainer.arm.getElbowPosition()) > Math.abs(position);
         hitTarget = 0;
+
+        // Set the elbow position.
+        RobotContainer.arm.setElbowPosition(position);
     }
 
     @Override
     public void execute () {
-        // Set the elbow position.
-        RobotContainer.arm.setElbowPosition(position);
-
         // If the elbow is within tolerance of the target position, increment hitTarget. Otherwise, reset the hitTarget count.
         if (Math.abs(RobotContainer.arm.getElbowPosition() - position) < ArmConstants.ELBOW_CLOSED_LOOP_ERROR) {
             hitTarget++;

@@ -8,19 +8,17 @@ import java.util.List;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
-
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.SwerveDriveConstants;
+import frc.robot.RobotContainer;
 import frc.robot.commands.HarvesterClawIntake;
 import frc.robot.commands.HarvesterRecordRetract;
-import frc.robot.commands.arm.ArmToPosition;
-import frc.robot.commands.auto.util.AutoScoreCone;
 import frc.robot.commands.auto.util.AutoDriveFollowTrajectory;
+import frc.robot.commands.auto.util.AutoScoreCone;
 import frc.robot.commands.drive.util.DriveSetGyro;
 import frc.robot.commands.harvester.HarvesterExtensionOut;
 

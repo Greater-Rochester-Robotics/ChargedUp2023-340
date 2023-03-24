@@ -19,7 +19,7 @@ import frc.robot.commands.HarvesterRecordRetract;
 import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.auto.util.AutoDriveFollowTrajectory;
 import frc.robot.commands.auto.util.AutoScoreCone;
-import frc.robot.commands.drive.DriveBalanceRobot;
+import frc.robot.commands.drive.DriveBalance;
 import frc.robot.commands.drive.util.DriveSetGyro;
 import frc.robot.commands.harvester.HarvesterIntake;
 import frc.robot.subsystems.swervelib.ADIS16470_IMU.IMUAxis;
@@ -58,7 +58,7 @@ public class AutoCone221PickUpChargeBalance extends SequentialCommandGroup {
         new HarvesterRecordRetract(false),
         new AutoDriveFollowTrajectory(path.get(2),false)
       ),
-      new DriveBalanceRobot()
+      new DriveBalance()
     );
   }
 }

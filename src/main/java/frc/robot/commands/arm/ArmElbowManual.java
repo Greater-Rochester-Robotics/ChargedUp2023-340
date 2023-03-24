@@ -10,7 +10,7 @@ import frc.robot.RobotContainer;
 
 /**
  * Controls the arm's elbow manually using a joystick.
- * @see RobotContainer#getElbowManualValue()
+ * @see RobotContainer#getElbowManualSpeed()
  */
 public class ArmElbowManual extends CommandBase {
     /**
@@ -23,7 +23,7 @@ public class ArmElbowManual extends CommandBase {
     @Override
     public void execute () {
         // Set the elbow's duty cycle based on the joystick's value.
-        RobotContainer.arm.setElbowDutyCycle(Robot.robotContainer.getElbowManualValue());
+        RobotContainer.arm.setElbowDutyCycle(Robot.robotContainer.getElbowManualSpeed());
     }
 
     @Override

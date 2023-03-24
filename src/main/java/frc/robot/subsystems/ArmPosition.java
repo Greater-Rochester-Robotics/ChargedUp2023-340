@@ -4,95 +4,50 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import frc.robot.Constants.ArmConstants;
-import frc.robot.RobotContainer;
-
-/** Add your docs here. */
+/**
+ * An arm position.
+ */
 public class ArmPosition {
-    // use Rotation2ds instead of double angles?
-    // find where angles are measured from (relative to the ground or relative to something else?)
+    /**
+     * The elbow's angle in radians.
+     */
     private double elbowAngle;
+    /**
+     * The wrist's length.
+     */
     private double wristLength;
 
-    public ArmPosition (){
+    /**
+     * Create a new ArmPosition.
+     * Has an elbow angle and wrist length of 0.
+     */
+    public ArmPosition () {
         this(0, 0);
     }
 
+    /**
+     * Create a new ArmPosition.
+     * @param elbowAngle The elbow's angle in radians.
+     * @param wristLength The wrist's length.
+     */
     public ArmPosition (double elbowAngle, double wristLength) {
         this.elbowAngle = elbowAngle;
         this.wristLength = wristLength;
     }
 
-    public double getElbowPosition () {
+    /**
+     * Gets the elbow's angle.
+     * @return The elbow's angle in radians.
+     */
+    public double getElbowAngle () {
         return elbowAngle;
     }
 
-    public double getWristPosition () {
-        return wristLength;
-    }
-
-    public ArmPosition getAsArmPosition () {
-        return this;
-    }
-
-    public Pose2d getEndPosition () {
-        double elbowToEnd = ArmConstants.ELBOW_TO_CLAW_DISTANCE + wristLength;
-        return(new Pose2d(
-            Math.cos(elbowAngle)*elbowToEnd,
-            Math.sin(elbowAngle)*elbowToEnd,
-            new Rotation2d()
-        ));
-    }
-
     /**
-     * measured from the shoulder pivot
-     * 
-     * @return
+     * Gets the wrist's length.
+     * @return The wrist's length.
      */
-    public double getEndX () {
-        double elbowToEnd = ArmConstants.ELBOW_TO_CLAW_DISTANCE + wristLength;
-        return (Math.cos(elbowAngle)*elbowToEnd);
-    }
-
-    public boolean isInFrontOfHarvester () {
-        return getEndX() > ArmConstants.ARM_TO_HARVESTER_MAX_DISTANCE;
-    }
-
-    public boolean isBehindHarvester () {
-        return getEndX() < ArmConstants.ARM_TO_HARVESTER_MIN_DISTANCE;
-    }
-
-    public boolean isOppositeSideFromCurrent () {
-        ArmPosition currentPosition = RobotContainer.arm.getArmPosition();
-        return !((this.isBehindHarvester()
-            && currentPosition.isBehindHarvester())
-            || (this.isInFrontOfHarvester()
-                && currentPosition.isInFrontOfHarvester()));
-    }
-
-    public static ArmPosition inverseKinematics (double x, double z) {
-        double shoulderToElbow = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE;
-        double elbowToEnd = ArmConstants.ELBOW_TO_CLAW_DISTANCE;
-        double shoulderToEnd = Math.sqrt(x
-            * x
-            + z
-                * z); // Gets the distance between the shoulder joint of the arm and the end point
-        if (shoulderToEnd > shoulderToElbow
-            + elbowToEnd) {
-            elbowToEnd += ArmConstants.WRIST_MAX_EXTENSION_LENGTH;
-        }
-        return new ArmPosition();
-    }
-    public ArmPosition interpolateArmPosition (ArmPosition nextPosition, double time) {
-        return interpolateArmPosition(this, nextPosition, time);
-    }
-
-    public static ArmPosition interpolateArmPosition (ArmPosition firstPosition, ArmPosition secondPosition, double time) {
-        return new ArmPosition(
-            (firstPosition.elbowAngle*time)+(secondPosition.elbowAngle*(1-time)), 
-            (firstPosition.wristLength*time)+(secondPosition.wristLength*(1-time))
-            );
+    public double getWristLength () {
+        return wristLength;
     }
 }

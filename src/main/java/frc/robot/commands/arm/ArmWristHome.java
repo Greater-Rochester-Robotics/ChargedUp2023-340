@@ -8,40 +8,40 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
 
+// TODO: Finalize and test.
+
 public class ArmWristHome extends CommandBase {
     boolean override;
 
-    public ArmWristHome() {
+    public ArmWristHome () {
         this(false);
     }
-  /** Creates a new ArmWristHome. */
-  public ArmWristHome(boolean override) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.arm);
-    this.override = override;
-  }
 
+    public ArmWristHome (boolean override) {
+        addRequirements(RobotContainer.arm);
+        this.override = override;
+    }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize () {}
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    RobotContainer.arm.setWristDutyCycle(-ArmConstants.WRIST_HOMING_SPEED);
-  }
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute () {
+        RobotContainer.arm.setWristDutyCycle(-ArmConstants.WRIST_HOMING_SPEED);
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    RobotContainer.arm.stopWristMotor();
-    RobotContainer.arm.zeroWrist();
-  }
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end (boolean interrupted) {
+        RobotContainer.arm.stopWristMotor();
+        RobotContainer.arm.zeroWrist();
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return (RobotContainer.arm.hasWristBeenZeroed() && !override) || RobotContainer.arm.getWristLimit();
-  }
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished () {
+        return (RobotContainer.arm.getWristBeenZeroed() && !override) || RobotContainer.arm.getWristLimitSwitch();
+    }
 }

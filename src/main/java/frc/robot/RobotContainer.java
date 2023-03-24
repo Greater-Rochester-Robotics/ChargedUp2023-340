@@ -36,11 +36,10 @@ import frc.robot.commands.auto.util.AutoScoreCone;
 import frc.robot.commands.claw.ClawClose;
 import frc.robot.commands.claw.ClawIntake;
 import frc.robot.commands.claw.ClawOpen;
-import frc.robot.commands.claw.ClawOpenSpit;
 import frc.robot.commands.claw.ClawSpit;
 import frc.robot.commands.claw.ClawStop;
-import frc.robot.commands.drive.DriveBalanceAdvanced;
-import frc.robot.commands.drive.DriveFieldRelativeAdvanced;
+import frc.robot.commands.drive.DriveBalance;
+import frc.robot.commands.drive.DriveFieldRelative;
 import frc.robot.commands.drive.DriveLockWheels;
 import frc.robot.commands.drive.DriveRobotCentric;
 import frc.robot.commands.drive.DriveStopAllModules;
@@ -80,16 +79,14 @@ public class RobotContainer {
     static final Trigger driverY = new JoystickButton(driver, 4);
     static final Trigger driverBack = new JoystickButton(driver, 7);
     static final Trigger driverStart = new JoystickButton(driver, 8);
-    // static final Trigger driverDUp = new POVButton(driver, 0);
-    // static final Trigger driverDDown = new POVButton(driver, 180);
+    // static final Trigger driverDUp = new POVButton(driver, 0); Used for facing the robot away from the driver station
+    // static final Trigger driverDDown = new POVButton(driver, 180); Used for facing the robot towards the driver station
     static final Trigger driverDLeft = new POVButton(driver, 270);
     static final Trigger driverDRight = new POVButton(driver, 90);
     static final Trigger driverLB = new JoystickButton(driver, 5);
     static final Trigger driverRB = new JoystickButton(driver, 6);
-    static final Trigger driverStickRightUp = new JoyTriggerButton(driver, -0.3, Axis.kRightY);
-    static final Trigger driverStickRightRight = new JoyTriggerButton(driver, 0.3, Axis.kRightX);
-    static final Trigger driverStickRightDown = new JoyTriggerButton(driver, 0.3, Axis.kRightY);
-    static final Trigger driverStickRightLeft = new JoyTriggerButton(driver, -0.3, Axis.kRightY);
+    static final Trigger driverStickRightUp = new JoyTriggerButton(driver, Axis.kRightY, -Constants.DRIVER_CONTROLLER_DEADZONE);
+    static final Trigger driverStickRightDown = new JoyTriggerButton(driver, Axis.kRightY, Constants.DRIVER_CONTROLLER_DEADZONE);
 
 
     /**
@@ -109,23 +106,48 @@ public class RobotContainer {
     static final Trigger coDriverDRight = new POVButton(coDriver, 90);
     static final Trigger coDriverLB = new JoystickButton(coDriver, 5);
     static final Trigger coDriverRB = new JoystickButton(coDriver, 6);
-    static final Trigger coDriverLTButton = new JoyTriggerButton(coDriver, .1, Axis.kLeftTrigger);
-    static final Trigger coDriverRTButton = new JoyTriggerButton(coDriver, .1, Axis.kRightTrigger);
+    static final Trigger coDriverLTButton = new JoyTriggerButton(coDriver, Axis.kLeftTrigger, Constants.CO_DRIVER_CONTROLLER_DEADZONE);
+    static final Trigger coDriverRTButton = new JoyTriggerButton(coDriver, Axis.kRightTrigger, Constants.CO_DRIVER_CONTROLLER_DEADZONE);
 
+    /**
+     * The auto selector for Smart Dashboard.
+     */
     public static SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
+    /**
+     * The current network tables cycle.
+     * Used for publishing values to network tables periodically.
+     */
+    private static int netCycle = 0;
+
+    /**
+     * The arm subsystem.
+     */
+    public static Arm arm;
+    /**
+     * The claw subsystem.
+     */
+    public static Claw claw;
+    /**
+     * The compressor subsystem.
+     */
+    public static Compressor compressor;
+    /**
+     * The harvester subsystem.
+     */
+    public static Harvester harvester;
+    /**
+     * The record player subsystem.
+     */
+    public static RecordPlayer recordPlayer;
     /**
      * The swerve drive subsystem.
      */
     public static SwerveDrive swerveDrive;
-    public static Claw claw;
-    public static Compressor compressor;
-    public static Arm arm;
-    public static Harvester harvester;
+    /**
+     * The target subsystem.
+     */
     public static Target target;
-    public static RecordPlayer recordPlayer;
-
-    private static int netCycle = 0;
 
     public RobotContainer () {
         swerveDrive = new SwerveDrive();
@@ -136,7 +158,7 @@ public class RobotContainer {
         target = new Target();
         recordPlayer = new RecordPlayer();
 
-        swerveDrive.setDefaultCommand(new DriveFieldRelativeAdvanced(false));
+        swerveDrive.setDefaultCommand(new DriveFieldRelative(false));
 
         // Add all autos to the auto selector
         configureAutoModes();
@@ -174,37 +196,67 @@ public class RobotContainer {
         driverLB.onTrue(new DriveToTarget()).onFalse(new DriveStopAllModules());
 
         // RB => Hold to balance the robot, wheels move to locked position on release
-        driverRB.whileTrue(new DriveBalanceAdvanced()).onFalse(new DriveLockWheels());
+        driverRB.whileTrue(new DriveBalance(true)).onFalse(new DriveLockWheels());
 
         // D left => Reset the gyro to 0
         driverDLeft.onTrue(new DriveResetGyroToZero());
 
-        // D Right => 
+        // D Right => Harvester spit
         driverDRight.onTrue(new HarvesterSpit()).onFalse(new HarvesterStop());
-        driverBack.toggleOnTrue(new DriveRobotCentric(false));
-        driverStart.onTrue(new HarvesterIntake(true)).onFalse(new HarvesterStop());
+
+        // Right Stick Up => Harvester out
         driverStickRightUp.onTrue(new HarvesterExtensionOut());
+
+        // Right Stick Down => Harvester in
         driverStickRightDown.onTrue(new HarvesterExtensionIn());
 
-        /* =================== CO-DRIVER BUTTONS =================== */
+        // Back (left) => Drive robot centric
+        driverBack.toggleOnTrue(new DriveRobotCentric(false));
+
+        // Start (right) => Harvester intake
+        driverStart.onTrue(new HarvesterIntake(true)).onFalse(new HarvesterStop());
+
+        /**
+         * Co-driver Controls
+         */
+
+        // A => Cone pickup
         coDriverA.onTrue(new ClawWristExtend()).onFalse(new ClawWristRetract(true));
+
+        // B => Cube pickup
         coDriverB.onTrue(Commands.sequence(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CUBE).withTimeout(.75), new ClawWristExtend())).onFalse(new ClawWristRetract(false));
-        coDriverX.onTrue(new InstantCommand(() -> target.getTargetPosition().getBackArmMoveCommand().schedule()));
+
+        // X => Arm to scoring position
+        coDriverX.onTrue(new InstantCommand(() -> target.getTargetPosition().getArmMoveCommand().schedule()));
+
+        // Y => Arm to internal cone pickup position
         coDriverY.onTrue(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE));
+
+        // LB => Elbow manual
         coDriverLB.whileTrue(new ArmElbowManual());
+
+        // RB => Wrist manual
         coDriverRB.whileTrue(new ArmWristManual());
 
+        // LT / RT => Record player manual control
         coDriverLTButton.or(coDriverRTButton).whileTrue(new RecordPlayerManual());
-        coDriverStart.onTrue(Commands.sequence( new ClawOpen(), new ClawIntake(), new ArmToPosition(ArmConstants.BACK_PICK_UP)));
-        coDriverBack.onTrue(Commands.sequence(new RecordPlayerSpin(), new WaitCommand(1.0), new RecordPlayerOrientCone()));
 
-        /* Targeting Control */
+        // DPad => Targeting control
         coDriverDUp.onTrue(new InstantCommand(() -> target.up()) { public boolean runsWhenDisabled () { return true; } });
         coDriverDRight.onTrue(new InstantCommand(() -> target.right()) { public boolean runsWhenDisabled () { return true; } });
         coDriverDDown.onTrue(new InstantCommand(() -> target.down()) { public boolean runsWhenDisabled () { return true; } });
         coDriverDLeft.onTrue(new InstantCommand(() -> target.left()) { public boolean runsWhenDisabled () { return true; } });
+
+        // Back (left) => Orient cone
+        coDriverBack.onTrue(Commands.sequence(new RecordPlayerSpin(), new WaitCommand(1.0), new RecordPlayerOrientCone()));
+
+        // Start (right) => Loading station pick up
+        coDriverStart.onTrue(Commands.sequence(new ClawOpen(), new ClawIntake(), new ArmToPosition(ArmConstants.BACK_PICK_UP)));
     }
 
+    /**
+     * Adds testing commands to smart dashboard.
+     */
     private void configureTestingCommands () {
         SmartDashboard.putData(new DriveResetAllModulePositionsToZero());
         SmartDashboard.putData(new DriveAdjustModulesManually());
@@ -220,9 +272,8 @@ public class RobotContainer {
     }
 
     /**
-     * Define all autonomous modes here to have them
-     * appear in the autonomous select drop down menu.
-     * They will appear in the order entered
+     * Defines all autonomous modes here to have them appear in the autonomous select drop down menu.
+     * They will appear in the order entered.
      */
     private void configureAutoModes () {
         autoChooser.setDefaultOption("Do Nothing", new WaitCommand(1));
@@ -241,7 +292,7 @@ public class RobotContainer {
     }
 
     /**
-     * Retrieve the autonomous mode selected on the
+     * Retrieves the autonomous mode selected on the
      * ShuffleDashboard/SmartDashboard
      * 
      * @return Autonomous Command
@@ -251,24 +302,18 @@ public class RobotContainer {
     }
 
     /**
-     * A method to return the value of a driver joystick axis,
-     * which runs from -1.0 to 1.0, with a .1 dead zone(a 0
-     * value returned if the joystick value is between -.1 and
-     * .1)
-     * 
-     * @param axis
-     * @return value of the joystick, from -1.0 to 1.0 where 0.0 is centered
+     * Gets an axis on the driver's controller, accounting for deadzone.
+     * @param axis The axis to get.
+     * @return Value of the axis. Joysticks return values from -1.0 to 1.0, triggers return values from 0.0 to 1.0;
      */
     public double getDriverAxis (Axis axis) {
-        return (driver.getRawAxis(axis.value) < -.075
-            || driver.getRawAxis(axis.value) > .075) ? driver.getRawAxis(axis.value) : 0.0;
+        return (driver.getRawAxis(axis.value) < -Constants.DRIVER_CONTROLLER_DEADZONE || driver.getRawAxis(axis.value) > Constants.DRIVER_CONTROLLER_DEADZONE) ? driver.getRawAxis(axis.value) : 0.0;
     }
 
     /**
-     * Accessor method to set driver rumble function
-     * 
-     * @param leftRumble
-     * @param rightRumble
+     * Sets the driver controller's rumble.
+     * @param leftRumble The left rumble motor's power from 0.0 to 1.0.
+     * @param rightRumble The right rumble motor's power from 0.0 to 1.0.
      */
     public static void setDriverRumble (double leftRumble, double rightRumble) {
         driver.setRumble(RumbleType.kLeftRumble, leftRumble);
@@ -276,55 +321,77 @@ public class RobotContainer {
     }
 
     /**
-     * accessor to get the true/false of the buttonNum
-     * on the driver control
+     * Gets the driver's DPad position.
      * 
-     * @param buttonNum
-     * @return the value of the button
-     */
-    public boolean getDriverButton (int buttonNum) {
-        return driver.getRawButton(buttonNum);
-    }
-
-    /**
-     * Returns the int position of the DPad/POVhat based
-     * on the following table:
-     * input |return
-     * not pressed | -1
-     * up | 0
-     * up right | 45
-     * right | 90
-     * down right | 135
-     * down | 180
-     * down left | 225
-     * left | 270
-     * up left | 315
-     * 
-     * @return
+     *   +--------------+-------------+
+     *   |     Input    |    Value    |
+     *   +--------------+-------------+
+     *   | Not pressed  |      -1     |
+     *   +--------------+-------------+
+     *   | Up           |      0      |
+     *   +--------------+-------------+
+     *   | Up + Right   |      45     |
+     *   +--------------+-------------+
+     *   | Right        |      90     |
+     *   +--------------+-------------+
+     *   | Down + Right |     135     |
+     *   +--------------+-------------+
+     *   | Down         |     180     |
+     *   +--------------+-------------+
+     *   | Down + Left  |     225     |
+     *   +--------------+-------------+
+     *   | Left         |     270     |
+     *   +--------------+-------------+
+     *   | Up + Left    |     315     |
+     *   +--------------+-------------+
      */
     public int getDriverDPad () {
         return (driver.getPOV());
     }
 
     /**
-     * A method to return the value of a co-driver joystick axis,
-     * which runs from -1.0 to 1.0, with a .1 dead zone(a 0
-     * value returned if the joystick value is between -.1 and
-     * .1)
-     * 
-     * @param axis
-     * @return
+     * Gets the forward value from the driver's controller for swerve (left stick Y).
+     * @param isVeloMode If velocity mode is being used.
+     * @return The percent output if velocity mode is not being used, otherwise the velocity. 
      */
-    public double getCoDriverAxis (Axis axis) {
-        return (coDriver.getRawAxis(axis.value) < -.1
-            || coDriver.getRawAxis(axis.value) > .1) ? coDriver.getRawAxis(axis.value) : 0;
+    public double getDriverForward (boolean isVeloMode) {
+        double raw = this.getDriverAxis(Axis.kLeftY);
+        return -Math.copySign(Math.pow(raw, Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_EXPONENTIAL), raw) * (isVeloMode ? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : Constants.SwerveDriveConstants.DRIVER_PERCENT_SPEED_SCALE_LINEAR);
     }
 
     /**
-     * Accessor method to set co-driver rumble function
-     * 
-     * @param leftRumble
-     * @param rightRumble
+     * Gets the lateral value from the driver's controller for swerve (left stick X).
+     * @param isVeloMode If velocity mode is being used.
+     * @return The percent output if velocity mode is not being used, otherwise the velocity. 
+     */
+    public double getDriverLateral (boolean isVeloMode) {
+        double raw = this.getDriverAxis(Axis.kLeftX);
+        return -Math.copySign(Math.pow(raw, Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_EXPONENTIAL), raw) * (isVeloMode ? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : Constants.SwerveDriveConstants.DRIVER_PERCENT_SPEED_SCALE_LINEAR);
+    }
+
+    /**
+     * Gets the rotation value from the driver's controller for swerve (LT and RT).
+     * @param isVeloMode If velocity mode is being used.
+     * @return The percent output if velocity mode is not being used, otherwise the velocity. 
+     */
+    public double getDriverRotation (boolean isVeloMode) {
+        double raw = (this.getDriverAxis(Axis.kRightTrigger) - Robot.robotContainer.getDriverAxis(Axis.kLeftTrigger));
+        return -Math.copySign(Math.pow(raw, Constants.SwerveDriveConstants.DRIVER_ROT_SPEED_SCALE_EXPONENTIAL), raw) * (isVeloMode ? Constants.SwerveDriveConstants.MAX_ROBOT_ROT_VELOCITY : Constants.SwerveDriveConstants.DRIVER_PERCENT_ROT_SPEED_SCALE_LINEAR);
+    }
+
+    /**
+     * Gets an axis on the co-driver's controller, accounting for deadzone.
+     * @param axis The axis to get.
+     * @return Value of the axis. Joysticks return values from -1.0 to 1.0, triggers return values from 0.0 to 1.0;
+     */
+    public double getCoDriverAxis (Axis axis) {
+        return (coDriver.getRawAxis(axis.value) < -Constants.CO_DRIVER_CONTROLLER_DEADZONE || coDriver.getRawAxis(axis.value) > Constants.CO_DRIVER_CONTROLLER_DEADZONE) ? coDriver.getRawAxis(axis.value) : 0;
+    }
+
+    /**
+     * Sets the co-driver controller's rumble.
+     * @param leftRumble The left rumble motor's power from 0.0 to 1.0.
+     * @param rightRumble The right rumble motor's power from 0.0 to 1.0.
      */
     public static void setCoDriverRumble (double leftRumble, double rightRumble) {
         coDriver.setRumble(RumbleType.kLeftRumble, leftRumble);
@@ -332,81 +399,33 @@ public class RobotContainer {
     }
 
     /**
-     * accessor to get the true/false of the buttonNum
-     * on the coDriver control
-     * 
-     * @param buttonNum
-     * @return the value of the button
+     * Gets the elbow's manual speed from the co-driver's controller (left stick Y).
+     * @return The speed from -1.0 to 1.0, scaled to the max output.
      */
-    public boolean getCoDriverButton (int buttonNum) {
-        return coDriver.getRawButton(buttonNum);
-    }
-
-    public double getRobotForwardFull (boolean isVeloMode) {
-        return this.getDriverAxis(Axis.kLeftY)
-            * -Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_LINEAR
-            * (isVeloMode ? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
-    }
-
-    public double getRobotForwardSlow (boolean isVeloMode) {
-        return this.getDriverAxis(Axis.kRightY)
-            * 0.5
-            * -Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_LINEAR
-            * (isVeloMode ? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
-    }
-
-    public double getRobotLateralFull (boolean isVeloMode) {
-        return this.getDriverAxis(Axis.kLeftX)
-            * -Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_LINEAR
-            * (isVeloMode ? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
-    }
-
-    public double getRobotLateralSlow (boolean isVeloMode) {
-        return this.getDriverAxis(Axis.kRightX)
-            * 0.5
-            * -Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_LINEAR
-            * (isVeloMode ? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
-    }
-
-    public double getRobotRotation (boolean isVeloMode) {
-        double value = (this.getDriverAxis(Axis.kRightTrigger)
-            - Robot.robotContainer.getDriverAxis(Axis.kLeftTrigger));
-        return value
-            * value
-            * Math.signum(value)
-            * -1.0
-            * (isVeloMode ? Constants.SwerveDriveConstants.MAX_ROBOT_ROT_VELOCITY : Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_ROTATIONAL);
+    public double getElbowManualSpeed () {
+        return getCoDriverAxis(Axis.kLeftY) * Constants.ArmConstants.ELBOW_MAX_MANUAL_DUTY_CYCLE;
     }
 
     /**
-     * accessor for the elbow motor's manual function
-     * 
-     * @return
+     * Gets the wrist's manual speed from the co-driver's controller (right stick Y).
+     * @return The speed from -1.0 to 1.0, scaled to the max output.
      */
-    public double getElbowManualValue () {
-        return getCoDriverAxis(Axis.kLeftY)
-            * .25;
+    public double getWristManualSpeed () {
+        return getCoDriverAxis(Axis.kRightY) * Constants.ArmConstants.WRIST_MAX_MANUAL_DUTY_CYCLE;
     }
 
     /**
-     * accessor for the wrist motor's manual function
-     * 
-     * @return
+     * Gets the record player's manual speed from the co-driver's controller (LT and RT).
+     * @return The speed from -1.0 to 1.0, scaled to the max output.
      */
-    public double getWristManualValue () {
-        return getCoDriverAxis(Axis.kRightY)
-            * .25;
+    public double getRecordPlayerManualSpeed () {
+        return (getCoDriverAxis(Axis.kRightTrigger) - getCoDriverAxis(Axis.kLeftTrigger)) * Constants.RecordPlayerConstants.ROTATE_MOTOR_SPEED;
     }
 
-    public double getRotationSpeed () {
-        return getCoDriverAxis(Axis.kRightY)
-            * 0.8;
-    }
-
-    public void notifyDriver (boolean notifyOn) {
-        setDriverRumble(0.0, notifyOn ? 0.6 : 0.0);
-    }
-
+    /**
+     * Increments the network tables cycle.
+     * Should be run every periodic.
+     */
     public static void incrementNetCycle () {
         if (netCycle == Constants.NETWORK_TABLES_CYCLE) {
             netCycle = 0;
@@ -415,7 +434,11 @@ public class RobotContainer {
         }
     }
 
-    public static boolean shouldPublishToNet () {
+    /**
+     * Returns true if values should be published to network tables during the current periodic.
+     * @return true if network tables should be updated, false otherwise.
+     */
+    public static boolean shouldPublishToNetworkTables () {
         return netCycle == 0;
     }
 }

@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -13,7 +12,6 @@ import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.claw.ClawClose;
 import frc.robot.commands.harvester.HarvesterExtensionOut;
 import frc.robot.commands.harvester.HarvesterIntake;
-import frc.robot.commands.recordPlayer.RecordPlayerSpin;
 
 /**
  * Deploys the harvester and runs the harvester motors.

@@ -17,7 +17,7 @@ import frc.robot.RobotContainer;
 import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.auto.util.AutoDriveFollowTrajectory;
 import frc.robot.commands.auto.util.AutoScoreCone;
-import frc.robot.commands.drive.DriveBalanceRobot;
+import frc.robot.commands.drive.DriveBalance;
 import frc.robot.commands.drive.util.DriveSetGyro;
 import frc.robot.subsystems.swervelib.ADIS16470_IMU.IMUAxis;
 
@@ -37,13 +37,13 @@ public class AutoCone021ChargeLeaveBalance extends SequentialCommandGroup {
       new DriveSetGyro(0, IMUAxis.kPitch),
       new DriveSetGyro(0, IMUAxis.kRoll),
       Commands.race(
-        new DriveBalanceRobot(),
+        new DriveBalance(),
         new WaitUntilCommand(()->(Math.abs( RobotContainer.swerveDrive.getGyroInDegPitch()) < SwerveDriveConstants.DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE_AUTO))
       ),
       new AutoDriveFollowTrajectory(path.get(1),true),
       new DriveSetGyro(0, IMUAxis.kPitch),
       new DriveSetGyro(0, IMUAxis.kRoll),
-      new DriveBalanceRobot()
+      new DriveBalance()
     );
   }
 }

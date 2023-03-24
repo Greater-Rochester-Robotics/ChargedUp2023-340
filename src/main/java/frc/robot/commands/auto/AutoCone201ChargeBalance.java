@@ -15,9 +15,8 @@ import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.auto.util.AutoDriveFollowTrajectory;
 import frc.robot.commands.auto.util.AutoScoreCone;
-import frc.robot.commands.drive.DriveBalanceRobot;
+import frc.robot.commands.drive.DriveBalance;
 import frc.robot.commands.drive.util.DriveSetGyro;
-import frc.robot.subsystems.swervelib.ADIS16470_IMU.IMUAxis;
 
 public class AutoCone201ChargeBalance extends SequentialCommandGroup {
   /** Creates a new AutoCone201ChargeBalance. */
@@ -34,7 +33,7 @@ public class AutoCone201ChargeBalance extends SequentialCommandGroup {
         new AutoDriveFollowTrajectory(path.get(0)),
         new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE)
       ).withTimeout(6),
-      new DriveBalanceRobot()
+      new DriveBalance()
     );
   }
 }

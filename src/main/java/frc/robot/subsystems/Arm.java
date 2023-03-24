@@ -35,15 +35,6 @@ import frc.robot.RobotContainer;
  * Controls the shoulder, elbow, and wrist.
  */
 public class Arm extends SubsystemBase {
-
-    double elbow1Radius = 0;
-    double elbow2Radius = 0;
-
-    double elbow1Mass = 0;
-    double elbow2Mass = 0;
-
-    double elbow1Inertia = elbow1Mass * elbow1Radius;
-    double elbow2Inertia = elbow2Mass * elbow2Radius;    
     /**
      * The elbow motor.
      */
@@ -56,6 +47,9 @@ public class Arm extends SubsystemBase {
      * The elbow's PID controller.
      */
     private SparkMaxPIDController elbowPID;
+    /**
+     * The elbow's profiled PID controller.
+     */
     private ProfiledPIDController elbowProfiledPID;
     /**
      * The elbow break.
@@ -63,20 +57,25 @@ public class Arm extends SubsystemBase {
     private Solenoid elbowBrake;
 
     /**
-     * The wrist's PID controller.
-     */
-    private PIDController wristPID;
-    /**
      * The wrist motor.
      */
     private TalonSRX wrist;
     /**
-     * The wrist's PID controller.
+     * The wrist's encoder.
      */
     private Encoder wristEncoder;
-    private DigitalInput wristLimit;
-
-    private boolean wristHasBeenZeroed;
+    /**
+     * The wrist's PID controller.
+     */
+    private PIDController wristPID;
+    /**
+     * The wrist's limit switch.
+     */
+    private DigitalInput wristLimitSwitch;
+    /**
+     * If the wrist has been zeroed.
+     */
+    private boolean wristHasBeenZeroed = false;
 
     /**
      * The network table instance used by the arm subsystem.
@@ -96,8 +95,8 @@ public class Arm extends SubsystemBase {
         elbow = new CANSparkMax(Constants.ELBOW_MOTOR, MotorType.kBrushless);
         elbowEncoder = elbow.getAbsoluteEncoder(Type.kDutyCycle);
         elbowPID = elbow.getPIDController();
-        elbowBrake = new Solenoid(PneumaticsModuleType.REVPH, Constants.ELBOW_BRAKE);
         elbowProfiledPID = new ProfiledPIDController(ArmConstants.ELBOW_P, ArmConstants.ELBOW_I, ArmConstants.ELBOW_D, ArmConstants.ELBOW_PROFILED_PID_CONSTRAINTS);
+        elbowBrake = new Solenoid(PneumaticsModuleType.REVPH, Constants.ELBOW_BRAKE);
 
         // Elbow motor settings.
         elbow.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
@@ -115,8 +114,8 @@ public class Arm extends SubsystemBase {
         elbow.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
 
         // Elbow encoder settings.
-        elbowEncoder.setPositionConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONV_FACTOR);
-        elbowEncoder.setVelocityConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONV_FACTOR / 60);
+        elbowEncoder.setPositionConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONVERSION_FACTOR);
+        elbowEncoder.setVelocityConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONVERSION_FACTOR / 60);
         elbowEncoder.setInverted(true);
         elbowEncoder.setZeroOffset(5.8760048535897932384626433832795);
 
@@ -134,8 +133,9 @@ public class Arm extends SubsystemBase {
         wrist = new TalonSRX(Constants.WRIST_MOTOR);
         wristPID = new PIDController(ArmConstants.WRIST_P, ArmConstants.WRIST_I, ArmConstants.WRIST_D);
         wristEncoder = new Encoder(Constants.WRIST_ENCODER_0, Constants.WRIST_ENCODER_1);
-        wristLimit = new DigitalInput(Constants.WRIST_LIMIT);
+        wristLimitSwitch = new DigitalInput(Constants.WRIST_LIMIT_SWITCH);
         
+        // Wrist motor settings.
         wrist.configAllSettings(new TalonSRXConfiguration());
         wrist.enableVoltageCompensation(true);
         wrist.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20);
@@ -146,9 +146,8 @@ public class Arm extends SubsystemBase {
         wrist.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus, 221);
         wrist.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 211);
         
+        // Wrist encoder settings.
         wristEncoder.setDistancePerPulse(ArmConstants.WRIST_ENCODER_DISTANCE_PER_PULSE);
-
-        wristHasBeenZeroed = false;
 
         // Start the elbow and wrist at 0 speed.
         elbow.set(0);
@@ -157,25 +156,19 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic () {
-        // Get the current positions of the shoulder and elbow.
-        double elbowPos = getElbowPosition();
-        double wristPos = getWristPosition();
-
-        // If the elbow is no longer in a safe position, stop it.
-        // if (Math.abs(elbowPos) > ArmConstants.MAX_ELBOW_ANGLE) {
-        //     System.out.println("Elbow is no longer at a safe angle, halting movement");
-        //     stopElbow();
-        // }
-
         // Publish values to network tables.
-        if (RobotContainer.shouldPublishToNet()) {
+        if (RobotContainer.shouldPublishToNetworkTables()) {
+            // Get the current positions of the shoulder and elbow.
+            double elbowPos = getElbowPosition();
+            double wristPos = getWristPosition();
+
             netTable.getEntry("elbow").setDouble(Math.round(elbowPos * 10) / 10);
-            // netTable.getEntry("wrist").setDouble(Math.round(wristPos * 10) / 10);
+            netTable.getEntry("wrist").setDouble(Math.round(wristPos * 10) / 10);
 
             SmartDashboard.putNumber("Absolute encoder elbow", Math.round(Math.toDegrees(elbowPos) * 10) * 0.1);
             SmartDashboard.putNumber("Wrist position", Math.round(Math.toDegrees(wristPos) * 10) * 0.1);
-            SmartDashboard.putBoolean("Wrist has been zeroed", hasWristBeenZeroed());
-            SmartDashboard.putBoolean("Wrist limit", getWristLimit());
+            SmartDashboard.putBoolean("Wrist has been zeroed", getWristBeenZeroed());
+            SmartDashboard.putBoolean("Wrist limit", getWristLimitSwitch());
         }
     }
 
@@ -216,13 +209,17 @@ public class Arm extends SubsystemBase {
             return;
         }
 
-        // TODO: this will depend on wrist position (was previously two values for in and out)
+        // TODO: This will depend on wrist position (was previously two values for in and out).
         // Counter for gravity.
         double gravityCounterConstant = ArmConstants.KG;
 
         // Set the target angle in the PID controller.
-        elbowPID.setReference(targetAngle + Math.PI, ControlType.kPosition, 0, gravityCounterConstant * Math.sin(getElbowPosition() - ArmConstants.SHOULDER_FIXED_ANGLE));
-        // elbow.set(elbowProfiledPID.calculate(getElbowPosition(), targetAngle) + gravityCounterConstant * Math.sin(getElbowPosition() - ArmConstants.SHOULDER_FIXED_ANGLE));
+        if (ArmConstants.ELBOW_USE_PROFILED_PID) {
+            elbow.set(elbowProfiledPID.calculate(getElbowPosition(), targetAngle) + gravityCounterConstant * Math.sin(getElbowPosition() - ArmConstants.SHOULDER_FIXED_ANGLE));
+        } else {
+            elbowPID.setReference(targetAngle + Math.PI, ControlType.kPosition, 0, gravityCounterConstant * Math.sin(getElbowPosition() - ArmConstants.SHOULDER_FIXED_ANGLE));
+        }
+
         elbowBrake.set(true);
 
     }
@@ -235,69 +232,81 @@ public class Arm extends SubsystemBase {
         elbowBrake.set(false);
     }
 
-    /* Wrist Methods */
+    /**
+     * Gets the wrist's position in meters.
+     * @return The wrist's position in meters.
+     */
+    public double getWristPosition () {
+        return wristEncoder.getDistance();
+    }
 
     /**
-     * Gets the elbow's position in meters.
-     * @return The elbow's position in meters.
+     * Gets the state of the wrist's limit switch.
+     * @return The status of the limit switch.
      */
-    public double getWristPosition() {
-        return wristEncoder.getDistance();
+    public boolean getWristLimitSwitch () {
+        return wristLimitSwitch.get();
+    }
+
+    /**
+     * Gets if the wrist has been zeroed.
+     * @return true if the wrist has been zeroed, false otherwise.
+     */
+    public boolean getWristBeenZeroed () {
+        return wristHasBeenZeroed;
+    }
+
+    /**
+     * Zeros the wrist.
+     */
+    public void zeroWrist () {
+        // TODO: Move to limit switch.
+        wristEncoder.reset();
+        wristHasBeenZeroed = true;
     }
 
     /**
      * Drives the wrist via duty cycle.
      * @param speed The speed to set the motor to, should be a value between -1.0 and 1.0.
      */
-    public void setWristDutyCycle(double speed) {
-        if(speed < 0 && wristLimit.get()) {
-            System.out.println("CANNOT SET WRIST MOTOR TO NEGATIVE SPEED, AT LOWER LIMIT");
+    public void setWristDutyCycle (double speed) {
+        if(speed < 0 && wristLimitSwitch.get()) {
+            System.out.println("Cannot set wrist motor speed: At lower limit");
             zeroWrist();
             speed = 0;
         }
         if(speed > 0 && getWristPosition() >= ArmConstants.WRIST_MAX_EXTENSION_LENGTH) {
-            System.out.println("CANNOT SET WRIST MOTOR TO POSITIVE SPEED, AT UPPER LIMIT");
+            System.out.println("Cannot set wrist motor speed: At upper limit");
             speed = 0;
         }
         wrist.set(TalonSRXControlMode.PercentOutput, speed);
     }
 
     /**
-     * Stops the wrist motor.
-     */
-    public void stopWristMotor() {
-        setWristDutyCycle(0.0);
-    }
-
-    /**
-     * Sets the elbow's position.
+     * Sets the wrist's position.
      * @param target The target in meters.
      */
-    public void setWristPosition(double target) {
-        if(target < 0 || target > ArmConstants.WRIST_MAX_EXTENSION_LENGTH) {
-            System.out.println("CANNOT SET WRIST TO POSITION: " + target + ", OUT OF RANGE");
+    public void setWristPosition (double target) {
+        if (target < 0 || target > ArmConstants.WRIST_MAX_EXTENSION_LENGTH) {
+            System.out.println("Cannot set wrist target to " + target + ": Out of range");
             stopWristMotor();
             return;
         }
-        if(!wristHasBeenZeroed) {
-            System.out.println("CANNOT SET WRIST TO POSITION, HAS NOT BEEN ZEROED");
+
+        if (!wristHasBeenZeroed) {
+            System.out.println("Cannot set wrist target: Has not been zeroed");
             stopWristMotor();
             return;
         }
+
         setWristDutyCycle(wristPID.calculate(getWristPosition(), target));
     }
 
-    public void zeroWrist() {
-        wristEncoder.reset();
-        wristHasBeenZeroed = true;
-    }
-
-    public boolean hasWristBeenZeroed() {
-        return wristHasBeenZeroed;
-    }
-
-    public boolean getWristLimit() {
-        return wristLimit.get();
+    /**
+     * Stops the wrist motor.
+     */
+    public void stopWristMotor () {
+        setWristDutyCycle(0.0);
     }
 
     /**

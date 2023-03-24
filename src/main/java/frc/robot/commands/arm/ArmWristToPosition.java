@@ -6,61 +6,76 @@ package frc.robot.commands.arm;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.RobotContainer;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
+/**
+ * Moves the wrist to a position.
+ */
 public class ArmWristToPosition extends SequentialCommandGroup {
-  /** Creates a new ArmWristToPosition. */
-  public ArmWristToPosition(double position) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
-    addCommands(
-        new ArmWristHome(),
-        new ArmWristToPositionPID(position)
-    );
-  }
+    /**
+     * Creates a new ArmWristManual command.
+     * @param target The target position to move to.
+     */
+    public ArmWristToPosition (double target) {
+        addCommands(
+            new ArmWristHome(),
+            new ArmWristToPositionPID(target)
+        );
+    }
 
+    /**
+     * Moves the wrist to position using PID.
+     */
     private class ArmWristToPositionPID extends CommandBase {
-        private double position;
+        /**
+         * A counter for the number of times the target position has been hit to combat slop.
+         * If this value exceeds 10, the wrist is assumed to be at position.
+         * Incremented if the arm is within tolerance when execute() is called.
+         */
         private int hitTarget;
+        /**
+         * The target position to move to.
+         */
+        private double target;
 
-        /** Creates a new ArmWristToPositionPID. */
-        public ArmWristToPositionPID(double position) {
-            // Use addRequirements() here to declare subsystem dependencies.
+        /**
+         * Creates a new ArmWristToPositionPID command.
+         * @param target The target position to move to.
+         */
+        public ArmWristToPositionPID (double target) {
             addRequirements(RobotContainer.arm);
-            this.position = position;
+            this.target = target;
         }
 
-        // Called when the command is initially scheduled.
         @Override
-        public void initialize() {
+        public void initialize () {
+            // Set helpers.
             hitTarget = 0;
         }
 
-        // Called every time the scheduler runs while the command is scheduled.
         @Override
-        public void execute() {
-            RobotContainer.arm.setWristPosition(position);
+        public void execute () {
+            // Set the target,
+            RobotContainer.arm.setWristPosition(target);
 
-            if(Math.abs(RobotContainer.arm.getWristPosition() - position) < ArmConstants.WRIST_CLOSED_LOOP_ERROR) {
+            // If the wrist is within tolerance of the target position, increment hitTarget. Otherwise, reset the hitTarget count.
+            if (Math.abs(RobotContainer.arm.getWristPosition() - target) < ArmConstants.WRIST_CLOSED_LOOP_ERROR) {
                 hitTarget++;
             } else {
                 hitTarget = 0;
             }
         }
 
-        // Called once the command ends or is interrupted.
         @Override
-        public void end(boolean interrupted) {
+        public void end (boolean interrupted) {
+        // If ended, stop the wrist from moving.
             RobotContainer.arm.stopWristMotor();
         }
 
-        // Returns true when the command should end.
         @Override
-        public boolean isFinished() {
+        public boolean isFinished () {
+            // Finish if hitTarget has been incremented to 10, or if the wrist has exceeded the maximum safe extension.
             return hitTarget >= 10 || RobotContainer.arm.getWristPosition() > ArmConstants.WRIST_MAX_EXTENSION_LENGTH || RobotContainer.arm.getWristPosition() <= 0;
         }
     }

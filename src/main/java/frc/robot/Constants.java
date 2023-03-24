@@ -27,15 +27,22 @@ public final class Constants {
     public static final Rotation2d ROTATE_BY_PI = Rotation2d.fromDegrees(180);//I only make this once
 
     /*Robot dimensions */
-    //TODO: set ALL of the robots dimensions none are acurate
+    //TODO: set ALL of the robots dimensions none are accurate
     public static final double ROBOT_WIDTH = 30.0;
     public static final double ROBOT_LENGTH = 30.0;
     public static final double ROBOT_BASE_HEIGHT = 5;
     public static final double MAXIMUM_VOLTAGE = 12.0;
 
     public static final int NETWORK_TABLES_CYCLE = 20;
+
+    public static final double DRIVER_CONTROLLER_DEADZONE = 0.01;
+      public static final double CO_DRIVER_CONTROLLER_DEADZONE = 0.1;
     
     public static class ArmConstants{
+        public static final double ELBOW_MAX_MANUAL_DUTY_CYCLE = 0.25;
+        public static final double WRIST_MAX_MANUAL_DUTY_CYCLE = 0.25;
+
+        public static final boolean ELBOW_USE_PROFILED_PID = false;
         
         public static final double WRIST_ENCODER_DISTANCE_PER_PULSE = 1.0;
 
@@ -89,13 +96,12 @@ public final class Constants {
       public static final double BACK_OF_ROBOT_TO_SHOULDER_DISTANCE = 30;
       
       /*indent dimensions */
-      //the indent height value is how far of the ground the indent will be. The indent is a circle. (Ask Caleb for explenation)
       public static final double INDENT_HEIGHT = 20;
       public static final double INDENT_RADIUS = 19;
       public static final double REMAINING_SPACE = ROBOT_LENGTH/2 - Math.sqrt(Math.pow(INDENT_RADIUS,2) - Math.pow(INDENT_HEIGHT - ROBOT_BASE_HEIGHT,2));
 
       /* */
-      public static final double ABS_ENC_TO_RAD_CONV_FACTOR = 2*Math.PI;
+      public static final double ABS_ENC_TO_RAD_CONVERSION_FACTOR = 2*Math.PI;
 
       /* Wrist Timeout points */
       public static final double WRIST_EXTENSION_DELAY = .4;
@@ -222,8 +228,10 @@ public final class Constants {
       // public static final double DRIVE_ROTATION_MIN_VELOCITY = 25;
 
       /* Driver Scaling Constants */
-      public static final double DRIVER_SPEED_SCALE_LINEAR = .75;//0.65 * 0.85;
-      public static final double DRIVER_SPEED_SCALE_ROTATIONAL = 1.2;
+      public static final double DRIVER_SPEED_SCALE_EXPONENTIAL = 2.0;
+      public static final double DRIVER_PERCENT_SPEED_SCALE_LINEAR = 1.0;
+      public static final double DRIVER_ROT_SPEED_SCALE_EXPONENTIAL = 3.0;
+      public static final double DRIVER_PERCENT_ROT_SPEED_SCALE_LINEAR = 1.0;
   }
   
   public class TargetConstants {
@@ -277,5 +285,5 @@ public final class Constants {
   public static final int CLAW_GAMEPIECE_SENSOR = 4;
   public static final int WRIST_ENCODER_0 = 5;
   public static final int WRIST_ENCODER_1 = 6;
-  public static final int WRIST_LIMIT = 7;
+  public static final int WRIST_LIMIT_SWITCH = 7;
 }
