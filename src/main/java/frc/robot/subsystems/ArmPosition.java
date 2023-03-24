@@ -4,12 +4,8 @@
 
 package frc.robot.subsystems;
 
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.RobotContainer;
 
@@ -17,18 +13,14 @@ import frc.robot.RobotContainer;
 public class ArmPosition {
     // use Rotation2ds instead of double angles?
     // find where angles are measured from (relative to the ground or relative to something else?)
-    private double shoulderAngle;
     private double elbowAngle;
     private double wristLength;
 
     public ArmPosition (){
-        shoulderAngle = 0;
-        elbowAngle = 0;
-        wristLength = 0;
+        this(0, 0);
     }
 
     public ArmPosition (double elbowAngle, double wristLength) {
-        this.shoulderAngle = ArmConstants.SHOULDER_FIXED_ANGLE;
         this.elbowAngle = elbowAngle;
         this.wristLength = wristLength;
     }
@@ -87,11 +79,9 @@ public class ArmPosition {
             * x
             + z
                 * z); // Gets the distance between the shoulder joint of the arm and the end point
-        boolean isExtended = false;
         if (shoulderToEnd > shoulderToElbow
             + elbowToEnd) {
             elbowToEnd += ArmConstants.WRIST_MAX_EXTENSION_LENGTH;
-            isExtended = true;
         }
         return new ArmPosition();
     }

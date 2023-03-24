@@ -24,6 +24,7 @@ import frc.robot.commands.HarvesterClawIntake;
 import frc.robot.commands.HarvesterRecordRetract;
 import frc.robot.commands.arm.ArmElbowManual;
 import frc.robot.commands.arm.ArmToPosition;
+import frc.robot.commands.arm.ArmWristManual;
 import frc.robot.commands.auto.AutoCone001PickUpCone021ChargeBalance;
 import frc.robot.commands.auto.AutoCone001PickUpReturn;
 import frc.robot.commands.auto.AutoCone021ChargeBalance;
@@ -191,6 +192,7 @@ public class RobotContainer {
         coDriverX.onTrue(new InstantCommand(() -> target.getTargetPosition().getBackArmMoveCommand().schedule()));
         coDriverY.onTrue(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE));
         coDriverLB.whileTrue(new ArmElbowManual());
+        coDriverRB.whileTrue(new ArmWristManual());
 
         coDriverLTButton.or(coDriverRTButton).whileTrue(new RecordPlayerManual());
         coDriverStart.onTrue(Commands.sequence( new ClawOpen(), new ClawIntake(), new ArmToPosition(ArmConstants.BACK_PICK_UP)));
@@ -383,6 +385,16 @@ public class RobotContainer {
      */
     public double getElbowManualValue () {
         return getCoDriverAxis(Axis.kLeftY)
+            * .25;
+    }
+
+    /**
+     * accessor for the wrist motor's manual function
+     * 
+     * @return
+     */
+    public double getWristManualValue () {
+        return getCoDriverAxis(Axis.kRightY)
             * .25;
     }
 

@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.ArmPosition;
 import frc.robot.subsystems.swervelib.SwervePIDFConfig;
@@ -111,6 +112,7 @@ public final class Constants {
       public static final double MAX_ELBOW_ACCELERATION_IN_RPM_PER_SEC = 10200.0;//watch out, this is in RPM per second
       public static final double ELBOW_CLOSED_LOOP_ERROR = Units.degreesToRadians(2);
       public static final double WRIST_CLOSED_LOOP_ERROR = Units.inchesToMeters(2);
+      public static final Constraints ELBOW_PROFILED_PID_CONSTRAINTS = new Constraints(MAX_ELBOW_VELOCITY_IN_RPM, MAX_ELBOW_ACCELERATION_IN_RPM_PER_SEC);
     }
 
     public static class ClawConstants {

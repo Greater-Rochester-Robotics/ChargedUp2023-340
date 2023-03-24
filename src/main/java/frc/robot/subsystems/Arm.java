@@ -18,21 +18,17 @@ import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DigitalSource;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.RobotContainer;
 
 /**
  * The arm subsystem.
@@ -60,6 +56,7 @@ public class Arm extends SubsystemBase {
      * The elbow's PID controller.
      */
     private SparkMaxPIDController elbowPID;
+    private ProfiledPIDController elbowProfiledPID;
     /**
      * The elbow break.
      */
@@ -100,6 +97,7 @@ public class Arm extends SubsystemBase {
         elbowEncoder = elbow.getAbsoluteEncoder(Type.kDutyCycle);
         elbowPID = elbow.getPIDController();
         elbowBrake = new Solenoid(PneumaticsModuleType.REVPH, Constants.ELBOW_BRAKE);
+        elbowProfiledPID = new ProfiledPIDController(ArmConstants.ELBOW_P, ArmConstants.ELBOW_I, ArmConstants.ELBOW_D, ArmConstants.ELBOW_PROFILED_PID_CONSTRAINTS);
 
         // Elbow motor settings.
         elbow.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
@@ -131,11 +129,13 @@ public class Arm extends SubsystemBase {
         elbowPID.setD(ArmConstants.ELBOW_D);
         elbowPID.setFF(ArmConstants.ELBOW_F);
 
-        // Setup the wrist.
-        wristEncoder = new Encoder(Constants.WRIST_ENCODER_0, Constants.WRIST_ENCODER_1);
-        wristEncoder.setDistancePerPulse(ArmConstants.WRIST_ENCODER_DISTANCE_PER_PULSE);
 
+        // Setup the wrist.
         wrist = new TalonSRX(Constants.WRIST_MOTOR);
+        wristPID = new PIDController(ArmConstants.WRIST_P, ArmConstants.WRIST_I, ArmConstants.WRIST_D);
+        wristEncoder = new Encoder(Constants.WRIST_ENCODER_0, Constants.WRIST_ENCODER_1);
+        wristLimit = new DigitalInput(Constants.WRIST_LIMIT);
+        
         wrist.configAllSettings(new TalonSRXConfiguration());
         wrist.enableVoltageCompensation(true);
         wrist.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20);
@@ -145,13 +145,12 @@ public class Arm extends SubsystemBase {
         wrist.setStatusFramePeriod(StatusFrameEnhanced.Status_6_Misc, 237);
         wrist.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus, 221);
         wrist.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 211);
+        
+        wristEncoder.setDistancePerPulse(ArmConstants.WRIST_ENCODER_DISTANCE_PER_PULSE);
 
-        wristPID = new PIDController(ArmConstants.WRIST_P ,ArmConstants.WRIST_I ,ArmConstants.WRIST_D);
-
-        wristLimit = new DigitalInput(Constants.WRIST_LIMIT);
         wristHasBeenZeroed = false;
 
-        // Start the elbow at 0 speed.
+        // Start the elbow and wrist at 0 speed.
         elbow.set(0);
         wrist.set(TalonSRXControlMode.PercentOutput, 0);
     }
@@ -160,6 +159,7 @@ public class Arm extends SubsystemBase {
     public void periodic () {
         // Get the current positions of the shoulder and elbow.
         double elbowPos = getElbowPosition();
+        double wristPos = getWristPosition();
 
         // If the elbow is no longer in a safe position, stop it.
         // if (Math.abs(elbowPos) > ArmConstants.MAX_ELBOW_ANGLE) {
@@ -170,9 +170,12 @@ public class Arm extends SubsystemBase {
         // Publish values to network tables.
         if (RobotContainer.shouldPublishToNet()) {
             netTable.getEntry("elbow").setDouble(Math.round(elbowPos * 10) / 10);
-            // netTable.getEntry("wrist").setBoolean(this.isWristExtended());
+            // netTable.getEntry("wrist").setDouble(Math.round(wristPos * 10) / 10);
 
             SmartDashboard.putNumber("Absolute encoder elbow", Math.round(Math.toDegrees(elbowPos) * 10) * 0.1);
+            SmartDashboard.putNumber("Wrist position", Math.round(Math.toDegrees(wristPos) * 10) * 0.1);
+            SmartDashboard.putBoolean("Wrist has been zeroed", hasWristBeenZeroed());
+            SmartDashboard.putBoolean("Wrist limit", getWristLimit());
         }
     }
 
@@ -213,12 +216,15 @@ public class Arm extends SubsystemBase {
             return;
         }
 
+        // TODO: this will depend on wrist position (was previously two values for in and out)
         // Counter for gravity.
         double gravityCounterConstant = ArmConstants.KG;
 
         // Set the target angle in the PID controller.
         elbowPID.setReference(targetAngle + Math.PI, ControlType.kPosition, 0, gravityCounterConstant * Math.sin(getElbowPosition() - ArmConstants.SHOULDER_FIXED_ANGLE));
+        // elbow.set(elbowProfiledPID.calculate(getElbowPosition(), targetAngle) + gravityCounterConstant * Math.sin(getElbowPosition() - ArmConstants.SHOULDER_FIXED_ANGLE));
         elbowBrake.set(true);
+
     }
 
     /**
@@ -278,7 +284,7 @@ public class Arm extends SubsystemBase {
             stopWristMotor();
             return;
         }
-        wristPID.calculate(getWristPosition(), target);
+        setWristDutyCycle(wristPID.calculate(getWristPosition(), target));
     }
 
     public void zeroWrist() {
