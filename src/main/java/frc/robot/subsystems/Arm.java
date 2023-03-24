@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+
+import edu.wpi.first.wpilibj.Timer;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
@@ -31,6 +33,15 @@ import frc.robot.Constants.ArmConstants;
  * Controls the shoulder, elbow, and wrist.
  */
 public class Arm extends SubsystemBase {
+
+    double elbow1Radius = 0;
+    double elbow2Radius = 0;
+
+    double elbow1Mass = 0;
+    double elbow2Mass = 0;
+
+    double elbow1Inertia = elbow1Mass * elbow1Radius;
+    double elbow2Inertia = elbow2Mass * elbow2Radius;    
     /**
      * The elbow motor.
      */
@@ -66,6 +77,7 @@ public class Arm extends SubsystemBase {
      * Creates a new Arm subsystem.
      */
     public Arm () {
+
         // Setup the elbow.
         elbow = new CANSparkMax(Constants.ELBOW_MOTOR, MotorType.kBrushless);
         elbowEncoder = elbow.getAbsoluteEncoder(Type.kDutyCycle);
@@ -108,6 +120,7 @@ public class Arm extends SubsystemBase {
 
         // Start the elbow at 0 speed.
         elbow.set(0);
+
     }
 
     @Override
