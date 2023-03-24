@@ -69,9 +69,13 @@ public class Arm extends SubsystemBase {
      */
     private PIDController wristPID;
     /**
-     * The wrist's limit switch.
+     * The wrist's inner limit switch.
      */
-    private DigitalInput wristLimitSwitch;
+    private DigitalInput wristInnerLimitSwitch;
+     /**
+     * The wrist's outer limit switch.
+     */
+    private DigitalInput wristOuterLimitSwitch;
     /**
      * If the wrist has been zeroed.
      */
@@ -133,7 +137,8 @@ public class Arm extends SubsystemBase {
         wrist = new TalonSRX(Constants.WRIST_MOTOR);
         wristPID = new PIDController(ArmConstants.WRIST_P, ArmConstants.WRIST_I, ArmConstants.WRIST_D);
         wristEncoder = new Encoder(Constants.WRIST_ENCODER_0, Constants.WRIST_ENCODER_1);
-        wristLimitSwitch = new DigitalInput(Constants.WRIST_LIMIT_SWITCH);
+        wristInnerLimitSwitch = new DigitalInput(Constants.WRIST_INNER_LIMIT_SWITCH);
+        wristOuterLimitSwitch = new DigitalInput(Constants.WRIST_OUTER_LIMIT_SWITCH);
         
         // Wrist motor settings.
         wrist.configAllSettings(new TalonSRXConfiguration());
@@ -168,8 +173,9 @@ public class Arm extends SubsystemBase {
             SmartDashboard.putNumber("Absolute encoder elbow", Math.round(Math.toDegrees(elbowPos) * 10) * 0.1);
             SmartDashboard.putNumber("Wrist position", Math.round(Math.toDegrees(wristPos) * 10) * 0.1);
             SmartDashboard.putBoolean("Wrist has been zeroed", getWristBeenZeroed());
-            SmartDashboard.putBoolean("Wrist limit", getWristLimitSwitch());
+            SmartDashboard.putBoolean("Wrist limit", getWristInnerLimitSwitch());
         }
+
     }
 
     /**
@@ -241,11 +247,19 @@ public class Arm extends SubsystemBase {
     }
 
     /**
-     * Gets the state of the wrist's limit switch.
-     * @return The status of the limit switch.
+     * Gets the state of the wrist's inner limit switch.
+     * @return The status of the inner limit switch.
      */
-    public boolean getWristLimitSwitch () {
-        return wristLimitSwitch.get();
+    public boolean getWristInnerLimitSwitch () {
+        return wristInnerLimitSwitch.get();
+    }
+
+    /**
+     * Gets the state of the wrist's outer limit switch.
+     * @return The status of the outer limit switch.
+     */
+    public boolean getWristOuterLimitSwitch() {
+        return wristOuterLimitSwitch.get();
     }
 
     /**
@@ -259,8 +273,7 @@ public class Arm extends SubsystemBase {
     /**
      * Zeros the wrist.
      */
-    public void zeroWrist () {
-        // TODO: Move to limit switch.
+    public void setWristZero () {
         wristEncoder.reset();
         wristHasBeenZeroed = true;
     }
@@ -270,12 +283,12 @@ public class Arm extends SubsystemBase {
      * @param speed The speed to set the motor to, should be a value between -1.0 and 1.0.
      */
     public void setWristDutyCycle (double speed) {
-        if(speed < 0 && wristLimitSwitch.get()) {
+        if(speed < 0 && getWristInnerLimitSwitch()) {
             System.out.println("Cannot set wrist motor speed: At lower limit");
-            zeroWrist();
+            setWristZero();
             speed = 0;
         }
-        if(speed > 0 && getWristPosition() >= ArmConstants.WRIST_MAX_EXTENSION_LENGTH) {
+        if(speed > 0 && getWristOuterLimitSwitch()) {
             System.out.println("Cannot set wrist motor speed: At upper limit");
             speed = 0;
         }

@@ -76,7 +76,7 @@ public class ArmWristToPosition extends SequentialCommandGroup {
         @Override
         public boolean isFinished () {
             // Finish if hitTarget has been incremented to 10, or if the wrist has exceeded the maximum safe extension.
-            return hitTarget >= 10 || RobotContainer.arm.getWristPosition() > ArmConstants.WRIST_MAX_EXTENSION_LENGTH || RobotContainer.arm.getWristPosition() <= 0;
+            return hitTarget >= 10 || RobotContainer.arm.getWristOuterLimitSwitch() || RobotContainer.arm.getWristPosition() <= 0;
         }
     }
 }

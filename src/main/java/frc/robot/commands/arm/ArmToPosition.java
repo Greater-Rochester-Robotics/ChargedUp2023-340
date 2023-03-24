@@ -29,7 +29,8 @@ public class ArmToPosition extends SequentialCommandGroup {
             new PrintCommand("ArmToPosition: Begin moving to position: " + Math.abs(Units.radiansToDegrees(armPosition.getElbowAngle()))),
 
             // Retract the wrist if it is extended.
-            // new ConditionalCommand(new ArmWristToPosition(0.0), new InstantCommand(), RobotContainer.arm::isWristExtended),
+            new ArmWristToPosition(0.0),
+
             new PrintCommand("ArmToPosition: Wrist is now retracted"),
 
             // Print that the arm is now starting its movement.
@@ -38,13 +39,7 @@ public class ArmToPosition extends SequentialCommandGroup {
             // Move the elbow to its final position.
             new ArmElbowToPosition(armPosition.getElbowAngle()).withTimeout(4),
 
-            // If the wrist should be extended, extend the wrist.
-            // new ConditionalCommand(
-            //     new ArmWristExtend(false),
-            //     new InstantCommand(),
-            //     armPosition::getWristPosition
-            // ),
-
+            new ArmWristToPosition(armPosition.getWristLength()),
             // Print that the arm has been moved.
             new PrintCommand("ArmToPosition: Finished moving to position: " + Math.abs(Units.radiansToDegrees(armPosition.getElbowAngle())))
         );

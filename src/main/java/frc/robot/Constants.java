@@ -285,5 +285,7 @@ public final class Constants {
   public static final int CLAW_GAMEPIECE_SENSOR = 4;
   public static final int WRIST_ENCODER_0 = 5;
   public static final int WRIST_ENCODER_1 = 6;
-  public static final int WRIST_LIMIT_SWITCH = 7;
+  public static final int WRIST_INNER_LIMIT_SWITCH = 7;
+  public static final int WRIST_OUTER_LIMIT_SWITCH = 8;
+
 }

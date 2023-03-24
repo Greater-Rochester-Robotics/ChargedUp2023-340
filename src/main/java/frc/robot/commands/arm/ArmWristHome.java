@@ -36,12 +36,12 @@ public class ArmWristHome extends CommandBase {
     @Override
     public void end (boolean interrupted) {
         RobotContainer.arm.stopWristMotor();
-        RobotContainer.arm.zeroWrist();
+        RobotContainer.arm.setWristZero();
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished () {
-        return (RobotContainer.arm.getWristBeenZeroed() && !override) || RobotContainer.arm.getWristLimitSwitch();
+        return (RobotContainer.arm.getWristBeenZeroed() && !override) || RobotContainer.arm.getWristInnerLimitSwitch();
     }
 }
