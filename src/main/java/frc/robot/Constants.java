@@ -117,9 +117,12 @@ public final class Constants {
       public static final double ELBOW_ACCELERATION_TIME = MAX_ELBOW_VELOCITY / MAX_ELBOW_ACCELERATION;
       public static final double MAX_ELBOW_VELOCITY_IN_RPM = .48;//Yes this is in RPM
       public static final double MAX_ELBOW_ACCELERATION_IN_RPM_PER_SEC = 10200.0;//watch out, this is in RPM per second
+      public static final double MAX_WRIST_VELOCITY_IN_MPS = 0.0;
+      public static final double MAX_WRIST_ACCELERATION_IN_MPS_PER_SEC = 0.0;
       public static final double ELBOW_CLOSED_LOOP_ERROR = Units.degreesToRadians(2);
       public static final double WRIST_CLOSED_LOOP_ERROR = Units.inchesToMeters(2);
       public static final Constraints ELBOW_PROFILED_PID_CONSTRAINTS = new Constraints(MAX_ELBOW_VELOCITY_IN_RPM, MAX_ELBOW_ACCELERATION_IN_RPM_PER_SEC);
+      public static final Constraints WRIST_PROFILED_PID_CONSTRAINTS = new Constraints(MAX_WRIST_VELOCITY_IN_MPS, MAX_WRIST_ACCELERATION_IN_MPS_PER_SEC);
     }
 
     public static class ClawConstants {
@@ -274,6 +277,7 @@ public final class Constants {
 
   public static final int CLAW_SOLENOID_OPEN = 14;
   public static final int CLAW_SOLENOID_CLOSED = 11;
+  public static final int CLAW_SOLENOID_HOLD = 13;
 
   public static final int HARVESTER_SOLENOID_OUT = 10;
   public static final int HARVESTER_SOLENOID_IN = 12;

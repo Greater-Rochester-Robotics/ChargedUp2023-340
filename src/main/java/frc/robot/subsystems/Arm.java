@@ -16,7 +16,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.SparkMaxPIDController;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -44,13 +43,9 @@ public class Arm extends SubsystemBase {
      */
     private AbsoluteEncoder elbowEncoder;
     /**
-     * The elbow's PID controller.
-     */
-    private SparkMaxPIDController elbowPID;
-    /**
      * The elbow's profiled PID controller.
      */
-    private ProfiledPIDController elbowProfiledPID;
+    private ProfiledPIDController elbowPID;
     /**
      * The elbow break.
      */
@@ -67,7 +62,7 @@ public class Arm extends SubsystemBase {
     /**
      * The wrist's PID controller.
      */
-    private PIDController wristPID;
+    private ProfiledPIDController wristPID;
     /**
      * The wrist's inner limit switch.
      */
@@ -98,8 +93,7 @@ public class Arm extends SubsystemBase {
         // Setup the elbow.
         elbow = new CANSparkMax(Constants.ELBOW_MOTOR, MotorType.kBrushless);
         elbowEncoder = elbow.getAbsoluteEncoder(Type.kDutyCycle);
-        elbowPID = elbow.getPIDController();
-        elbowProfiledPID = new ProfiledPIDController(ArmConstants.ELBOW_P, ArmConstants.ELBOW_I, ArmConstants.ELBOW_D, ArmConstants.ELBOW_PROFILED_PID_CONSTRAINTS);
+        elbowPID = new ProfiledPIDController(ArmConstants.ELBOW_P, ArmConstants.ELBOW_I, ArmConstants.ELBOW_D, ArmConstants.ELBOW_PROFILED_PID_CONSTRAINTS);
         elbowBrake = new Solenoid(PneumaticsModuleType.REVPH, Constants.ELBOW_BRAKE);
 
         // Elbow motor settings.
@@ -123,19 +117,9 @@ public class Arm extends SubsystemBase {
         elbowEncoder.setInverted(true);
         elbowEncoder.setZeroOffset(5.8760048535897932384626433832795);
 
-        // Elbow PID settings.
-        elbowPID.setFeedbackDevice(elbowEncoder);
-        elbowPID.setOutputRange(-ArmConstants.MAX_ELBOW_PID_OUT, ArmConstants.MAX_ELBOW_PID_OUT);
-        elbowPID.setPositionPIDWrappingEnabled(false);
-        elbowPID.setP(ArmConstants.ELBOW_P);
-        elbowPID.setI(ArmConstants.ELBOW_I);
-        elbowPID.setD(ArmConstants.ELBOW_D);
-        elbowPID.setFF(ArmConstants.ELBOW_F);
-
-
         // Setup the wrist.
         wrist = new TalonSRX(Constants.WRIST_MOTOR);
-        wristPID = new PIDController(ArmConstants.WRIST_P, ArmConstants.WRIST_I, ArmConstants.WRIST_D);
+        wristPID = new ProfiledPIDController(ArmConstants.WRIST_P, ArmConstants.WRIST_I, ArmConstants.WRIST_D, ArmConstants.WRIST_PROFILED_PID_CONSTRAINTS);
         wristEncoder = new Encoder(Constants.WRIST_ENCODER_0, Constants.WRIST_ENCODER_1);
         wristInnerLimitSwitch = new DigitalInput(Constants.WRIST_INNER_LIMIT_SWITCH);
         wristOuterLimitSwitch = new DigitalInput(Constants.WRIST_OUTER_LIMIT_SWITCH);
@@ -173,7 +157,8 @@ public class Arm extends SubsystemBase {
             SmartDashboard.putNumber("Absolute encoder elbow", Math.round(Math.toDegrees(elbowPos) * 10) * 0.1);
             SmartDashboard.putNumber("Wrist position", Math.round(Math.toDegrees(wristPos) * 10) * 0.1);
             SmartDashboard.putBoolean("Wrist has been zeroed", getWristBeenZeroed());
-            SmartDashboard.putBoolean("Wrist limit", getWristInnerLimitSwitch());
+            SmartDashboard.putBoolean("Wrist limit inner", getWristInnerLimitSwitch());
+            SmartDashboard.putBoolean("Wrist limit outer", getWristOuterLimitSwitch());
         }
 
     }
@@ -220,11 +205,7 @@ public class Arm extends SubsystemBase {
         double gravityCounterConstant = ArmConstants.KG;
 
         // Set the target angle in the PID controller.
-        if (ArmConstants.ELBOW_USE_PROFILED_PID) {
-            elbow.set(elbowProfiledPID.calculate(getElbowPosition(), targetAngle) + gravityCounterConstant * Math.sin(getElbowPosition() - ArmConstants.SHOULDER_FIXED_ANGLE));
-        } else {
-            elbowPID.setReference(targetAngle + Math.PI, ControlType.kPosition, 0, gravityCounterConstant * Math.sin(getElbowPosition() - ArmConstants.SHOULDER_FIXED_ANGLE));
-        }
+        elbow.set(elbowPID.calculate(getElbowPosition(), targetAngle) + gravityCounterConstant * Math.sin(getElbowPosition()));
 
         elbowBrake.set(true);
 
@@ -273,7 +254,7 @@ public class Arm extends SubsystemBase {
     /**
      * Zeros the wrist.
      */
-    public void setWristZero () {
+    public void zeroWrist () {
         wristEncoder.reset();
         wristHasBeenZeroed = true;
     }
@@ -285,7 +266,7 @@ public class Arm extends SubsystemBase {
     public void setWristDutyCycle (double speed) {
         if(speed < 0 && getWristInnerLimitSwitch()) {
             System.out.println("Cannot set wrist motor speed: At lower limit");
-            setWristZero();
+            zeroWrist();
             speed = 0;
         }
         if(speed > 0 && getWristOuterLimitSwitch()) {

@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -22,6 +23,7 @@ import frc.robot.Constants.ClawConstants;
 public class Claw extends SubsystemBase {
   private TalonSRX clawMotor;
   private DoubleSolenoid openClose;
+  private Solenoid hold;
   private DigitalInput gamePieceSensor;
   private boolean isClawOpen;
 
@@ -49,6 +51,7 @@ public class Claw extends SubsystemBase {
     clawMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 211);
 
     openClose = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.CLAW_SOLENOID_CLOSED, Constants.CLAW_SOLENOID_OPEN); //open is in is reverse, close is out is forward
+    hold = new Solenoid(PneumaticsModuleType.REVPH, Constants.CLAW_SOLENOID_HOLD);
 
     gamePieceSensor = new DigitalInput(Constants.CLAW_GAMEPIECE_SENSOR);
 
@@ -65,8 +68,9 @@ public class Claw extends SubsystemBase {
   /**
    * Closes the claw pneumatic
    */
-  public void close(){
+  public void close(boolean isCone){
     openClose.set(Value.kForward);
+    hold.set(isCone);
     isClawOpen = false;
   }
 
@@ -75,6 +79,7 @@ public class Claw extends SubsystemBase {
    */
   public void open(){
     openClose.set(Value.kReverse);
+    hold.set(false);
     isClawOpen = true;
   }
 

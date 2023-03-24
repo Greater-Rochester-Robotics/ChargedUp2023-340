@@ -187,7 +187,7 @@ public class RobotContainer {
         driverB.onTrue(new HarvesterClawIntake(false)).onFalse(new HarvesterRecordRetract(false));
 
         // X => Toggle opening the claw
-        driverX.onTrue(new ConditionalCommand(Commands.sequence(new ClawClose(), new ClawStop()), new ClawOpen(), claw::isOpen));
+        driverX.onTrue(new ConditionalCommand(Commands.sequence(new ClawClose(true), new ClawStop()), new ClawOpen(), claw::isOpen));
 
         // Y => Toggle opening the claw and spitting
         driverY.onTrue(new ClawSpit()).onFalse(new ClawStop());

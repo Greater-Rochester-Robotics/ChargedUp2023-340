@@ -11,16 +11,18 @@ import frc.robot.RobotContainer;
  * Closes the claw.
  */
 public class ClawClose extends InstantCommand {
+    private boolean isCone;
     /**
      * Creates a new ClawClose command.
      */
-    public ClawClose () {
+    public ClawClose (boolean isCone) {
         addRequirements(RobotContainer.claw);
+        this.isCone = isCone;
     }
 
     @Override
     public void initialize () {
         // Close the claw.
-        RobotContainer.claw.close();
+        RobotContainer.claw.close(isCone);
     }
 }
