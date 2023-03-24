@@ -18,9 +18,9 @@ import frc.robot.commands.ClawWristRetract;
 import frc.robot.commands.HarvesterClawIntake;
 import frc.robot.commands.HarvesterRecordRetract;
 import frc.robot.commands.arm.ArmToPosition;
-import frc.robot.commands.auto.util.AutoDriveFollowTrajectory;
 import frc.robot.commands.auto.util.AutoScoreCone;
 import frc.robot.commands.drive.DriveBalance;
+import frc.robot.commands.drive.auto.DriveFollowTrajectory;
 import frc.robot.commands.drive.util.DriveSetGyro;
 import frc.robot.subsystems.swervelib.ADIS16470_IMU.IMUAxis;
 
@@ -48,7 +48,7 @@ public class AutoCone001PickUpCone021ChargeBalance extends SequentialCommandGrou
         Commands.parallel(
             // Drive to pick-up location
             Commands.sequence(
-                new AutoDriveFollowTrajectory(path.get(0)),
+                new DriveFollowTrajectory(path.get(0)),
                 new WaitCommand(.5)
             ),
 
@@ -69,7 +69,7 @@ public class AutoCone001PickUpCone021ChargeBalance extends SequentialCommandGrou
         Commands.parallel(
             Commands.sequence(
                 // Drive to second scoring position
-                new AutoDriveFollowTrajectory(path.get(1), false)
+                new DriveFollowTrajectory(path.get(1), false)
             ),
 
             Commands.sequence(
@@ -92,7 +92,7 @@ public class AutoCone001PickUpCone021ChargeBalance extends SequentialCommandGrou
 
         // Drive to balancing position bring arm to default position
         Commands.deadline(
-            new AutoDriveFollowTrajectory(path.get(2)),
+            new DriveFollowTrajectory(path.get(2)),
             new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE)
         ).withTimeout(6),
 

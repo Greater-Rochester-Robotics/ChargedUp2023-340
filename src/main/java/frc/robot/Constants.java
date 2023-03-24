@@ -80,6 +80,7 @@ public final class Constants {
       public static final ArmPosition INTERNAL_DEFAULT = new ArmPosition(Math.toRadians(-7.5), 0);
       public static final ArmPosition INTERNAL_PICK_UP_CONE = new ArmPosition(Math.toRadians(14.5), 0);
       public static final ArmPosition INTERNAL_PICK_UP_CUBE = new ArmPosition(Math.toRadians(10), 0);
+      public static final ArmPosition CUBE_GRABBING_POSITION = new ArmPosition(0,0);
 
 
       /* Arm Limits */

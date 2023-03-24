@@ -25,6 +25,10 @@ public class DriveFieldRelative extends CommandBase {
      * If velocity mode should be used.
      */
     private boolean isVeloMode;
+     /**
+     * If the gyro should be used.
+     */
+    private boolean counterRotationOn;
     /**
      * The robot's current angle.
      */
@@ -37,14 +41,19 @@ public class DriveFieldRelative extends CommandBase {
      * The previous DPad value.
      */
     private int prevDPad;
+    
+    public DriveFieldRelative (boolean isVeloMode) {
+        this(isVeloMode, true);
+    }
 
     /**
      * Creates a new DriveFieldRelative command.
      * @param isVeloMode If velocity mode should be used.
      */
-    public DriveFieldRelative (boolean isVeloMode) {
+    public DriveFieldRelative (boolean isVeloMode, boolean counterRotationOn) {
         addRequirements(RobotContainer.swerveDrive);
         this.isVeloMode = isVeloMode;
+        this.counterRotationOn = counterRotationOn;
     }
 
     @Override
@@ -61,16 +70,16 @@ public class DriveFieldRelative extends CommandBase {
         double rotSpeed = Robot.robotContainer.getDriverRotation(isVeloMode);
 
         // Use the DPad to turn to specific angles.
-        if (Robot.robotContainer.getDriverDPad() == 0 && prevDPad != 0) {
+        if (counterRotationOn && Robot.robotContainer.getDriverDPad() == 0 && prevDPad != 02 ) {
             // Face away if DPad up.
             currentAngle = Math.round(RobotContainer.swerveDrive.getGyroInRadYaw() / Constants.TWO_PI) * Constants.TWO_PI;
-        } else if (Robot.robotContainer.getDriverDPad() == 180 && prevDPad != 180) {
+        } else if (counterRotationOn && Robot.robotContainer.getDriverDPad() == 180 && prevDPad != 180) {
             // Face towards if DPad down.
             currentAngle = Math.round(RobotContainer.swerveDrive.getGyroInRadYaw() / Constants.TWO_PI) * Constants.TWO_PI - Math.PI;
         }
 
         // test if the absolute rotational input is greater than .1
-        if (Math.abs(rotSpeed) > 0) {
+        if (!counterRotationOn || Math.abs(rotSpeed) > 0) {
             // if the test is true, just copy the DriveFieldCentric execute method
             RobotContainer.swerveDrive.driveFieldRelative(
                 awaySpeed,
