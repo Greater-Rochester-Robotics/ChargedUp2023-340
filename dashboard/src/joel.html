@@ -32,7 +32,7 @@
             font-size: 40vh;
         }
 
-        .joel-container {
+        .joel-edition-container {
             position: absolute;
             top: 90%;
             left: 50%;
@@ -44,13 +44,30 @@
             text-align: center;
         }
 
-        .joel {
+        .joel-edition {
             margin: 0;
             position: relative;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             font-size: 8vh;
+        }
+
+        .joel {
+            position: absolute;
+            margin: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .joel-confetti {
+            position: absolute;
+            margin: 0;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
         }
     </style>
 </head>
@@ -60,19 +77,48 @@
         <p id="timer" class="timer">0:00</p>
     </div>
 
-    <div id="joel-container" class="joel-container">
-        <p id="joel" class="joel">Dashboard: Joel Edition</p>
+    <div id="joel-edition-container" class="joel-edition-container">
+        <p id="joel-edition" class="joel-edition">Dashboard: Joel Edition</p>
+    </div>
+
+    <div id="joel-container" class="joel-container" hidden>
+        <img id="joel-confetti" class="joel-confetti" src="/assets/confetti.gif">
+        <img id="joel" class="joel" src="/assets/joel.png">
     </div>
 
     <script type="module">
         import { NetworkTables } from '/lib/networktables.js';
 
+        let joelActive = false;
+
         // Integer: match time in seconds
         NetworkTables.addKeyListener(`/dashboard/general/time`, (_, value) => {
             if (typeof value === `number` && value >= 0 && value <= 300) {
                 document.getElementById(`timer`).innerText = new Date(value * 1000).toISOString().substring(15, 19);
+                if (value === 1 && NetworkTables.getValue("teleop", false)) setTimeout(() => activateJoel(), 1000);
             }
         });
+
+        document.onkeydown = (event) => {
+            if (event.key === `j`) {
+                if (joelActive) deactivateJoel();
+                else activateJoel();
+            }
+        };
+
+        function activateJoel () {
+            if (joelActive) return;
+            joelActive = true;
+
+            document.getElementById(`joel-container`).hidden = false;
+        }
+
+        function deactivateJoel () {
+            if (!joelActive) return;
+            joelActive = false;
+
+            document.getElementById(`joel-container`).hidden = true;
+        }
     </script>
 </body>
 

@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.Constants.SwerveDriveConstants;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -21,128 +20,97 @@ import frc.robot.Constants.SwerveDriveConstants;
  * project.
  */
 public class Robot extends TimedRobot {
-  /**
-   * The robot's autonomous command.
-   */
-  private Command autonomousCommand;
-  
-  /**
-   * The network table instance used by the robot.
-   */
-  private NetworkTableInstance netInst = NetworkTableInstance.getDefault();
-  /**
-   * The general values network table.
-   */
-  private NetworkTable netTable = netInst.getTable("/dashboard/general");
-  /**
-   * An incrementing integer used to schedule periodic updates to network table values.
-   */
-  private int netCycle = 0;
+    /**
+     * The robot's autonomous command.
+     */
+    private Command autonomousCommand;
 
-  /**
-   * The robot container.
-   */
-  public static RobotContainer robotContainer;
+    /**
+     * The network table instance used by the robot.
+     */
+    private NetworkTableInstance netInst = NetworkTableInstance.getDefault();
+    /**
+     * The general values network table.
+     */
+    private NetworkTable netTable = netInst.getTable("/dashboard/general");
 
-  /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   */
-  @Override
-  public void robotInit() {
-    //Stop the liveWindow from starting, we don't use it.
-    LiveWindow.setEnabled(false);
-    LiveWindow.disableAllTelemetry();
-    // Instantiate our RobotContainer.  This will perform all our button bindings,
-    // and put our autonomous chooser on the dashboard.
-    robotContainer = new RobotContainer();
-  }
+    /**
+     * The robot container.
+     */
+    public static RobotContainer robotContainer;
 
-  /**
-   * This function is called every robot packet, no matter the mode. Use this for items like
-   * diagnostics that you want ran during disabled, autonomous, teleoperated and test.
-   *
-   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
-   * SmartDashboard integrated updating.
-   */
-  @Override
-  public void robotPeriodic() {
-    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
-    // commands, running already-scheduled commands, removing finished or interrupted commands,
-    // and running subsystem periodic() methods.  This must be called from the robot's periodic
-    // block in order for anything in the Command-based framework to work.
-    CommandScheduler.getInstance().run();
+    @Override
+    public void robotInit () {
+        // Stop the liveWindow from starting, we don't use it.
+        LiveWindow.setEnabled(false);
+        LiveWindow.disableAllTelemetry();
 
-    // Update the network tables cycle.
-    netCycle++;
-    if (netCycle > 10) {
-      netCycle = 0;
+        // Instantiate our RobotContainer.
+        robotContainer = new RobotContainer();
     }
 
-    // If the network tables publish cycle has restarted, publish values.
-    if (netCycle == 0) {
-      netTable.getEntry("alliance").setInteger(DriverStation.getAlliance().ordinal());
-      netTable.getEntry("voltage").setDouble(RobotController.getBatteryVoltage());
-      netTable.getEntry("psi").setDouble(RobotContainer.compressor.getPressure());
-      netTable.getEntry("time").setInteger((int) DriverStation.getMatchTime());
+    @Override
+    public void robotPeriodic () {
+        // Runs the Scheduler. This is responsible for polling buttons, adding newly-scheduled
+        // commands, running already-scheduled commands, removing finished or interrupted commands,
+        // and running subsystem periodic() methods. This must be called from the robot's periodic
+        // block in order for anything in the Command-based framework to work.
+        CommandScheduler.getInstance().run();
+
+        // Increment the network tables cycle.
+        RobotContainer.incrementNetCycle();
+
+        // Publish to network tables.
+        if (RobotContainer.shouldPublishToNetworkTables()) {
+            netTable.getEntry("alliance").setInteger(DriverStation.getAlliance().ordinal());
+            netTable.getEntry("voltage").setDouble(Math.round(RobotController.getBatteryVoltage() * 10) / 10);
+            netTable.getEntry("psi").setDouble(Math.round(RobotContainer.compressor.getPressure() * 10) / 10);
+            netTable.getEntry("time").setInteger((int) DriverStation.getMatchTime());
+            netTable.getEntry("teleop").setBoolean(DriverStation.isTeleop());
+        }
     }
-  }
 
-  /** This function is called once each time the robot enters Disabled mode. */
-  @Override
-  public void disabledInit() {}
+    @Override
+    public void disabledInit () {}
 
-  @Override
-  public void disabledPeriodic() {}
+    @Override
+    public void disabledPeriodic () {}
 
-  @Override
-  public void disabledExit() {}
+    @Override
+    public void disabledExit () {}
 
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
-  @Override
-  public void autonomousInit() {
-    autonomousCommand = robotContainer.getAutonomousCommand();
-
-    if (autonomousCommand != null) {
-      autonomousCommand.schedule();
+    @Override
+    public void autonomousInit () {
+        autonomousCommand = robotContainer.getAutonomousCommand();
+        if (autonomousCommand != null) autonomousCommand.schedule();
     }
-  }
 
-  /** This function is called periodically during autonomous. */
-  @Override
-  public void autonomousPeriodic() {}
+    @Override
+    public void autonomousPeriodic () {}
 
-  @Override
-  public void autonomousExit() {}
+    @Override
+    public void autonomousExit () {}
 
-  @Override
-  public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
-    if (autonomousCommand != null) {
-      autonomousCommand.cancel();
+    @Override
+    public void teleopInit () {
+        if (autonomousCommand != null) autonomousCommand.cancel();
+        RobotContainer.swerveDrive.stopAllModules();
     }
-  }
 
-  /** This function is called periodically during operator control. */
-  @Override
-  public void teleopPeriodic() {}
+    @Override
+    public void teleopPeriodic () {}
 
-  @Override
-  public void teleopExit() {}
+    @Override
+    public void teleopExit () {}
 
-  @Override
-  public void testInit() {
-    // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
-  }
+    @Override
+    public void testInit () {
+        CommandScheduler.getInstance().cancelAll();
+    }
 
-  /** This function is called periodically during test mode. */
-  @Override
-  public void testPeriodic() {}
+    @Override
+    public void testPeriodic () {}
 
-  @Override
-  public void testExit() {}
+    @Override
+    public void testExit () {}
 }

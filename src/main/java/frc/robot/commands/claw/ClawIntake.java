@@ -7,16 +7,20 @@ package frc.robot.commands.claw;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.RobotContainer;
 
+/**
+ * Runs the claw motors to intake a game piece.
+ */
 public class ClawIntake extends InstantCommand {
-  /** Creates a new ClawIntake. */
-  public ClawIntake() {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.claw);
-  }
+    /**
+     * Creates a new ClawIntake command.
+     */
+    public ClawIntake () {
+        addRequirements(RobotContainer.claw);
+    }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    RobotContainer.claw.intake();
-  }
+    @Override
+    public void initialize () {
+        // Run the claw motors in.
+        RobotContainer.claw.intake();
+    }
 }

@@ -67,18 +67,22 @@ public class SwerveMoveNEO implements SwerveMoveMotor{
         driveMotor.getEncoder().setPositionConversionFactor(encToMetersConvFactor);
         driveMotor.getEncoder().setVelocityConversionFactor(encToMetersConvFactor/60);
         
-        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 37);
-        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 11); 
-        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 9);
-        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 59791);
-        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 59797);
-        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 59809);
-        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 59833);
+        setPeriodicFramePeriods();
        
         //if values have changed burn NEO flash
         // if(areValuesUpdated){
             driveMotor.burnFlash();
         // }
+    }
+
+    public void setPeriodicFramePeriods() {
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 37);
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 13); 
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 11);
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 59791);
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 59797);
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 59809);
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 59833);
     }
 
 

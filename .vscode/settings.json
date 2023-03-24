@@ -31,5 +31,19 @@
   "java.completion.importOrder": ["java", "javax"],
   "[java]": {
     "editor.detectIndentation": false
-  }
+  },
+  "cSpell.words": [
+    "Brushless",
+    "CTRE",
+    "Deadzone",
+    "Gamepiece",
+    "Odometry",
+    "PIDF",
+    "REVPH",
+    "Robotmodel",
+    "Targetting",
+    "Teleop",
+    "Touchselection",
+    "Vbat"
+  ]
 }

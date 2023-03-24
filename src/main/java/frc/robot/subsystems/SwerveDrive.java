@@ -26,7 +26,8 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 
 import frc.robot.Constants;
-import frc.robot.subsystems.ADIS16470_IMU.IMUAxis;
+import frc.robot.subsystems.swervelib.ADIS16470_IMU;
+import frc.robot.subsystems.swervelib.ADIS16470_IMU.IMUAxis;
 import frc.robot.subsystems.LLHelpers.LLResults;
 import frc.robot.subsystems.swervelib.SwerveModule;
 import frc.robot.subsystems.swervelib.rev.SwerveMoveNEO;
@@ -163,13 +164,24 @@ public class SwerveDrive extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if(count > 10){
-      count = 0;
-      // SmartDashboard.putNumber("GyroRoll", Math.round(this.getGyroInDegRoll()));
-      // SmartDashboard.putNumber("GyroPitch", Math.round(this.getGyroInDegPitch()));
-      SmartDashboard.putNumber("GyroYaw", Math.round(this.getGyroInDegYaw()));
+    // if(count > 10){
+    //   count = 0;
+    //   // SmartDashboard.putNumber("GyroRoll", Math.round(this.getGyroInDegRoll()));
+    //   // SmartDashboard.putNumber("GyroPitch", Math.round(this.getGyroInDegPitch()));
+    //   SmartDashboard.putNumber("GyroYaw", Math.round(this.getGyroInDegYaw()));
+    // }
+    // count++;
+
+    if(count > 300) {
+        count = 0;
+        frontLeft.setPeriodicFramePeriods();
+        rearLeft.setPeriodicFramePeriods();
+        frontRight.setPeriodicFramePeriods();
+        rearRight.setPeriodicFramePeriods();
     }
     count++;
+
+
 
     //run odometry update on the odometry object
     driveOdometry.update(getGyroRotation2d(), getSwerveModulePositions());

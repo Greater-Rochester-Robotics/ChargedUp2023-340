@@ -4,59 +4,67 @@
 
 package frc.robot.commands.arm;
 
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.RobotContainer;
 
+/**
+ * Moves the elbow to a set position (in radians).
+ */
 public class ArmElbowToPosition extends CommandBase {
-  double position;
-  int onTarget;
-  double maxVelReached;
-  boolean goingDown;
-  /** Creates a new ArmElbowToPosition. */
-  public ArmElbowToPosition(double position) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.arm);
-    this.position = position;
-  }
+    /**
+     * If the elbow is going down.
+     */
+    private boolean goingDown;
+    /**
+     * A counter for the number of times the target position has been hit to combat slop.
+     * If this value exceeds 10, the elbow is assumed to be at position.
+     * Incremented if the arm is within tolerance when execute() is called.
+     */
+    private int hitTarget;
+    /**
+     * The target position to move to.
+     */
+    private double position;
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    onTarget = 0;
-    maxVelReached = 0;
-    goingDown = Math.abs(RobotContainer.arm.getElbowPosition()) > Math.abs(position);
-  }
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    // if(Math.abs(RobotContainer.arm.getElbowVelocity()) > maxVelReached){
-    //   maxVelReached = Math.abs(RobotContainer.arm.getElbowVelocity());
-    //   SmartDashboard.putNumber("elbow max velocity reached", maxVelReached);
-    // }
-    // System.out.print("angle: " + Math.round(Units.radiansToDegrees(RobotContainer.arm.getElbowPosition()))+"  ");
-    RobotContainer.arm.setElbowPosition(position);
-    if(Math.abs(RobotContainer.arm.getElbowPosition()-position) < ArmConstants.ELBOW_CLOSED_LOOP_ERROR){
-      onTarget++;
-      // System.out.println("ON Target");
-    }else{
-      onTarget = 0;
-      // System.out.println("OFF Target");
+    /**
+     * Creates a new ArmElbowToPosition command.
+     * @param position The position to set the elbow to in radians.
+     */
+    public ArmElbowToPosition (double position) {
+        addRequirements(RobotContainer.arm);
+        this.position = position;
     }
-  }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    RobotContainer.arm.stopElbow();
-  }
+    @Override
+    public void initialize() {
+        // Set helpers.
+        goingDown = Math.abs(RobotContainer.arm.getElbowPosition()) > Math.abs(position);
+        hitTarget = 0;
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return  onTarget >= 10 || (!goingDown && Math.abs(RobotContainer.arm.getElbowPosition()) > ArmConstants.MAX_ELBOW_ANGLE);
-  }
+        // Set the elbow position.
+        RobotContainer.arm.setElbowPosition(position);
+    }
+
+    @Override
+    public void execute () {
+        // If the elbow is within tolerance of the target position, increment hitTarget. Otherwise, reset the hitTarget count.
+        if (Math.abs(RobotContainer.arm.getElbowPosition() - position) < ArmConstants.ELBOW_CLOSED_LOOP_ERROR) {
+            hitTarget++;
+        } else {
+            hitTarget = 0;
+        }
+    }
+
+    @Override
+    public void end (boolean interrupted) {
+        // If ended, stop the elbow from moving.
+        RobotContainer.arm.stopElbow();
+    }
+
+    @Override
+    public boolean isFinished () {
+        // Finish if hitTarget has been incremented to 10, or if the elbow has exceeded the maximum safe angle.
+        return hitTarget >= 10 || (!goingDown && Math.abs(RobotContainer.arm.getElbowPosition()) > ArmConstants.MAX_ELBOW_ANGLE);
+    }
 }

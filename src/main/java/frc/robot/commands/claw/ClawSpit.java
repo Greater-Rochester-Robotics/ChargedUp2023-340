@@ -4,33 +4,24 @@
 
 package frc.robot.commands.claw;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.RobotContainer;
 
-public class ClawSpit extends CommandBase {
-  /** Creates a new ClawSpit. */
-  public ClawSpit() {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.claw);
-  }
+/**
+ * Runs the claw motors to spit a game piece.
+ */
+public class ClawSpit extends InstantCommand {
+    /**
+     * Creates a new ClawSpit command.
+     */
+    public ClawSpit () {
+        addRequirements(RobotContainer.claw);
+    }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    RobotContainer.claw.outtake();
-  }
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {}
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    RobotContainer.claw.stop();
-  }
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize () {
+        // Run the claw motors out.
+        RobotContainer.claw.spit();
+    }
 }

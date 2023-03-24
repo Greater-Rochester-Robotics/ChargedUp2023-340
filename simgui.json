@@ -1,0 +1,20 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Drive Module 0": "Command",
+      "/SmartDashboard/Drive Module 1": "Command",
+      "/SmartDashboard/Drive Module 2": "Command",
+      "/SmartDashboard/Drive Module 3": "Command",
+      "/SmartDashboard/DriveAdjustModulesManually": "Command",
+      "/SmartDashboard/DriveAllModulesPositionOnly": "Command",
+      "/SmartDashboard/DriveLockWheels": "Command",
+      "/SmartDashboard/DriveResetAllModulePositionsToZero": "Command",
+      "/SmartDashboard/DriveStopAllModules": "Command",
+      "/SmartDashboard/DriveTurnToAngleInRad": "Command",
+      "/SmartDashboard/ResetOdometry": "Command",
+      "/SmartDashboard/Score middle cone": "Command",
+      "/SmartDashboard/SendableChooser[0]": "String Chooser"
+    }
+  }
+}

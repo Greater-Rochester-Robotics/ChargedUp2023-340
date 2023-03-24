@@ -6,8 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
-import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.ArmPosition;
 import frc.robot.subsystems.swervelib.SwervePIDFConfig;
 import frc.robot.subsystems.swervelib.rev.NEOConfig;
@@ -27,100 +27,107 @@ public final class Constants {
     public static final Rotation2d ROTATE_BY_PI = Rotation2d.fromDegrees(180);//I only make this once
 
     /*Robot dimensions */
-    //TODO: set ALL of the robots dimensions none are acurate
+    //TODO: set ALL of the robots dimensions none are accurate
     public static final double ROBOT_WIDTH = 30.0;
     public static final double ROBOT_LENGTH = 30.0;
     public static final double ROBOT_BASE_HEIGHT = 5;
     public static final double MAXIMUM_VOLTAGE = 12.0;
+
+    public static final int NETWORK_TABLES_CYCLE = 20;
+
+    public static final double DRIVER_CONTROLLER_DEADZONE = 0.01;
+      public static final double CO_DRIVER_CONTROLLER_DEADZONE = 0.1;
     
     public static class ArmConstants{
+        public static final double ELBOW_MAX_MANUAL_DUTY_CYCLE = 0.25;
+        public static final double WRIST_MAX_MANUAL_DUTY_CYCLE = 0.25;
+
+        public static final boolean ELBOW_USE_PROFILED_PID = false;
+        
+        public static final double WRIST_ENCODER_DISTANCE_PER_PULSE = 1.0;
+
       /* Arm PID Constants */
-      public static final double SHOULDER_P_RIGHT = 1.80;
-      public static final double SHOULDER_I_RIGHT = 0.0;
-      public static final double SHOULDER_D_RIGHT = 0.0;
-      public static final double SHOULDER_F_RIGHT = 0.0;
-
-      public static final double SHOULDER_P_LEFT = 1.80;
-      public static final double SHOULDER_I_LEFT = 0.0;
-      public static final double SHOULDER_D_LEFT = 0.0;
-      public static final double SHOULDER_F_LEFT = 0.0;
-      public static final double MAX_SHOULDER_OUT_PID_OUT = .2;
-      public static final double MAX_SHOULDER_IN_PID_OUT = .45;
-      public static final double SHOULDER_F_DIFFERENCE = 0.0;
-
       public static final double ELBOW_P = 1.0;
       public static final double ELBOW_I = 0.0;
       public static final double ELBOW_D = 2.0;
       public static final double ELBOW_F = 0.0;
-      public static final double KG_WRIST_OUT = 0.30; // The force required to counter gravity i.e prevent the arm from dropping
-      public static final double KG_WRIST_IN = 0.3;
-      public static final double MAX_ELBOW_PID_OUT = .40;//if this changes it won't hit targets
+
+      public static final double WRIST_P = 0.0;
+      public static final double WRIST_I = 0.0;
+      public static final double WRIST_D = 0.0;
+
+      public static final double KG = 0.30;
+
+      public static final double MAX_ELBOW_PID_OUT = .35;//if this changes it won't hit targets
 
       /*Scoring constants */
       /* WARNING DO NOT CHANGE WITHOUT TESTING IN A CONTROLLED ENVIRONMENT */
-      public static final ArmPosition BACK_HIGH_CONE = new ArmPosition(Math.toRadians(-32.6),Math.toRadians(-159),true);
-      public static final ArmPosition BACK_MIDDLE_CONE = new ArmPosition(Math.toRadians(-13),Math.toRadians(-115),false);
-      public static final ArmPosition BACK_HIGH_CUBE = new ArmPosition(Math.toRadians(-24.5),Math.toRadians(-127), false);
-      public static final ArmPosition BACK_MIDDLE_CUBE = new ArmPosition(Math.toRadians(-5.4), Math.toRadians(-82.2), false);
-      public static final ArmPosition BACK_LOWER_SCORE = new ArmPosition(Math.toRadians(5.2), Math.toRadians(-50), false);
-      public static final ArmPosition BACK_PICK_UP = new ArmPosition(0,0,false);
+      // TODO: All Wrist Lengths are incorrect right now, change later
+      public static final ArmPosition BACK_HIGH_CONE = new ArmPosition(Math.toRadians(-155), 0);
+      public static final ArmPosition BACK_MIDDLE_CONE = new ArmPosition(Math.toRadians(-115.0),0);
+      public static final ArmPosition BACK_HIGH_CUBE = new ArmPosition(Math.toRadians(-127), 0);
+      public static final ArmPosition BACK_MIDDLE_CUBE = new ArmPosition(Math.toRadians(-82.2), 0);
+      public static final ArmPosition BACK_LOWER_SCORE = new ArmPosition(Math.toRadians(-65), 0);
+      public static final ArmPosition BACK_PICK_UP = new ArmPosition(Math.toRadians(-96),0);
 
-      public static final ArmPosition FRONT_HIGH_CONE = new ArmPosition(Math.toRadians(0), Math.toRadians(0), false);  //Fix
-      public static final ArmPosition FRONT_MIDDLE_CONE = new ArmPosition(Math.toRadians(11.96),Math.toRadians(109.45),true);
-      public static final ArmPosition FRONT_HIGH_CUBE = new ArmPosition(Math.toRadians(0), Math.toRadians(0), false);  //Fix
-      public static final ArmPosition FRONT_MIDDLE_CUBE = new ArmPosition(Math.toRadians(0), Math.toRadians(0), false);  //Fix
-      public static final ArmPosition FRONT_LOWER_SCORE = new ArmPosition(Math.toRadians(0), Math.toRadians(0), false);  //Fix
-      public static final ArmPosition FRONT_PICK_UP = new ArmPosition(Math.toRadians(2.5), Math.toRadians(93), false); 
+      public static final ArmPosition FRONT_HIGH_CONE = new ArmPosition(Math.toRadians(0), 0);  //Fix
+      public static final ArmPosition FRONT_MIDDLE_CONE = new ArmPosition(Math.toRadians(109.45),0);
+      public static final ArmPosition FRONT_HIGH_CUBE = new ArmPosition(Math.toRadians(0), 0);  //Fix
+      public static final ArmPosition FRONT_MIDDLE_CUBE = new ArmPosition(Math.toRadians(0), 0);  //Fix
+      public static final ArmPosition FRONT_LOWER_SCORE = new ArmPosition(Math.toRadians(0), 0);  //Fix
+      public static final ArmPosition FRONT_PICK_UP = new ArmPosition(Math.toRadians(93), 0); 
 
-      public static final ArmPosition INTERNAL_PICK_UP = new ArmPosition(Math.toRadians(5.2), Math.toRadians(16), false);
+      public static final ArmPosition INTERNAL_DEFAULT = new ArmPosition(Math.toRadians(-7.5), 0);
+      public static final ArmPosition INTERNAL_PICK_UP_CONE = new ArmPosition(Math.toRadians(14.5), 0);
+      public static final ArmPosition INTERNAL_PICK_UP_CUBE = new ArmPosition(Math.toRadians(10), 0);
 
 
       /* Arm Limits */
       public static final double MAX_ELBOW_ANGLE = Math.toRadians(165);
-      public static final double MAX_SHOULDER_ANGLE = Math.toRadians(15);
-      public static final double MIN_SHOULDER_ANGLE = Math.toRadians(-33);
 
       /*arm dimensions */
+      public static final double SHOULDER_FIXED_ANGLE = Math.toRadians(38); //TODO: put correct angle
       public static final double SHOULDER_TO_ELBOW_DISTANCE = Units.inchesToMeters(38);
       public static final double ELBOW_TO_CLAW_DISTANCE = Units.inchesToMeters(29);
-      public static final double WRIST_EXTENSION_LENGTH = Units.inchesToMeters(10);
+      public static final double WRIST_MAX_EXTENSION_LENGTH = Units.inchesToMeters(10);
       public static final double ARM_TO_HARVESTER_MIN_DISTANCE = Units.inchesToMeters(15);
       public static final double ARM_TO_HARVESTER_MAX_DISTANCE = Units.inchesToMeters(15);
       public static final double MAX_HEIGHT = 50;
       public static final double BACK_OF_ROBOT_TO_SHOULDER_DISTANCE = 30;
       
       /*indent dimensions */
-      //the indent height value is how far of the ground the indent will be. The indent is a circle. (Ask Caleb for explenation)
       public static final double INDENT_HEIGHT = 20;
       public static final double INDENT_RADIUS = 19;
       public static final double REMAINING_SPACE = ROBOT_LENGTH/2 - Math.sqrt(Math.pow(INDENT_RADIUS,2) - Math.pow(INDENT_HEIGHT - ROBOT_BASE_HEIGHT,2));
 
       /* */
-      public static final double ABS_ENC_TO_RAD_CONV_FACTOR = 2*Math.PI;
+      public static final double ABS_ENC_TO_RAD_CONVERSION_FACTOR = 2*Math.PI;
 
       /* Wrist Timeout points */
       public static final double WRIST_EXTENSION_DELAY = .4;
       public static final double WRIST_RETRACTION_DELAY = .4;
+      public static final double WRIST_EXTENSION_SPEED = 0.5;
+      public static final double WRIST_HOMING_SPEED = 0.25;
 
       /*Acceleration and max velocities for the arm */
-      public static final double MAX_SHOULDER_VELOCITY = 1;
       public static final double MAX_ELBOW_VELOCITY = 1;
-      public static final double MAX_SHOULDER_ACCELERATION = 1;
       public static final double MAX_ELBOW_ACCELERATION = 1;
-      public static final double SHOULDER_ACCELERATION_DISTANCE = 1;
       public static final double ELBOW_ACCELERATION_DISTANCE = 1;
-      public static final double SHOULDER_ACCELERATION_TIME = MAX_SHOULDER_VELOCITY / MAX_SHOULDER_ACCELERATION;
       public static final double ELBOW_ACCELERATION_TIME = MAX_ELBOW_VELOCITY / MAX_ELBOW_ACCELERATION;
       public static final double MAX_ELBOW_VELOCITY_IN_RPM = .48;//Yes this is in RPM
       public static final double MAX_ELBOW_ACCELERATION_IN_RPM_PER_SEC = 10200.0;//watch out, this is in RPM per second
-      public static final double ELBOW_CLOSED_LOOP_ERROR = Units.degreesToRadians(1);
-      public static final double SHOULDER_CLOSED_LOOP_ERROR = Units.degreesToRadians(1);
+      public static final double ELBOW_CLOSED_LOOP_ERROR = Units.degreesToRadians(2);
+      public static final double WRIST_CLOSED_LOOP_ERROR = Units.inchesToMeters(2);
+      public static final Constraints ELBOW_PROFILED_PID_CONSTRAINTS = new Constraints(MAX_ELBOW_VELOCITY_IN_RPM, MAX_ELBOW_ACCELERATION_IN_RPM_PER_SEC);
     }
 
     public static class ClawConstants {
-      public static final double CLAW_MOTOR_INTAKE_SPEED = -0.9; 
-      public static final double CLAW_MOTOR_OUTTAKE_SPEED = 1.0; 
-      public static final double CLAW_MOTOR_HOLD_SPEED = -0.35;
+      public static final double CLAW_MOTOR_INTAKE_SPEED = 1.0; 
+      public static final double CLAW_MOTOR_OUTTAKE_SPEED = -1.0; 
+      public static final double CLAW_MOTOR_HOLD_SPEED = 0.35;
+
+      public static final double CLAW_OPEN_DELAY = 0.3;
+      public static final double CLAW_CLOSE_DELAY = 0.3;
     }
 
     public class CompressorConstants {
@@ -130,7 +137,7 @@ public final class Constants {
     }
   
     public static class HarvesterConstants {
-      public static final double HARVESTER_MOTOR_INTAKE_SPEED = -0.8; //TODO: set this to the right value
+      public static final double HARVESTER_MOTOR_INTAKE_SPEED = -0.7; //TODO: set this to the right value
       public static final double HARVESTER_MOTOR_OUTTAKE_SPEED = 0.7; //TODO: set this to the right value
       public static final double HARVESTER_MOTOR_CUBE_SPEED = -0.4; //TODO: set this to the right value
     }
@@ -158,15 +165,16 @@ public final class Constants {
       public static final double DRIVE_ENC_TO_METERS_FACTOR = Units.inchesToMeters(4.125)*Math.PI/7.13;//6.54;//7.13;//0.319186/7.13:1//the ratio from mechanical specs
       public static final double MINIMUM_DRIVE_SPEED = 0.2;// the slowest the wheels can turn, in m/s
       public static final double MINIMUM_DRIVE_DUTY_CYCLE = 0.05;// the slowest the wheels can turn, in duty cycle
-      public static final double MOTOR_MAXIMUM_VELOCITY =  4.233672;
+      public static final double MOTOR_MAXIMUM_VELOCITY = 4.233672;
       public static final double MAX_ROBOT_ROT_VELOCITY = MOTOR_MAXIMUM_VELOCITY/((FRONT_LEFT_POSITION.getNorm()+REAR_RIGHT_POSITION.getNorm())/2);
-      public static final double PATH_MAXIMUM_VELOCITY = 3.5;
-      public static final double MAXIMUM_ACCELERATION = 1.25;
+      public static final double PATH_MAXIMUM_VELOCITY = 4;
+      public static final double MAXIMUM_ACCELERATION = 2.25;
 
       /*Drive balance robot constants */
-      public static final double DRIVE_BALANCE_ROBOT_VELOCITY_TOLERANCE = 8;
-      public static final double DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE = 5;
-      public static final double DRIVE_BALANCE_ROBOT_MAX_SPEED = 0.2;
+      public static final double DRIVE_BALANCE_ROBOT_VELOCITY_TOLERANCE = 7;
+      public static final double DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE = 3;
+      public static final double DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE_AUTO = 13;
+      public static final double DRIVE_BALANCE_ROBOT_MAX_SPEED = 0.11;
 
       // public static final double MAX_ROBOT_ROT_VELOCITY = MAXIMUM_VELOCITY / DISTANCE_TO_MODULE_0;
       public static final double MAXIMUM_VOLTAGE = 12.0;
@@ -220,8 +228,10 @@ public final class Constants {
       // public static final double DRIVE_ROTATION_MIN_VELOCITY = 25;
 
       /* Driver Scaling Constants */
-      public static final double DRIVER_SPEED_SCALE_LINEAR = .75;//0.65 * 0.85;
-      public static final double DRIVER_SPEED_SCALE_ROTATIONAL = 1.2;
+      public static final double DRIVER_SPEED_SCALE_EXPONENTIAL = 2.0;
+      public static final double DRIVER_PERCENT_SPEED_SCALE_LINEAR = 1.0;
+      public static final double DRIVER_ROT_SPEED_SCALE_EXPONENTIAL = 3.0;
+      public static final double DRIVER_PERCENT_ROT_SPEED_SCALE_LINEAR = 1.0;
   }
   
   public class TargetConstants {
@@ -246,8 +256,6 @@ public final class Constants {
   public static final int FRONT_RIGHT_MOVE_MOTOR = 8;//drive module 3
   public static final int FRONT_RIGHT_ROTATE_MOTOR = 9;//drive module 3
 
-  public static final int SHOULDER_MOTOR_LEFT = 20;
-  public static final int SHOULDER_MOTOR_RIGHT = 21;
   public static final int ELBOW_MOTOR = 25;
 
   public static final int RECORD_PLAYER_MOTOR = 34;
@@ -257,6 +265,8 @@ public final class Constants {
   public static final int CLAW_MOTOR = 40;
 
   public static final int HARVESTER_MOTOR = 50;
+
+  public static final int WRIST_MOTOR = 55;
   
   /* Solenoids */
   public static final int ELBOW_BRAKE = 15;
@@ -267,13 +277,13 @@ public final class Constants {
   public static final int HARVESTER_SOLENOID_OUT = 10;
   public static final int HARVESTER_SOLENOID_IN = 12;
 
-  public static final int WRIST_SOLENOID_OUT = 9;
-  public static final int WRIST_SOLENOID_IN = 13;
-
   /* Digital Input Channels */
   public static final int HARVESTER_GAME_PIECE_SENSOR = 0;
   public static final int RECORD_CONE_POSITION_0 = 1;
   public static final int RECORD_CONE_POSITION_1 = 2;
   public static final int RECORD_IS_GAME_PIECE = 3;
   public static final int CLAW_GAMEPIECE_SENSOR = 4;
+  public static final int WRIST_ENCODER_0 = 5;
+  public static final int WRIST_ENCODER_1 = 6;
+  public static final int WRIST_LIMIT_SWITCH = 7;
 }

@@ -12,6 +12,7 @@ import frc.robot.subsystems.swervelib.ctre.SwerveRotationTalonSRX;
 import frc.robot.subsystems.swervelib.interfaces.SwerveAbsoluteSensor;
 import frc.robot.subsystems.swervelib.interfaces.SwerveMoveMotor;
 import frc.robot.subsystems.swervelib.interfaces.SwerveRotationMotor;
+import frc.robot.subsystems.swervelib.rev.SwerveMoveNEO;
 import frc.robot.subsystems.swervelib.rev.SwerveRotationNEO;
 
 /**
@@ -24,8 +25,8 @@ import frc.robot.subsystems.swervelib.rev.SwerveRotationNEO;
  * https://docs.google.com/presentation/d/1feVl0L5lgIKSZhKCheWgWhkOydIu-ibgdp7oqA0yqAQ/edit?usp=sharing
  */
 public class SwerveModule {
-    private SwerveMoveMotor driveMotor;
-    private SwerveRotationMotor rotationMotor;
+    private SwerveMoveNEO driveMotor;
+    private SwerveRotationNEO rotationMotor;
     private SwerveAbsoluteSensor absSensor;
     private double varOfRelToAbs;
 
@@ -34,28 +35,15 @@ public class SwerveModule {
     static final double TWO_PI = 2*Math.PI;
     static final Rotation2d ROTATE_BY_PI = Rotation2d.fromDegrees(180);
 
-    /**
-     * Creates a new SwerveModule object. 
-     * 
-     * @param driveMotor a SwerveDriveBase object, which
-     */
-    public SwerveModule(SwerveMoveMotor driveMotor, SwerveRotationMotor rotationMotor, SwerveAbsoluteSensor rotationAbsSensor) {
-        this.driveMotor = driveMotor;
-        this.rotationMotor = rotationMotor;
-        this.absSensor = rotationAbsSensor;
-
-    }
-
-    public SwerveModule(SwerveMoveMotor driveMotor, SwerveRotationNEO rotationNEO){
+    public SwerveModule(SwerveMoveNEO driveMotor, SwerveRotationNEO rotationNEO){
         this.driveMotor = driveMotor;
         this.rotationMotor = rotationNEO;
         this.absSensor = rotationNEO;
     }
 
-    public SwerveModule(SwerveMoveMotor driveMotor, SwerveRotationTalonSRX rotationTalonSRX){
-        this.driveMotor = driveMotor;
-        this.rotationMotor = rotationTalonSRX;
-        this.absSensor = rotationTalonSRX;
+    public void setPeriodicFramePeriods() {
+        driveMotor.setPeriodicFramePeriods();
+        rotationMotor.setPeriodicFramePeriods();
     }
 
     /**

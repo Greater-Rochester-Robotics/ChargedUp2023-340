@@ -12,15 +12,17 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.SwerveDriveConstants;
+import frc.robot.RobotContainer;
+import frc.robot.commands.HarvesterRecordRetract;
 import frc.robot.commands.arm.ArmToPosition;
-import frc.robot.commands.drive.DriveBalanceRobot;
-import frc.robot.commands.drive.auto.DriveFollowTrajectory;
+import frc.robot.commands.auto.util.AutoDriveFollowTrajectory;
+import frc.robot.commands.auto.util.AutoScoreCone;
+import frc.robot.commands.drive.DriveBalance;
 import frc.robot.commands.drive.util.DriveSetGyro;
 import frc.robot.commands.harvester.HarvesterIntake;
-import frc.robot.commands.harvester.HarvesterStopRetract;
+import frc.robot.subsystems.swervelib.ADIS16470_IMU.IMUAxis;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -32,13 +34,15 @@ public class AutoCone220PickupCone221ChargeBalance extends SequentialCommandGrou
 
     addCommands(
         new DriveSetGyro(0),
+        new DriveSetGyro(0, IMUAxis.kPitch),
+        new DriveSetGyro(0, IMUAxis.kRoll),
         new AutoScoreCone(ArmConstants.BACK_HIGH_CONE),
         Commands.race(
             new HarvesterIntake(false),
             Commands.parallel(
-            new ArmToPosition(ArmConstants.INTERNAL_PICK_UP),
+            new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE),
             Commands.sequence(
-                new DriveFollowTrajectory(path.get(0)),
+                new AutoDriveFollowTrajectory(path.get(0)),
                 new WaitCommand(0.5)
             ),
             Commands.sequence(
@@ -47,12 +51,12 @@ public class AutoCone220PickupCone221ChargeBalance extends SequentialCommandGrou
             )
             )
         ),
-        new DriveFollowTrajectory(path.get(1),false),
+        new AutoDriveFollowTrajectory(path.get(1),false),
         new WaitCommand(0.5),
-        new HarvesterStopRetract(false),
+        new HarvesterRecordRetract(false),
         new AutoScoreCone(ArmConstants.BACK_HIGH_CONE),
-        new DriveFollowTrajectory(path.get(2),false),
-        new DriveBalanceRobot()
+        new AutoDriveFollowTrajectory(path.get(2),false),
+        new DriveBalance()
     );
   }
 }

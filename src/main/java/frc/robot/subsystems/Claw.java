@@ -8,21 +8,15 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
-
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ClawConstants;
 
 public class Claw extends SubsystemBase {
@@ -73,7 +67,7 @@ public class Claw extends SubsystemBase {
    */
   public void close(){
     openClose.set(Value.kForward);
-    isClawOpen = openClose.get() == Value.kForward;
+    isClawOpen = false;
   }
 
   /**
@@ -81,11 +75,11 @@ public class Claw extends SubsystemBase {
    */
   public void open(){
     openClose.set(Value.kReverse);
-    isClawOpen = openClose.get() == Value.kForward;
+    isClawOpen = true;
   }
 
   public boolean isOpen(){
-    return openClose.get() == Value.kForward;
+    return isClawOpen;
   }
 
   /**
@@ -98,7 +92,7 @@ public class Claw extends SubsystemBase {
   /**
    * cause the intake motor to spit out
    */
-  public void outtake(){
+  public void spit(){
     clawMotor.set(TalonSRXControlMode.PercentOutput, ClawConstants.CLAW_MOTOR_OUTTAKE_SPEED);
   }
 
@@ -112,7 +106,7 @@ public class Claw extends SubsystemBase {
   /**
    * causes the claw motor to intake slowly to hold object
    */
-  public void hold() {
+  public void intakeSlow() {
     clawMotor.set(ControlMode.PercentOutput, ClawConstants.CLAW_MOTOR_HOLD_SPEED);
   }
 
