@@ -32,7 +32,7 @@ public class ClawWristRetract extends SequentialCommandGroup {
             new ConditionalCommand(
                 Commands.sequence(
                     new ClawStop(),
-                    new ConditionalCommand(new ClawClose(), new InstantCommand(), () -> isCone),
+                    new ConditionalCommand(new ClawClose(true), new InstantCommand(), () -> isCone),
                     new WaitCommand(0.3)
                 ),
                 new ClawIntakeSlow(),

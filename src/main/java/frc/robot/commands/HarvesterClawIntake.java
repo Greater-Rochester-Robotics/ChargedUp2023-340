@@ -32,7 +32,7 @@ public class HarvesterClawIntake extends SequentialCommandGroup {
 
             // If picking up a cone, close the claw to utilize the flanges to knock over upright cones in the record player.
             new ConditionalCommand(
-                new ClawClose(),
+                new ClawClose(true),
                 new InstantCommand(),
                 () -> isCone
             ),
