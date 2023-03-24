@@ -29,7 +29,7 @@ public class ArmTest {
     //  pass in the angles that match our design and make sure this is consistent with the rest of the arm code.
 
     // Set-Up
-    ArmPosition armPosition = new ArmPosition(Math.PI, false);
+    ArmPosition armPosition = new ArmPosition(Math.PI, 0.0);
     double expectedX = 0;
     double expectedY = Units.inchesToMeters(9);
 
@@ -79,7 +79,7 @@ public class ArmTest {
   @Disabled
   void testGetEndPositionStraightDownWristOut(){
     // Set-Up
-    ArmPosition armPosition = new ArmPosition(Math.PI, true);
+    ArmPosition armPosition = new ArmPosition(Math.PI, 0.0);
     //TODO: put correct coords
     double expectedX = 0;
     double expectedY = Units.inchesToMeters(9);

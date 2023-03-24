@@ -35,13 +35,21 @@ public final class Constants {
     public static final int NETWORK_TABLES_CYCLE = 20;
     
     public static class ArmConstants{
+        
+        public static final double WRIST_ENCODER_DISTANCE_PER_PULSE = 1.0;
+
       /* Arm PID Constants */
       public static final double ELBOW_P = 1.0;
       public static final double ELBOW_I = 0.0;
       public static final double ELBOW_D = 2.0;
       public static final double ELBOW_F = 0.0;
-      public static final double KG_WRIST_OUT = 0.30; // The force required to counter gravity i.e prevent the arm from dropping
-      public static final double KG_WRIST_IN = 0.3;
+
+      public static final double WRIST_P = 0.0;
+      public static final double WRIST_I = 0.0;
+      public static final double WRIST_D = 0.0;
+
+      public static final double KG = 0.30;
+
       public static final double MAX_ELBOW_PID_OUT = .35;//if this changes it won't hit targets
 
       /*Scoring constants */
@@ -73,7 +81,7 @@ public final class Constants {
       public static final double SHOULDER_FIXED_ANGLE = Math.toRadians(38); //TODO: put correct angle
       public static final double SHOULDER_TO_ELBOW_DISTANCE = Units.inchesToMeters(38);
       public static final double ELBOW_TO_CLAW_DISTANCE = Units.inchesToMeters(29);
-      public static final double WRIST_EXTENSION_LENGTH = Units.inchesToMeters(10);
+      public static final double WRIST_MAX_EXTENSION_LENGTH = Units.inchesToMeters(10);
       public static final double ARM_TO_HARVESTER_MIN_DISTANCE = Units.inchesToMeters(15);
       public static final double ARM_TO_HARVESTER_MAX_DISTANCE = Units.inchesToMeters(15);
       public static final double MAX_HEIGHT = 50;
@@ -91,6 +99,8 @@ public final class Constants {
       /* Wrist Timeout points */
       public static final double WRIST_EXTENSION_DELAY = .4;
       public static final double WRIST_RETRACTION_DELAY = .4;
+      public static final double WRIST_EXTENSION_SPEED = 0.5;
+      public static final double WRIST_HOMING_SPEED = 0.25;
 
       /*Acceleration and max velocities for the arm */
       public static final double MAX_ELBOW_VELOCITY = 1;
@@ -100,6 +110,7 @@ public final class Constants {
       public static final double MAX_ELBOW_VELOCITY_IN_RPM = .48;//Yes this is in RPM
       public static final double MAX_ELBOW_ACCELERATION_IN_RPM_PER_SEC = 10200.0;//watch out, this is in RPM per second
       public static final double ELBOW_CLOSED_LOOP_ERROR = Units.degreesToRadians(2);
+      public static final double WRIST_CLOSED_LOOP_ERROR = Units.inchesToMeters(2);
     }
 
     public static class ClawConstants {
@@ -244,6 +255,8 @@ public final class Constants {
   public static final int CLAW_MOTOR = 40;
 
   public static final int HARVESTER_MOTOR = 50;
+
+  public static final int WRIST_MOTOR = 55;
   
   /* Solenoids */
   public static final int ELBOW_BRAKE = 15;
@@ -254,13 +267,13 @@ public final class Constants {
   public static final int HARVESTER_SOLENOID_OUT = 10;
   public static final int HARVESTER_SOLENOID_IN = 12;
 
-  public static final int WRIST_SOLENOID_OUT = 9;
-  public static final int WRIST_SOLENOID_IN = 13;
-
   /* Digital Input Channels */
   public static final int HARVESTER_GAME_PIECE_SENSOR = 0;
   public static final int RECORD_CONE_POSITION_0 = 1;
   public static final int RECORD_CONE_POSITION_1 = 2;
   public static final int RECORD_IS_GAME_PIECE = 3;
   public static final int CLAW_GAMEPIECE_SENSOR = 4;
+  public static final int WRIST_ENCODER_0 = 5;
+  public static final int WRIST_ENCODER_1 = 6;
+  public static final int WRIST_LIMIT = 7;
 }

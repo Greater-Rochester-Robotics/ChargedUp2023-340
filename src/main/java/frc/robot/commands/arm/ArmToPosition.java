@@ -32,8 +32,9 @@ public class ArmToPosition extends SequentialCommandGroup {
             // Print the target position.
             new PrintCommand("ArmToPosition: Begin moving to position: " + Math.abs(Units.radiansToDegrees(armPosition.getElbowPosition()))),
 
+            // TODO: Fix
             // Retract the wrist if it is extended.
-            new ConditionalCommand(new ArmWristRetract(true), new InstantCommand(), RobotContainer.arm::isWristExtended),
+            // new ConditionalCommand(new ArmWristToPosition(0.0), new InstantCommand(), RobotContainer.arm::isWristExtended),
             new PrintCommand("ArmToPosition: Wrist is now retracted"),
 
             // Check if the arm is moving around the harvester.
@@ -62,12 +63,13 @@ public class ArmToPosition extends SequentialCommandGroup {
             // Move the elbow to its final position.
             new ArmElbowToPosition(armPosition.getElbowPosition()).withTimeout(4),
 
+            // TODO: Fix
             // If the wrist should be extended, extend the wrist while moving the shoulder 5 degrees.
-            new ConditionalCommand(
-                new ArmWristExtend(false),
-                new InstantCommand(),
-                armPosition::getWristPosition
-            ),
+            // new ConditionalCommand(
+            //     new ArmWristExtend(false),
+            //     new InstantCommand(),
+            //     armPosition::getWristPosition
+            // ),
 
             // Print that the arm has been moved.
             new PrintCommand("ArmToPosition: Finished moving to position: " + Math.abs(Units.radiansToDegrees(armPosition.getElbowPosition())))

@@ -23,7 +23,7 @@ public class AutoScoreCone extends SequentialCommandGroup {
             new ArmToPosition(armPosition),
 
             // Wait for the arm to become stable.
-            new WaitCommand(armPosition.getWristPosition() ? 1.5 : 0.5),
+            // new WaitCommand(armPosition.getWristPosition() ? 1.5 : 0.5),
 
             // Open the claw to score the cone.
             new ClawOpen(),

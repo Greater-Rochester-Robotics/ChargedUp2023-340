@@ -81,11 +81,20 @@ public class ArmPosition {
     }
 
     public static ArmPosition inverseKinematics (double x, double z) {
-        double elbowAngle = Math.atan2(z,x);
-        double distance = Math.hypot(x,z);
-        return new ArmPosition(elbowAngle, distance - ArmConstants.ELBOW_TO_CLAW_DISTANCE);
+        double shoulderToElbow = ArmConstants.SHOULDER_TO_ELBOW_DISTANCE;
+        double elbowToEnd = ArmConstants.ELBOW_TO_CLAW_DISTANCE;
+        double shoulderToEnd = Math.sqrt(x
+            * x
+            + z
+                * z); // Gets the distance between the shoulder joint of the arm and the end point
+        boolean isExtended = false;
+        if (shoulderToEnd > shoulderToElbow
+            + elbowToEnd) {
+            elbowToEnd += ArmConstants.WRIST_MAX_EXTENSION_LENGTH;
+            isExtended = true;
+        }
+        return new ArmPosition();
     }
-
     public ArmPosition interpolateArmPosition (ArmPosition nextPosition, double time) {
         return interpolateArmPosition(this, nextPosition, time);
     }

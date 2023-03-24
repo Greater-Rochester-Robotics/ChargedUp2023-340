@@ -4,8 +4,10 @@
 
 package frc.robot.subsystems;
 
-
-import edu.wpi.first.wpilibj.Timer;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
@@ -14,11 +16,15 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.SparkMaxPIDController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalSource;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -60,9 +66,20 @@ public class Arm extends SubsystemBase {
     private Solenoid elbowBrake;
 
     /**
-     * The wrist solenoid.
+     * The wrist's PID controller.
      */
-    private DoubleSolenoid wrist;
+    private PIDController wristPID;
+    /**
+     * The wrist motor.
+     */
+    private TalonSRX wrist;
+    /**
+     * The wrist's PID controller.
+     */
+    private Encoder wristEncoder;
+    private DigitalInput wristLimit;
+
+    private boolean wristHasBeenZeroed;
 
     /**
      * The network table instance used by the arm subsystem.
@@ -115,12 +132,28 @@ public class Arm extends SubsystemBase {
         elbowPID.setFF(ArmConstants.ELBOW_F);
 
         // Setup the wrist.
-        wrist = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.WRIST_SOLENOID_OUT, Constants.WRIST_SOLENOID_IN);
-        retractWrist();
+        wristEncoder = new Encoder(Constants.WRIST_ENCODER_0, Constants.WRIST_ENCODER_1);
+        wristEncoder.setDistancePerPulse(ArmConstants.WRIST_ENCODER_DISTANCE_PER_PULSE);
+
+        wrist = new TalonSRX(Constants.WRIST_MOTOR);
+        wrist.configAllSettings(new TalonSRXConfiguration());
+        wrist.enableVoltageCompensation(true);
+        wrist.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20);
+        wrist.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 251);
+        wrist.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 254);
+        wrist.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, 241);
+        wrist.setStatusFramePeriod(StatusFrameEnhanced.Status_6_Misc, 237);
+        wrist.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus, 221);
+        wrist.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 211);
+
+        wristPID = new PIDController(ArmConstants.WRIST_P ,ArmConstants.WRIST_I ,ArmConstants.WRIST_D);
+
+        wristLimit = new DigitalInput(Constants.WRIST_LIMIT);
+        wristHasBeenZeroed = false;
 
         // Start the elbow at 0 speed.
         elbow.set(0);
-
+        wrist.set(TalonSRXControlMode.PercentOutput, 0);
     }
 
     @Override
@@ -137,7 +170,7 @@ public class Arm extends SubsystemBase {
         // Publish values to network tables.
         if (RobotContainer.shouldPublishToNet()) {
             netTable.getEntry("elbow").setDouble(Math.round(elbowPos * 10) / 10);
-            netTable.getEntry("wrist").setBoolean(this.isWristExtended());
+            // netTable.getEntry("wrist").setBoolean(this.isWristExtended());
 
             SmartDashboard.putNumber("Absolute encoder elbow", Math.round(Math.toDegrees(elbowPos) * 10) * 0.1);
         }
@@ -181,7 +214,7 @@ public class Arm extends SubsystemBase {
         }
 
         // Counter for gravity.
-        double gravityCounterConstant = isWristExtended() ? ArmConstants.KG_WRIST_OUT : ArmConstants.KG_WRIST_IN;
+        double gravityCounterConstant = ArmConstants.KG;
 
         // Set the target angle in the PID controller.
         elbowPID.setReference(targetAngle + Math.PI, ControlType.kPosition, 0, gravityCounterConstant * Math.sin(getElbowPosition() - ArmConstants.SHOULDER_FIXED_ANGLE));
@@ -196,26 +229,69 @@ public class Arm extends SubsystemBase {
         elbowBrake.set(false);
     }
 
+    /* Wrist Methods */
+
     /**
-     * Checks if the wrist is extended.
-     * @return true if the wrist is extended, false otherwise.
+     * Gets the elbow's position in meters.
+     * @return The elbow's position in meters.
      */
-    public boolean isWristExtended () {
-        return wrist.get() == Value.kForward;
+    public double getWristPosition() {
+        return wristEncoder.getDistance();
     }
 
     /**
-     * Extends the wrist.
+     * Drives the wrist via duty cycle.
+     * @param speed The speed to set the motor to, should be a value between -1.0 and 1.0.
      */
-    public void extendWrist () {
-        wrist.set(Value.kForward);
+    public void setWristDutyCycle(double speed) {
+        if(speed < 0 && wristLimit.get()) {
+            System.out.println("CANNOT SET WRIST MOTOR TO NEGATIVE SPEED, AT LOWER LIMIT");
+            zeroWrist();
+            speed = 0;
+        }
+        if(speed > 0 && getWristPosition() >= ArmConstants.WRIST_MAX_EXTENSION_LENGTH) {
+            System.out.println("CANNOT SET WRIST MOTOR TO POSITIVE SPEED, AT UPPER LIMIT");
+            speed = 0;
+        }
+        wrist.set(TalonSRXControlMode.PercentOutput, speed);
     }
 
     /**
-     * Retracts the wrist.
+     * Stops the wrist motor.
      */
-    public void retractWrist () {
-        wrist.set(Value.kReverse);
+    public void stopWristMotor() {
+        setWristDutyCycle(0.0);
+    }
+
+    /**
+     * Sets the elbow's position.
+     * @param target The target in meters.
+     */
+    public void setWristPosition(double target) {
+        if(target < 0 || target > ArmConstants.WRIST_MAX_EXTENSION_LENGTH) {
+            System.out.println("CANNOT SET WRIST TO POSITION: " + target + ", OUT OF RANGE");
+            stopWristMotor();
+            return;
+        }
+        if(!wristHasBeenZeroed) {
+            System.out.println("CANNOT SET WRIST TO POSITION, HAS NOT BEEN ZEROED");
+            stopWristMotor();
+            return;
+        }
+        wristPID.calculate(getWristPosition(), target);
+    }
+
+    public void zeroWrist() {
+        wristEncoder.reset();
+        wristHasBeenZeroed = true;
+    }
+
+    public boolean hasWristBeenZeroed() {
+        return wristHasBeenZeroed;
+    }
+
+    public boolean getWristLimit() {
+        return wristLimit.get();
     }
 
     /**
@@ -225,7 +301,7 @@ public class Arm extends SubsystemBase {
     public ArmPosition getArmPosition () {
         return new ArmPosition(
             getElbowPosition(),
-            wrist.get().equals(Value.kForward)
+            getWristPosition()
         );
     }
 }

@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.arm.ArmWristRetract;
+import frc.robot.commands.arm.ArmWristToPosition;
 import frc.robot.commands.claw.ClawClose;
 import frc.robot.commands.claw.ClawIntakeSlow;
 import frc.robot.commands.claw.ClawStop;
@@ -39,7 +39,7 @@ public class ClawWristRetract extends SequentialCommandGroup {
                 () -> isCone
             ),
             // Retract the wrist.
-            new ArmWristRetract(true)
+            new ArmWristToPosition(0.0)
         );
     }
 }
