@@ -173,7 +173,8 @@ public class Arm extends SubsystemBase {
             SmartDashboard.putNumber("Absolute encoder elbow", Math.round(Math.toDegrees(elbowPos) * 10) * 0.1);
             SmartDashboard.putNumber("Wrist position", Math.round(Math.toDegrees(wristPos) * 10) * 0.1);
             SmartDashboard.putBoolean("Wrist has been zeroed", getWristBeenZeroed());
-            SmartDashboard.putBoolean("Wrist limit", getWristInnerLimitSwitch());
+            SmartDashboard.putBoolean("Wrist limit inner", getWristInnerLimitSwitch());
+            SmartDashboard.putBoolean("Wrist limit outer", getWristOuterLimitSwitch());
         }
 
     }
@@ -221,9 +222,9 @@ public class Arm extends SubsystemBase {
 
         // Set the target angle in the PID controller.
         if (ArmConstants.ELBOW_USE_PROFILED_PID) {
-            elbow.set(elbowProfiledPID.calculate(getElbowPosition(), targetAngle) + gravityCounterConstant * Math.sin(getElbowPosition() - ArmConstants.SHOULDER_FIXED_ANGLE));
+            elbow.set(elbowProfiledPID.calculate(getElbowPosition(), targetAngle) + gravityCounterConstant * Math.sin(getElbowPosition()));
         } else {
-            elbowPID.setReference(targetAngle + Math.PI, ControlType.kPosition, 0, gravityCounterConstant * Math.sin(getElbowPosition() - ArmConstants.SHOULDER_FIXED_ANGLE));
+            elbowPID.setReference(targetAngle + Math.PI, ControlType.kPosition, 0, gravityCounterConstant * Math.sin(getElbowPosition()));
         }
 
         elbowBrake.set(true);
@@ -273,7 +274,7 @@ public class Arm extends SubsystemBase {
     /**
      * Zeros the wrist.
      */
-    public void setWristZero () {
+    public void zeroWrist () {
         wristEncoder.reset();
         wristHasBeenZeroed = true;
     }
@@ -285,7 +286,7 @@ public class Arm extends SubsystemBase {
     public void setWristDutyCycle (double speed) {
         if(speed < 0 && getWristInnerLimitSwitch()) {
             System.out.println("Cannot set wrist motor speed: At lower limit");
-            setWristZero();
+            zeroWrist();
             speed = 0;
         }
         if(speed > 0 && getWristOuterLimitSwitch()) {

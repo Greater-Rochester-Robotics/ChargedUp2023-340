@@ -36,7 +36,7 @@ public class ArmWristHome extends CommandBase {
     @Override
     public void end (boolean interrupted) {
         RobotContainer.arm.stopWristMotor();
-        RobotContainer.arm.setWristZero();
+        RobotContainer.arm.zeroWrist();
     }
 
     // Returns true when the command should end.
