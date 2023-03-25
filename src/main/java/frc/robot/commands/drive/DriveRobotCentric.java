@@ -44,8 +44,14 @@ public class DriveRobotCentric extends CommandBase {
     @Override
     public void execute () {
         RobotContainer.setDriverRumble(0.25, 0.25);
-        double forwardSpeed = Robot.robotContainer.getDriverForward(isVeloMode);
-        double strafeSpeed = Robot.robotContainer.getDriverLateral(isVeloMode);
+        double forwardSpeed = Robot.robotContainer.getDriverForwardFull(isVeloMode);
+        double strafeSpeed = Robot.robotContainer.getDriverLateralFull(isVeloMode);
+        //check if secondary sticks are being used
+        if(Robot.robotContainer.getDriverButton(9)){
+          //if secondary sticks used, replace with secondary sticks witha slow factor
+          forwardSpeed *= 0.5;
+          strafeSpeed *= 0.5;
+        }
         double rotSpeed = Robot.robotContainer.getDriverRotation(isVeloMode);
 
         RobotContainer.swerveDrive.driveRobotCentric(

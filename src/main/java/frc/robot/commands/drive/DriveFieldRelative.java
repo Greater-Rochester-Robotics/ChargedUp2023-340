@@ -65,8 +65,14 @@ public class DriveFieldRelative extends CommandBase {
     @Override
     public void execute () {
         // Fetch the driver's current analog inputs.
-        double awaySpeed = Robot.robotContainer.getDriverForward(isVeloMode);
-        double lateralSpeed = Robot.robotContainer.getDriverLateral(isVeloMode);
+        double awaySpeed = Robot.robotContainer.getDriverForwardFull(isVeloMode);
+        double lateralSpeed = Robot.robotContainer.getDriverLateralFull(isVeloMode);
+        //check if secondary sticks are being used
+        if(Robot.robotContainer.getDriverButton(9)){
+            //if secondary sticks used, replace with secondary sticks with a slow factor
+            awaySpeed *= 0.5;
+            lateralSpeed *= 0.5;
+        }
         double rotSpeed = Robot.robotContainer.getDriverRotation(isVeloMode);
 
         // Use the DPad to turn to specific angles.

@@ -79,8 +79,8 @@ public class RobotContainer {
     static final Trigger driverY = new JoystickButton(driver, 4);
     static final Trigger driverBack = new JoystickButton(driver, 7);
     static final Trigger driverStart = new JoystickButton(driver, 8);
-    // static final Trigger driverDUp = new POVButton(driver, 0); Used for facing the robot away from the driver station
-    // static final Trigger driverDDown = new POVButton(driver, 180); Used for facing the robot towards the driver station
+    // static final Trigger driverDUp = new POVButton(driver, 0); //Used for facing the robot away from the driver station
+    // static final Trigger driverDDown = new POVButton(driver, 180); //Used for facing the robot towards the driver station
     static final Trigger driverDLeft = new POVButton(driver, 270);
     static final Trigger driverDRight = new POVButton(driver, 90);
     static final Trigger driverLB = new JoystickButton(driver, 5);
@@ -321,6 +321,16 @@ public class RobotContainer {
     }
 
     /**
+     * accessor to get the true/false of the buttonNum 
+     * on the driver control
+     * @param buttonNum
+     * @return the value of the button
+     */
+    public boolean getDriverButton(int buttonNum) {
+        return driver.getRawButton(buttonNum);
+    }
+
+    /**
      * Gets the driver's DPad position.
      * 
      *   +--------------+-------------+
@@ -354,7 +364,7 @@ public class RobotContainer {
      * @param isVeloMode If velocity mode is being used.
      * @return The percent output if velocity mode is not being used, otherwise the velocity. 
      */
-    public double getDriverForward (boolean isVeloMode) {
+    public double getDriverForwardFull (boolean isVeloMode) {
         double raw = this.getDriverAxis(Axis.kLeftY);
         return -Math.copySign(Math.pow(raw, Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_EXPONENTIAL), raw) * (isVeloMode ? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : Constants.SwerveDriveConstants.DRIVER_PERCENT_SPEED_SCALE_LINEAR);
     }
@@ -364,9 +374,19 @@ public class RobotContainer {
      * @param isVeloMode If velocity mode is being used.
      * @return The percent output if velocity mode is not being used, otherwise the velocity. 
      */
-    public double getDriverLateral (boolean isVeloMode) {
+    public double getDriverLateralFull (boolean isVeloMode) {
         double raw = this.getDriverAxis(Axis.kLeftX);
         return -Math.copySign(Math.pow(raw, Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_EXPONENTIAL), raw) * (isVeloMode ? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : Constants.SwerveDriveConstants.DRIVER_PERCENT_SPEED_SCALE_LINEAR);
+    }
+
+    public double getRobotLateralFull(boolean isVeloMode) {
+        return this.getDriverAxis(Axis.kLeftX)*-Constants.SwerveDriveConstants.DRIVER_PERCENT_SPEED_SCALE_LINEAR
+            * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
+    }
+
+    public double getRobotLateralSlow(boolean isVeloMode) {
+        return this.getDriverAxis(Axis.kRightX)*0.5*-Constants.SwerveDriveConstants.DRIVER_PERCENT_SPEED_SCALE_LINEAR 
+        * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
     }
 
     /**

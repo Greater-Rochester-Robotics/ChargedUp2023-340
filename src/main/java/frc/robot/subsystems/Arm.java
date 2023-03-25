@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -37,11 +38,13 @@ public class Arm extends SubsystemBase {
     /**
      * The elbow motor.
      */
-    private CANSparkMax elbow;
+    private CANSparkMax elbowMotor;
     /**
      * The elbow's absolute encoder.
      */
-    private AbsoluteEncoder elbowEncoder;
+    private AbsoluteEncoder elbowAbsoluteEncoder;
+
+    private SparkMaxPIDController elbowController;
     /**
      * The elbow's profiled PID controller.
      */
@@ -54,7 +57,7 @@ public class Arm extends SubsystemBase {
     /**
      * The wrist motor.
      */
-    private TalonSRX wrist;
+    private TalonSRX wristMotor;
     /**
      * The wrist's encoder.
      */
@@ -91,56 +94,65 @@ public class Arm extends SubsystemBase {
     public Arm () {
 
         // Setup the elbow.
-        elbow = new CANSparkMax(Constants.ELBOW_MOTOR, MotorType.kBrushless);
-        elbowEncoder = elbow.getAbsoluteEncoder(Type.kDutyCycle);
+        elbowMotor = new CANSparkMax(Constants.ELBOW_MOTOR, MotorType.kBrushless);
+        elbowAbsoluteEncoder = elbowMotor.getAbsoluteEncoder(Type.kDutyCycle);
         elbowPID = new ProfiledPIDController(ArmConstants.ELBOW_P, ArmConstants.ELBOW_I, ArmConstants.ELBOW_D, ArmConstants.ELBOW_PROFILED_PID_CONSTRAINTS);
         elbowBrake = new Solenoid(PneumaticsModuleType.REVPH, Constants.ELBOW_BRAKE);
 
         // Elbow motor settings.
-        elbow.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
-        elbow.setInverted(true);
-        elbow.setIdleMode(IdleMode.kBrake);
-        elbow.setClosedLoopRampRate(1);
+        elbowMotor.enableVoltageCompensation(Constants.MAXIMUM_VOLTAGE);
+        elbowMotor.setInverted(true);
+        elbowMotor.setIdleMode(IdleMode.kBrake);
+        elbowMotor.setClosedLoopRampRate(1);
 
         // Elbow frame settings.
-        elbow.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
-        elbow.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-        elbow.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
-        elbow.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 59467);
-        elbow.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 59453);
-        elbow.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 6);
-        elbow.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
+        elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
+        elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
+        elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
+        elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 59467);
+        elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 59453);
+        elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 6);
+        elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 10);
+
 
         // Elbow encoder settings.
-        elbowEncoder.setPositionConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONVERSION_FACTOR);
-        elbowEncoder.setVelocityConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONVERSION_FACTOR / 60);
-        elbowEncoder.setInverted(true);
-        elbowEncoder.setZeroOffset(5.8760048535897932384626433832795);
+        elbowAbsoluteEncoder.setPositionConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONVERSION_FACTOR);
+        elbowAbsoluteEncoder.setVelocityConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONVERSION_FACTOR / 60);
+        elbowAbsoluteEncoder.setInverted(true);
+        elbowAbsoluteEncoder.setZeroOffset(5.8760048535897932384626433832795);
+
+        elbowController = elbowMotor.getPIDController();
+        elbowController.setFeedbackDevice(elbowAbsoluteEncoder);
+        elbowController.setP(ArmConstants.ELBOW_P);
+        elbowController.setI(ArmConstants.ELBOW_I);
+        elbowController.setD(ArmConstants.ELBOW_D);
+        elbowController.setFF(ArmConstants.ELBOW_F);
+        elbowController.setPositionPIDWrappingEnabled(false);
 
         // Setup the wrist.
-        wrist = new TalonSRX(Constants.WRIST_MOTOR);
+        wristMotor = new TalonSRX(Constants.WRIST_MOTOR);
         wristPID = new ProfiledPIDController(ArmConstants.WRIST_P, ArmConstants.WRIST_I, ArmConstants.WRIST_D, ArmConstants.WRIST_PROFILED_PID_CONSTRAINTS);
         wristEncoder = new Encoder(Constants.WRIST_ENCODER_0, Constants.WRIST_ENCODER_1);
         wristInnerLimitSwitch = new DigitalInput(Constants.WRIST_INNER_LIMIT_SWITCH);
         wristOuterLimitSwitch = new DigitalInput(Constants.WRIST_OUTER_LIMIT_SWITCH);
-        
+        wristMotor.setNeutralMode(NeutralMode.Brake);
+        wristMotor.configVoltageCompSaturation(Constants.MAXIMUM_VOLTAGE);
         // Wrist motor settings.
-        wrist.configAllSettings(new TalonSRXConfiguration());
-        wrist.enableVoltageCompensation(true);
-        wrist.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20);
-        wrist.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 251);
-        wrist.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 254);
-        wrist.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, 241);
-        wrist.setStatusFramePeriod(StatusFrameEnhanced.Status_6_Misc, 237);
-        wrist.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus, 221);
-        wrist.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 211);
+        wristMotor.enableVoltageCompensation(true);
+        wristMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20);
+        wristMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 251);
+        wristMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 254);
+        wristMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, 241);
+        wristMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_6_Misc, 237);
+        wristMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus, 221);
+        wristMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 211);
         
         // Wrist encoder settings.
         wristEncoder.setDistancePerPulse(ArmConstants.WRIST_ENCODER_DISTANCE_PER_PULSE);
 
         // Start the elbow and wrist at 0 speed.
-        elbow.set(0);
-        wrist.set(TalonSRXControlMode.PercentOutput, 0);
+        elbowMotor.set(0);
+        wristMotor.set(TalonSRXControlMode.PercentOutput, 0);
     }
 
     @Override
@@ -163,12 +175,14 @@ public class Arm extends SubsystemBase {
 
     }
 
+    // -------------------------- Elbow Motor Methods -------------------------- //
+
     /**
      * Gets the elbow's position in radians.
      * @return The elbow's position in radians.
      */
     public double getElbowPosition () {
-        return elbowEncoder.getPosition() - Math.PI;
+        return elbowAbsoluteEncoder.getPosition() - Math.PI;
     }
 
     /**
@@ -177,7 +191,7 @@ public class Arm extends SubsystemBase {
      * @unused
      */
     public double getElbowVelocity () {
-        return elbowEncoder.getVelocity();
+        return elbowAbsoluteEncoder.getVelocity();
     }
 
     /**
@@ -185,7 +199,7 @@ public class Arm extends SubsystemBase {
      * @param speed The speed to set the motor to, should be a value between -1.0 and 1.0.
      */
     public void setElbowDutyCycle (double speed) {
-        elbow.set(speed);
+        elbowMotor.set(speed);
         elbowBrake.set(true);
     }
 
@@ -205,7 +219,8 @@ public class Arm extends SubsystemBase {
         double gravityCounterConstant = ArmConstants.KG;
 
         // Set the target angle in the PID controller.
-        elbow.set(elbowPID.calculate(getElbowPosition(), targetAngle) + gravityCounterConstant * Math.sin(getElbowPosition()));
+        // elbowMotor.set(elbowPID.calculate(getElbowPosition(), targetAngle) + gravityCounterConstant * Math.sin(getElbowPosition()));
+        elbowController.setReference(targetAngle, ControlType.kPosition, 0, ArmConstants.KG* Math.sin(getElbowPosition()));
 
         elbowBrake.set(true);
 
@@ -215,9 +230,11 @@ public class Arm extends SubsystemBase {
      * Stops the elbow and re-engages the brake.
      */
     public void stopElbow () {
-        elbow.set(0);
+        elbowMotor.set(0);
         elbowBrake.set(false);
     }
+
+    // -------------------------- Wrist Piston Methods -------------------------- //
 
     /**
      * Gets the wrist's position in meters.
@@ -273,7 +290,7 @@ public class Arm extends SubsystemBase {
             System.out.println("Cannot set wrist motor speed: At upper limit");
             speed = 0;
         }
-        wrist.set(TalonSRXControlMode.Current, speed);
+        wristMotor.set(TalonSRXControlMode.Current, speed);
     }
 
     /**
