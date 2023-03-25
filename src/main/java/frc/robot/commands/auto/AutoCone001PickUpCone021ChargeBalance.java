@@ -59,7 +59,7 @@ public class AutoCone001PickUpCone021ChargeBalance extends SequentialCommandGrou
                 new HarvesterClawIntake(true)
             )
 
-            // Wait for cone to be intook (Wait to see cone then wait to not see anymore)
+            // Wait for cone to be intaken (Wait to see cone then wait to not see anymore)
             // Commands.sequence(
             //     new WaitUntilCommand(RobotContainer.harvester::hasGamePiece).withTimeout(1.5),
             //     new WaitUntilCommand(() -> (!RobotContainer.harvester.hasGamePiece())).withTimeout(0.5)

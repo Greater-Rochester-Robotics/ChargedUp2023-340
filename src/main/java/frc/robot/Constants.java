@@ -27,7 +27,7 @@ public final class Constants {
     public static final Rotation2d ROTATE_BY_PI = Rotation2d.fromDegrees(180);//I only make this once
 
     /*Robot dimensions */
-    //TODO: set ALL of the robots dimensions none are accurate
+    //TODO: set ALL of the robots dimensions; none are accurate
     public static final double ROBOT_WIDTH = 30.0;
     public static final double ROBOT_LENGTH = 30.0;
     public static final double ROBOT_BASE_HEIGHT = 5;
@@ -86,7 +86,7 @@ public final class Constants {
       public static final double MAX_ELBOW_ANGLE = Math.toRadians(165);
 
       /*arm dimensions */
-      public static final double SHOULDER_FIXED_ANGLE = Math.toRadians(38); //TODO: put correct angle
+      public static final double SHOULDER_FIXED_ANGLE = Math.toRadians(-8);
       public static final double SHOULDER_TO_ELBOW_DISTANCE = Units.inchesToMeters(38);
       public static final double ELBOW_TO_CLAW_DISTANCE = Units.inchesToMeters(29);
       public static final double WRIST_MAX_EXTENSION_LENGTH = Units.inchesToMeters(10);
