@@ -10,7 +10,7 @@ import { TextSprite } from '/lib/TextSprite.js';
 
 let lastShoulderPosition = 0;
 let lastElbowPosition = 0;
-let lastWristAlpha = 0;
+let lastWristValue = 0;
 let lastClawAlpha = 0;
 let lastHarvesterAlpha = 0;
 let debugRobotModelPoseCount = 0;
@@ -93,7 +93,7 @@ const harvesterLateralHelper = new THREE.Object3D();
 const robotPoseData = {
     shoulder: { value: 0, since: Date.now(), startingValue: 0 },
     elbow: { value: 0, since: Date.now(), startingValue: 0 },
-    wrist: { state: false, since: Date.now(), startingAlpha: 0 },
+    wrist: { value: 0, since: Date.now(), startingValue: 0 },
     claw: { state: false, since: Date.now(), startingAlpha: 0 },
     recordPlayer: 0,
     harvester: { state: false, since: Date.now(), startingAlpha: 0 }
@@ -112,6 +112,9 @@ robotModels.driveBase.material.uniforms.thickness.value = 0.3;
 robotModels.driveBase.position.set(0, -1.6, 0);
 robotModels.driveBase.rotation.set(0.3,  0.6, Math.PI);
 robotModels.driveBase.geometry.scale(1.2, 1.2, 1.2);
+
+setShoulder(-0.13);
+
 scene.add(robotModels.driveBase);
 
 const voltageText = new TextSprite(`0.0V`, 0.45, `#ffffff`);
@@ -196,13 +199,6 @@ NetworkTables.addKeyListener(`/dashboard/target/scoring`, (_, value) => {
     }
 }, false);
 
-// Double: radians
-NetworkTables.addKeyListener(`/dashboard/robotmodel/shoulder`, (_, value) => {
-    if (typeof value === `number`) {
-        robotPoseData.shoulder = { value, since: Date.now(), startingValue: lastShoulderPosition };
-    }
-}, true);
-
 let last = Date.now();
 // Double: radians
 NetworkTables.addKeyListener(`/dashboard/robotmodel/elbow`, (_, value) => {
@@ -212,10 +208,10 @@ NetworkTables.addKeyListener(`/dashboard/robotmodel/elbow`, (_, value) => {
     last = Date.now();
 }, true);
 
-// Boolean: extended
+// Number: length in meters
 NetworkTables.addKeyListener(`/dashboard/robotmodel/wrist`, (_, value) => {
-    if (typeof value === `boolean`) {
-        robotPoseData.wrist = { state: value, since: Date.now(), startingAlpha: lastWristAlpha };
+    if (typeof value === `number`) {
+        robotPoseData.wrist = { value, since: Date.now(), startingValue: lastWristValue };
     }
 });
 
@@ -357,16 +353,14 @@ function animate() {
 
     if (DEBUG_ROBOT_MODEL_POSE) {
         debugRobotModelPoseCount++;
-        setShoulder(Math.sin(debugRobotModelPoseCount / 50) * Math.PI / 8);
         setElbow(-1.1 + Math.sin(debugRobotModelPoseCount / 50) * 1.4);
-        extendWrist(Math.min(Math.max(Math.sin(debugRobotModelPoseCount / 25) * 5, 0), 1));
+        setWrist(Math.min(Math.max(Math.sin(debugRobotModelPoseCount / 25), 0), 0.616));
         openClaw(Math.min(Math.max(Math.sin(debugRobotModelPoseCount / 25) * 5, 0), 1));
         spinRecordPlayer(0.04);
         deployHarvester(Math.min(Math.max(Math.sin(debugRobotModelPoseCount / 25) * 2, 0), 1));
     } else {
-        setShoulder(interpolateArm(robotPoseData.shoulder, 500));
         setElbow(interpolateArm(robotPoseData.elbow, 500));
-        extendWrist(determineBooleanAlpha(robotPoseData.wrist, 100));
+        setWrist(interpolateArm(robotPoseData.wrist, 100));
         openClaw(determineBooleanAlpha(robotPoseData.claw, 150));
         spinRecordPlayer((robotPoseData.recordPlayer / 30) * 2 * Math.PI);
         deployHarvester(determineBooleanAlpha(robotPoseData.harvester, 350));
@@ -473,9 +467,9 @@ function setElbow (theta) {
     lastElbowPosition = theta;
 }
 
-function extendWrist (alpha) {
-    robotModels.wrist.position.set(0, alpha * 0.25, 0);
-    lastWristAlpha = alpha;
+function setWrist (length) {
+    robotModels.wrist.position.set(0, length * 0.7, 0);
+    lastWristValue = length;
 }
 
 function openClaw (alpha) {
