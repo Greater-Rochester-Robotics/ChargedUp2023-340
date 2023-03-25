@@ -96,6 +96,12 @@ public final class Constants {
       public static final double MAX_HEIGHT = 50;
       public static final double BACK_OF_ROBOT_TO_SHOULDER_DISTANCE = 30;
       
+      /* Elbow Safe Zone Positions */
+      public static final double ELBOW_ANGLE_IN_FRONT_OF_HARVESTER = Units.degreesToRadians(10);
+      public static final double ELBOW_ANGLE_BEHIND_HARVESTER = Units.degreesToRadians(10);
+      public static final double ELBOW_ANGLE_BEHIND_RECORD_PLAYER = Units.degreesToRadians(-10);
+      public static final double ELBOW_ANGLE_BEHIND_ROBOT = Units.degreesToRadians(-10);
+
       /*indent dimensions */
       public static final double INDENT_HEIGHT = 20;
       public static final double INDENT_RADIUS = 19;
