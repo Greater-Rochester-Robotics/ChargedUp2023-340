@@ -127,6 +127,13 @@ public class ADIS16470_IMU implements AutoCloseable, NTSendable {
   private static final int FLSHCNT_LOW = 0x7C; // Flash update count, lower word
   private static final int FLSHCNT_HIGH = 0x7E; // Flash update count, upper word
 
+      // weight between the previous and current gyro angles
+      // represents 1 second for the timestamp,
+      // this is the point at which we ignore the previous angle because it is too old to be of use 
+      // The IMU timestamp conversion is 1 = 49.02us
+      // the value 1_000_000 is the number of microseconds we average over
+  private static final double AVERAGE_RATE_SCALING_FACTOR = 49.02 / 1_000_000;
+
   //Following packet requests all three gyro axes
   private static final byte[] m_autospi_allAngle_packet = {
     X_DELTANG_OUT,
@@ -207,6 +214,9 @@ public class ADIS16470_IMU implements AutoCloseable, NTSendable {
   private double m_gyro_rate_x = 0.0;
   private double m_gyro_rate_y = 0.0;
   private double m_gyro_rate_z = 0.0;
+  private double m_average_gyro_rate_x = 0.0;
+  private double m_average_gyro_rate_y = 0.0;
+  private double m_average_gyro_rate_z = 0.0;
   private double m_accel_x = 0.0;
   private double m_accel_y = 0.0;
   private double m_accel_z = 0.0;
@@ -836,6 +846,19 @@ public class ADIS16470_IMU implements AutoCloseable, NTSendable {
                     accel_y_si, Math.sqrt((accel_x_si * accel_x_si) + (accel_z_si * accel_z_si)));
             compAngleX = accelAngleX;
             compAngleY = accelAngleY;
+
+            m_average_gyro_rate_x = 0;
+            m_average_gyro_rate_y = 0;
+            m_average_gyro_rate_z = 0;
+
+            //TODO: test this
+            // System.out.println(m_average_gyro_rate_x);
+            // System.out.println(m_gyro_rate_x);
+            // System.out.println(m_average_gyro_rate_y);
+            // System.out.println(m_gyro_rate_y);
+            // System.out.println(m_average_gyro_rate_z);
+            // System.out.println(m_gyro_rate_z);
+
           } else {
             // Run inclinometer calculations
             accelAngleX =
@@ -876,9 +899,22 @@ public class ADIS16470_IMU implements AutoCloseable, NTSendable {
             m_compAngleY = compAngleY * rad_to_deg;
             m_accelAngleX = accelAngleX * rad_to_deg;
             m_accelAngleY = accelAngleY * rad_to_deg;
+
+            m_average_gyro_rate_x += gyro_rate_x;
+            m_average_gyro_rate_y += gyro_rate_y;
+            m_average_gyro_rate_z += gyro_rate_z;
+
           }
           m_first_run = false;
         }
+
+        // the inverse of data to read divided by dataset length,
+        // this is the number of iterations of the for loop inverted (so multiplication can be used instead of division)
+        double invTotalIterations = dataset_len / data_to_read;
+        m_average_gyro_rate_x *= invTotalIterations;
+        m_average_gyro_rate_y *= invTotalIterations;
+        m_average_gyro_rate_z *= invTotalIterations;
+
       } else {
         m_thread_idle = true;
         data_count = 0;
