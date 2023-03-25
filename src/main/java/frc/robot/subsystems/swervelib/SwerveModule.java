@@ -167,7 +167,7 @@ public class SwerveModule {
         /**
          * Poll AbsEnc speed and compares with RelEnc speed, if AbsEnc speed is 0ish, while other is NOT 
          * puts DriverStationWarning that an ABS sensor isn't working and uses the varOfRelToAbs to get a new currentAngle 
-         * otherwise equates the varOfRelToAbs to the correct offset based on currrentRelPos and currentAngle
+         * otherwise equates the varOfRelToAbs to the correct offset based on current RelPos and currentAngle
          */
         //TODO: try to fix
         // if(rotationMotor.getRelEncSpeed() < -.25 || rotationMotor.getRelEncSpeed() > .25)

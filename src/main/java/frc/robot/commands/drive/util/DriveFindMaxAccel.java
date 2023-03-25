@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
 /**
- * a function to find the max accelleration of the robot
+ * a function to find the max acceleration of the robot
  */
 public class DriveFindMaxAccel extends CommandBase {
   private Timer timer = new Timer();
@@ -37,7 +37,7 @@ public class DriveFindMaxAccel extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //Drives the robot forword
+    //Drives the robot forward
     // RobotContainer.swerveDrive.driveFieldRelative(1.0, 0.0, 0.0, false);
     for (int i=0; i<4; i++){
       RobotContainer.swerveDrive.driveOneModule(i, speed, angle[i], false);
