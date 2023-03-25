@@ -27,7 +27,8 @@
   ],
   "wpilib.skipTests": true,
   "java.test.defaultConfig": "WPIlibUnitTests",
-  "java.format.settings.url": ".vscode/java-formatter.xml",
+  "java.format.settings.url": ".clang-format",
+  "clang-format.executable": "c:\\Program Files\\LLVM\\bin\\clang-format.exe",
   "java.completion.importOrder": ["java", "javax"],
   "[java]": {
     "editor.detectIndentation": false

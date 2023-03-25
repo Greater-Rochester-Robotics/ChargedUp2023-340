@@ -79,8 +79,10 @@ public class RobotContainer {
     static final Trigger driverY = new JoystickButton(driver, 4);
     static final Trigger driverBack = new JoystickButton(driver, 7);
     static final Trigger driverStart = new JoystickButton(driver, 8);
+    // clang-format off
     // static final Trigger driverDUp = new POVButton(driver, 0); //Used for facing the robot away from the driver station
     // static final Trigger driverDDown = new POVButton(driver, 180); //Used for facing the robot towards the driver station
+    // clang-format 
     static final Trigger driverDLeft = new POVButton(driver, 270);
     static final Trigger driverDRight = new POVButton(driver, 90);
     static final Trigger driverLB = new JoystickButton(driver, 5);
@@ -330,6 +332,7 @@ public class RobotContainer {
         return driver.getRawButton(buttonNum);
     }
 
+    // clang-format off
     /**
      * Gets the driver's DPad position.
      * 
@@ -355,6 +358,7 @@ public class RobotContainer {
      *   | Up + Left    |     315     |
      *   +--------------+-------------+
      */
+    // clang-format on
     public int getDriverDPad () {
         return (driver.getPOV());
     }
