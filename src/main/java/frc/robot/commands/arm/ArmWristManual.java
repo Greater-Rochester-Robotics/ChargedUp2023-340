@@ -19,7 +19,7 @@ public class ArmWristManual extends CommandBase {
     @Override
     public void execute () {
         // Set the wrist's duty cycle based on the joystick's value.
-        RobotContainer.arm.setWristDutyCycle(Robot.robotContainer.getWristManualSpeed());
+        RobotContainer.arm.setWristVoltage(Robot.robotContainer.getWristManualSpeed());
     }
 
     @Override

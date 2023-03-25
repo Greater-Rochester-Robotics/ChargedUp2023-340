@@ -26,7 +26,7 @@ public class ArmToPosition extends SequentialCommandGroup {
     public ArmToPosition (ArmPosition armPosition) {
         addCommands(
             // Print the target position.
-            new PrintCommand("ArmToPosition: Begin moving to position: " + Math.abs(Units.radiansToDegrees(armPosition.getElbowAngle())) + " " + Math.abs(Units.metersToInches(armPosition.getWristLength()))),
+            new PrintCommand("ArmToPosition: Begin moving to position: " + Math.abs(Units.radiansToDegrees(armPosition.getElbowPosition())) + " " + Math.abs(Units.metersToInches(armPosition.getWristPosition()))),
 
             // Retract the wrist if it is extended.
             new ArmWristToPosition(0.0),
@@ -37,11 +37,11 @@ public class ArmToPosition extends SequentialCommandGroup {
             new PrintCommand("ArmToPosition: Moving elbow..."),
 
             // Move the elbow to its final position.
-            new ArmElbowToPosition(armPosition.getElbowAngle()).withTimeout(4),
+            new ArmElbowToPosition(armPosition.getElbowPosition()).withTimeout(4),
 
-            new ArmWristToPosition(armPosition.getWristLength()),
+            new ArmWristToPosition(armPosition.getWristPosition()),
             // Print that the arm has been moved.
-            new PrintCommand("ArmToPosition: Finished moving to position: " + Math.abs(Units.radiansToDegrees(armPosition.getElbowAngle())) + " " + Math.abs(Units.metersToInches(armPosition.getWristLength())))
+            new PrintCommand("ArmToPosition: Finished moving to position: " + Math.abs(Units.radiansToDegrees(armPosition.getElbowPosition())) + " " + Math.abs(Units.metersToInches(armPosition.getWristPosition())))
         );
     }
 }

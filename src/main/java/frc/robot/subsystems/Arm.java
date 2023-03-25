@@ -263,7 +263,7 @@ public class Arm extends SubsystemBase {
      * Drives the wrist via duty cycle.
      * @param speed The speed to set the motor to, should be a value between -1.0 and 1.0.
      */
-    public void setWristDutyCycle (double speed) {
+    public void setWristVoltage (double speed) {
         if(speed < 0 && getWristInnerLimitSwitch()) {
             System.out.println("Cannot set wrist motor speed: At lower limit");
             zeroWrist();
@@ -273,7 +273,7 @@ public class Arm extends SubsystemBase {
             System.out.println("Cannot set wrist motor speed: At upper limit");
             speed = 0;
         }
-        wrist.set(TalonSRXControlMode.PercentOutput, speed);
+        wrist.set(TalonSRXControlMode.Current, speed);
     }
 
     /**
@@ -292,15 +292,15 @@ public class Arm extends SubsystemBase {
             stopWristMotor();
             return;
         }
-
-        setWristDutyCycle(wristPID.calculate(getWristPosition(), target));
+        
+        setWristVoltage(wristPID.calculate(getWristPosition(), target));
     }
 
     /**
      * Stops the wrist motor.
      */
     public void stopWristMotor () {
-        setWristDutyCycle(0.0);
+        setWristVoltage(0.0);
     }
 
     /**

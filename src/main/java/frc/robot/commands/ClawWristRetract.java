@@ -29,15 +29,9 @@ public class ClawWristRetract extends SequentialCommandGroup {
         addCommands(
             // If a cone, stop the claw intake, close the claw, and wait to ensure the claw has fully grabbed the cone.
             // If a cube, switch to running the claw intake slowly.
-            new ConditionalCommand(
-                Commands.sequence(
-                    new ClawStop(),
-                    new ConditionalCommand(new ClawClose(true), new InstantCommand(), () -> isCone),
-                    new WaitCommand(0.3)
-                ),
-                new ClawIntakeSlow(),
-                () -> isCone
-            ),
+            new ClawStop(),
+            new ConditionalCommand(new ClawClose(true), new ClawIntakeSlow(), () -> isCone),//TODO: Change once SHUTTLE VALVE INSTALLED
+            new WaitCommand(0.3),
             // Retract the wrist.
             new ArmWristToPosition(0.0)
         );
