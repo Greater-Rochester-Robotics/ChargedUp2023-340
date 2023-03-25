@@ -462,8 +462,8 @@ function setElbow (theta) {
         robotModels.elbow.rotateOnAxis(axis, -delta);
     }
 
-    _moveElbow(-lastElbowPosition);
-    _moveElbow(theta);
+    _moveElbow(-lastElbowPosition + 0.13);
+    _moveElbow(theta - 0.13);
     lastElbowPosition = theta;
 }
 
