@@ -1,3 +1,4 @@
+// Enabling debug controls
 const ENABLE_ORBIT_CONTROLS = false;
 const ENABLE_KEYBOARD_DEBUGGING = false;
 const DEBUG_ROBOT_MODEL_POSE = false;
@@ -8,6 +9,7 @@ import { OrbitControls } from '/lib/OrbitControls.js';
 import { STLLoader } from '/lib/STLLoader.js'
 import { TextSprite } from '/lib/TextSprite.js';
 
+// Initialize parameters
 let lastShoulderPosition = 0;
 let lastElbowPosition = 0;
 let lastWristValue = 0;
@@ -22,12 +24,14 @@ const currentSelection = {
     y: 0
 };
 
+// Set up internal clock
 const clock = new THREE.Clock();
 const frameInterval = 1 / 30;
 let frameDelta = 0;
 
 const loader = new STLLoader();
 
+//Set up renderer
 const renderer = new THREE.WebGLRenderer({
     alpha: true,
     antialias: true,
@@ -37,6 +41,7 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+// Set up camera position
 const frustum = calculateCameraFrustum(currentFrustumScale);
 const camera = new THREE.OrthographicCamera(frustum.left, frustum.right, frustum.top, frustum.bottom, 1, 100);
 camera.position.z = 10;
@@ -45,9 +50,11 @@ const raycaster = new THREE.Raycaster();
 
 const scene = new THREE.Scene();
 
+// Load cone and cube STL files
 const coneSTL = await loadSTL(`./assets/models/cone.stl`);
 const cubeSTL = await loadSTL(`./assets/models/cube.stl`);
 
+// Set up all options for where you are scoring
 const selectionOptions = [];
 for (let i = 0; i < 3; i++) {
     selectionOptions.push([]);
@@ -61,6 +68,7 @@ for (let i = 0; i < 3; i++) {
     }
 }
 
+// Set up rounded rectangles behind everything
 const selectionOptionBackgrounds = [];
 for (let i = 0; i < 3; i++) {
     const mesh = new THREE.Mesh(
@@ -77,6 +85,7 @@ for (let i = 0; i < 3; i++) {
     selectionOptionBackgrounds.push(mesh);
 }
 
+// Set up models of different parts of the robot
 const robotModels = {
     driveBase: createMeshFromSTL(await loadSTL(`./assets/models/drivebase.stl`)),
     shoulder: createMeshFromSTL(await loadSTL(`./assets/models/shoulder.stl`)),
@@ -90,6 +99,7 @@ const robotModels = {
 
 const harvesterLateralHelper = new THREE.Object3D();
 
+// Initialize position data for parts of robot
 const robotPoseData = {
     shoulder: { value: 0, since: Date.now(), startingValue: 0 },
     elbow: { value: 0, since: Date.now(), startingValue: 0 },
@@ -99,6 +109,7 @@ const robotPoseData = {
     harvester: { state: false, since: Date.now(), startingAlpha: 0 }
 };
 
+// Set up robot model
 robotModels.driveBase.add(robotModels.shoulder);
 robotModels.shoulder.add(robotModels.elbow);
 robotModels.elbow.add(robotModels.wrist);
@@ -113,10 +124,12 @@ robotModels.driveBase.position.set(0, -1.6, 0);
 robotModels.driveBase.rotation.set(0.3,  0.6, Math.PI);
 robotModels.driveBase.geometry.scale(1.2, 1.2, 1.2);
 
+// Set shoulder angle to its fixed angle (in radians)
 setShoulder(-0.13);
 
 scene.add(robotModels.driveBase);
 
+// Set up text fields
 const voltageText = new TextSprite(`0.0V`, 0.45, `#ffffff`);
 voltageText.fontSize = 100;
 voltageText.fontFace = `'Library'`;
@@ -149,6 +162,7 @@ for (let i = 0; i < 2; i++) {
     scene.add(mesh);
 }
 
+// Create loop to refresh the text once a second
 setInterval(() => refreshText(), 1000);
 
 // Integer enum: 0 = Red, 1 = Blue, 2 = Invalid
@@ -236,12 +250,14 @@ NetworkTables.addKeyListener(`/dashboard/robotmodel/harvester`, (_, value) => {
     }
 });
 
+// If window is resized rerender
 window.addEventListener(`resize`, () => {
     updateCameraFrustum();
     renderer.setSize(window.innerWidth, window.innerHeight);
     render();
 });
 
+// Handle click events
 document.addEventListener(`click`, (event) => {
     const clickX = (event.clientX / window.innerWidth) * 2 - 1;
     const clickY = - (event.clientY / window.innerHeight) * 2 + 1;
@@ -256,6 +272,7 @@ document.addEventListener(`click`, (event) => {
     }
 });
 
+// If in keyboard debugging mode handle necessary key presses
 if (ENABLE_KEYBOARD_DEBUGGING) {
     document.onkeydown = (event) => {
         if (!scoring) {
@@ -274,6 +291,7 @@ if (ENABLE_KEYBOARD_DEBUGGING) {
     };
 }
 
+// If orbit debugging controls are on handle rerendering at different camera angles
 if (ENABLE_ORBIT_CONTROLS) {
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enablePan = false;
@@ -282,6 +300,7 @@ if (ENABLE_ORBIT_CONTROLS) {
 
 animate();
 
+/** Turn dimensions into shape */
 function roundedRectangle (x, y, width, height, radius) {
     const shape = new THREE.Shape();
     shape.moveTo(x, y + radius);
@@ -296,6 +315,7 @@ function roundedRectangle (x, y, width, height, radius) {
     return new THREE.ShapeGeometry(shape)
 }
 
+/** Load STL asynchronously (using promises) */
 async function loadSTL (path) {
     return await new Promise((resolve) => {
         loader.load(path, (geometry) => {
@@ -304,6 +324,7 @@ async function loadSTL (path) {
     })
 }
 
+/** Use STL to create a mesh */
 function createMeshFromSTL (geometry) {
     const geometryClone = geometry.clone();
     geometryClone.deleteAttribute(`normal`);
@@ -339,18 +360,23 @@ function createMeshFromSTL (geometry) {
     return new THREE.Mesh(geometryClone, material);
 }
 
+/** Animate the robot model based on frame rate */
 function animate() {
+    // TODO: ask Bryce what this does
     requestAnimationFrame(animate);
 
+    // If hasn't been long enough to animate next frame return
     frameDelta += clock.getDelta();
     if (frameDelta <= frameInterval) return;
     frameDelta = frameDelta % frameInterval;
 
+    // When program started zoom in
     if (currentFrustumScale !== 4) {
         currentFrustumScale += (4 - currentFrustumScale) * 0.3;
         updateCameraFrustum();
     }
 
+    // If debugging robot model run animations on all parts of model otherwise use network table
     if (DEBUG_ROBOT_MODEL_POSE) {
         debugRobotModelPoseCount++;
         setElbow(-1.1 + Math.sin(debugRobotModelPoseCount / 50) * 1.4);
@@ -366,6 +392,7 @@ function animate() {
         deployHarvester(determineBooleanAlpha(robotPoseData.harvester, 350));
     }
 
+    // For each cube and cone if they are selected spin them and make them bigger
     selectionOptions.forEach((row, y) => {
         row.forEach((selectionOption, x) => {
             let rotationDelta;
@@ -397,10 +424,12 @@ function animate() {
     render();
 }
 
+/** Render the graphics using camera location */
 function render() {
     renderer.render(scene, camera);
 }
 
+/** Calculate field of view of camera */
 function calculateCameraFrustum () {
     const aspect = window.innerWidth / window.innerHeight;
     return {
@@ -411,6 +440,7 @@ function calculateCameraFrustum () {
     }
 }
 
+/** Update camera field of view */
 function updateCameraFrustum () {
     const frustum = calculateCameraFrustum();
     camera.left = frustum.left;
@@ -420,6 +450,7 @@ function updateCameraFrustum () {
     camera.updateProjectionMatrix();
 }
 
+/** Set current selection as scoring */
 function startScoring () {
     scoring = {
         x: currentSelection.x,
@@ -428,11 +459,13 @@ function startScoring () {
     };
 }
 
+/** Set scored cone or cube as scored and reset scoring variable */
 function finishScoring () {
     if (scoring && selectionOptions[scoring.y] && selectionOptions[scoring.y][scoring.x]) selectionOptions[scoring.y][scoring.x].material.uniforms.color.value = new THREE.Color(scoring.x % 3 === 1 ? 0xa718b2 : 0xefdf0d);
     scoring = null;
 }
 
+/** Rotate shoulder to input angle */
 function setShoulder (theta) {
     function _moveShoulder (delta) {
         const origin = new THREE.Vector3(-0.13, -0.085, 0);
@@ -450,6 +483,7 @@ function setShoulder (theta) {
     lastShoulderPosition = theta;
 }
 
+/** Rotate elbow to input angle */
 function setElbow (theta) {
     function _moveElbow (delta) {
         const origin = new THREE.Vector3(-0.13, -1.05, 0);
@@ -467,11 +501,13 @@ function setElbow (theta) {
     lastElbowPosition = theta;
 }
 
+/** Rotate elbow to input length */
 function setWrist (length) {
     robotModels.wrist.position.set(0, length * 0.7, 0);
     lastWristValue = length;
 }
 
+/** Set claw as open or closed based on input and rotate both parts to match */
 function openClaw (alpha) {
     const delta = (lastClawAlpha - alpha) * Math.PI / 4;
 
@@ -488,6 +524,7 @@ function openClaw (alpha) {
     });
 }
 
+/** Rotate record player at speed inputted */
 function spinRecordPlayer (alpha) {
     const origin = new THREE.Vector3(0.089, 0, 0);
     const axis = new THREE.Vector3(0, 1, 0);
@@ -499,6 +536,7 @@ function spinRecordPlayer (alpha) {
     robotModels.recordPlayer.rotateOnAxis(axis, alpha);
 }
 
+/** Set harvester as in or out based on input and rotate to match */
 function deployHarvester (alpha) {
     const delta = (lastHarvesterAlpha - alpha) * -Math.PI / 6;
     const origin = new THREE.Vector3(0.313, 0.3, 0);
@@ -514,15 +552,18 @@ function deployHarvester (alpha) {
     lastHarvesterAlpha = alpha;
 }
 
+/** Interpolate value along movement based on inputted value and period */
 function interpolateArm (poseData, period) {
     return poseData.value - (Math.max(1 - ((Date.now() - poseData.since) / period), 0) * (poseData.value - poseData.startingValue));
 }
 
+/** Interpolate value along movement based on which of two end states must be reached and period */
 function determineBooleanAlpha (poseData, period) {
     const p = ((Date.now() - poseData.since) / period) + (poseData.state ? poseData.startingAlpha : 1 - poseData.startingAlpha);
     return Math.max(Math.min(poseData.state ? p : 1 - p, 1), 0);
 }
 
+/** Refresh all text being rendered */
 function refreshText () {
     voltageText.text = voltageText.text;
     psiText.text = psiText.text;
