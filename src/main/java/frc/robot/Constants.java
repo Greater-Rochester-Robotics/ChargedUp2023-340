@@ -95,6 +95,7 @@ public final class Constants {
       public static final double ARM_TO_HARVESTER_MAX_DISTANCE = Units.inchesToMeters(15);
       public static final double MAX_HEIGHT = 50;
       public static final double BACK_OF_ROBOT_TO_SHOULDER_DISTANCE = 30;
+      public static final double INTERNAL_EXTENSION_LENGTH = 0.0;
       
       /* Elbow Safe Zone Positions */
       public static final double ELBOW_ANGLE_IN_FRONT_OF_HARVESTER = Units.degreesToRadians(10);

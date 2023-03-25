@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.arm.ArmWristToPosition;
 import frc.robot.commands.claw.ClawIntake;
 import frc.robot.commands.claw.ClawOpen;
@@ -24,7 +25,7 @@ public class ClawWristExtend extends SequentialCommandGroup {
             new ClawIntake(),
             new WaitCommand(0.3),
             // TODO: put a position
-            new ArmWristToPosition(0.0)
+            new ArmWristToPosition(ArmConstants.INTERNAL_EXTENSION_LENGTH)
         );
     }
 }
