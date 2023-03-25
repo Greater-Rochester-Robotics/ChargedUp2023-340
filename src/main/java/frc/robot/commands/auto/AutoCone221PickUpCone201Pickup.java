@@ -16,9 +16,9 @@ import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.commands.HarvesterClawIntake;
 import frc.robot.commands.HarvesterRecordRetract;
 import frc.robot.commands.arm.ArmToPosition;
-import frc.robot.commands.auto.util.AutoDriveFollowTrajectory;
 import frc.robot.commands.auto.util.AutoScoreCone;
 import frc.robot.commands.drive.DriveBalance;
+import frc.robot.commands.drive.auto.DriveFollowTrajectory;
 import frc.robot.commands.drive.util.DriveSetGyro;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -36,19 +36,19 @@ public class AutoCone221PickUpCone201Pickup extends SequentialCommandGroup {
         new AutoScoreCone(ArmConstants.BACK_MIDDLE_CONE),
         Commands.parallel(
             new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE),
-            new AutoDriveFollowTrajectory(path.get(0))
+            new DriveFollowTrajectory(path.get(0))
         ),
         new HarvesterClawIntake(true),
         new WaitCommand(1),
-        new AutoDriveFollowTrajectory(path.get(1)),
+        new DriveFollowTrajectory(path.get(1)),
         Commands.parallel(
-            new AutoDriveFollowTrajectory(path.get(2)),
+            new DriveFollowTrajectory(path.get(2)),
             new HarvesterRecordRetract(true)
         ),
         new AutoScoreCone(ArmConstants.BACK_MIDDLE_CONE),
         Commands.parallel(
             new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE),
-            new AutoDriveFollowTrajectory(path.get(3))
+            new DriveFollowTrajectory(path.get(3))
         ),
         new DriveBalance()
     );

@@ -17,8 +17,8 @@ import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.RobotContainer;
 import frc.robot.commands.HarvesterClawIntake;
 import frc.robot.commands.HarvesterRecordRetract;
-import frc.robot.commands.auto.util.AutoDriveFollowTrajectory;
 import frc.robot.commands.auto.util.AutoScoreCone;
+import frc.robot.commands.drive.auto.DriveFollowTrajectory;
 import frc.robot.commands.drive.util.DriveSetGyro;
 import frc.robot.commands.harvester.HarvesterExtensionOut;
 
@@ -33,7 +33,7 @@ public class AutoCone001PickUpReturn extends SequentialCommandGroup {
             Commands.parallel(
                 new HarvesterClawIntake(false),
                 Commands.sequence(
-                    new AutoDriveFollowTrajectory(path.get(0)),
+                    new DriveFollowTrajectory(path.get(0)),
                     new WaitCommand(1.5)
                 ),
                 Commands.sequence(
@@ -42,7 +42,7 @@ public class AutoCone001PickUpReturn extends SequentialCommandGroup {
                 )
             ),
             new HarvesterRecordRetract(false).withTimeout(0),
-            new AutoDriveFollowTrajectory(path.get(1), false)
+            new DriveFollowTrajectory(path.get(1), false)
         );
     }
 }
