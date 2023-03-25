@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.ArmPosition;
@@ -31,33 +33,50 @@ public class ArmElbowWristToPosition extends SequentialCommandGroup {
             // Check if arm is in front of harvester going back
             new ConditionalCommand(
                 Commands.sequence(
+                    new PrintCommand("is in front of harvester going back"),
                     // Move arm in front of harvester
                     new ArmElbowWristToPositionPID(new ArmPosition(ArmConstants.ELBOW_ANGLE_IN_FRONT_OF_HARVESTER, 0)),
                     new ConditionalCommand(
                         // Move arm behind robot
-                        new ArmElbowWristToPositionPID(new ArmPosition(ArmConstants.ELBOW_ANGLE_BEHIND_ROBOT, 0)),
+                        new ParallelCommandGroup(
+                            new ArmElbowWristToPositionPID(new ArmPosition(ArmConstants.ELBOW_ANGLE_BEHIND_ROBOT, 0)),
+                            new PrintCommand("is going behind robot, moving to ELBOW_ANGLE_BEHIND_ROBOT")
+                        ),
                         // Move arm behind harvester
-                        new ArmElbowWristToPositionPID(new ArmPosition(ArmConstants.ELBOW_ANGLE_BEHIND_HARVESTER, 0)),
+                        new ParallelCommandGroup(
+                            new ArmElbowWristToPositionPID(new ArmPosition(ArmConstants.ELBOW_ANGLE_BEHIND_HARVESTER, 0)),
+                            new PrintCommand("is not going behind robot, moving to ELBOW_ANGLE_BEHIND_HARVESTER")
+                        ),
                         () -> isGoingBehindRobot(elbowTarget)
                     )
                 ),
                 // Check if arm is in the robot going out
                 new ConditionalCommand(
                     Commands.sequence(
+                        new PrintCommand("isn't in front of harvester going back\nis in robot going out"),
                         // Retract wrist (don't know direction to set up)
                         new ArmWristToPosition(0),
+                        new PrintCommand("has retracted wrist"),
                         new ConditionalCommand(
                             // Move arm in front of harvester
-                            new ArmElbowWristToPositionPID(new ArmPosition(ArmConstants.ELBOW_ANGLE_IN_FRONT_OF_HARVESTER, 0)),
+                            new ParallelCommandGroup(
+                                new ArmElbowWristToPositionPID(new ArmPosition(ArmConstants.ELBOW_ANGLE_IN_FRONT_OF_HARVESTER, 0)),
+                                new PrintCommand("Is going in front of harvester, moving to ELBOW_ANGLE_IN_FRONT_OF_HARVESTER")
+                            ),
                             // Move arm behind robot
-                            new ArmElbowWristToPositionPID(new ArmPosition(ArmConstants.ELBOW_ANGLE_BEHIND_ROBOT, 0)),
+                            new ParallelCommandGroup(
+                                new ArmElbowWristToPositionPID(new ArmPosition(ArmConstants.ELBOW_ANGLE_BEHIND_ROBOT, 0)),
+                                new PrintCommand("Is going behind harvester, moving to ELBOW_ANGLE_BEHIND_ROBOT")
+                            ),
                             () -> isGoingInFrontOfHarvester(elbowTarget)
                         )
                     ),
                     // Check if arm is behind robot going forward
                     new ConditionalCommand(
                         Commands.sequence(
+                            new PrintCommand("isn't in front of harvester going back\nisn't in robot going out"),
                             // Move arm to back of robot
+                            new PrintCommand("moving to ELBOW_ANGLE_BEHIND_ROBOT, and retracting wrist"),
                             new ArmElbowWristToPositionPID(new ArmPosition(ArmConstants.ELBOW_ANGLE_BEHIND_ROBOT, 0)),
                             new ConditionalCommand(
                                 // Move arm in front of harvester
@@ -68,7 +87,7 @@ public class ArmElbowWristToPosition extends SequentialCommandGroup {
                             )
                         ),
                         // Do nothing (not going to do unsafe motion)
-                        new InstantCommand(),
+                        new PrintCommand("no unsafe motion"),
                         () -> isBehindRobotGoingForward(RobotContainer.arm.getElbowPosition(), elbowTarget)
                     ),
                     () -> isInRobotGoingOut(RobotContainer.arm.getElbowPosition(), elbowTarget)

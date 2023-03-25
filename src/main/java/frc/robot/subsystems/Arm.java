@@ -119,7 +119,7 @@ public class Arm extends SubsystemBase {
         elbowAbsoluteEncoder.setPositionConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONVERSION_FACTOR);
         elbowAbsoluteEncoder.setVelocityConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONVERSION_FACTOR / 60);
         elbowAbsoluteEncoder.setInverted(true);
-        elbowAbsoluteEncoder.setZeroOffset(5.8760048535897932384626433832795);
+        elbowAbsoluteEncoder.setZeroOffset(1.6277872);
 
         elbowController = elbowMotor.getPIDController();
         elbowController.setFeedbackDevice(elbowAbsoluteEncoder);
@@ -132,7 +132,7 @@ public class Arm extends SubsystemBase {
         // Setup the wrist.
         wristMotor = new TalonSRX(Constants.WRIST_MOTOR);
         wristPID = new ProfiledPIDController(ArmConstants.WRIST_P, ArmConstants.WRIST_I, ArmConstants.WRIST_D, ArmConstants.WRIST_PROFILED_PID_CONSTRAINTS);
-        wristEncoder = new Encoder(Constants.WRIST_ENCODER_0, Constants.WRIST_ENCODER_1);
+        wristEncoder = new Encoder(Constants.WRIST_ENCODER_FORWARD, Constants.WRIST_ENCODER_REVERSE);
         wristInnerLimitSwitch = new DigitalInput(Constants.WRIST_INNER_LIMIT_SWITCH);
         wristOuterLimitSwitch = new DigitalInput(Constants.WRIST_OUTER_LIMIT_SWITCH);
         wristMotor.setNeutralMode(NeutralMode.Brake);
@@ -167,7 +167,7 @@ public class Arm extends SubsystemBase {
             netTable.getEntry("wrist").setDouble(Math.round(wristPos * 10) / 10);
 
             SmartDashboard.putNumber("Absolute encoder elbow", Math.round(Math.toDegrees(elbowPos) * 10) * 0.1);
-            SmartDashboard.putNumber("Wrist position", Math.round(Math.toDegrees(wristPos) * 10) * 0.1);
+            SmartDashboard.putNumber("Wrist position", Math.round(wristPos * 100) * 0.01);
             SmartDashboard.putBoolean("Wrist has been zeroed", getWristBeenZeroed());
             SmartDashboard.putBoolean("Wrist limit inner", getWristInnerLimitSwitch());
             SmartDashboard.putBoolean("Wrist limit outer", getWristOuterLimitSwitch());
@@ -249,7 +249,7 @@ public class Arm extends SubsystemBase {
      * @return The status of the inner limit switch.
      */
     public boolean getWristInnerLimitSwitch () {
-        return wristInnerLimitSwitch.get();
+        return !wristInnerLimitSwitch.get();
     }
 
     /**
@@ -257,7 +257,7 @@ public class Arm extends SubsystemBase {
      * @return The status of the outer limit switch.
      */
     public boolean getWristOuterLimitSwitch() {
-        return wristOuterLimitSwitch.get();
+        return !wristOuterLimitSwitch.get();
     }
 
     /**
@@ -290,7 +290,7 @@ public class Arm extends SubsystemBase {
             System.out.println("Cannot set wrist motor speed: At upper limit");
             speed = 0;
         }
-        wristMotor.set(TalonSRXControlMode.Current, speed);
+        wristMotor.set(TalonSRXControlMode.PercentOutput, speed);
     }
 
     /**

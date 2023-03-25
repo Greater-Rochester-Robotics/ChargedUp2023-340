@@ -44,7 +44,7 @@ public final class Constants {
 
         public static final boolean ELBOW_USE_PROFILED_PID = false;
         
-        public static final double WRIST_ENCODER_DISTANCE_PER_PULSE = 1.0;
+        public static final double WRIST_ENCODER_DISTANCE_PER_PULSE = Math.PI*Units.inchesToMeters(1.8)/2048;
 
       /* Arm PID Constants */
       public static final double ELBOW_P = 1.0;
@@ -90,7 +90,7 @@ public final class Constants {
       public static final double SHOULDER_FIXED_ANGLE = Math.toRadians(-8);
       public static final double SHOULDER_TO_ELBOW_DISTANCE = Units.inchesToMeters(38);
       public static final double ELBOW_TO_CLAW_DISTANCE = Units.inchesToMeters(29);
-      public static final double WRIST_MAX_EXTENSION_LENGTH = Units.inchesToMeters(10);
+      public static final double WRIST_MAX_EXTENSION_LENGTH = 0.61;
       public static final double ARM_TO_HARVESTER_MIN_DISTANCE = Units.inchesToMeters(15);
       public static final double ARM_TO_HARVESTER_MAX_DISTANCE = Units.inchesToMeters(15);
       public static final double MAX_HEIGHT = 50;
@@ -273,11 +273,12 @@ public final class Constants {
 
   
   /* CTRE motor and sensors */
+  public static final int WRIST_MOTOR = 20;
+
   public static final int CLAW_MOTOR = 40;
 
   public static final int HARVESTER_MOTOR = 50;
 
-  public static final int WRIST_MOTOR = 55;
   
   /* Solenoids */
   public static final int ELBOW_BRAKE = 15;
@@ -293,11 +294,11 @@ public final class Constants {
   public static final int HARVESTER_GAME_PIECE_SENSOR = 0;
   public static final int RECORD_CONE_POSITION_0 = 1;
   public static final int RECORD_CONE_POSITION_1 = 2;
-  public static final int RECORD_IS_GAME_PIECE = 3;
-  public static final int CLAW_GAMEPIECE_SENSOR = 4;
-  public static final int WRIST_ENCODER_0 = 5;
-  public static final int WRIST_ENCODER_1 = 6;
-  public static final int WRIST_INNER_LIMIT_SWITCH = 7;
-  public static final int WRIST_OUTER_LIMIT_SWITCH = 8;
+  public static final int RECORD_IS_GAME_PIECE = 10;//TODO: remove
+  public static final int CLAW_GAMEPIECE_SENSOR = 11;
+  public static final int WRIST_ENCODER_FORWARD = 6;
+  public static final int WRIST_ENCODER_REVERSE = 5;
+  public static final int WRIST_INNER_LIMIT_SWITCH = 4;
+  public static final int WRIST_OUTER_LIMIT_SWITCH = 3;
 
 }
