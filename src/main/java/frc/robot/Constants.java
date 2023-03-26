@@ -84,7 +84,7 @@ public final class Constants {
       public static final ArmPosition INTERNAL_DEFAULT = new ArmPosition(Math.toRadians(0.0), 0);
       public static final ArmPosition INTERNAL_PICK_UP_CONE = new ArmPosition(Math.toRadians(21), 0.27);
     //   public static final ArmPosition INTERNAL_PICK_UP_CUBE = new ArmPosition(Math.toRadians(10), 0);
-      public static final ArmPosition CUBE_GRABBING_POSITION = new ArmPosition(Math.toRadians(43), 0.3);
+      public static final ArmPosition CUBE_GRABBING_POSITION = new ArmPosition(Math.toRadians(40.0), 0.36);
 
 
       /* Arm Limits */
@@ -151,7 +151,7 @@ public final class Constants {
     public static class HarvesterConstants {
       public static final double HARVESTER_MOTOR_INTAKE_SPEED = -0.7; //TODO: set this to the right value
       public static final double HARVESTER_MOTOR_OUTTAKE_SPEED = 0.7; //TODO: set this to the right value
-      public static final double HARVESTER_MOTOR_CUBE_SPEED = -0.4; //TODO: set this to the right value
+      public static final double HARVESTER_MOTOR_CUBE_SPEED = -0.3; //TODO: set this to the right value
     }
   
     public class RecordPlayerConstants {
@@ -241,7 +241,7 @@ public final class Constants {
 
       /* Driver Scaling Constants */
       public static final double DRIVER_SPEED_SCALE_EXPONENTIAL = 3.0;
-      public static final double DRIVER_PERCENT_SPEED_SCALE_LINEAR = 1.0;
+      public static final double DRIVER_PERCENT_SPEED_SCALE_LINEAR = 0.9;
       public static final double DRIVER_ROT_SPEED_SCALE_EXPONENTIAL = 1.0;
       public static final double DRIVER_PERCENT_ROT_SPEED_SCALE_LINEAR = 1.1;
   }

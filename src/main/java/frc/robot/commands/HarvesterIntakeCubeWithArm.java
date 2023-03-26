@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.arm.ArmToPosition;
+import frc.robot.commands.claw.ClawIntake;
 import frc.robot.commands.claw.ClawIntakeSlow;
 import frc.robot.commands.claw.ClawOpen;
 import frc.robot.commands.harvester.HarvesterExtensionOut;
@@ -34,15 +35,14 @@ public class HarvesterIntakeCubeWithArm extends SequentialCommandGroup {
             new ArmToPosition(ArmConstants.CUBE_GRABBING_POSITION, true, RobotContainer.harvester::isLockHarvesterOut).withTimeout(8),
             Commands.sequence(
                 new WaitUntilCommand( () -> Math.abs(RobotContainer.arm.getArmPosition().getElbowPosition()-ArmConstants.CUBE_GRABBING_POSITION.getElbowPosition()) < Units.degreesToRadians(5) ),
+                new ClawIntake(),
+                new HarvesterIntake(false),
                 new HarvesterExtensionOut(),
                 new WaitCommand(.2),
                 new HarvesterLock(true)
             )
-        ),
-        // new WaitCommand(.5),
+        )
         
-        new ClawIntakeSlow(),
-        new HarvesterIntake(false)
         //TODO: EXAMINE IF YOU NEED A LOCK OUT ON THE HARVESTER
     );
   }
