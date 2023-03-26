@@ -175,11 +175,11 @@ public class ArmElbowWristToPosition extends SequentialCommandGroup {
 
         private boolean wristIsFinished() {
             // Finish if hitTarget has been incremented to 10, or if the wrist has exceeded the maximum safe extension.
-            return wristHitTarget >= 10 || RobotContainer.arm.getWristOuterLimitSwitch() || 
+            return wristHitTarget >= ArmConstants.WRIST_TARGET_HIT_COUNT || RobotContainer.arm.getWristOuterLimitSwitch() || 
                 (target.getWristPosition() < .025 &&  RobotContainer.arm.getWristInnerLimitSwitch());    
         }
         private boolean elbowIsFinished() {
-            return elbowHitTarget >= 10 || (!goingDown && Math.abs(RobotContainer.arm.getElbowPosition()) > ArmConstants.MAX_ELBOW_ANGLE);
+            return elbowHitTarget >= ArmConstants.ELBOW_TARGET_HIT_COUNT || (!goingDown && Math.abs(RobotContainer.arm.getElbowPosition()) > ArmConstants.MAX_ELBOW_ANGLE);
         }
     }
 

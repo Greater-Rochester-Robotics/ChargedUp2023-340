@@ -183,7 +183,7 @@ public class Arm extends SubsystemBase {
         }
 
         if(wristMaintainingPosition){
-            setWristDutyCycle(-.08 * Math.cos(getElbowPosition()));
+            setWristDutyCycle(-ArmConstants.WRIST_HOLDING_STRENGTH * Math.abs(Math.cos(getElbowPosition())));
         }
     }
 

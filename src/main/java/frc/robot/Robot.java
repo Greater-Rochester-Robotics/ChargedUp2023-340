@@ -51,14 +51,14 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic () {
+        // Increment the network tables cycle.
+        RobotContainer.incrementNetCycle();
+
         // Runs the Scheduler. This is responsible for polling buttons, adding newly-scheduled
         // commands, running already-scheduled commands, removing finished or interrupted commands,
         // and running subsystem periodic() methods. This must be called from the robot's periodic
         // block in order for anything in the Command-based framework to work.
         CommandScheduler.getInstance().run();
-
-        // Increment the network tables cycle.
-        RobotContainer.incrementNetCycle();
 
         // Publish to network tables.
         if (RobotContainer.shouldPublishToNetworkTables()) {

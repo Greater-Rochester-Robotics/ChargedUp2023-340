@@ -21,10 +21,10 @@ import frc.robot.subsystems.swervelib.rev.NEOConfig;
  */
 public final class Constants {
     /* Factors of PI */
-    public static final double PI_OVER_TWO = Math.PI/2;
-    public static final double THREE_PI_OVER_TWO = 3*PI_OVER_TWO;
-    public static final double TWO_PI = 2*Math.PI;
-    public static final Rotation2d ROTATE_BY_PI = Rotation2d.fromDegrees(180);//I only make this once
+    public static final double PI_OVER_TWO = Math.PI / 2;
+    public static final double THREE_PI_OVER_TWO = 3 * PI_OVER_TWO;
+    public static final double TWO_PI = 2 * Math.PI;
+    public static final Rotation2d ROTATE_BY_PI = Rotation2d.fromDegrees(180);
 
     /*Robot dimensions */
     //TODO: set ALL of the robots dimensions; none are accurate
@@ -33,31 +33,32 @@ public final class Constants {
     public static final double ROBOT_BASE_HEIGHT = 5;
     public static final double MAXIMUM_VOLTAGE = 12.0;
 
-    public static final int NETWORK_TABLES_CYCLE = 20;
+    public static final int NETWORK_TABLES_CYCLE = 10;
 
     public static final double DRIVER_CONTROLLER_DEADZONE = 0.1;
       public static final double CO_DRIVER_CONTROLLER_DEADZONE = 0.1;
     
     public static class ArmConstants{
-        public static final double ELBOW_MAX_MANUAL_DUTY_CYCLE = 0.25;
-        public static final double WRIST_MAX_MANUAL_DUTY_CYCLE = 0.25;
+        public static final double ELBOW_MAX_MANUAL_DUTY_CYCLE = 0.3;
+        public static final double WRIST_MAX_MANUAL_DUTY_CYCLE = 0.3;
 
         public static final boolean ELBOW_USE_PROFILED_PID = false;
         
         public static final double WRIST_ENCODER_DISTANCE_PER_PULSE = Math.PI*Units.inchesToMeters(1.8)/2048;
 
       /* Arm PID Constants */
-      public static final double ELBOW_P = 1.3;
+      public static final double ELBOW_P = 1.4;
       public static final double ELBOW_I = 0.00004;
-      public static final double ELBOW_D = 2.0;
+      public static final double ELBOW_D = 2.3;
       public static final double ELBOW_F = 0.0;
 
       public static final double WRIST_P = 17.0;
-      public static final double WRIST_I = 7.0;
+      public static final double WRIST_I = 8.0;
       public static final double WRIST_D = 0.50;
-      public static final double MAX_WRIST_VELOCITY_IN_MPS = 14.0;
-      public static final double MAX_WRIST_ACCELERATION_IN_MPS_PER_SEC = 2.25;
+      public static final double MAX_WRIST_VELOCITY_IN_MPS = 20.0;
+      public static final double MAX_WRIST_ACCELERATION_IN_MPS_PER_SEC = 2.5;
       public static final Constraints WRIST_PROFILED_PID_CONSTRAINTS = new Constraints(MAX_WRIST_VELOCITY_IN_MPS, MAX_WRIST_ACCELERATION_IN_MPS_PER_SEC);
+      public static final double WRIST_HOLDING_STRENGTH = 0.08;
 
       public static final double KG = 0.35;
 
@@ -116,17 +117,19 @@ public final class Constants {
 
       /* Wrist Timeout points */
     //   public static final double WRIST_EXTENSION_SPEED = 0.5;
-      public static final double WRIST_HOMING_SPEED = 0.65;
+      public static final double WRIST_HOMING_SPEED = 0.85;
 
       /*Acceleration and max velocities for the arm */
       public static final double MAX_ELBOW_VELOCITY = 1;
       public static final double MAX_ELBOW_ACCELERATION = 1;
       public static final double ELBOW_ACCELERATION_DISTANCE = 1;
       public static final double ELBOW_ACCELERATION_TIME = MAX_ELBOW_VELOCITY / MAX_ELBOW_ACCELERATION;
-      public static final double MAX_ELBOW_VELOCITY_IN_RPM = .48;//Yes this is in RPM
+      public static final double MAX_ELBOW_VELOCITY_IN_RPM = 1.0;//Yes this is in RPM
       public static final double MAX_ELBOW_ACCELERATION_IN_RPM_PER_SEC = 10200.0;//watch out, this is in RPM per second
-      public static final double ELBOW_CLOSED_LOOP_ERROR = Units.degreesToRadians(2.5);
-      public static final double WRIST_CLOSED_LOOP_ERROR = .002;
+      public static final double ELBOW_CLOSED_LOOP_ERROR = Units.degreesToRadians(4.5);
+      public static final int ELBOW_TARGET_HIT_COUNT = 6;
+      public static final double WRIST_CLOSED_LOOP_ERROR = .005;
+      public static final int WRIST_TARGET_HIT_COUNT = 5;
       public static final Constraints ELBOW_PROFILED_PID_CONSTRAINTS = new Constraints(MAX_ELBOW_VELOCITY_IN_RPM, MAX_ELBOW_ACCELERATION_IN_RPM_PER_SEC);
     }
 

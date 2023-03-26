@@ -65,6 +65,6 @@ public class    ArmElbowToPosition extends CommandBase {
     @Override
     public boolean isFinished () {
         // Finish if hitTarget has been incremented to 10, or if the elbow has exceeded the maximum safe angle.
-        return hitTarget >= 4 || (!goingDown && Math.abs(RobotContainer.arm.getElbowPosition()) > ArmConstants.MAX_ELBOW_ANGLE);
+        return hitTarget >= ArmConstants.ELBOW_TARGET_HIT_COUNT || (!goingDown && Math.abs(RobotContainer.arm.getElbowPosition()) > ArmConstants.MAX_ELBOW_ANGLE);
     }
 }
