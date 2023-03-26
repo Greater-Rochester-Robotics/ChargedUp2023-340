@@ -20,7 +20,7 @@ import frc.robot.commands.drive.util.DriveSetGyro;
 
 public class AutoCone201ChargeBalance extends SequentialCommandGroup {
   /** Creates a new AutoCone201ChargeBalance. */
-  public AutoCone201ChargeBalance() {
+  public AutoCone201ChargeBalance(boolean scoreHigh) {
     List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("Cone201ChargeBalance", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
@@ -28,7 +28,7 @@ public class AutoCone201ChargeBalance extends SequentialCommandGroup {
       new DriveSetGyro(0),
     //   new DriveSetGyro(0, IMUAxis.kPitch),
     //   new DriveSetGyro(0, IMUAxis.kRoll),
-      new AutoScoreCone(ArmConstants.BACK_MIDDLE_CONE).withTimeout(6),
+      new AutoScoreCone(scoreHigh?ArmConstants.BACK_HIGH_CONE:ArmConstants.BACK_MIDDLE_CONE).withTimeout(6),
       Commands.deadline(
         new DriveFollowTrajectory(path.get(0)),
         new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE)

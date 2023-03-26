@@ -22,11 +22,9 @@ public class AutoScoreCube extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
          // Move the arm to the specified position.
-         new ArmToPosition(armPosition),
-         new WaitCommand(0.5),
+         new ArmToPosition(armPosition).withTimeout(4),
          new ClawSpit(),
-         new ClawClose(false),
-         new ArmToPosition(ArmConstants.INTERNAL_DEFAULT)
+         new WaitCommand(0.4)
     );
   }
 }

@@ -20,7 +20,7 @@ public class AutoScoreCone extends SequentialCommandGroup {
     public AutoScoreCone (ArmPosition armPosition) {
         addCommands(
             // Move the arm to the specified position.
-            new ArmToPosition(armPosition),
+            new ArmToPosition(armPosition).withTimeout(4),
 
             // Wait for the arm to become stable.
             // new WaitCommand(armPosition.getWristPosition() ? 1.5 : 0.5),

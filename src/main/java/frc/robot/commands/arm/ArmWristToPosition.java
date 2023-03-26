@@ -75,6 +75,7 @@ public class ArmWristToPosition extends SequentialCommandGroup {
             if(RobotContainer.arm.getWristInnerLimitSwitch()){
                 RobotContainer.arm.zeroWrist();
             }
+            System.out.println("wrist to position end. interrupted: " + interrupted);
         }
 
         @Override

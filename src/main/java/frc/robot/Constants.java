@@ -54,7 +54,7 @@ public final class Constants {
 
       public static final double WRIST_P = 17.0;
       public static final double WRIST_I = 8.0;
-      public static final double WRIST_D = 0.50;
+      public static final double WRIST_D = 1.0;
       public static final double MAX_WRIST_VELOCITY_IN_MPS = 20.0;
       public static final double MAX_WRIST_ACCELERATION_IN_MPS_PER_SEC = 2.5;
       public static final Constraints WRIST_PROFILED_PID_CONSTRAINTS = new Constraints(MAX_WRIST_VELOCITY_IN_MPS, MAX_WRIST_ACCELERATION_IN_MPS_PER_SEC);
@@ -70,7 +70,7 @@ public final class Constants {
       public static final ArmPosition BACK_HIGH_CONE = new ArmPosition(Math.toRadians(-116.5), .58);
       public static final ArmPosition BACK_MIDDLE_CONE = new ArmPosition(Math.toRadians(-101),.12);
       public static final ArmPosition BACK_HIGH_CUBE = new ArmPosition(Math.toRadians(-102), 0.46);
-      public static final ArmPosition BACK_MIDDLE_CUBE = new ArmPosition(Math.toRadians(-74), 0.8);
+      public static final ArmPosition BACK_MIDDLE_CUBE = new ArmPosition(Math.toRadians(-74), 0.0);
       public static final ArmPosition BACK_LOWER_SCORE = new ArmPosition(Math.toRadians(-65), 0);
       public static final ArmPosition BACK_PICK_UP = new ArmPosition(Math.toRadians(-99),0);
 
@@ -82,7 +82,7 @@ public final class Constants {
       public static final ArmPosition FRONT_PICK_UP = new ArmPosition(Math.toRadians(93), 0); 
 
       public static final ArmPosition INTERNAL_DEFAULT = new ArmPosition(Math.toRadians(0.0), 0);
-      public static final ArmPosition INTERNAL_PICK_UP_CONE = new ArmPosition(Math.toRadians(21), 0.27);
+      public static final ArmPosition INTERNAL_PICK_UP_CONE = new ArmPosition(Math.toRadians(18.5), 0.27);
     //   public static final ArmPosition INTERNAL_PICK_UP_CUBE = new ArmPosition(Math.toRadians(10), 0);
       public static final ArmPosition CUBE_GRABBING_POSITION = new ArmPosition(Math.toRadians(40.0), 0.36);
 
@@ -128,7 +128,7 @@ public final class Constants {
       public static final double MAX_ELBOW_ACCELERATION_IN_RPM_PER_SEC = 10200.0;//watch out, this is in RPM per second
       public static final double ELBOW_CLOSED_LOOP_ERROR = Units.degreesToRadians(4.5);
       public static final int ELBOW_TARGET_HIT_COUNT = 6;
-      public static final double WRIST_CLOSED_LOOP_ERROR = .005;
+      public static final double WRIST_CLOSED_LOOP_ERROR = .02;
       public static final int WRIST_TARGET_HIT_COUNT = 5;
       public static final Constraints ELBOW_PROFILED_PID_CONSTRAINTS = new Constraints(MAX_ELBOW_VELOCITY_IN_RPM, MAX_ELBOW_ACCELERATION_IN_RPM_PER_SEC);
     }

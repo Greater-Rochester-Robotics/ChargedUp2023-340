@@ -24,7 +24,14 @@ public class ArmWristHome extends CommandBase {
 
     // Called when the command is initially scheduled.
     @Override
-    public void initialize () {}
+    public void initialize () {
+        if(override){
+            System.out.println("Forcing wrist to home");
+        }else{
+            System.out.println("Wrist homing without override");
+        }
+        System.out.println("Starting homing wrist from: " + RobotContainer.arm.getWristPosition());
+    }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
@@ -42,7 +49,13 @@ public class ArmWristHome extends CommandBase {
         RobotContainer.arm.stopWristMotor();
         if(RobotContainer.arm.getWristInnerLimitSwitch()){
             RobotContainer.arm.zeroWrist();
+            System.out.println("Wrist has fully homed");
+        }else if(!override && RobotContainer.arm.getWristBeenZeroed()){
+            System.out.println("Wrist was previously homed and was not overridden");
+        }else{
+            System.out.println("Wrist has not fully homed, but home command ended is interrupt:" + interrupted);
         }
+        System.out.println("Homing ended with wrist at: " + RobotContainer.arm.getWristPosition());
     }
 
     // Returns true when the command should end.

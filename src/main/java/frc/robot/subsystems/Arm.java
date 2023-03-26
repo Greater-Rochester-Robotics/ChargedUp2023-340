@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
@@ -183,7 +184,7 @@ public class Arm extends SubsystemBase {
         }
 
         if(wristMaintainingPosition){
-            setWristDutyCycle(-ArmConstants.WRIST_HOLDING_STRENGTH * Math.abs(Math.cos(getElbowPosition())));
+            wristMotor.set(ControlMode.PercentOutput, -1*ArmConstants.WRIST_HOLDING_STRENGTH * Math.cos(getElbowPosition()));
         }
     }
 

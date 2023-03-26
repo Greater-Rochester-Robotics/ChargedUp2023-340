@@ -31,7 +31,7 @@ import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.arm.ArmWristHome;
 import frc.robot.commands.arm.ArmWristManual;
 import frc.robot.commands.arm.ArmWristToPosition;
-import frc.robot.commands.auto.AutoCone001PickUpCone021ChargeBalance;
+import frc.robot.commands.auto.AutoCone221PickUpCube211ChargeBalance;
 import frc.robot.commands.auto.AutoCone001PickUpReturn;
 import frc.robot.commands.auto.AutoCone021ChargeBalance;
 import frc.robot.commands.auto.AutoCone201ChargeBalance;
@@ -238,7 +238,7 @@ public class RobotContainer {
         coDriverA.onTrue(new ClawWristExtendForCone()).onFalse(new ClawWristRetract(true));
 
         // B => Cube pickup
-        coDriverB.onTrue(new ClawIntake()).onFalse(new ClawStop());//Commands.sequence(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CUBE).withTimeout(.75), new ClawWristExtend())).onFalse(new ClawWristRetract(false));
+        coDriverB.onTrue(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE, () -> false));
 
         // X => Arm to scoring position
         coDriverX.onTrue(new InstantCommand(() -> target.getTargetPosition().getArmMoveCommand().schedule()));
@@ -294,11 +294,12 @@ public class RobotContainer {
         autoChooser.addOption("Score middle cone", new AutoScoreCone(ArmConstants.BACK_MIDDLE_CUBE));
         autoChooser.addOption("Loading Station outer cone mid, cube pickup, return", new AutoCone221PickUpReturn());
         // autoChooser.addOption("Left outer cone high, cube pickup, balance", new AutoCone220PickUpChargeBalance());
-        autoChooser.addOption("Loading Station inner cone mid, balance", new AutoCone201ChargeBalance());
+        autoChooser.addOption("Loading Station inner cone mid, balance", new AutoCone201ChargeBalance(false));
+        autoChooser.addOption("Loading Station inner cone high, balance", new AutoCone201ChargeBalance(true));
         autoChooser.addOption("Loading Station inner cone mid, charge leave, balance", new AutoCone201ChargeLeaveBalance());
         autoChooser.addOption("Score Table outer cone mid, cube pickup, return", new AutoCone001PickUpReturn());
         autoChooser.addOption("Score Table inner cone mid, balance", new AutoCone021ChargeBalance());
-        autoChooser.addOption("Score Table outer cone mid, cone pickup, score table inner cone mid, balance", new AutoCone001PickUpCone021ChargeBalance());
+        autoChooser.addOption("Score Table outer cone mid, cube pickup, score table cube mid, balance", new AutoCone221PickUpCube211ChargeBalance());
         // autoChooser.addOption("Score Table inner cone mid, charge leave, balance", new AutoCone021ChargeLeaveBalance()); // NOT FUNCTIONAL LAST TEST 3-12
 
         autoChooser.addOption("test", new AutoCone221PickUpCone201Pickup());

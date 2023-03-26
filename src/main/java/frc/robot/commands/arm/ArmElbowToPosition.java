@@ -60,6 +60,7 @@ public class    ArmElbowToPosition extends CommandBase {
     public void end (boolean interrupted) {
         // If ended, stop the elbow from moving.
         RobotContainer.arm.stopElbow();
+        System.out.println("elbow to position end. interrupted: " + interrupted);
     }
 
     @Override

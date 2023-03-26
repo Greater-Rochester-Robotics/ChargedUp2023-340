@@ -115,6 +115,9 @@ public class Claw extends SubsystemBase {
     clawMotor.set(ControlMode.PercentOutput, ClawConstants.CLAW_MOTOR_HOLD_SPEED);
   }
 
+  public boolean isIntakeOn(){
+    return Math.abs(clawMotor.getMotorOutputPercent()) > 0;
+  }
   /**
    * @return true if game piece detected
    */

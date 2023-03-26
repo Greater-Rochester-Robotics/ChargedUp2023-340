@@ -24,7 +24,10 @@ import frc.robot.commands.drive.auto.DriveFollowTrajectory;
 public class DriveToTarget extends InstantCommand {
 
   PathPlannerTrajectory trajectory;
-  /** Creates a new DriveToTarget. */
+  /** 
+   * THIS IS NOT FOR AUTO'S. It this command spawns another 
+   * command that can kill command groups.
+   */
   public DriveToTarget() {
     // Use addRequirements() here to declare subsystem dependencies.
   }

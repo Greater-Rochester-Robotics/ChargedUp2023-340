@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.ArmPosition;
 
 /**
@@ -44,7 +45,7 @@ public class ArmToPosition extends SequentialCommandGroup {
             new PrintCommand("ArmToPosition: Begin moving to position: " + Math.round(Units.radiansToDegrees(armPosition.getElbowPosition())) + " deg | " + armPosition.getWristPosition() + " m"),
 
             // Retract the wrist to the home position.
-            new ArmWristHome(true).withTimeout(1.5),
+            new ArmWristHome(true).withTimeout(1.25),
 
             new PrintCommand("ArmToPosition: Wrist is now retracted"),
 
@@ -59,7 +60,7 @@ public class ArmToPosition extends SequentialCommandGroup {
             // Wait until harvester is locked out
             new WaitUntilCommand(wristExtendWaitConditional),
             
-            armPosition.getWristPosition()<.001?
+            armPosition.getWristPosition()< ArmConstants.WRIST_CLOSED_LOOP_ERROR?
                 new InstantCommand():
                 new ArmWristToPosition(armPosition.getWristPosition()),
             // Print that the arm has been moved.

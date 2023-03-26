@@ -74,6 +74,6 @@ public class RecordPlayerOrientCone extends CommandBase {
     @Override
     public boolean isFinished () {
         // Stop if the position has been found and the record player is within tolerance of the target position.
-        return hasFoundPosition && Math.abs(targetPosition - RobotContainer.recordPlayer.getEncoderAngle()) < 0.1;
+        return hasFoundPosition && Math.abs(targetPosition - RobotContainer.recordPlayer.getEncoderAngle()) < 0.15;
     }
 }

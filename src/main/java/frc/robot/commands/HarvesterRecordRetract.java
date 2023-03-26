@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants.ArmConstants;
+import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.harvester.HarvesterExtensionIn;
 import frc.robot.commands.harvester.HarvesterStop;
 import frc.robot.commands.recordPlayer.RecordPlayerOrientCone;
@@ -18,7 +20,7 @@ import frc.robot.commands.recordPlayer.RecordPlayerOrientCone;
  */
 public class HarvesterRecordRetract extends SequentialCommandGroup {
     public HarvesterRecordRetract (boolean isCone) {
-        this(isCone, 1, 1);
+        this(isCone, 1, 0.75);
     }
 
     /**
@@ -37,9 +39,12 @@ public class HarvesterRecordRetract extends SequentialCommandGroup {
 
             // If we grabbed a cone, add delay to ensure the cone is in position then run the record player.
             new ConditionalCommand(
-                Commands.sequence(
-                    new WaitCommand(recordPlayerDelay),
-                    new RecordPlayerOrientCone()
+                Commands.parallel(
+                    Commands.sequence(
+                        new WaitCommand(recordPlayerDelay),
+                        new RecordPlayerOrientCone()
+                    ),
+                    new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE, () -> false).withTimeout(3)
                 ),
                 new InstantCommand(),
                 () -> isCone

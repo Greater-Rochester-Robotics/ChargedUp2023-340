@@ -6,32 +6,52 @@ package frc.robot.commands.auto;
 
 import java.util.List;
 
+import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.SwerveDriveConstants;
 import frc.robot.commands.ClawWristExtendForCone;
 import frc.robot.commands.ClawWristRetract;
 import frc.robot.commands.HarvesterClawIntake;
+import frc.robot.commands.HarvesterIntakeCubeWithArm;
 import frc.robot.commands.HarvesterRecordRetract;
+import frc.robot.commands.HarvesterRetractCubeWithArm;
 import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.auto.util.AutoScoreCone;
+import frc.robot.commands.auto.util.AutoScoreCube;
+import frc.robot.commands.claw.ClawClose;
+import frc.robot.commands.claw.ClawIntake;
+import frc.robot.commands.claw.ClawOpen;
+import frc.robot.commands.claw.ClawSpit;
+import frc.robot.commands.claw.ClawStop;
 import frc.robot.commands.drive.DriveBalance;
 import frc.robot.commands.drive.auto.DriveFollowTrajectory;
 import frc.robot.commands.drive.util.DriveSetGyro;
+import frc.robot.commands.harvester.HarvesterExtensionIn;
+import frc.robot.commands.harvester.HarvesterLock;
+import frc.robot.commands.harvester.HarvesterSpit;
+import frc.robot.commands.harvester.HarvesterStop;
 import frc.robot.subsystems.swervelib.ADIS16470_IMU.IMUAxis;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class AutoCone001PickUpCone021ChargeBalance extends SequentialCommandGroup {
+public class AutoCone221PickUpCube211ChargeBalance extends SequentialCommandGroup {
   /** Creates a new Cone221PickUpCone201ChargeBalance. */
-  public AutoCone001PickUpCone021ChargeBalance() {
+  public AutoCone221PickUpCube211ChargeBalance() {
     // Load path group
-    List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("Cone001PickUpCone021ChargeBalance", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
+    List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("Cone221PickUpCube211ChargeBalance", 
+        new PathConstraints(SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION), 
+        new PathConstraints(SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION), 
+        new PathConstraints(SwerveDriveConstants.PATH_MAXIMUM_VELOCITY - 1.0, SwerveDriveConstants.MAXIMUM_ACCELERATION));
 
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
@@ -49,21 +69,10 @@ public class AutoCone001PickUpCone021ChargeBalance extends SequentialCommandGrou
             // Drive to pick-up location
             Commands.sequence(
                 new DriveFollowTrajectory(path.get(0)),
-                new WaitCommand(.5)
+                new WaitCommand(0.5)
             ),
 
-            Commands.sequence(
-                new ArmToPosition(ArmConstants.INTERNAL_DEFAULT),
-
-                // Put out intake
-                new HarvesterClawIntake(true)
-            )
-
-            // Wait for cone to be intaken (Wait to see cone then wait to not see anymore)
-            // Commands.sequence(
-            //     new WaitUntilCommand(RobotContainer.harvester::hasGamePiece).withTimeout(1.5),
-            //     new WaitUntilCommand(() -> (!RobotContainer.harvester.hasGamePiece())).withTimeout(0.5)
-            // )
+            new HarvesterIntakeCubeWithArm()
         ),
 
         Commands.parallel(
@@ -73,27 +82,27 @@ public class AutoCone001PickUpCone021ChargeBalance extends SequentialCommandGrou
             ),
 
             Commands.sequence(
-                // Bring in intake an orient cone with spindexer
-                new HarvesterRecordRetract(true, 0.25, 0.5),
+                new WaitCommand(.25),
+                // Grab cone and retract wrist. Move the arm to position
+                new HarvesterRetractCubeWithArm(ArmConstants.BACK_MIDDLE_CUBE),
 
-                // Move arm to pick-up position for cone
-                new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE),
-    
-                // Extend wrist to cone
-                new ClawWristExtendForCone(),
-
-                // Grab cone and retract wrist
-                new ClawWristRetract(true)
-            )
+                // Score the cube
+                new ClawSpit()
+            ).withTimeout(7)
         ),
-        
-        // Score cone mid
-        new AutoScoreCone(ArmConstants.BACK_MIDDLE_CONE).withTimeout(6.0),
 
         // Drive to balancing position bring arm to default position
         Commands.deadline(
             new DriveFollowTrajectory(path.get(2)),
-            new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE)
+            Commands.parallel(
+                new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE),
+                Commands.sequence(
+                    new WaitCommand(0.35),
+                    // Close the claw
+                    new ClawClose(true),
+                    new ClawStop()
+                )
+            )
         ).withTimeout(6),
 
         // Balance robot with feedback loop

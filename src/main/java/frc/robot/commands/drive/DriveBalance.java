@@ -97,80 +97,81 @@ public class DriveBalance extends CommandBase {
         // Get the current gyro position.
         Rotation2d currentGyro = RobotContainer.swerveDrive.getGyroRotation2d();
 
-        if(enableLateralControl){
-            // Determine the away speed.
-            double awaySpeed = 0.0;
-            double awayAngle = (currentPitch * currentGyro.getCos()) + (currentRoll * currentGyro.getSin());
-            double awayVel = Math.sqrt((pitchVel * pitchVel) + (rollVel * rollVel));
+        // if(enableLateralControl){
+        // Determine the away speed.
+        double awaySpeed = 0.0;
+        double awayAngle = (currentPitch * currentGyro.getCos()) + (currentRoll * currentGyro.getSin());
+        double awayVel = Math.sqrt((pitchVel * pitchVel) + (rollVel * rollVel));
 
-            // If the charge station is moving down or the robot's pitch / roll is within tolerance, stop moving forward.
-            if (Math.abs(awayVel) > SwerveDriveConstants.DRIVE_BALANCE_ROBOT_VELOCITY_TOLERANCE || 
-                Math.abs(awayAngle) < SwerveDriveConstants.DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE) {
-                awaySpeed = 0.0;
-            } else {
-                // Determine the speed the robot should move at.
-                double rawSpeed = -balancePIDX.calculate(currentPitch, 0.0);
+        // If the charge station is moving down or the robot's pitch / roll is within tolerance, stop moving forward.
+        if (Math.abs(awayVel) > SwerveDriveConstants.DRIVE_BALANCE_ROBOT_VELOCITY_TOLERANCE || 
+            Math.abs(awayAngle) < SwerveDriveConstants.DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE) {
+            awaySpeed = 0.0;
+        } else {
+            // Determine the speed the robot should move at.
+            double rawSpeed = -balancePIDX.calculate(currentPitch, 0.0);
 
-                // Set the away speed to the determined speed within the range of the specified max speed.
-                awaySpeed = Math.min(Math.max(rawSpeed, -SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED), SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED);
-            }
-
-            // Get the lateral speed from the driver's controller.
-            double lateralSpeed = Robot.robotContainer.getDriverLateralFull(false);
-            if(Robot.robotContainer.getDriverButton(9)){
-                //if secondary sticks used, replace with secondary sticks with a slow factor
-                lateralSpeed *= 0.5;
-            }
-
-            // Move the robot.
-            RobotContainer.swerveDrive.driveFieldRelative(
-                awaySpeed, 
-                lateralSpeed, 
-                RobotContainer.swerveDrive.getCounterRotationPIDOut(startingYaw), 
-                false
-            );
-        }else{
-            double forwardSpeed = 0.0;
-            double strafeSpeed = 0.0;
-            //if we are facing up and the ramp is moving down (or vice versa) we are coming to balance so stop moving
-            if(Math.abs(pitchVel) > SwerveDriveConstants.DRIVE_BALANCE_ROBOT_VELOCITY_TOLERANCE || 
-                Math.abs(currentPitch) < SwerveDriveConstants.DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE){
-                
-                forwardSpeed = 0.0;
-            } else {
-                forwardSpeed = balancePIDX.calculate(currentPitch, 0.0);
-            }
-
-            //same thing for roll
-            if(Math.abs(rollVel) > SwerveDriveConstants.DRIVE_BALANCE_ROBOT_VELOCITY_TOLERANCE || 
-                Math.abs(currentRoll) < SwerveDriveConstants.DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE){
-            strafeSpeed = 0.0;
-            } else {
-            strafeSpeed = balancePIDY.calculate(currentRoll, 0.0);
-            }
-
-            //puts the value of forward speed between maxSpeed and -maxSpeed
-            if(forwardSpeed > SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED){
-                forwardSpeed = SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED;
-            }else if(forwardSpeed < -SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED){
-                forwardSpeed = -SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED;
-            }
-
-            //puts the value of strafe speed between maxSpeed and -maxSpeed
-            if(strafeSpeed > SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED){
-                strafeSpeed = SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED;
-            }else if(strafeSpeed < -SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED){
-                strafeSpeed = -SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED;
-            }
-            //moves the robot using driveRobotCentric
-            RobotContainer.swerveDrive.driveRobotCentric(
-                forwardSpeed * -1.0,
-                strafeSpeed * -1.0,
-                RobotContainer.swerveDrive.getCounterRotationPIDOut(currentRoll),
-                false,
-                false
-            );
+            // Set the away speed to the determined speed within the range of the specified max speed.
+            awaySpeed = Math.min(Math.max(rawSpeed, -SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED), SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED);
         }
+
+        // Get the lateral speed from the driver's controller.
+        double lateralSpeed = enableLateralControl ? Robot.robotContainer.getDriverLateralFull(false) : 0;
+        if(Robot.robotContainer.getDriverButton(9)){
+            //if secondary sticks used, replace with secondary sticks with a slow factor
+            lateralSpeed *= 0.5;
+        }
+
+        // Move the robot.
+        RobotContainer.swerveDrive.driveFieldRelative(
+            awaySpeed,
+            lateralSpeed, 
+            RobotContainer.swerveDrive.getCounterRotationPIDOut(startingYaw), 
+            false
+        );
+        // }else{
+        //     double forwardSpeed = 0.0;
+        //     double strafeSpeed = 0.0;
+        //     //if we are facing up and the ramp is moving down (or vice versa) we are coming to balance so stop moving
+        //     if(Math.abs(pitchVel) > SwerveDriveConstants.DRIVE_BALANCE_ROBOT_VELOCITY_TOLERANCE || 
+        //         Math.abs(currentPitch) < SwerveDriveConstants.DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE){
+                
+        //         forwardSpeed = 0.0;
+        //     } else {
+        //         forwardSpeed = balancePIDX.calculate(currentPitch, 0.0);
+        //     }
+
+        //     //puts the value of forward speed between maxSpeed and -maxSpeed
+        //     if(forwardSpeed > SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED){
+        //         forwardSpeed = SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED;
+        //     }else if(forwardSpeed < -SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED){
+        //         forwardSpeed = -SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED;
+        //     }
+
+        //     //same thing for roll
+        //     // if(Math.abs(rollVel) > SwerveDriveConstants.DRIVE_BALANCE_ROBOT_VELOCITY_TOLERANCE || 
+        //     //     Math.abs(currentRoll) < SwerveDriveConstants.DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE){
+        //     // strafeSpeed = 0.0;
+        //     // } else {
+        //     // strafeSpeed = balancePIDY.calculate(currentRoll, 0.0);
+        //     // }
+
+        //     // //puts the value of strafe speed between maxSpeed and -maxSpeed
+        //     // if(strafeSpeed > SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED){
+        //     //     strafeSpeed = SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED;
+        //     // }else if(strafeSpeed < -SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED){
+        //     //     strafeSpeed = -SwerveDriveConstants.DRIVE_BALANCE_ROBOT_MAX_SPEED;
+        //     // }
+        //     //moves the robot using driveRobotCentric
+        //     RobotContainer.swerveDrive.driveRobotCentric(
+        //         forwardSpeed * -1.0,
+        //         strafeSpeed * -1.0,
+        //         // RobotContainer.swerveDrive.getCounterRotationPIDOut(currentRoll),
+        //         0,
+        //         false,
+        //         false
+        //     );
+        // }
     }
 
     @Override
