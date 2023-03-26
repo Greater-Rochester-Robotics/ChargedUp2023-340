@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -18,13 +19,18 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.commands.ClawWristExtend;
+import frc.robot.commands.ClawWristExtendForCone;
 import frc.robot.commands.ClawWristRetract;
 import frc.robot.commands.HarvesterClawIntake;
+import frc.robot.commands.HarvesterIntakeCubeWithArm;
 import frc.robot.commands.HarvesterRecordRetract;
+import frc.robot.commands.HarvesterRetractCubeWithArm;
 import frc.robot.commands.arm.ArmElbowManual;
+import frc.robot.commands.arm.ArmElbowToPosition;
 import frc.robot.commands.arm.ArmToPosition;
+import frc.robot.commands.arm.ArmWristHome;
 import frc.robot.commands.arm.ArmWristManual;
+import frc.robot.commands.arm.ArmWristToPosition;
 import frc.robot.commands.auto.AutoCone001PickUpCone021ChargeBalance;
 import frc.robot.commands.auto.AutoCone001PickUpReturn;
 import frc.robot.commands.auto.AutoCone021ChargeBalance;
@@ -60,6 +66,7 @@ import frc.robot.commands.recordPlayer.RecordPlayerManual;
 import frc.robot.commands.recordPlayer.RecordPlayerOrientCone;
 import frc.robot.commands.recordPlayer.RecordPlayerSpin;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.ArmPosition;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Compressor;
 import frc.robot.subsystems.Harvester;
@@ -159,9 +166,14 @@ public class RobotContainer {
         harvester = new Harvester();
         target = new Target();
         recordPlayer = new RecordPlayer();
-
         swerveDrive.setDefaultCommand(new DriveFieldRelative(false));
 
+        SmartDashboard.putData("arm to 0", new ArmToPosition(new ArmPosition()));
+        SmartDashboard.putData("arm high cone", new ArmToPosition(new ArmPosition(Units.degreesToRadians(-90), 0.3)));
+
+        SmartDashboard.putData("elbow to 0", new ArmElbowToPosition(0));
+        SmartDashboard.putData("elbow to -90", new ArmElbowToPosition(Math.toRadians(-90)));
+        SmartDashboard.putData("elbow to 15", new ArmElbowToPosition(Math.toRadians(15)));
         // Add all autos to the auto selector
         configureAutoModes();
 
@@ -186,7 +198,7 @@ public class RobotContainer {
         driverA.onTrue(new HarvesterClawIntake(true)).onFalse(new HarvesterRecordRetract(true));
 
         // B => Hold to intake cubes with the harvester
-        driverB.onTrue(new HarvesterClawIntake(false)).onFalse(new HarvesterRecordRetract(false));
+        driverB.onTrue(new HarvesterIntakeCubeWithArm()).onFalse(new HarvesterRetractCubeWithArm());//new HarvesterClawIntake(false)).onFalse(new HarvesterRecordRetract(false));
 
         // X => Toggle opening the claw
         driverX.onTrue(new ConditionalCommand(Commands.sequence(new ClawClose(false), new ClawStop()), new ClawOpen(), claw::isOpen));
@@ -223,16 +235,16 @@ public class RobotContainer {
          */
 
         // A => Cone pickup
-        coDriverA.onTrue(new ClawWristExtend()).onFalse(new ClawWristRetract(true));
+        coDriverA.onTrue(new ClawWristExtendForCone()).onFalse(new ClawWristRetract(true));
 
         // B => Cube pickup
-        coDriverB.onTrue(Commands.sequence(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CUBE).withTimeout(.75), new ClawWristExtend())).onFalse(new ClawWristRetract(false));
+        coDriverB.onTrue(new ClawIntake()).onFalse(new ClawStop());//Commands.sequence(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CUBE).withTimeout(.75), new ClawWristExtend())).onFalse(new ClawWristRetract(false));
 
         // X => Arm to scoring position
         coDriverX.onTrue(new InstantCommand(() -> target.getTargetPosition().getArmMoveCommand().schedule()));
 
         // Y => Arm to internal cone pickup position
-        coDriverY.onTrue(new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE));
+        coDriverY.onTrue(new ArmToPosition(ArmConstants.INTERNAL_DEFAULT));
 
         // LB => Elbow manual
         coDriverLB.whileTrue(new ArmElbowManual());
@@ -383,15 +395,15 @@ public class RobotContainer {
         return -Math.copySign(Math.pow(raw, Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_EXPONENTIAL), raw) * (isVeloMode ? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : Constants.SwerveDriveConstants.DRIVER_PERCENT_SPEED_SCALE_LINEAR);
     }
 
-    public double getRobotLateralFull(boolean isVeloMode) {
-        return this.getDriverAxis(Axis.kLeftX)*-Constants.SwerveDriveConstants.DRIVER_PERCENT_SPEED_SCALE_LINEAR
-            * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
-    }
+    // public double getRobotLateralFull(boolean isVeloMode) {
+    //     return this.getDriverAxis(Axis.kLeftX)*-Constants.SwerveDriveConstants.DRIVER_PERCENT_SPEED_SCALE_LINEAR
+    //         * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
+    // }
 
-    public double getRobotLateralSlow(boolean isVeloMode) {
-        return this.getDriverAxis(Axis.kRightX)*0.5*-Constants.SwerveDriveConstants.DRIVER_PERCENT_SPEED_SCALE_LINEAR 
-        * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
-    }
+    // public double getRobotLateralSlow(boolean isVeloMode) {
+    //     return this.getDriverAxis(Axis.kRightX)*0.5*-Constants.SwerveDriveConstants.DRIVER_PERCENT_SPEED_SCALE_LINEAR 
+    //     * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
+    // }
 
     /**
      * Gets the rotation value from the driver's controller for swerve (LT and RT).
@@ -420,6 +432,10 @@ public class RobotContainer {
     public static void setCoDriverRumble (double leftRumble, double rightRumble) {
         coDriver.setRumble(RumbleType.kLeftRumble, leftRumble);
         coDriver.setRumble(RumbleType.kRightRumble, rightRumble);
+    }
+
+    public boolean getCoDriverButton(int buttonNum) {
+        return coDriver.getRawButton(buttonNum);
     }
 
     /**

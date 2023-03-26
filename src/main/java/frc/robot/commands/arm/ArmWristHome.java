@@ -29,14 +29,18 @@ public class ArmWristHome extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute () {
-        RobotContainer.arm.setWristVoltage(-ArmConstants.WRIST_HOMING_SPEED);
+        if(override || !RobotContainer.arm.getWristBeenZeroed() ){
+            RobotContainer.arm.setWristDutyCycle(-ArmConstants.WRIST_HOMING_SPEED);
+        }else{
+            RobotContainer.arm.stopWristMotor();
+        }
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end (boolean interrupted) {
         RobotContainer.arm.stopWristMotor();
-        if(!interrupted || !override){
+        if(RobotContainer.arm.getWristInnerLimitSwitch()){
             RobotContainer.arm.zeroWrist();
         }
     }
@@ -44,6 +48,7 @@ public class ArmWristHome extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished () {
-        return (RobotContainer.arm.getWristBeenZeroed() && !override) || RobotContainer.arm.getWristInnerLimitSwitch();
+        return (RobotContainer.arm.getWristBeenZeroed() && !override) || 
+            RobotContainer.arm.getWristInnerLimitSwitch();
     }
 }

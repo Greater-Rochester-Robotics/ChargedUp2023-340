@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.SwerveDriveConstants;
-import frc.robot.commands.ClawWristExtend;
+import frc.robot.commands.ClawWristExtendForCone;
 import frc.robot.commands.ClawWristRetract;
 import frc.robot.commands.HarvesterClawIntake;
 import frc.robot.commands.HarvesterRecordRetract;
@@ -80,7 +80,7 @@ public class AutoCone001PickUpCone021ChargeBalance extends SequentialCommandGrou
                 new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE),
     
                 // Extend wrist to cone
-                new ClawWristExtend(),
+                new ClawWristExtendForCone(),
 
                 // Grab cone and retract wrist
                 new ClawWristRetract(true)

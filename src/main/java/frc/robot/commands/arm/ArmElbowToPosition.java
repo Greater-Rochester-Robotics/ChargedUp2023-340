@@ -11,7 +11,7 @@ import frc.robot.RobotContainer;
 /**
  * Moves the elbow to a set position (in radians).
  */
-public class ArmElbowToPosition extends CommandBase {
+public class    ArmElbowToPosition extends CommandBase {
     /**
      * If the elbow is going down.
      */
@@ -65,6 +65,6 @@ public class ArmElbowToPosition extends CommandBase {
     @Override
     public boolean isFinished () {
         // Finish if hitTarget has been incremented to 10, or if the elbow has exceeded the maximum safe angle.
-        return hitTarget >= 10 || (!goingDown && Math.abs(RobotContainer.arm.getElbowPosition()) > ArmConstants.MAX_ELBOW_ANGLE);
+        return hitTarget >= 4 || (!goingDown && Math.abs(RobotContainer.arm.getElbowPosition()) > ArmConstants.MAX_ELBOW_ANGLE);
     }
 }

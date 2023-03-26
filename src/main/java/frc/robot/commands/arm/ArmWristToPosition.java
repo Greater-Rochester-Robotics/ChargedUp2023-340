@@ -52,6 +52,7 @@ public class ArmWristToPosition extends SequentialCommandGroup {
         public void initialize () {
             // Set helpers.
             hitTarget = 0;
+            RobotContainer.arm.resetWristController();
         }
 
         @Override
@@ -71,7 +72,7 @@ public class ArmWristToPosition extends SequentialCommandGroup {
         public void end (boolean interrupted) {
         // If ended, stop the wrist from moving.
             RobotContainer.arm.stopWristMotor();
-            if(RobotContainer.arm.getWristInnerLimitSwitch() && !interrupted){
+            if(RobotContainer.arm.getWristInnerLimitSwitch()){
                 RobotContainer.arm.zeroWrist();
             }
         }
@@ -79,8 +80,9 @@ public class ArmWristToPosition extends SequentialCommandGroup {
         @Override
         public boolean isFinished () {
             // Finish if hitTarget has been incremented to 10, or if the wrist has exceeded the maximum safe extension.
-            return hitTarget >= 10 || RobotContainer.arm.getWristOuterLimitSwitch() || 
-                (target < .025 &&  RobotContainer.arm.getWristInnerLimitSwitch());          
+            return hitTarget >= 5 || RobotContainer.arm.getWristOuterLimitSwitch() || 
+                (target < .025 && RobotContainer.arm.getWristInnerLimitSwitch());         
+            
         }
     }
 }

@@ -4,14 +4,20 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.claw.ClawIntakeSlow;
 import frc.robot.commands.claw.ClawOpen;
+import frc.robot.commands.harvester.HarvesterExtensionOut;
 import frc.robot.commands.harvester.HarvesterIntake;
+import frc.robot.commands.harvester.HarvesterLock;
 import frc.robot.commands.recordPlayer.RecordPlayerStop;
+import frc.robot.RobotContainer;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -24,10 +30,19 @@ public class HarvesterIntakeCubeWithArm extends SequentialCommandGroup {
     addCommands(
         new ClawOpen(),
         new RecordPlayerStop(),
-        new HarvesterIntake(false),
-        new WaitCommand(2),//TODO: DO WE NEED THIS DELAY????????
-        new ArmToPosition(ArmConstants.CUBE_GRABBING_POSITION),
-        new ClawIntakeSlow()
+        Commands.parallel(
+            new ArmToPosition(ArmConstants.CUBE_GRABBING_POSITION, true, RobotContainer.harvester::isLockHarvesterOut).withTimeout(8),
+            Commands.sequence(
+                new WaitUntilCommand( () -> Math.abs(RobotContainer.arm.getArmPosition().getElbowPosition()-ArmConstants.CUBE_GRABBING_POSITION.getElbowPosition()) < Units.degreesToRadians(5) ),
+                new HarvesterExtensionOut(),
+                new WaitCommand(.2),
+                new HarvesterLock(true)
+            )
+        ),
+        // new WaitCommand(.5),
+        
+        new ClawIntakeSlow(),
+        new HarvesterIntake(false)
         //TODO: EXAMINE IF YOU NEED A LOCK OUT ON THE HARVESTER
     );
   }

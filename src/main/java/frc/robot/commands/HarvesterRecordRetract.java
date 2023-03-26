@@ -18,7 +18,7 @@ import frc.robot.commands.recordPlayer.RecordPlayerOrientCone;
  */
 public class HarvesterRecordRetract extends SequentialCommandGroup {
     public HarvesterRecordRetract (boolean isCone) {
-        this(isCone, 1, 2.5);
+        this(isCone, 1, 1);
     }
 
     /**

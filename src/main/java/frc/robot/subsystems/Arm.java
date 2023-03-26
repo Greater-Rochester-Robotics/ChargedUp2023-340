@@ -79,6 +79,8 @@ public class Arm extends SubsystemBase {
      */
     private boolean wristHasBeenZeroed = false;
 
+    private boolean wristMaintainingPosition = false; 
+
     /**
      * The network table instance used by the arm subsystem.
      */
@@ -119,7 +121,7 @@ public class Arm extends SubsystemBase {
         elbowAbsoluteEncoder.setPositionConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONVERSION_FACTOR);
         elbowAbsoluteEncoder.setVelocityConversionFactor(ArmConstants.ABS_ENC_TO_RAD_CONVERSION_FACTOR / 60);
         elbowAbsoluteEncoder.setInverted(true);
-        elbowAbsoluteEncoder.setZeroOffset(1.6277872);
+        elbowAbsoluteEncoder.setZeroOffset(3.7332022 - Math.PI);
 
         elbowController = elbowMotor.getPIDController();
         elbowController.setFeedbackDevice(elbowAbsoluteEncoder);
@@ -135,9 +137,11 @@ public class Arm extends SubsystemBase {
         wristEncoder = new Encoder(Constants.WRIST_ENCODER_FORWARD, Constants.WRIST_ENCODER_REVERSE);
         wristInnerLimitSwitch = new DigitalInput(Constants.WRIST_INNER_LIMIT_SWITCH);
         wristOuterLimitSwitch = new DigitalInput(Constants.WRIST_OUTER_LIMIT_SWITCH);
+
+        // Wrist motor settings.
+        wristMotor.setInverted(false);
         wristMotor.setNeutralMode(NeutralMode.Brake);
         wristMotor.configVoltageCompSaturation(Constants.MAXIMUM_VOLTAGE);
-        // Wrist motor settings.
         wristMotor.enableVoltageCompensation(true);
         wristMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20);
         wristMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 251);
@@ -147,12 +151,16 @@ public class Arm extends SubsystemBase {
         wristMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus, 221);
         wristMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 211);
         
+        wristPID.disableContinuousInput();
+        
         // Wrist encoder settings.
         wristEncoder.setDistancePerPulse(ArmConstants.WRIST_ENCODER_DISTANCE_PER_PULSE);
 
         // Start the elbow and wrist at 0 speed.
         elbowMotor.set(0);
-        wristMotor.set(TalonSRXControlMode.PercentOutput, 0);
+        elbowMotor.burnFlash();
+        this.stopWristMotor();
+
     }
 
     @Override
@@ -167,12 +175,16 @@ public class Arm extends SubsystemBase {
             netTable.getEntry("wrist").setDouble(Math.round(wristPos * 10) / 10);
 
             SmartDashboard.putNumber("Absolute encoder elbow", Math.round(Math.toDegrees(elbowPos) * 10) * 0.1);
-            SmartDashboard.putNumber("Wrist position", Math.round(wristPos * 100) * 0.01);
+            SmartDashboard.putNumber("Wrist position", Math.round(wristPos * 10000) * 0.0001);
             SmartDashboard.putBoolean("Wrist has been zeroed", getWristBeenZeroed());
             SmartDashboard.putBoolean("Wrist limit inner", getWristInnerLimitSwitch());
             SmartDashboard.putBoolean("Wrist limit outer", getWristOuterLimitSwitch());
+            SmartDashboard.putNumber("wrist motor output percentage",wristMotor.getMotorOutputPercent());
         }
 
+        if(wristMaintainingPosition){
+            setWristDutyCycle(-.08 * Math.cos(getElbowPosition()));
+        }
     }
 
     // -------------------------- Elbow Motor Methods -------------------------- //
@@ -213,6 +225,7 @@ public class Arm extends SubsystemBase {
             System.out.println("Cannot set elbow target to " + Math.round(Math.toDegrees(targetAngle)) + " degrees: Out of Range");
             return;
         }
+        targetAngle += Math.PI;
 
         // TODO: This will depend on wrist position (was previously two values for in and out).
         // Counter for gravity.
@@ -223,7 +236,6 @@ public class Arm extends SubsystemBase {
         elbowController.setReference(targetAngle, ControlType.kPosition, 0, ArmConstants.KG* Math.sin(getElbowPosition()));
 
         elbowBrake.set(true);
-
     }
 
     /**
@@ -280,17 +292,18 @@ public class Arm extends SubsystemBase {
      * Drives the wrist via duty cycle.
      * @param speed The speed to set the motor to, should be a value between -1.0 and 1.0.
      */
-    public void setWristVoltage (double speed) {
-        if(speed < 0 && getWristInnerLimitSwitch()) {
-            System.out.println("Cannot set wrist motor speed: At lower limit");
+    public void setWristDutyCycle (double speed) {
+        if(speed < -.08 && getWristInnerLimitSwitch()) {
+            // System.out.println("Cannot set wrist motor speed: At lower limit");
             zeroWrist();
-            speed = 0;
+            speed = -.08;
         }
         if(speed > 0 && getWristOuterLimitSwitch()) {
-            System.out.println("Cannot set wrist motor speed: At upper limit");
+            // System.out.println("Cannot set wrist motor speed: At upper limit");
             speed = 0;
         }
         wristMotor.set(TalonSRXControlMode.PercentOutput, speed);
+        wristMaintainingPosition = false;
     }
 
     /**
@@ -309,15 +322,22 @@ public class Arm extends SubsystemBase {
             stopWristMotor();
             return;
         }
-        
-        setWristVoltage(wristPID.calculate(getWristPosition(), target));
+
+        double output = wristPID.calculate(getWristPosition(), target);
+        output = output+ (-.08 * Math.cos(getElbowPosition()));
+        setWristDutyCycle(output);
+        wristMaintainingPosition = false;
     }
 
+    public void resetWristController(){
+        wristPID.reset(getWristPosition());
+    }
     /**
      * Stops the wrist motor.
      */
     public void stopWristMotor () {
-        setWristVoltage(0.0);
+        setWristDutyCycle(0.0);
+        wristMaintainingPosition = true;
     }
 
     /**
@@ -329,5 +349,13 @@ public class Arm extends SubsystemBase {
             getElbowPosition(),
             getWristPosition()
         );
+    }
+
+    public void setWristMaintainingPosition(boolean maintainPosition){
+        wristMaintainingPosition = maintainPosition;
+    }
+
+    public boolean isWristMaintainingPosition(){
+        return wristMaintainingPosition;
     }
 }

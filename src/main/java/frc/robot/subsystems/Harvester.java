@@ -30,6 +30,7 @@ public class Harvester extends SubsystemBase {
   private DoubleSolenoid harvesterPistons;
   Timer rumbleTimer;
   private boolean isHarvesterOut;
+  private boolean lockHarvesterOut;
 
   /**
    * The network table instance used by the harvester subsystem.
@@ -50,6 +51,7 @@ public class Harvester extends SubsystemBase {
     harvesterMotor.enableVoltageCompensation(true);
     
     harvesterMotor.setNeutralMode(NeutralMode.Brake);
+    harvesterMotor.setInverted(true);
 
     harvesterMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 20);
     harvesterMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 251);
@@ -66,6 +68,7 @@ public class Harvester extends SubsystemBase {
     harvesterPistons = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.HARVESTER_SOLENOID_OUT, Constants.HARVESTER_SOLENOID_IN);
 
     isHarvesterOut = harvesterPistons.get() == Value.kForward;
+    isHarvesterOut = false;
   }
 
   @Override
@@ -86,8 +89,11 @@ public class Harvester extends SubsystemBase {
    * Move the intake into the robot.
    */
   public void harvesterExtensionIn() {
+    if(lockHarvesterOut){
+        return;
+    }
     harvesterPistons.set(Value.kReverse);
-    isHarvesterOut = harvesterPistons.get() == Value.kForward;
+    isHarvesterOut = false;
   }
 
   /**
@@ -95,13 +101,20 @@ public class Harvester extends SubsystemBase {
    */
   public void harvesterExtensionOut() {
     harvesterPistons.set(Value.kForward);
-    isHarvesterOut = harvesterPistons.get() == Value.kForward;
+    isHarvesterOut = true;
   }
 
   public boolean isHarvesterOut(){
     return isHarvesterOut;
   }
 
+  public boolean isLockHarvesterOut(){
+    return lockHarvesterOut;
+  }
+
+  public void lockHarvesterOut(boolean lockHarvesterOut){
+    this.lockHarvesterOut = lockHarvesterOut;
+  }
   /**
    * run the intake motor, to bring a gamepiece into the robot
    */

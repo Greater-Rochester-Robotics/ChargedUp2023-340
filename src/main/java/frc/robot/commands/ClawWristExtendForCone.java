@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.arm.ArmWristToPosition;
 import frc.robot.commands.claw.ClawIntake;
 import frc.robot.commands.claw.ClawOpen;
@@ -15,17 +16,17 @@ import frc.robot.commands.claw.ClawOpen;
  * Opens the claw and extends the wrist while running the claw intake.
  * Used to pick up game pieces from the record player.
  */
-public class ClawWristExtend extends SequentialCommandGroup {
+public class ClawWristExtendForCone extends SequentialCommandGroup {
     /**
      * Creates a new ClawWristExtend command.
      */
-    public ClawWristExtend () {
+    public ClawWristExtendForCone () {
         addCommands(
             new ClawOpen(),
             new ClawIntake(),
             new WaitCommand(0.3),
             // TODO: put a position
-            new ArmWristToPosition(ArmConstants.INTERNAL_EXTENSION_LENGTH)
+            new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE)
         );
     }
 }
