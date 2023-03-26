@@ -410,7 +410,7 @@ public class Target extends SubsystemBase {
      * @return The ArmToPosition command.
      */
     public Command getArmMoveCommand(){
-      return new ArmToPosition(this.getArmPosition(), true, () -> !Robot.robotContainer.getCoDriverButton(3));
+      return new ArmToPosition(this.getArmPosition(), () -> !Robot.robotContainer.getCoDriverButton(3));
     }
   }
 }
