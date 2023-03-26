@@ -26,14 +26,19 @@ import frc.robot.subsystems.ArmPosition;
  */
 public class ArmToPosition extends SequentialCommandGroup {
 
+    /**
+     * Creates a new ArmToPosition command. Does not wait to extend wrist
+     * @param armPosition The arm position to move to.
+     */
     public ArmToPosition(ArmPosition armPosition){
-        this(armPosition, false, ()->true);
+        this(armPosition, ()->true);
     }
     /**
      * Creates a new ArmToPosition command.
      * @param armPosition The arm position to move to.
+     * @param wristExtendWaitConditional Condition to wait on to extend the wrist
      */
-    public ArmToPosition (ArmPosition armPosition, boolean isUserControl, BooleanSupplier extend) {
+    public ArmToPosition (ArmPosition armPosition, BooleanSupplier wristExtendWaitConditional) {
         addCommands(
             // Print the target position.
             new PrintCommand("ArmToPosition: Begin moving to position: " + Math.round(Units.radiansToDegrees(armPosition.getElbowPosition())) + " deg | " + armPosition.getWristPosition() + " m"),
@@ -50,12 +55,10 @@ public class ArmToPosition extends SequentialCommandGroup {
             new ArmElbowToPosition(armPosition.getElbowPosition()).withTimeout(5),
 
             new PrintCommand("ArmToPosition: Elbow in Position"),
-
-            isUserControl?
-                new WaitUntilCommand(extend):
-                new InstantCommand(),
-
-
+            
+            // Wait until harvester is locked out
+            new WaitUntilCommand(wristExtendWaitConditional),
+            
             armPosition.getWristPosition()<.001?
                 new InstantCommand():
                 new ArmWristToPosition(armPosition.getWristPosition()),
