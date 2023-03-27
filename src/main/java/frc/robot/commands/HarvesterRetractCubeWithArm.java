@@ -12,6 +12,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.arm.ArmWristToPosition;
 import frc.robot.commands.claw.ClawClose;
+import frc.robot.commands.claw.ClawIntakeSlow;
 import frc.robot.commands.claw.ClawStop;
 import frc.robot.commands.harvester.HarvesterExtensionIn;
 import frc.robot.commands.harvester.HarvesterLock;
@@ -24,14 +25,14 @@ import frc.robot.subsystems.ArmPosition;
 public class HarvesterRetractCubeWithArm extends SequentialCommandGroup {
 
     public HarvesterRetractCubeWithArm(){
-        this(ArmConstants.INTERNAL_DEFAULT);
+        this(ArmConstants.INTERNAL_CUBE);
     }
     /** Creates a new HarvesterRetractCubeWithArm. */
     public HarvesterRetractCubeWithArm(ArmPosition armPosition) {
         // Add your commands in the addCommands() call, e.g.
         // addCommands(new FooCommand(), new BarCommand());
         addCommands(
-            new ClawStop(),
+            new ClawIntakeSlow(),
             new HarvesterStop(),
             // new ClawClose(false)//TODO: fix when the SHUTTLE VALVE INSTALLED
             Commands.parallel(

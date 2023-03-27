@@ -81,10 +81,11 @@ public final class Constants {
       public static final ArmPosition FRONT_LOWER_SCORE = new ArmPosition(Math.toRadians(0), 0);  //Fix
       public static final ArmPosition FRONT_PICK_UP = new ArmPosition(Math.toRadians(93), 0); 
 
-      public static final ArmPosition INTERNAL_DEFAULT = new ArmPosition(Math.toRadians(0.0), 0);
+      public static final ArmPosition INTERNAL_CONE = new ArmPosition(Math.toRadians(0.0), 0);
+      public static final ArmPosition INTERNAL_CUBE = new ArmPosition(Math.toRadians(-12.5), 0);
       public static final ArmPosition INTERNAL_PICK_UP_CONE = new ArmPosition(Math.toRadians(18.5), 0.27);
-    //   public static final ArmPosition INTERNAL_PICK_UP_CUBE = new ArmPosition(Math.toRadians(10), 0);
-      public static final ArmPosition CUBE_GRABBING_POSITION = new ArmPosition(Math.toRadians(40.0), 0.36);
+      public static final ArmPosition INTERNAL_PICK_UP_CUBE = new ArmPosition(Math.toRadians(18.5), 0.27);//TODO: get actual cube position
+      public static final ArmPosition CUBE_GRABBING_POSITION = new ArmPosition(Math.toRadians(40), 0.35);
 
 
       /* Arm Limits */
@@ -136,7 +137,7 @@ public final class Constants {
     public static class ClawConstants {
       public static final double CLAW_MOTOR_INTAKE_SPEED = 1.0; 
       public static final double CLAW_MOTOR_OUTTAKE_SPEED = -1.0; 
-      public static final double CLAW_MOTOR_HOLD_SPEED = 0.35;
+      public static final double CLAW_MOTOR_HOLD_SPEED = 0.1;
 
       public static final double CLAW_OPEN_DELAY = 0.3;
       public static final double CLAW_CLOSE_DELAY = 0.3;
@@ -151,7 +152,7 @@ public final class Constants {
     public static class HarvesterConstants {
       public static final double HARVESTER_MOTOR_INTAKE_SPEED = -0.7; //TODO: set this to the right value
       public static final double HARVESTER_MOTOR_OUTTAKE_SPEED = 0.7; //TODO: set this to the right value
-      public static final double HARVESTER_MOTOR_CUBE_SPEED = -0.3; //TODO: set this to the right value
+      public static final double HARVESTER_MOTOR_CUBE_SPEED = -0.4; //TODO: set this to the right value
     }
   
     public class RecordPlayerConstants {

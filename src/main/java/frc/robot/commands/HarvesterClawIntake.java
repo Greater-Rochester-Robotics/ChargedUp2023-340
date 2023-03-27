@@ -38,7 +38,7 @@ public class HarvesterClawIntake extends SequentialCommandGroup {
             ),
 
             // Move the arm back.
-            new ArmToPosition(ArmConstants.INTERNAL_DEFAULT).withTimeout(3)
+            new ArmToPosition(ArmConstants.INTERNAL_CONE).withTimeout(3)
         );
     }
 }

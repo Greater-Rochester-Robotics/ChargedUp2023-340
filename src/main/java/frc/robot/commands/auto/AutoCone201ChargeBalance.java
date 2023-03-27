@@ -19,7 +19,9 @@ import frc.robot.commands.drive.auto.DriveFollowTrajectory;
 import frc.robot.commands.drive.util.DriveSetGyro;
 
 public class AutoCone201ChargeBalance extends SequentialCommandGroup {
-  /** Creates a new AutoCone201ChargeBalance. */
+  /**
+   * @param scoreHigh Whether to score the cone high, scores mid on false
+   */
   public AutoCone201ChargeBalance(boolean scoreHigh) {
     List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("Cone201ChargeBalance", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
     // Add your commands in the addCommands() call, e.g.

@@ -4,12 +4,11 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.arm.ArmWristToPosition;
+import frc.robot.Constants.ArmConstants;
+import frc.robot.commands.arm.ArmToPosition;
 import frc.robot.commands.claw.ClawClose;
 import frc.robot.commands.claw.ClawIntakeSlow;
 import frc.robot.commands.claw.ClawStop;
@@ -32,8 +31,8 @@ public class ClawWristRetract extends SequentialCommandGroup {
             new ClawStop(),
             new ConditionalCommand(new ClawClose(true), new ClawIntakeSlow(), () -> isCone),//TODO: Change once SHUTTLE VALVE INSTALLED
             new WaitCommand(0.3),
-            // Retract the wrist.
-            new ArmWristToPosition(0.0)
+            
+            new ConditionalCommand(new ArmToPosition(ArmConstants.INTERNAL_CONE), new ArmToPosition(ArmConstants.INTERNAL_CUBE), () -> isCone)
         );
     }
 }

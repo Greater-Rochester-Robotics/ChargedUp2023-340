@@ -19,7 +19,7 @@ public class HarvesterRetractWithArm extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-        new ArmToPosition(ArmConstants.INTERNAL_DEFAULT),
+        new ArmToPosition(ArmConstants.INTERNAL_CONE),
         new HarvesterStop(),
         new HarvesterExtensionIn()
     );

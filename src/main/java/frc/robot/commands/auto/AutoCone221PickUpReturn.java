@@ -23,12 +23,15 @@ import frc.robot.commands.drive.util.DriveSetGyro;
 import frc.robot.commands.harvester.HarvesterExtensionOut;
 
 public class AutoCone221PickUpReturn extends SequentialCommandGroup {
-    public AutoCone221PickUpReturn () {
+    /**
+     * @param scoreHigh Whether to score the cone high, scores mid on false
+     */
+    public AutoCone221PickUpReturn (boolean scoreHigh) {
         List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("Cone221PickUpReturn", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
 
         addCommands(
             new DriveSetGyro(0),
-            new AutoScoreCone(ArmConstants.BACK_MIDDLE_CONE),
+            new AutoScoreCone(scoreHigh?ArmConstants.BACK_HIGH_CONE:ArmConstants.BACK_MIDDLE_CONE),
             new HarvesterExtensionOut(),
             Commands.parallel(
                 new HarvesterClawIntake(false),

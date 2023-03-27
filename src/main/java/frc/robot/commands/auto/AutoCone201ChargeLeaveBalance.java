@@ -22,14 +22,17 @@ import frc.robot.commands.drive.util.DriveSetGyro;
 import frc.robot.subsystems.swervelib.ADIS16470_IMU.IMUAxis;
 
 public class AutoCone201ChargeLeaveBalance extends SequentialCommandGroup {
-    public AutoCone201ChargeLeaveBalance () {
+    /**
+     * @param scoreHigh Whether to score the cone high, scores mid on false
+     */
+    public AutoCone201ChargeLeaveBalance (boolean scoreHigh) {
         List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("Cone201ChargeLeaveBalance", SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION);
 
     addCommands(
       new DriveSetGyro(0),
       new DriveSetGyro(0, IMUAxis.kPitch),
       new DriveSetGyro(0, IMUAxis.kRoll),
-      new AutoScoreCone(ArmConstants.BACK_MIDDLE_CONE),
+      new AutoScoreCone(scoreHigh?ArmConstants.BACK_HIGH_CONE:ArmConstants.BACK_MIDDLE_CONE),
       Commands.deadline(
         new DriveFollowTrajectory(path.get(0)),
         new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE)

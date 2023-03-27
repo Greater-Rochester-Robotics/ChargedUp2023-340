@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.SwerveDriveConstants;
-import frc.robot.commands.ClawWristExtendForCone;
+import frc.robot.commands.ArmClawExtend;
 import frc.robot.commands.ClawWristRetract;
 import frc.robot.commands.HarvesterClawIntake;
 import frc.robot.commands.HarvesterIntakeCubeWithArm;
@@ -46,7 +46,11 @@ import frc.robot.subsystems.swervelib.ADIS16470_IMU.IMUAxis;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class AutoCone221PickUpCube211ChargeBalance extends SequentialCommandGroup {
   /** Creates a new Cone221PickUpCone201ChargeBalance. */
-  public AutoCone221PickUpCube211ChargeBalance() {
+   /**
+    * @param scoreConeHigh Whether to score the cone high, scores mid on false
+    * @param scoreCubeHigh Whether to score the cone high, scores mid on false
+    */
+  public AutoCone221PickUpCube211ChargeBalance(boolean scoreConeHigh, boolean scoreCubeHigh) {
     // Load path group
     List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup("Cone221PickUpCube211ChargeBalance", 
         new PathConstraints(SwerveDriveConstants.PATH_MAXIMUM_VELOCITY, SwerveDriveConstants.MAXIMUM_ACCELERATION), 
@@ -62,7 +66,7 @@ public class AutoCone221PickUpCube211ChargeBalance extends SequentialCommandGrou
         new DriveSetGyro(0, IMUAxis.kRoll),
 
         // Score cone mid
-        new AutoScoreCone(ArmConstants.BACK_MIDDLE_CONE).withTimeout(6.0),
+        new AutoScoreCone(scoreConeHigh?ArmConstants.BACK_HIGH_CONE:ArmConstants.BACK_MIDDLE_CONE).withTimeout(6.0),
 
 
         Commands.parallel(
@@ -84,7 +88,7 @@ public class AutoCone221PickUpCube211ChargeBalance extends SequentialCommandGrou
             Commands.sequence(
                 new WaitCommand(.25),
                 // Grab cone and retract wrist. Move the arm to position
-                new HarvesterRetractCubeWithArm(ArmConstants.BACK_MIDDLE_CUBE),
+                new HarvesterRetractCubeWithArm(scoreCubeHigh?ArmConstants.BACK_HIGH_CUBE:ArmConstants.BACK_MIDDLE_CUBE),
 
                 // Score the cube
                 new ClawSpit()
@@ -97,7 +101,7 @@ public class AutoCone221PickUpCube211ChargeBalance extends SequentialCommandGrou
             Commands.parallel(
                 new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE),
                 Commands.sequence(
-                    new WaitCommand(0.35),
+                    new WaitCommand(0.15),
                     // Close the claw
                     new ClawClose(true),
                     new ClawStop()
