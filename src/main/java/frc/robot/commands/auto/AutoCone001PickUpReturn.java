@@ -11,16 +11,13 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.SwerveDriveConstants;
-import frc.robot.RobotContainer;
-import frc.robot.commands.HarvesterClawIntake;
-import frc.robot.commands.HarvesterRecordRetract;
+import frc.robot.commands.HarvesterIntakeCubeWithArm;
+import frc.robot.commands.HarvesterRetractCubeWithArm;
 import frc.robot.commands.auto.util.AutoScoreCone;
 import frc.robot.commands.drive.auto.DriveFollowTrajectory;
 import frc.robot.commands.drive.util.DriveSetGyro;
-import frc.robot.commands.harvester.HarvesterExtensionOut;
 
 public class AutoCone001PickUpReturn extends SequentialCommandGroup {
     /**
@@ -31,21 +28,29 @@ public class AutoCone001PickUpReturn extends SequentialCommandGroup {
 
         addCommands(
             new DriveSetGyro(0),
-            new AutoScoreCone(scoreHigh?ArmConstants.BACK_HIGH_CONE:ArmConstants.BACK_MIDDLE_CONE),
-            new HarvesterExtensionOut(),
+            new AutoScoreCone(scoreHigh?ArmConstants.BACK_HIGH_CONE:ArmConstants.BACK_MIDDLE_CONE).withTimeout(6.0),
             Commands.parallel(
-                new HarvesterClawIntake(false),
+                // Drive to pick-up location
                 Commands.sequence(
                     new DriveFollowTrajectory(path.get(0)),
-                    new WaitCommand(1.5)
+                    new WaitCommand(0.5)
                 ),
-                Commands.sequence(
-                    new WaitUntilCommand(RobotContainer.harvester::hasGamePiece),
-                    new WaitUntilCommand(() -> (!RobotContainer.harvester.hasGamePiece()))
-                )
+
+                new HarvesterIntakeCubeWithArm()
             ),
-            new HarvesterRecordRetract(false).withTimeout(0),
-            new DriveFollowTrajectory(path.get(1), false)
+
+            Commands.parallel(
+                Commands.sequence(
+                    // Drive to second scoring position
+                    new DriveFollowTrajectory(path.get(1), false)
+                ),
+
+                Commands.sequence(
+                    new WaitCommand(.25),
+                    // Grab cone and retract wrist. Move the arm to position
+                    new HarvesterRetractCubeWithArm()
+                )
+            )
         );
     }
 }
