@@ -116,10 +116,10 @@ public class DriveBalance extends CommandBase {
         }
 
         // Get the lateral speed from the driver's controller.
-        double lateralSpeed = enableLateralControl ? Robot.robotContainer.getDriverLateralFull(false) : 0;
+        double lateralSpeed = enableLateralControl ? Robot.robotContainer.getRobotLateralFull(false) : 0;
         if(Robot.robotContainer.getDriverButton(9)){
             //if secondary sticks used, replace with secondary sticks with a slow factor
-            lateralSpeed *= 0.5;
+            lateralSpeed *= SwerveDriveConstants.DRIVER_SLOW_STICK_ROT_MODIFIER;
         }
 
         // Move the robot.

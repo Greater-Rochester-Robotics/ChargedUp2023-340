@@ -137,7 +137,7 @@ public final class Constants {
     public static class ClawConstants {
       public static final double CLAW_MOTOR_INTAKE_SPEED = 1.0; 
       public static final double CLAW_MOTOR_OUTTAKE_SPEED = -1.0; 
-      public static final double CLAW_MOTOR_HOLD_SPEED = 0.1;
+      public static final double CLAW_MOTOR_HOLD_SPEED = 0.2;
 
       public static final double CLAW_OPEN_DELAY = 0.3;
       public static final double CLAW_CLOSE_DELAY = 0.3;
@@ -241,10 +241,12 @@ public final class Constants {
       // public static final double DRIVE_ROTATION_MIN_VELOCITY = 25;
 
       /* Driver Scaling Constants */
-      public static final double DRIVER_SPEED_SCALE_EXPONENTIAL = 3.0;
+      public static final double DRIVER_SPEED_SCALE_EXPONENTIAL = 2.0;
       public static final double DRIVER_PERCENT_SPEED_SCALE_LINEAR = 0.9;
       public static final double DRIVER_ROT_SPEED_SCALE_EXPONENTIAL = 1.0;
-      public static final double DRIVER_PERCENT_ROT_SPEED_SCALE_LINEAR = 1.1;
+      public static final double DRIVER_PERCENT_ROT_SPEED_SCALE_LINEAR = 1.0;
+      public static final double DRIVER_SLOW_STICK_MODIFIER = 0.5;
+      public static final double DRIVER_SLOW_STICK_ROT_MODIFIER = 0.75;
   }
   
   public class TargetConstants {

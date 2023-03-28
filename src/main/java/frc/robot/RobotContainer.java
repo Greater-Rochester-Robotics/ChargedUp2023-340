@@ -378,43 +378,62 @@ public class RobotContainer {
     }
 
     /**
-     * Gets the forward value from the driver's controller for swerve (left stick Y).
+     * Gets the forward value for the robot
+     * Currently: from the driver's controller for swerve (left stick Y).
      * @param isVeloMode If velocity mode is being used.
      * @return The percent output if velocity mode is not being used, otherwise the velocity. 
      */
-    public double getDriverForwardFull (boolean isVeloMode) {
+    public double getRobotForwardFull (boolean isVeloMode) {
         double raw = this.getDriverAxis(Axis.kLeftY);
         return -Math.copySign(Math.pow(raw, Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_EXPONENTIAL), raw) * (isVeloMode ? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : Constants.SwerveDriveConstants.DRIVER_PERCENT_SPEED_SCALE_LINEAR);
     }
 
     /**
-     * Gets the lateral value from the driver's controller for swerve (left stick X).
+     * Gets the lateral value for the robot 
+     * Currently:from the driver's controller for swerve (left stick X).
      * @param isVeloMode If velocity mode is being used.
      * @return The percent output if velocity mode is not being used, otherwise the velocity. 
      */
-    public double getDriverLateralFull (boolean isVeloMode) {
+    public double getRobotLateralFull (boolean isVeloMode) {
         double raw = this.getDriverAxis(Axis.kLeftX);
-        return -Math.copySign(Math.pow(raw, Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_EXPONENTIAL), raw) * (isVeloMode ? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : Constants.SwerveDriveConstants.DRIVER_PERCENT_SPEED_SCALE_LINEAR);
+        return -Math.copySign(Math.pow(raw, Constants.SwerveDriveConstants.DRIVER_SPEED_SCALE_EXPONENTIAL), raw) 
+            * (isVeloMode ? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : Constants.SwerveDriveConstants.DRIVER_PERCENT_SPEED_SCALE_LINEAR);
     }
 
-    // public double getRobotLateralFull(boolean isVeloMode) {
-    //     return this.getDriverAxis(Axis.kLeftX)*-Constants.SwerveDriveConstants.DRIVER_PERCENT_SPEED_SCALE_LINEAR
-    //         * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
-    // }
-
-    // public double getRobotLateralSlow(boolean isVeloMode) {
-    //     return this.getDriverAxis(Axis.kRightX)*0.5*-Constants.SwerveDriveConstants.DRIVER_PERCENT_SPEED_SCALE_LINEAR 
-    //     * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
-    // }
-
     /**
-     * Gets the rotation value from the driver's controller for swerve (LT and RT).
+     * Gets the rotation value for the robot
+     * Currently: from the driver's controller for swerve (LT and RT).
      * @param isVeloMode If velocity mode is being used.
      * @return The percent output if velocity mode is not being used, otherwise the velocity. 
      */
-    public double getDriverRotation (boolean isVeloMode) {
+    public double getRobotRotation (boolean isVeloMode) {
         double raw = (this.getDriverAxis(Axis.kRightTrigger) - Robot.robotContainer.getDriverAxis(Axis.kLeftTrigger));
-        return -Math.copySign(Math.pow(raw, Constants.SwerveDriveConstants.DRIVER_ROT_SPEED_SCALE_EXPONENTIAL), raw) * (isVeloMode ? Constants.SwerveDriveConstants.MAX_ROBOT_ROT_VELOCITY : Constants.SwerveDriveConstants.DRIVER_PERCENT_ROT_SPEED_SCALE_LINEAR);
+        return -Math.copySign(Math.pow(raw, Constants.SwerveDriveConstants.DRIVER_ROT_SPEED_SCALE_EXPONENTIAL), raw) 
+            * (isVeloMode ? Constants.SwerveDriveConstants.MAX_ROBOT_ROT_VELOCITY : Constants.SwerveDriveConstants.DRIVER_PERCENT_ROT_SPEED_SCALE_LINEAR);
+    }
+
+    /**
+     * Gets the slow forward value for the robot 
+     * Currently:from the driver's controller for swerve (left stick Y).
+     * @param isVeloMode If velocity mode is being used.
+     * @return The percent output if velocity mode is not being used, otherwise the velocity. 
+     */
+    public double getRobotForwardSlow(boolean isVeloMode) {
+        double raw = this.getDriverAxis(Axis.kLeftY);
+        return -raw*Constants.SwerveDriveConstants.DRIVER_SLOW_STICK_MODIFIER*Constants.SwerveDriveConstants.DRIVER_PERCENT_SPEED_SCALE_LINEAR 
+            * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
+    }
+    
+    /**
+     * Gets the slow lateral value for the robot 
+     * Currently:from the driver's controller for swerve (left stick X).
+     * @param isVeloMode If velocity mode is being used.
+     * @return The percent output if velocity mode is not being used, otherwise the velocity. 
+     */
+    public double getRobotLateralSlow(boolean isVeloMode) {
+        double raw = this.getDriverAxis(Axis.kLeftX);
+        return -raw*Constants.SwerveDriveConstants.DRIVER_SLOW_STICK_MODIFIER*Constants.SwerveDriveConstants.DRIVER_PERCENT_SPEED_SCALE_LINEAR 
+            * (isVeloMode? Constants.SwerveDriveConstants.MOTOR_MAXIMUM_VELOCITY : 1.0);
     }
 
     /**
@@ -422,7 +441,7 @@ public class RobotContainer {
      * @param axis The axis to get.
      * @return Value of the axis. Joysticks return values from -1.0 to 1.0, triggers return values from 0.0 to 1.0;
      */
-    public double getCoDriverAxis (Axis axis) {
+    public double getCoDriverAxis(Axis axis) {
         return (coDriver.getRawAxis(axis.value) < -Constants.CO_DRIVER_CONTROLLER_DEADZONE || coDriver.getRawAxis(axis.value) > Constants.CO_DRIVER_CONTROLLER_DEADZONE) ? coDriver.getRawAxis(axis.value) : 0;
     }
 

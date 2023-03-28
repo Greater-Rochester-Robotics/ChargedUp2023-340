@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.SwerveDriveConstants;
 
 /**
  * This command is designed so that a driver can drive
@@ -65,15 +66,21 @@ public class DriveFieldRelative extends CommandBase {
     @Override
     public void execute () {
         // Fetch the driver's current analog inputs.
-        double awaySpeed = Robot.robotContainer.getDriverForwardFull(isVeloMode);
-        double lateralSpeed = Robot.robotContainer.getDriverLateralFull(isVeloMode);
+        double awaySpeed = Robot.robotContainer.getRobotForwardFull(isVeloMode);
+        double lateralSpeed = Robot.robotContainer.getRobotLateralFull(isVeloMode);
+        double rotSpeed = Robot.robotContainer.getRobotRotation(isVeloMode);
+
         //check if secondary sticks are being used
         if(Robot.robotContainer.getDriverButton(9)){
             //if secondary sticks used, replace with secondary sticks with a slow factor
-            awaySpeed *= 0.5;
-            lateralSpeed *= 0.5;
+            awaySpeed *= SwerveDriveConstants.DRIVER_SLOW_STICK_MODIFIER;
+            lateralSpeed *= SwerveDriveConstants.DRIVER_SLOW_STICK_MODIFIER;
+            rotSpeed *= SwerveDriveConstants.DRIVER_SLOW_STICK_ROT_MODIFIER;
+
+            //TODO: try this
+            // awaySpeed = Robot.robotContainer.getRobotForwardSlow(isVeloMode);
+            // lateralSpeed = Robot.robotContainer.getRobotLateralSlow(isVeloMode);
         }
-        double rotSpeed = Robot.robotContainer.getDriverRotation(isVeloMode);
 
         // Use the DPad to turn to specific angles.
         if (counterRotationOn && Robot.robotContainer.getDriverDPad() == 0 && prevDPad != 02 ) {

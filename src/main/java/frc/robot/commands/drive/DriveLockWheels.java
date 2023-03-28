@@ -38,8 +38,8 @@ public class DriveLockWheels extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(Robot.robotContainer.getDriverForwardFull(false)) > .075 ||
-      Math.abs(Robot.robotContainer.getDriverLateralFull(false)) > .075 ||
-      Math.abs(Robot.robotContainer.getDriverRotation(false)) > .075 ;
+    return Math.abs(Robot.robotContainer.getRobotForwardFull(false)) > .075 ||
+      Math.abs(Robot.robotContainer.getRobotLateralFull(false)) > .075 ||
+      Math.abs(Robot.robotContainer.getRobotRotation(false)) > .075 ;
   }
 }
