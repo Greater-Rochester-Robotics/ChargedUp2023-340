@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
@@ -45,7 +46,15 @@ public class ArmToPosition extends SequentialCommandGroup {
             new PrintCommand("ArmToPosition: Begin moving to position: " + Math.round(Units.radiansToDegrees(armPosition.getElbowPosition())) + " deg | " + armPosition.getWristPosition() + " m"),
 
             // Retract the wrist to the home position.
-            new ArmWristHome(true).withTimeout(1.25),
+            // new ArmWristHome(true).withTimeout(1.25),//commented out due to breaking the rm with too fast a homing speed
+            Commands.sequence(
+                new ConditionalCommand(
+                    new ArmWristToPosition(0.05),
+                    new InstantCommand(), 
+                    ()-> (RobotContainer.arm.getWristPosition() > .05)
+                ),
+                new ArmWristHome(true)
+            ).withTimeout(2.25),
 
             new PrintCommand("ArmToPosition: Wrist is now retracted"),
 

@@ -13,11 +13,11 @@ import frc.robot.Constants.ArmConstants;
 public class ArmWristHome extends CommandBase {
     boolean override;
 
-    public ArmWristHome () {
+    public ArmWristHome() {
         this(false);
     }
 
-    public ArmWristHome (boolean override) {
+    public ArmWristHome(boolean override) {
         addRequirements(RobotContainer.arm);
         this.override = override;
     }
@@ -27,10 +27,13 @@ public class ArmWristHome extends CommandBase {
     public void initialize () {
         if(override){
             System.out.println("Forcing wrist to home");
-        }else{
+            System.out.println("Starting homing wrist from: " + RobotContainer.arm.getWristPosition());
+        }else if(!RobotContainer.arm.getWristBeenZeroed()){
+            System.out.println("Wrist homing without override");
+            System.out.println("Starting homing wrist from: " + RobotContainer.arm.getWristPosition());
+        }else if(RobotContainer.arm.getWristBeenZeroed()){
             System.out.println("Wrist homing without override");
         }
-        System.out.println("Starting homing wrist from: " + RobotContainer.arm.getWristPosition());
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -55,7 +58,7 @@ public class ArmWristHome extends CommandBase {
         }else{
             System.out.println("Wrist has not fully homed, but home command ended is interrupt:" + interrupted);
         }
-        System.out.println("Homing ended with wrist at: " + RobotContainer.arm.getWristPosition());
+        System.out.println("Homing command ended with wrist at: " + RobotContainer.arm.getWristPosition());
     }
 
     // Returns true when the command should end.

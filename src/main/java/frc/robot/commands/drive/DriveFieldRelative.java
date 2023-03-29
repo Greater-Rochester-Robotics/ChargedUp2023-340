@@ -83,7 +83,7 @@ public class DriveFieldRelative extends CommandBase {
         }
 
         // Use the DPad to turn to specific angles.
-        if (counterRotationOn && Robot.robotContainer.getDriverDPad() == 0 && prevDPad != 02 ) {
+        if (counterRotationOn && Robot.robotContainer.getDriverButton(5)) {
             // Face away if DPad up.
             currentAngle = Math.round(RobotContainer.swerveDrive.getGyroInRadYaw() / Constants.TWO_PI) * Constants.TWO_PI;
         } else if (counterRotationOn && Robot.robotContainer.getDriverDPad() == 180 && prevDPad != 180) {

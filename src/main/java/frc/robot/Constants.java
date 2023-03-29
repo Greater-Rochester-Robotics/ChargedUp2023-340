@@ -118,7 +118,7 @@ public final class Constants {
 
       /* Wrist Timeout points */
     //   public static final double WRIST_EXTENSION_SPEED = 0.5;
-      public static final double WRIST_HOMING_SPEED = 0.85;
+      public static final double WRIST_HOMING_SPEED = 0.45;//Rob says keep this low, or the arm will kill itself
 
       /*Acceleration and max velocities for the arm */
       public static final double MAX_ELBOW_VELOCITY = 1;

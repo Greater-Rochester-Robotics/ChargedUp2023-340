@@ -93,7 +93,7 @@ public class RobotContainer {
     // clang-format 
     static final Trigger driverDLeft = new POVButton(driver, 270);
     static final Trigger driverDRight = new POVButton(driver, 90);
-    static final Trigger driverLB = new JoystickButton(driver, 5);
+    // static final Trigger driverLB = new JoystickButton(driver, 5);////Used for facing the robot away from the driver station
     static final Trigger driverRB = new JoystickButton(driver, 6);
     static final Trigger driverStickRightUp = new JoyTriggerButton(driver, Axis.kRightY, -Constants.DRIVER_CONTROLLER_DEADZONE);
     static final Trigger driverStickRightDown = new JoyTriggerButton(driver, Axis.kRightY, Constants.DRIVER_CONTROLLER_DEADZONE);
@@ -208,7 +208,7 @@ public class RobotContainer {
         driverY.onTrue(new ClawSpit()).onFalse(new ClawStop());
 
         // LB => Hold to drive to the selected scoring position (Currently non-functional)
-        driverLB.onTrue(new DriveToTarget()).onFalse(new DriveStopAllModules());
+        // driverLB.onTrue(new DriveToTarget()).onFalse(new DriveStopAllModules());//currently remapped
 
         // RB => Hold to balance the robot, wheels move to locked position on release
         driverRB.whileTrue(new DriveBalance(true)).onFalse(new DriveLockWheels());
@@ -300,7 +300,7 @@ public class RobotContainer {
         autoChooser.addOption("Loading Station inner cone mid, charge leave, balance", new AutoCone201ChargeLeaveBalance(false));
         autoChooser.addOption("Score Table outer cone mid, cube pickup, return", new AutoCone001PickUpReturn(false));
         autoChooser.addOption("Score Table inner cone mid, balance", new AutoCone021ChargeBalance(false));
-        autoChooser.addOption("Score Table outer cone mid, cube pickup, score table cube mid, balance", new AutoCone221PickUpCube211ChargeBalance(false, false));
+        autoChooser.addOption("Loading Station outer cone mid, cube pickup, loading station cube mid, balance", new AutoCone221PickUpCube211ChargeBalance(false, false));
         // autoChooser.addOption("Score Table inner cone mid, charge leave, balance", new AutoCone021ChargeLeaveBalance()); // NOT FUNCTIONAL LAST TEST 3-12
 
         autoChooser.addOption("test", new AutoCone221PickUpCone201Pickup());

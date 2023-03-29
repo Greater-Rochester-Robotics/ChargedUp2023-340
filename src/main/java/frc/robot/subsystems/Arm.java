@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
@@ -262,7 +264,7 @@ public class Arm extends SubsystemBase {
      * @return The status of the inner limit switch.
      */
     public boolean getWristInnerLimitSwitch () {
-        return !wristInnerLimitSwitch.get();
+        return !wristInnerLimitSwitch.get();// || wristMotor.isRevLimitSwitchClosed() == 1;
     }
 
     /**
@@ -294,6 +296,7 @@ public class Arm extends SubsystemBase {
      * @param speed The speed to set the motor to, should be a value between -1.0 and 1.0.
      */
     public void setWristDutyCycle (double speed) {
+        // wristMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         if(speed < -.08 && getWristInnerLimitSwitch()) {
             // System.out.println("Cannot set wrist motor speed: At lower limit");
             zeroWrist();
@@ -311,7 +314,8 @@ public class Arm extends SubsystemBase {
      * Sets the wrist's position.
      * @param target The target in meters.
      */
-    public void setWristPosition (double target) {
+    public void setWristPosition (double target) {        
+        // wristMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0);
         if (target < 0 || target > ArmConstants.WRIST_MAX_EXTENSION_LENGTH) {
             System.out.println("Cannot set wrist target to " + target + ": Out of range");
             stopWristMotor();
@@ -339,6 +343,7 @@ public class Arm extends SubsystemBase {
     public void stopWristMotor () {
         setWristDutyCycle(0.0);
         wristMaintainingPosition = true;
+        wristMotor.configReverseLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen, 0);
     }
 
     /**
