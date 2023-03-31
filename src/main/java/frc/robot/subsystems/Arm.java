@@ -111,7 +111,7 @@ public class Arm extends SubsystemBase {
         elbowMotor.setClosedLoopRampRate(1);
 
         // Elbow frame settings.
-        elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 2000);
+        elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
         elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
         elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
         elbowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 59467);
@@ -182,7 +182,8 @@ public class Arm extends SubsystemBase {
             SmartDashboard.putBoolean("Wrist has been zeroed", getWristBeenZeroed());
             SmartDashboard.putBoolean("Wrist limit inner", getWristInnerLimitSwitch());
             SmartDashboard.putBoolean("Wrist limit outer", getWristOuterLimitSwitch());
-            SmartDashboard.putNumber("wrist motor output percentage",wristMotor.getMotorOutputPercent());
+            SmartDashboard.putNumber("wrist output",wristMotor.getMotorOutputPercent());
+            SmartDashboard.putNumber("Elbow output", elbowMotor.getAppliedOutput());
         }
 
         if(wristMaintainingPosition){
@@ -232,11 +233,12 @@ public class Arm extends SubsystemBase {
 
         // TODO: This will depend on wrist position (was previously two values for in and out).
         // Counter for gravity.
-        double gravityCounterConstant = ArmConstants.KG;
+        boolean isGoingDown = (Math.abs(getElbowPosition()) - Math.abs(targetAngle)) > 0;
+        double gravityCounterConstant = isGoingDown?ArmConstants.KG_DOWN:ArmConstants.KG_UP;
 
         // Set the target angle in the PID controller.
         // elbowMotor.set(elbowPID.calculate(getElbowPosition(), targetAngle) + gravityCounterConstant * Math.sin(getElbowPosition()));
-        elbowController.setReference(targetAngle, ControlType.kPosition, 0, ArmConstants.KG* Math.sin(getElbowPosition()));
+        elbowController.setReference(targetAngle, ControlType.kPosition, 0, gravityCounterConstant* Math.sin(getElbowPosition()));
 
         elbowBrake.set(true);
     }

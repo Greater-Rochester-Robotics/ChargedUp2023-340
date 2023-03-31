@@ -47,9 +47,9 @@ public final class Constants {
         public static final double WRIST_ENCODER_DISTANCE_PER_PULSE = Math.PI*Units.inchesToMeters(1.8)/2048;
 
       /* Arm PID Constants */
-      public static final double ELBOW_P = 1.4;
-      public static final double ELBOW_I = 0.00004;
-      public static final double ELBOW_D = 2.3;
+      public static final double ELBOW_P = 1.2;
+      public static final double ELBOW_I = 0.000025;
+      public static final double ELBOW_D = 3.0;
       public static final double ELBOW_F = 0.0;
 
       public static final double WRIST_P = 17.0;
@@ -60,7 +60,8 @@ public final class Constants {
       public static final Constraints WRIST_PROFILED_PID_CONSTRAINTS = new Constraints(MAX_WRIST_VELOCITY_IN_MPS, MAX_WRIST_ACCELERATION_IN_MPS_PER_SEC);
       public static final double WRIST_HOLDING_STRENGTH = 0.08;
 
-      public static final double KG = 0.35;
+      public static final double KG_DOWN = .01;
+      public static final double KG_UP = 1.75; //0.35;
 
       public static final double MAX_ELBOW_PID_OUT = .38;//if this changes it won't hit targets
 
@@ -118,7 +119,7 @@ public final class Constants {
 
       /* Wrist Timeout points */
     //   public static final double WRIST_EXTENSION_SPEED = 0.5;
-      public static final double WRIST_HOMING_SPEED = 0.45;//Rob says keep this low, or the arm will kill itself
+      public static final double WRIST_HOMING_SPEED = 0.6;//Rob says keep this low, or the arm will kill itself
 
       /*Acceleration and max velocities for the arm */
       public static final double MAX_ELBOW_VELOCITY = 1;
@@ -128,6 +129,7 @@ public final class Constants {
       public static final double MAX_ELBOW_VELOCITY_IN_RPM = 1.0;//Yes this is in RPM
       public static final double MAX_ELBOW_ACCELERATION_IN_RPM_PER_SEC = 10200.0;//watch out, this is in RPM per second
       public static final double ELBOW_CLOSED_LOOP_ERROR = Units.degreesToRadians(4.5);
+      public static final double ELBOW_HEIGHT_CLOSED_LOOP_ERROR_MODIFIER = 0.0115;
       public static final int ELBOW_TARGET_HIT_COUNT = 6;
       public static final double WRIST_CLOSED_LOOP_ERROR = .02;
       public static final int WRIST_TARGET_HIT_COUNT = 5;
@@ -245,8 +247,9 @@ public final class Constants {
       public static final double DRIVER_PERCENT_SPEED_SCALE_LINEAR = 0.9;
       public static final double DRIVER_ROT_SPEED_SCALE_EXPONENTIAL = 1.0;
       public static final double DRIVER_PERCENT_ROT_SPEED_SCALE_LINEAR = 1.0;
-      public static final double DRIVER_SLOW_STICK_MODIFIER = 0.5;
-      public static final double DRIVER_SLOW_STICK_ROT_MODIFIER = 0.75;
+      public static final double DRIVER_SLOW_STICK_MODIFIER = 1.111; //.5
+      public static final double DRIVER_SLOW_STICK_ROT_MODIFIER = 1.111; //.75
+      public static final double DRIVER_SLOW_STICK_TIMEOUT = 5;
   }
   
   public class TargetConstants {

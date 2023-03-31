@@ -34,7 +34,10 @@ public class HarvesterIntakeCubeWithArm extends SequentialCommandGroup {
         Commands.parallel(
             new ArmToPosition(ArmConstants.CUBE_GRABBING_POSITION, RobotContainer.harvester::isLockHarvesterOut).withTimeout(6),
             Commands.sequence(
-                new WaitUntilCommand( () -> Math.abs(RobotContainer.arm.getArmPosition().getElbowPosition()-ArmConstants.CUBE_GRABBING_POSITION.getElbowPosition()) < Units.degreesToRadians(5) ),
+                new WaitUntilCommand(
+                    () ->
+                        Math.abs(RobotContainer.arm.getArmPosition().getElbowPosition() - ArmConstants.CUBE_GRABBING_POSITION.getElbowPosition()) < Units.degreesToRadians(5)
+                ),
                 new ClawIntake(),
                 new HarvesterIntake(false),
                 new HarvesterExtensionOut(),

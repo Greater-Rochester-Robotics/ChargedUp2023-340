@@ -4,6 +4,7 @@
 
 package frc.robot.commands.arm;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.RobotContainer;
@@ -49,7 +50,7 @@ public class    ArmElbowToPosition extends CommandBase {
         // Set the elbow position.
         RobotContainer.arm.setElbowPosition(position);
         // If the elbow is within tolerance of the target position, increment hitTarget. Otherwise, reset the hitTarget count.
-        if (Math.abs(RobotContainer.arm.getElbowPosition() - position) < ArmConstants.ELBOW_CLOSED_LOOP_ERROR) {
+        if (Math.abs(RobotContainer.arm.getElbowPosition() - position) < ArmConstants.ELBOW_CLOSED_LOOP_ERROR + (Math.abs(RobotContainer.arm.getElbowPosition()) * ArmConstants.ELBOW_HEIGHT_CLOSED_LOOP_ERROR_MODIFIER)) {
             hitTarget++;
         } else {
             hitTarget = 0;

@@ -7,7 +7,9 @@
 
 package frc.robot.commands.drive;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.SwerveDriveConstants;
@@ -25,6 +27,9 @@ public class DriveRobotCentric extends CommandBase {
     // isVeloMode says if velosity mode is inabled
     private boolean isVeloMode;
 
+    private Timer slowTimer;
+    private boolean wasSlowStick;
+
     /**
      * Creates a new DriveRobotCentric.
      */
@@ -32,6 +37,9 @@ public class DriveRobotCentric extends CommandBase {
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(RobotContainer.swerveDrive);
         this.isVeloMode = isVeloMode;
+
+        slowTimer = new Timer();
+        wasSlowStick = false;
     }
 
     // Called when the command is initially scheduled.
@@ -39,6 +47,9 @@ public class DriveRobotCentric extends CommandBase {
     public void initialize () {
         // RobotContainer.swerveDrive.setIsOdometry(false);
         RobotContainer.setDriverRumble(0.25, 0.25);
+
+        slowTimer.reset();
+        slowTimer.start();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -48,13 +59,22 @@ public class DriveRobotCentric extends CommandBase {
         double forwardSpeed = Robot.robotContainer.getRobotForwardFull(isVeloMode);
         double strafeSpeed = Robot.robotContainer.getRobotLateralFull(isVeloMode);
         double rotSpeed = Robot.robotContainer.getRobotRotation(isVeloMode);
+        boolean slowStick = Robot.robotContainer.getDriverButton(9);
+
 
         //check if secondary sticks are being used
-        if(Robot.robotContainer.getDriverButton(9)){
-          //if secondary sticks used, replace with secondary sticks witha slow factor
-          forwardSpeed *= SwerveDriveConstants.DRIVER_SLOW_STICK_ROT_MODIFIER;
-          strafeSpeed *= SwerveDriveConstants.DRIVER_SLOW_STICK_ROT_MODIFIER;
-          rotSpeed *= SwerveDriveConstants.DRIVER_SLOW_STICK_ROT_MODIFIER;
+        if(slowStick){
+            if(!wasSlowStick)
+                slowTimer.reset();
+
+            if(slowTimer.get() <= Constants.SwerveDriveConstants.DRIVER_SLOW_STICK_TIMEOUT || Constants.SwerveDriveConstants.DRIVER_SLOW_STICK_TIMEOUT <= 0) {
+                //if secondary sticks used, replace with secondary sticks with a slow factor
+                forwardSpeed *= SwerveDriveConstants.DRIVER_SLOW_STICK_MODIFIER;
+                strafeSpeed *= SwerveDriveConstants.DRIVER_SLOW_STICK_MODIFIER;
+                rotSpeed *= SwerveDriveConstants.DRIVER_SLOW_STICK_ROT_MODIFIER;
+            }
+
+            wasSlowStick = slowStick;
         }
 
         RobotContainer.swerveDrive.driveRobotCentric(

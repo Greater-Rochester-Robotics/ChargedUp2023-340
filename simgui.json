@@ -12,9 +12,15 @@
       "/SmartDashboard/DriveResetAllModulePositionsToZero": "Command",
       "/SmartDashboard/DriveStopAllModules": "Command",
       "/SmartDashboard/DriveTurnToAngleInRad": "Command",
+      "/SmartDashboard/Home wrist": "Command",
       "/SmartDashboard/ResetOdometry": "Command",
       "/SmartDashboard/Score middle cone": "Command",
-      "/SmartDashboard/SendableChooser[0]": "String Chooser"
+      "/SmartDashboard/SendableChooser[0]": "String Chooser",
+      "/SmartDashboard/arm high cone": "Command",
+      "/SmartDashboard/arm to 0": "Command",
+      "/SmartDashboard/elbow to -90": "Command",
+      "/SmartDashboard/elbow to 0": "Command",
+      "/SmartDashboard/elbow to 15": "Command"
     }
   }
 }

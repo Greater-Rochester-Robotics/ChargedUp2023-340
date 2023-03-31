@@ -72,8 +72,9 @@ public class RecordPlayer extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putBoolean("record player has cone: ", getConePositionSensor0());
-    SmartDashboard.putBoolean("record player has game piece: ", getGamePieceSensor());
+    SmartDashboard.putBoolean("cone position 0", getConePositionSensor0());
+    SmartDashboard.putBoolean("cone position 1", getConePositionSensor1());
+    SmartDashboard.putBoolean("intake sensor", getGamePieceSensor());
     // SmartDashboard.putNumber("record player angle", getEncoderAngle());
 
     // Command curCommand = this.getCurrentCommand();

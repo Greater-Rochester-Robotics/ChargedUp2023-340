@@ -4,6 +4,7 @@
 
 package frc.robot.commands.drive;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -38,10 +39,14 @@ public class DriveFieldRelative extends CommandBase {
      * If movement is from the driver's controls.
      */
     private boolean wasDriverControl = false;
+    
     /**
      * The previous DPad value.
      */
     private int prevDPad;
+
+    private Timer slowTimer;
+    private boolean wasSlowStick;
     
     public DriveFieldRelative (boolean isVeloMode) {
         this(isVeloMode, true);
@@ -55,12 +60,17 @@ public class DriveFieldRelative extends CommandBase {
         addRequirements(RobotContainer.swerveDrive);
         this.isVeloMode = isVeloMode;
         this.counterRotationOn = counterRotationOn;
+
+        slowTimer = new Timer();
+        wasSlowStick = false;
     }
 
     @Override
     public void initialize () {
         // Set the current angle.
         currentAngle = RobotContainer.swerveDrive.getGyroInRadYaw();
+        slowTimer.reset();
+        slowTimer.start();
     }
 
     @Override
@@ -69,18 +79,22 @@ public class DriveFieldRelative extends CommandBase {
         double awaySpeed = Robot.robotContainer.getRobotForwardFull(isVeloMode);
         double lateralSpeed = Robot.robotContainer.getRobotLateralFull(isVeloMode);
         double rotSpeed = Robot.robotContainer.getRobotRotation(isVeloMode);
+        boolean slowStick = Robot.robotContainer.getDriverButton(9);
 
         //check if secondary sticks are being used
-        if(Robot.robotContainer.getDriverButton(9)){
-            //if secondary sticks used, replace with secondary sticks with a slow factor
-            awaySpeed *= SwerveDriveConstants.DRIVER_SLOW_STICK_MODIFIER;
-            lateralSpeed *= SwerveDriveConstants.DRIVER_SLOW_STICK_MODIFIER;
-            rotSpeed *= SwerveDriveConstants.DRIVER_SLOW_STICK_ROT_MODIFIER;
+        // if(slowStick){
+        //     if(!wasSlowStick)
+        //         slowTimer.reset();
 
-            //TODO: try this
-            // awaySpeed = Robot.robotContainer.getRobotForwardSlow(isVeloMode);
-            // lateralSpeed = Robot.robotContainer.getRobotLateralSlow(isVeloMode);
-        }
+        //     if(slowTimer.get() <= Constants.SwerveDriveConstants.DRIVER_SLOW_STICK_TIMEOUT || Constants.SwerveDriveConstants.DRIVER_SLOW_STICK_TIMEOUT <= 0) {
+        //         //if secondary sticks used, replace with secondary sticks with a slow factor
+        //         awaySpeed *= SwerveDriveConstants.DRIVER_SLOW_STICK_MODIFIER;
+        //         lateralSpeed *= SwerveDriveConstants.DRIVER_SLOW_STICK_MODIFIER;
+        //         rotSpeed *= SwerveDriveConstants.DRIVER_SLOW_STICK_ROT_MODIFIER;
+        //     }
+
+        //     wasSlowStick = slowStick;
+        // }
 
         // Use the DPad to turn to specific angles.
         if (counterRotationOn && Robot.robotContainer.getDriverButton(5)) {

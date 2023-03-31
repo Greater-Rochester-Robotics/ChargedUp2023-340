@@ -32,6 +32,7 @@ import frc.robot.commands.arm.ArmWristHome;
 import frc.robot.commands.arm.ArmWristManual;
 import frc.robot.commands.arm.ArmWristToPosition;
 import frc.robot.commands.auto.AutoCone221PickUpCube211ChargeBalance;
+import frc.robot.commands.auto.AutoCone221PickUpCube211DriveOut;
 import frc.robot.commands.auto.AutoCone001PickUpReturn;
 import frc.robot.commands.auto.AutoCone021ChargeBalance;
 import frc.robot.commands.auto.AutoCone201ChargeBalance;
@@ -175,6 +176,8 @@ public class RobotContainer {
         SmartDashboard.putData("elbow to 0", new ArmElbowToPosition(0));
         SmartDashboard.putData("elbow to -90", new ArmElbowToPosition(Math.toRadians(-90)));
         SmartDashboard.putData("elbow to 15", new ArmElbowToPosition(Math.toRadians(15)));
+
+        SmartDashboard.putData("Home wrist", new ArmWristHome(true));
         // Add all autos to the auto selector
         configureAutoModes();
 
@@ -257,10 +260,10 @@ public class RobotContainer {
         coDriverLTButton.or(coDriverRTButton).whileTrue(new RecordPlayerManual());
 
         // DPad => Targeting control
-        coDriverDUp.onTrue(new InstantCommand(() -> target.up()) { public boolean runsWhenDisabled () { return true; } });
-        coDriverDRight.onTrue(new InstantCommand(() -> target.right()) { public boolean runsWhenDisabled () { return true; } });
-        coDriverDDown.onTrue(new InstantCommand(() -> target.down()) { public boolean runsWhenDisabled () { return true; } });
-        coDriverDLeft.onTrue(new InstantCommand(() -> target.left()) { public boolean runsWhenDisabled () { return true; } });
+        coDriverDUp.onTrue(new InstantCommand(() -> target.up()).ignoringDisable(true));// { public boolean runsWhenDisabled () { return true; } });
+        coDriverDRight.onTrue(new InstantCommand(() -> target.right()).ignoringDisable(true));// { public boolean runsWhenDisabled () { return true; } });
+        coDriverDDown.onTrue(new InstantCommand(() -> target.down()).ignoringDisable(true));// { public boolean runsWhenDisabled () { return true; } });
+        coDriverDLeft.onTrue(new InstantCommand(() -> target.left()).ignoringDisable(true));// { public boolean runsWhenDisabled () { return true; } });
 
         // Back (left) => Orient cone
         coDriverBack.onTrue(Commands.sequence(new RecordPlayerSpin(), new WaitCommand(1.0), new RecordPlayerOrientCone()));
@@ -298,9 +301,10 @@ public class RobotContainer {
         autoChooser.addOption("Loading Station inner cone mid, balance", new AutoCone201ChargeBalance(false));
         autoChooser.addOption("Loading Station inner cone high, balance", new AutoCone201ChargeBalance(true));
         autoChooser.addOption("Loading Station inner cone mid, charge leave, balance", new AutoCone201ChargeLeaveBalance(false));
+        autoChooser.addOption("Loading Station outer cone mid, cube pickup, loading station cube mid, balance", new AutoCone221PickUpCube211ChargeBalance(false, false));
+        autoChooser.addOption("Loading Station outer cone mid, cube pickup, loading station cube mid, drive out", new AutoCone221PickUpCube211DriveOut(false, false));
         autoChooser.addOption("Score Table outer cone mid, cube pickup, return", new AutoCone001PickUpReturn(false));
         autoChooser.addOption("Score Table inner cone mid, balance", new AutoCone021ChargeBalance(false));
-        autoChooser.addOption("Loading Station outer cone mid, cube pickup, loading station cube mid, balance", new AutoCone221PickUpCube211ChargeBalance(false, false));
         // autoChooser.addOption("Score Table inner cone mid, charge leave, balance", new AutoCone021ChargeLeaveBalance()); // NOT FUNCTIONAL LAST TEST 3-12
 
         autoChooser.addOption("test", new AutoCone221PickUpCone201Pickup());
