@@ -77,10 +77,12 @@ public class AutoCone221PickUpCube211DriveOut extends SequentialCommandGroup {
             new HarvesterIntakeCubeWithArm()
         ),
 
+        new DriveFollowTrajectory(path.get(1)),
+
         Commands.parallel(
             Commands.sequence(
                 // Drive to second scoring position
-                new DriveFollowTrajectory(path.get(1), false)
+                new DriveFollowTrajectory(path.get(2), false)
             ),
 
             Commands.sequence(
@@ -95,7 +97,7 @@ public class AutoCone221PickUpCube211DriveOut extends SequentialCommandGroup {
 
         // Drive to balancing position bring arm to default position
         Commands.parallel(
-            new DriveFollowTrajectory(path.get(2)),
+            new DriveFollowTrajectory(path.get(3)),
             new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE),
             Commands.sequence(
                 new WaitCommand(0.15),

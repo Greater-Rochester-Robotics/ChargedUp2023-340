@@ -307,7 +307,6 @@ public class RobotContainer {
         autoChooser.addOption("Score Table inner cone mid, balance", new AutoCone021ChargeBalance(false));
         // autoChooser.addOption("Score Table inner cone mid, charge leave, balance", new AutoCone021ChargeLeaveBalance()); // NOT FUNCTIONAL LAST TEST 3-12
 
-        autoChooser.addOption("test", new AutoCone221PickUpCone201Pickup());
         SmartDashboard.putData(RobotContainer.autoChooser);
     }
 

@@ -10,6 +10,7 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.SwerveDriveConstants;
@@ -30,18 +31,20 @@ public class AutoCone201ChargeLeaveBalance extends SequentialCommandGroup {
 
     addCommands(
       new DriveSetGyro(0),
-      new DriveSetGyro(0, IMUAxis.kPitch),
-      new DriveSetGyro(0, IMUAxis.kRoll),
+    //   new DriveSetGyro(0, IMUAxis.kPitch),
+    //   new DriveSetGyro(0, IMUAxis.kRoll),
       new AutoScoreCone(scoreHigh?ArmConstants.BACK_HIGH_CONE:ArmConstants.BACK_MIDDLE_CONE),
       Commands.deadline(
         new DriveFollowTrajectory(path.get(0)),
         new ArmToPosition(ArmConstants.INTERNAL_PICK_UP_CONE)
       ).withTimeout(6),
       Commands.race(
-        new DriveBalance(),
+        new DriveBalance().withTimeout(2.5),
         new WaitUntilCommand(()->(Math.abs( RobotContainer.swerveDrive.getGyroInDegPitch()) < SwerveDriveConstants.DRIVE_BALANCE_ROBOT_ANGLE_TOLERANCE_AUTO))
       ),
-      new DriveFollowTrajectory(path.get(1),true),
+      new DriveFollowTrajectory(path.get(1), true),
+      new WaitCommand(2),
+      new DriveFollowTrajectory(path.get(2)),
       new DriveBalance()      
     );
   }
