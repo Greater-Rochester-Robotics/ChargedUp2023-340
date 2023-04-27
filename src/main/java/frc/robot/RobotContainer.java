@@ -105,20 +105,20 @@ public class RobotContainer {
      */
     static final XboxController coDriver = new XboxController(1);
 
-    static final Trigger coDriverA = new JoystickButton(coDriver, 1);
-    static final Trigger coDriverB = new JoystickButton(coDriver, 2);
-    static final Trigger coDriverX = new JoystickButton(coDriver, 3);
-    static final Trigger coDriverY = new JoystickButton(coDriver, 4);
-    static final Trigger coDriverBack = new JoystickButton(coDriver, 7);
-    static final Trigger coDriverStart = new JoystickButton(coDriver, 8);
-    static final Trigger coDriverDUp = new POVButton(coDriver, 0);
-    static final Trigger coDriverDDown = new POVButton(coDriver, 180);
-    static final Trigger coDriverDLeft = new POVButton(coDriver, 270);
-    static final Trigger coDriverDRight = new POVButton(coDriver, 90);
-    static final Trigger coDriverLB = new JoystickButton(coDriver, 5);
-    static final Trigger coDriverRB = new JoystickButton(coDriver, 6);
-    static final Trigger coDriverLTButton = new JoyTriggerButton(coDriver, Axis.kLeftTrigger, Constants.CO_DRIVER_CONTROLLER_DEADZONE);
-    static final Trigger coDriverRTButton = new JoyTriggerButton(coDriver, Axis.kRightTrigger, Constants.CO_DRIVER_CONTROLLER_DEADZONE);
+    private static Trigger coDriverA = new Trigger();
+    private static Trigger coDriverB = new Trigger();
+    private static Trigger coDriverX = new Trigger();
+    private static Trigger coDriverY = new Trigger();
+    private static Trigger coDriverBack = new Trigger();
+    private static Trigger coDriverStart = new Trigger();
+    private static Trigger coDriverDUp = new Trigger();
+    private static Trigger coDriverDDown = new Trigger();
+    private static Trigger coDriverDLeft = new Trigger();
+    private static Trigger coDriverDRight = new Trigger();
+    private static Trigger coDriverLB = new Trigger();
+    private static Trigger coDriverRB = new Trigger();
+    private static Trigger coDriverLTButton = new Trigger();
+    private static Trigger coDriverRTButton = new Trigger();
 
     /**
      * The auto selector for Smart Dashboard.
@@ -161,6 +161,7 @@ public class RobotContainer {
     public static Target target;
 
     public RobotContainer () {
+        makeCoDriverButtons();
         swerveDrive = new SwerveDrive();
         claw = new Claw();
         compressor = new Compressor();
@@ -188,6 +189,23 @@ public class RobotContainer {
         configureTestingCommands();
 
         SmartDashboard.putData("Score middle cone", new AutoScoreCone(ArmConstants.BACK_MIDDLE_CUBE));
+    }
+
+    private void makeCoDriverButtons(){
+        coDriverA = new JoystickButton(coDriver, 1);
+        coDriverB = new JoystickButton(coDriver, 2);
+        coDriverX = new JoystickButton(coDriver, 3);
+        coDriverY = new JoystickButton(coDriver, 4);
+        coDriverBack = new JoystickButton(coDriver, 7);
+        coDriverStart = new JoystickButton(coDriver, 8);
+        coDriverDUp = new POVButton(coDriver, 0);
+        coDriverDDown = new POVButton(coDriver, 180);
+        coDriverDLeft = new POVButton(coDriver, 270);
+        coDriverDRight = new POVButton(coDriver, 90);
+        coDriverLB = new JoystickButton(coDriver, 5);
+        coDriverRB = new JoystickButton(coDriver, 6);
+        coDriverLTButton = new JoyTriggerButton(coDriver, Axis.kLeftTrigger, Constants.CO_DRIVER_CONTROLLER_DEADZONE);
+        coDriverRTButton = new JoyTriggerButton(coDriver, Axis.kRightTrigger, Constants.CO_DRIVER_CONTROLLER_DEADZONE);
     }
 
     /**
